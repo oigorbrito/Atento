@@ -87,6 +87,12 @@ jobs:
         run: |
           python -m compileall -q             /tmp/PsyChat/agent/psychology_agent.py             /tmp/PsyChat/core/vector_store.py             /tmp/PsyChat/core/rag_system.py
 
+      - name: Dynamically swap patched model and embedding providers
+        run: |
+          python evals/spikes/psychat/patched_provider_swap_probe.py \
+            --donor-root /tmp/PsyChat \
+            --output evals/results/psychat_patched_provider_swap.json
+
       - name: Dynamic provider replacement probe
         run: |
           python evals/spikes/psychat/provider_replacement_probe.py \
