@@ -302,15 +302,17 @@ def patch_vector_store(path: Path) -> None:
         "            self.collection_name = staging_name\n"
         "            success = self.add_documents(documents)\n"
         "            complete = success and staging.count() == len(documents)\n"
-        "            self.collection = previous_collection\n"
-        "            self.collection_name = previous_name\n"
         "            if not complete:\n"
+        "                self.collection = previous_collection\n"
+        "                self.collection_name = previous_name\n"
         "                self.client.delete_collection(staging_name)\n"
         "                return False\n"
+        "            self._validate_collection_contract()\n"
+        "            self.collection = previous_collection\n"
+        "            self.collection_name = previous_name\n"
         "            self._write_active_collection_name(staging_name)\n"
         "            self.collection = staging\n"
         "            self.collection_name = staging_name\n"
-        "            self._validate_collection_contract()\n"
         "            return True\n"
         "        except Exception as exc:\n"
         "            self.collection = previous_collection\n"
@@ -680,7 +682,7 @@ def apply_patch(donor_root: Path) -> dict:
     retention = retention_metrics(donor_root)
 
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.15",
+        "metric_version": "psychat-minimal-fork-patch-v0.16",
         "pinned_commit": head_before,
         "changed_files": changed,
         "donor_files_touched_to_introduce_provider_boundary": len(PROVIDER_BOUNDARY_FILES),
