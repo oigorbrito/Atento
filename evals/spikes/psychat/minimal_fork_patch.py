@@ -229,20 +229,16 @@ def patch_vector_store(path: Path) -> None:
         "            return {}\n",
         label="VectorStore collection contract fail closed",
     )
-    text = replace_once(
+    text = replace_regex_once(
         text,
-        "            self.client.delete_collection(COLLECTION_NAME)\n"
-        "            self.collection = self.client.create_collection(\n"
-        "                name=COLLECTION_NAME,\n"
-        "                metadata={\"description\": \"MCP知识库向量存储\"}\n"
-        "            )",
-        "            self.client.delete_collection(self.collection_name)\n"
-        "            self.collection = self.client.create_collection(\n"
-        "                name=self.collection_name,\n"
-        "                metadata=self.expected_collection_metadata,\n"
-        "            )\n"
-        "            self._validate_collection_contract()",
-        label="VectorStore clear collection contract",
+        r"""    def clear_collection\(self\) -> bool:\n.*?\n\nif __name__ == "__main__":""",
+        """    def clear_collection(self) -> bool:
+        \"\"\"Atomically promote an empty generation instead of mutating active data.\"\"\"
+        return self.rebuild_documents([])
+
+
+if __name__ == "__main__":""",
+        label="VectorStore atomic clear generation",
     )
     text = replace_once(
         text,
@@ -356,8 +352,10 @@ def patch_vector_store(path: Path) -> None:
         "            )\n"
         "            self.collection = staging\n"
         "            self.collection_name = staging_name\n"
-        "            success = self.add_documents(\n"
-        "                documents, refresh_active=False\n"
+        "            success = (\n"
+        "                True\n"
+        "                if not documents\n"
+        "                else self.add_documents(documents, refresh_active=False)\n"
         "            )\n"
         "            complete = success and staging.count() == len(documents)\n"
         "            if not complete:\n"
@@ -740,7 +738,7 @@ def apply_patch(donor_root: Path) -> dict:
     retention = retention_metrics(donor_root)
 
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.18",
+        "metric_version": "psychat-minimal-fork-patch-v0.19",
         "pinned_commit": head_before,
         "changed_files": changed,
         "donor_files_touched_to_introduce_provider_boundary": len(PROVIDER_BOUNDARY_FILES),
@@ -750,6 +748,7 @@ def apply_patch(donor_root: Path) -> dict:
         "vector_index_schema_version": "rag-cosine-v1",
         "vector_collection_versioned": True,
         "vector_clear_preserves_index_contract": True,
+        "clear_collection_uses_atomic_empty_generation": True,
         "embedding_identity_required_by_vector_store": True,
         "vector_collection_namespaced_by_embedding_identity": True,
         "vector_collection_namespaced_by_corpus_identity": True,
