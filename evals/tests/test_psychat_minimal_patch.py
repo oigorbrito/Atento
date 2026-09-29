@@ -255,6 +255,12 @@ class PsyChatMinimalPatchGeneratorTest(unittest.TestCase):
             self.assertIn("vector collection metadata mismatch", patched)
             self.assertIn("except RuntimeError:", patched)
             self.assertIn("raise", patched)
+            self.assertIn("def _read_active_collection_name", patched)
+            self.assertIn("def _write_active_collection_name", patched)
+            self.assertIn("def rebuild_documents", patched)
+            self.assertIn("os.replace(temp, self.pointer_path)", patched)
+            self.assertIn("staging.count() == len(documents)", patched)
+            self.assertIn("self._validate_collection_contract()", patched)
             self.assertNotIn("self.client.delete_collection(COLLECTION_NAME)", patched)
 
 
@@ -273,11 +279,11 @@ class PsyChatMinimalPatchGeneratorTest(unittest.TestCase):
             self.assertIn('"role": "user"', patched)
             self.assertNotIn("requests.post(", patched)
             self.assertIn("clear_existing: bool = True", patched)
-            self.assertIn(
+            self.assertIn("self.vector_store.rebuild_documents(documents)", patched)
+            self.assertNotIn(
                 "if clear_existing and not self.vector_store.clear_collection():",
                 patched,
             )
-            self.assertIn("知识库清空失败，终止重建", patched)
 
             class Gateway:
                 def __init__(self):
