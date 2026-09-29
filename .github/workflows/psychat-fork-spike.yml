@@ -66,10 +66,11 @@ jobs:
           path: |
             evals/results/psychat_real_isolation.json
             evals/results/psychat_static_chassis.json
+            evals/results/psychat_composed_chassis.json
           if-no-files-found: error
 
   adapted-static:
-    name: Adapted chassis static audit
+    name: Adapter-only chassis static audit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
