@@ -14,6 +14,17 @@ class FakePsyChatDonor:
         return f"{message}:{count}", {"turns": count}
 
 
+class FakeRetrievalDonor:
+    def respond(self, *, message, session_state):
+        return "grounded", {
+            **dict(session_state),
+            "last_retrieval_docs": [
+                {"metadata": {"qa_id": "qa-001", "source": "a.md"}},
+                {"id": "doc-002", "metadata": {"source": "b.md"}},
+            ],
+        }
+
+
 class FakeUpstreamRagSystem:
     def __init__(self):
         self.conversation_history = []
@@ -102,6 +113,28 @@ class PsyChatAdapterTest(unittest.TestCase):
         self.assertEqual(runtime.execute(session_id="a", message="x", route=route()).response, "x:1")
         self.assertEqual(runtime.execute(session_id="a", message="x", route=route()).response, "x:2")
         self.assertEqual(runtime.execute(session_id="b", message="x", route=route()).response, "x:1")
+
+    def test_executor_emits_deterministic_rag_trace(self):
+        registry = CapabilityRegistry()
+        registry.register(PsyChatExecutorAdapter(FakeRetrievalDonor()))
+        runtime = PsyChatSpikeRuntime(
+            registry=registry,
+            sessions=InMemorySessionStore(),
+        )
+
+        result = runtime.execute(
+            session_id="a",
+            message="knowledge question",
+            route=route(),
+        )
+
+        self.assertEqual(result.trace[0]["event"], "rag.completed")
+        self.assertTrue(result.trace[0]["used"])
+        self.assertEqual(
+            result.trace[0]["retrieved_ids"],
+            ["qa-001", "doc-002"],
+        )
+        self.assertEqual(result.trace[-1]["event"], "executor.completed")
 
     def test_real_bridge_shape_restores_and_extracts_donor_state(self):
         port = PsyChatRagSystemPort(FakeUpstreamRagSystem)
