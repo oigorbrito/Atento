@@ -1,0 +1,56 @@
+type: retrospective_handoff
+project: Atento
+scope: completed_and_documented_work_only
+continuation_instruction: false
+protocol:
+  version: v1.1-frozen
+selection:
+  repository: letta-ai/letta-code
+  frozen_sha: a75111ea610eff9b4a37baba4fbc6ee24bb73c79
+  status: EXECUTABLE_CHASSIS_SELECTED
+  control: LibreChat-AI/LibreChat
+method:
+  separates_architecture_from_feature_coverage: true
+  exact_sha_per_candidate: true
+  parity_before_comparison: true
+  targeted_probes_after_observation: true
+evaluated_candidates:
+  - Dify
+  - Rasa
+  - LibreChat
+  - Open WebUI
+  - Letta Code
+  - AnythingLLM
+intake_rejected:
+  - Flowise
+letta_evidence:
+  exact_sha_ci: true
+  install_frozen_lockfile: PASS
+  lint_typecheck: PASS
+  build: PASS
+  update_chain_smoke: PASS
+  unit_and_api_matrix: PASS
+  external_provider_failure:
+    job: Headless / gemini-3.6-flash
+    classification: external_provider_availability
+    evidence: Google AI HTTP 503 / high demand
+fork_scaffold:
+  F0: PASS
+  F1: PASS
+  F2: PASS
+  F3: PASS
+  F4: PASS
+  F5: PASS
+  real_core_exceptions: 0
+invariants:
+  - keep Atento product code outside Letta core when an intended boundary exists
+  - default Atento product code to atento/**
+  - require explicit isolated exception for src/** changes
+  - keep RAG removable and outside the orchestration core
+  - keep general and therapeutic policy/memory identities separable
+  - treat upstream upgrades as migration/revalidation events
+  - do not use feature count as chassis quality evidence
+historical_limit:
+  fork_seed_applied_to_real_user_repo_during_benchmark: false
+  external_user_branch_created_during_benchmark: false
+note: This file records history only and intentionally contains no next-step instruction.
