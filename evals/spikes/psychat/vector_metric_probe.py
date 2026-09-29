@@ -291,6 +291,9 @@ def main() -> int:
 
         reopened = cls(embedding_gateway=StubEmbeddingGateway())
         stale_writer = cls(embedding_gateway=StubEmbeddingGateway())
+        restart_opened_name = reopened.collection_name
+        first_promoted_name = promoted_name
+        first_promoted_pointer = promoted_pointer
         if reopened.collection_name != promoted_name:
             raise AssertionError(
                 "new VectorStore instance did not reopen promoted generation"
@@ -323,6 +326,11 @@ def main() -> int:
         if not store.rebuild_documents([second_doc]):
             raise AssertionError("second healthy generation was not promoted")
         second_promoted_name = store.collection_name
+        second_promoted_pointer = json.loads(
+            store.pointer_path.read_text(encoding="utf-8")
+        )["active_collection"]
+        if second_promoted_pointer != second_promoted_name:
+            raise AssertionError("second promotion pointer mismatch")
         if second_promoted_name == promoted_name:
             raise AssertionError("second promotion reused the prior generation name")
         if reopened.collection_name != promoted_name:
@@ -394,7 +402,7 @@ def main() -> int:
             )
 
         expected_info = {
-            "name": collection_name,
+            "name": cleared_name,
             "index_schema": "rag-cosine-v1",
             "embedding_identity": StubEmbeddingGateway.index_identity,
             "corpus_identity": corpus_identity,
@@ -406,7 +414,7 @@ def main() -> int:
                 )
 
     report = {
-        "metric_version": "psychat-vector-metric-v0.14",
+        "metric_version": "psychat-vector-metric-v0.15",
         "runtime_shape": args.expect,
         "collection_name": collection_name,
         "collection_metadata": metadata,
@@ -440,13 +448,18 @@ def main() -> int:
             args.expect != "patched" or True
         ),
         "atomic_generation_promotion_pass": (
-            args.expect != "patched" or promoted_pointer == promoted_name
+            args.expect != "patched"
+            or (
+                first_promoted_pointer == first_promoted_name
+                and second_promoted_pointer == second_promoted_name
+            )
         ),
         "partial_staging_never_promoted": (
             args.expect != "patched" or pointer_after_failure == promoted_name
         ),
         "promoted_generation_survives_restart": (
-            args.expect != "patched" or reopened.collection_name == promoted_name
+            args.expect != "patched"
+            or restart_opened_name == first_promoted_name
         ),
         "corrupt_pointer_fails_closed": (
             args.expect != "patched" or True
