@@ -38,22 +38,80 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Validate candidate registry
-        run: python -m evals.atentoeval.candidates validate-registry --registry evals/config/candidates.json
-      - name: Run candidate schema tests
-        run: python -m unittest evals.tests.test_candidates -v
+      - name: Show preparation runtime
+        shell: bash
+        run: |
+          mkdir -p prepare-logs
+          python --version | tee prepare-logs/python-version.txt
+          git rev-parse HEAD | tee prepare-logs/checkout-head.txt
+
+      - id: registry
+        name: Validate candidate registry
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m evals.atentoeval.candidates validate-registry --registry evals/config/candidates.json \
+            2>&1 | tee prepare-logs/registry.log
+
+      - id: schema_tests
+        name: Run candidate schema tests
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m unittest evals.tests.test_candidates -v \
+            2>&1 | tee prepare-logs/schema-tests.log
+
       - id: static_matrix
         name: Build static candidate matrix
+        continue-on-error: true
         shell: bash
         run: |
-          matrix="$(python -m evals.atentoeval.candidates github-matrix --registry evals/config/candidates.json --profile python_static_chassis)"
+          set -o pipefail
+          matrix="$(python -m evals.atentoeval.candidates github-matrix \
+            --registry evals/config/candidates.json \
+            --profile python_static_chassis \
+            2> >(tee prepare-logs/static-matrix.stderr >&2))"
+          printf '%s\n' "$matrix" | tee prepare-logs/static-matrix.json
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
       - id: openclaw_matrix
         name: Build OpenClaw Nayá matrix
+        continue-on-error: true
         shell: bash
         run: |
-          matrix="$(python -m evals.atentoeval.candidates github-matrix --registry evals/config/candidates.json --profile openclaw_naya_local_delta)"
+          set -o pipefail
+          matrix="$(python -m evals.atentoeval.candidates github-matrix \
+            --registry evals/config/candidates.json \
+            --profile openclaw_naya_local_delta \
+            2> >(tee prepare-logs/openclaw-matrix.stderr >&2))"
+          printf '%s\n' "$matrix" | tee prepare-logs/openclaw-matrix.json
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+      - name: Upload preparation diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: candidate-prepare-diagnostics
+          path: prepare-logs
+          if-no-files-found: error
+
+      - name: Enforce preparation
+        if: always()
+        shell: bash
+        env:
+          REGISTRY_OUTCOME: ${{ steps.registry.outcome }}
+          SCHEMA_TESTS_OUTCOME: ${{ steps.schema_tests.outcome }}
+          STATIC_MATRIX_OUTCOME: ${{ steps.static_matrix.outcome }}
+          OPENCLAW_MATRIX_OUTCOME: ${{ steps.openclaw_matrix.outcome }}
+        run: |
+          printf 'registry=%s\nschema_tests=%s\nstatic_matrix=%s\nopenclaw_matrix=%s\n' \
+            "$REGISTRY_OUTCOME" "$SCHEMA_TESTS_OUTCOME" "$STATIC_MATRIX_OUTCOME" "$OPENCLAW_MATRIX_OUTCOME"
+          test "$REGISTRY_OUTCOME" = success
+          test "$SCHEMA_TESTS_OUTCOME" = success
+          test "$STATIC_MATRIX_OUTCOME" = success
+          test "$OPENCLAW_MATRIX_OUTCOME" = success
 
   candidate-static:
     name: Static candidate / ${{ matrix.candidate_id }}
