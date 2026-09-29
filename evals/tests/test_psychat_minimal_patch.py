@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from evals.spikes.psychat.minimal_fork_patch import patch_data_processor, patch_rag_system
+from evals.spikes.psychat.minimal_fork_patch import patch_data_processor, patch_rag_system, patch_vector_store
 
 
 PROCESSOR_FIXTURE = '''from typing import List, Dict, Any
@@ -42,6 +42,56 @@ class DataProcessor:
             "source": source,
             "qa_id": qa_id if qa_id is not None else "unknown",
         }]
+'''
+
+
+VECTOR_STORE_FIXTURE = '''import chromadb
+from chromadb.config import Settings
+import requests
+from typing import List, Dict, Any
+from config import *
+
+class VectorStore:
+    def __init__(self):
+        # 初始化阿里云百炼Embedding API配置
+        self.api_key = ALIBABA_API_KEY
+        self.embedding_url = "https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings"
+        
+        # 初始化ChromaDB客户端
+        self.client = chromadb.PersistentClient(
+            path=CHROMA_DB_PATH,
+            settings=Settings()
+        )
+        self.collection = self.client.get_or_create_collection(
+            name=COLLECTION_NAME,
+            metadata={"description": "MCP知识库向量存储"}
+        )
+
+    def get_embedding(self, text: str) -> List[float]:
+        response = requests.post(self.embedding_url, json={"input": text})
+        result = response.json()
+        return result["data"][0]["embedding"]
+
+    def add_documents(self, documents: List[Dict[str, Any]]) -> bool:
+        return True
+
+    def get_collection_info(self) -> Dict[str, Any]:
+        return {
+            'name': COLLECTION_NAME,
+            'document_count': self.collection.count(),
+            'path': CHROMA_DB_PATH
+        }
+
+    def clear_collection(self) -> bool:
+        try:
+            self.client.delete_collection(COLLECTION_NAME)
+            self.collection = self.client.create_collection(
+                name=COLLECTION_NAME,
+                metadata={"description": "MCP知识库向量存储"}
+            )
+            return True
+        except Exception:
+            return False
 '''
 
 
@@ -143,6 +193,30 @@ class PsyChatMinimalPatchGeneratorTest(unittest.TestCase):
             )
             self.assertNotIn("unknown", [chunk["qa_id"] for chunk in chunks])
             self.assertIn("section.split('\\n')", patched)
+
+
+
+    def test_vector_patch_preserves_versioned_cosine_contract_on_clear(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "vector_store.py"
+            path.write_text(VECTOR_STORE_FIXTURE, encoding="utf-8")
+
+            patch_vector_store(path)
+            patched = path.read_text(encoding="utf-8")
+
+            compile(patched, str(path), "exec")
+            self.assertIn(
+                'ATENTO_COLLECTION_NAME = f"{COLLECTION_NAME}__{ATENTO_INDEX_SCHEMA_VERSION}"',
+                patched,
+            )
+            self.assertIn("name=ATENTO_COLLECTION_NAME", patched)
+            self.assertIn("self.client.delete_collection(ATENTO_COLLECTION_NAME)", patched)
+            self.assertIn('"hnsw:space": "cosine"', patched)
+            self.assertIn(
+                '"atento:index_schema": ATENTO_INDEX_SCHEMA_VERSION',
+                patched,
+            )
+            self.assertNotIn("self.client.delete_collection(COLLECTION_NAME)", patched)
 
 
     def test_rag_system_patch_preserves_message_construction(self):
