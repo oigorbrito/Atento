@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Deterministic plumbing probe for PsyChat -> AtentoEval RAG traces.
+"""Deterministic end-to-end plumbing probe for PsyChat -> AtentoEval RAG traces.
 
 This is not a donor-quality benchmark. It verifies that fixture-driven RAG
-decisions and retrieved document IDs survive the PsyChat adapter and are scored
-correctly by AtentoEval.
+routing and retrieved document IDs survive the complete integration seam:
+
+RouteDecision -> Registry -> Executor -> PsyChatRagSystemPort -> donor response
+-> state/trace extraction -> AtentoEval scoring.
 """
 from __future__ import annotations
 
@@ -15,31 +17,45 @@ from evals.atentoeval.metrics import score_turn
 from evals.atentoeval.runner import load_cases
 from evals.spikes.psychat.adapter.contracts import ExecutionResult, RouteDecision
 from evals.spikes.psychat.adapter.executor import PsyChatExecutorAdapter
+from evals.spikes.psychat.adapter.psychat_bridge import PsyChatRagSystemPort
 from evals.spikes.psychat.adapter.registry import CapabilityRegistry
 from evals.spikes.psychat.adapter.runtime import PsyChatSpikeRuntime
 from evals.spikes.psychat.adapter.session import InMemorySessionStore
 from evals.spikes.psychat.atentoeval_adapter import to_turn_result
 
 
-class FixtureDonor:
-    def __init__(self, *, attempted: bool, retrieved_ids: list[str]) -> None:
-        self.attempted = attempted
+class FixturePatchedRagSystem:
+    def __init__(self, *, retrieved_ids: list[str]) -> None:
         self.retrieved_ids = list(retrieved_ids)
+        self.conversation_history = []
+        self.no_rag_counter = 0
+        self.last_retrieval_docs = []
+        self.force_flags = []
 
-    def respond(self, *, message: str, session_state: dict, force_retrieval: bool = False):
-        if not self.attempted:
-            raise AssertionError("non-RAG case was incorrectly routed to PsyChat")
+    def generate_response(self, message: str, force_retrieval: bool = False):
+        self.force_flags.append(bool(force_retrieval))
         if not force_retrieval:
-            raise AssertionError("RAG route reached PsyChat without force_retrieval")
-        docs = [{"id": doc_id} for doc_id in self.retrieved_ids]
-        return "fixture-response", {
-            **dict(session_state),
-            "last_retrieval_docs": docs,
-            "_atento_turn": {
-                "rag_attempted": self.attempted,
-                "used_rag": bool(docs),
-                "sources": [],
-            },
+            raise AssertionError("knowledge.rag reached donor without force_retrieval")
+
+        self.conversation_history.append({"role": "user", "content": message})
+        self.conversation_history.append(
+            {"role": "assistant", "content": "fixture-response"}
+        )
+        self.last_retrieval_docs = [
+            {
+                "id": doc_id,
+                "metadata": {"qa_id": doc_id, "source": f"{doc_id}.fixture"},
+            }
+            for doc_id in self.retrieved_ids
+        ]
+        return {
+            "success": True,
+            "response": "fixture-response",
+            "sources": [
+                {"qa_id": doc_id, "source": f"{doc_id}.fixture"}
+                for doc_id in self.retrieved_ids
+            ],
+            "used_rag": bool(self.last_retrieval_docs),
         }
 
 
@@ -62,13 +78,17 @@ def run_case(case) -> dict:
     attempted = bool(fixture["rag_attempted"])
     retrieved_ids = [str(x) for x in fixture.get("retrieval_fixture", [])]
 
+    created = []
+
+    def donor_factory():
+        donor = FixturePatchedRagSystem(retrieved_ids=retrieved_ids)
+        created.append(donor)
+        return donor
+
     registry = CapabilityRegistry()
     registry.register(
         PsyChatExecutorAdapter(
-            FixtureDonor(
-                attempted=attempted,
-                retrieved_ids=retrieved_ids,
-            )
+            PsyChatRagSystemPort(donor_factory)
         )
     )
     registry.register(DirectConversationExecutor())
@@ -76,6 +96,7 @@ def run_case(case) -> dict:
         registry=registry,
         sessions=InMemorySessionStore(),
     )
+
     selected_route = (
         RouteDecision(
             capability="knowledge.rag",
@@ -96,6 +117,18 @@ def run_case(case) -> dict:
         message=step.user,
         route=selected_route,
     )
+
+    if attempted:
+        if len(created) != 1:
+            raise AssertionError(f"{case.id}: expected one PsyChat runtime")
+        if created[0].force_flags != [True]:
+            raise AssertionError(
+                f"{case.id}: RAG authority was not propagated through bridge: "
+                f"{created[0].force_flags}"
+            )
+    elif created:
+        raise AssertionError(f"{case.id}: non-RAG case instantiated PsyChat donor")
+
     turn = to_turn_result(
         case_id=case.id,
         step_index=0,
@@ -111,13 +144,16 @@ def run_case(case) -> dict:
     ):
         if scores.get(metric) != 1.0:
             raise AssertionError(
-                f"{case.id}: expected {metric}=1.0 in plumbing probe, got {scores.get(metric)}"
+                f"{case.id}: expected {metric}=1.0 in plumbing probe, "
+                f"got {scores.get(metric)}"
             )
 
     return {
         "case_id": case.id,
         "selected_capability": selected_route.capability,
         "selected_executor": selected_route.executor,
+        "bridge_exercised": attempted,
+        "force_retrieval_propagated": attempted,
         "trace": turn.trace["rag"],
         "scores": {
             key: value for key, value in scores.items() if key.startswith("rag_")
@@ -137,10 +173,23 @@ def main() -> int:
         raise AssertionError("no RAG cases found")
 
     rows = [run_case(case) for case in rag_cases]
+    attempted_rows = [row for row in rows if row["bridge_exercised"]]
+    empty_attempts = [
+        row
+        for row in attempted_rows
+        if row["trace"]["attempted"] and not row["trace"]["retrieved_ids"]
+    ]
+    if not empty_attempts:
+        raise AssertionError(
+            "RAG suite must contain at least one attempted retrieval with zero evidence"
+        )
+
     report = {
-        "probe": "rag_harness_plumbing",
+        "probe": "rag_harness_end_to_end_plumbing",
         "quality_claim": False,
         "case_count": len(rows),
+        "bridge_case_count": len(attempted_rows),
+        "forced_empty_retrieval_case_count": len(empty_attempts),
         "all_deterministic_rag_metrics_pass": True,
         "rows": rows,
     }
