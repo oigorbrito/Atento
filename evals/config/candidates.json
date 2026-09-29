@@ -10,7 +10,8 @@
       "MODEL_ADAPTER"
     ],
     "ci_profiles": [
-      "python_static_chassis"
+      "python_static_chassis",
+      "openclaw_naya_local_delta"
     ],
     "decision_requires_same_block_contract": true,
     "decision_requires_same_case_set_when_behavioral": true
@@ -87,6 +88,18 @@
       "ci_enabled": false,
       "ci_profile": null,
       "external_terms_note": "Atento-native control; no external upstream pin."
+    },
+    {
+      "candidate_id": "openclaw_upstream",
+      "block": "ASSISTANT_BASE",
+      "source_id": "SRC-OPENCLAW",
+      "repository": "openclaw/openclaw",
+      "upstream_sha": "e9571d77e76bd6d35996273d9e8398ad539b26e1",
+      "variant": "UPSTREAM",
+      "adapter_id": "openclaw_naya",
+      "ci_enabled": true,
+      "ci_profile": "openclaw_naya_local_delta",
+      "external_terms_note": "MIT; qualification pin and static evidence recorded in docs/evaluation/openclaw-qualification-2026-09-29.md."
     }
   ]
 }
