@@ -114,7 +114,20 @@ Não promover automaticamente um projeto de RAG, modelo ou mecanismo isolado a c
 
 O **Apollo** será um terceiro agente especializado em nutrição, treino e acompanhamento físico.
 
+Sua decisão de base possui ADR própria:
+
+- `docs/adr/ADR-APOLLO-001-fitness-nutrition-base-selection.md`
+
 Ele permanece **em espera** neste momento.
+
+A auditoria do remoto em 2026-09-29 não encontrou candidatos, benchmarks ou medições específicos do Apollo já registrados. Portanto:
+
+```text
+APOLLO_STATUS = DEFERRED
+APOLLO_SHORTLIST = NOT_SELECTED
+APOLLO_WINNER = NOT_SELECTED
+APOLLO_RESEARCH = NOT_STARTED
+```
 
 Nenhuma seleção de chassis, donor ou arquitetura específica para Apollo deve bloquear a qualificação da NAIA ou da Anna.
 
