@@ -10,7 +10,8 @@ Quando a mesma informação aparece em mais de um arquivo, prevalece o documento
 |---|---|---|---|---|
 | `README.md` | entrada/navegação | propósito, maturidade, links e quick orientation | progresso duplicado, arquitetura detalhada, licenças completas | navegação ou posicionamento mudar |
 | `AGENTS.md` | regras para agentes/contribuição automatizada | workflow, defensabilidade, gates, regras de progresso | arquitetura detalhada de módulo, decisões ADR específicas | regras de engenharia/governança mudarem |
-| `roadmap.md` | escopo + arquitetura macro + Project Points + progresso | blocos A–S, dependências, source map arquitetural, ledger 100 pontos, status global | protocolo detalhado de benchmark, licença legal detalhada | escopo/progresso/dependências/arquitetura macro mudar |
+| `docs/product-concept-reset.md` | identidade atual do produto durante reconciliação | NAIA/Anna/Apollo, papéis, boundaries e regras de seleção enquanto o reset estiver aberto | medições detalhadas, benchmark spec, progresso | alinhamento conceitual mudar |
+| `roadmap.md` | ledger técnico + arquitetura histórica/em reconciliação + Project Points + progresso | blocos A–S, dependências, source map arquitetural, ledger 100 pontos, status global | protocolo detalhado de benchmark, licença legal detalhada, identidade de produto durante DECISION_RESET | escopo/progresso/dependências/arquitetura macro mudar |
 | `docs/adr/*.md` | decisão arquitetural específica | contexto, alternativas, evidência, decisão, consequências | status geral do projeto | decisão estrutural for proposta/aceita/substituída |
 | `docs/evaluation/harness.md` | metodologia AtentoEval | suites, schemas, judges, adapters, métricas, release comparison | progresso, escolha fork/greenfield, autorização de dataset | avaliação mudar |
 | `docs/evaluation/*qualification*.md` / `*research*.md` | registro de evidência datada | pins, fatos observados, probes, blockers, síntese de pesquisa e gaps não provados | metodologia normativa, decisão ADR, progresso global | nova evidência material ou requalificação |
@@ -23,11 +24,17 @@ Quando a mesma informação aparece em mais de um arquivo, prevalece o documento
 ### AGENTS.md — defensável
 Papel correto: política de execução. Deve apontar para fontes canônicas em vez de copiar especificações inteiras. O progress tracking global foi tornado obrigatório.
 
-### roadmap.md — defensável com disciplina de ownership
-É intencionalmente amplo. Deve permanecer a fonte de verdade para **o que falta e quanto do projeto inteiro está concluído**. Detalhes que evoluem rapidamente devem apontar para docs especializados.
+### docs/product-concept-reset.md — autoridade provisória durante DECISION_RESET
+Enquanto a reconciliação estiver aberta, este documento define a identidade NAIA/Anna/Apollo e impede que a decomposição histórica seja confundida com decisão final.
 
-### ADR-000 — defensável enquanto `Proposed`
-Não deve ser tratada como decisão antes do spike. A mudança para `Accepted` exige evidência listada na própria ADR.
+### roadmap.md — ledger técnico durante reconciliação
+Permanece a fonte de verdade para Project Points e evidência de progresso, mas sua decomposição arquitetural histórica não substitui o product concept reset enquanto `DECISION_RESET` estiver ativo.
+
+### ADR-000 / ADR-001 / ADR-002 — reabertas
+Preservam evidência e histórico, mas não possuem autoridade para selecionar chassis, shortlist, ordem de execução ou topologia enquanto estiverem marcadas `DECISION_RESET`.
+
+### ADR-ANNA-001 — seleção da base da Anna
+Fonte de verdade para o estado da decisão de chassis da Anna. Enquanto `DECISION_RESET`, nenhuma classificação histórica de PsychAgent, TherapyMind, PsyChat ou TheraMind constitui shortlist ou vencedor.
 
 ### docs/evaluation/harness.md — defensável
 Possui responsabilidade clara: metodologia de avaliação. Não deve carregar status geral do projeto.
