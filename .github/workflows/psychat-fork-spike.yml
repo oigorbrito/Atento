@@ -74,7 +74,7 @@ jobs:
         run: |
           python evals/spikes/psychat/retrieval_mechanics_probe.py \
             --donor-root /tmp/PsyChat \
-            --output evals/results/psychat_retrieval_mechanics.json
+            --output evals/results/psychat_retrieval_mechanics_upstream.json
 
       - name: Static upstream Chassis Fitness audit
         run: |
@@ -106,6 +106,19 @@ jobs:
             --donor-root /tmp/PsyChat \
             --output evals/results/psychat_provider_replacement.json
 
+      - name: Re-run retrieval mechanics on patched donor
+        run: |
+          python evals/spikes/psychat/retrieval_mechanics_probe.py \
+            --donor-root /tmp/PsyChat \
+            --output evals/results/psychat_retrieval_mechanics_patched.json
+
+      - name: Compare upstream and patched retrieval mechanics
+        run: |
+          python evals/spikes/psychat/retrieval_preservation_probe.py \
+            --upstream evals/results/psychat_retrieval_mechanics_upstream.json \
+            --patched evals/results/psychat_retrieval_mechanics_patched.json \
+            --output evals/results/psychat_retrieval_preservation.json
+
       - name: Audit patched BLOCO I donor plus Atento chassis
         run: |
           rm -rf /tmp/PsyChatRagBlock
@@ -120,12 +133,14 @@ jobs:
         run: |
           cat evals/results/psychat_gold_source.json
           cat evals/results/psychat_real_isolation.json
-          cat evals/results/psychat_retrieval_mechanics.json
+          cat evals/results/psychat_retrieval_mechanics_upstream.json
           cat evals/results/psychat_change_surface.json
           cat evals/results/psychat_static_chassis.json
           cat evals/results/psychat_unpatched_composed_chassis.json
           cat evals/results/psychat_minimal_fork_patch.json
           cat evals/results/psychat_provider_replacement.json
+          cat evals/results/psychat_retrieval_mechanics_patched.json
+          cat evals/results/psychat_retrieval_preservation.json
           cat evals/results/psychat_patched_rag_chassis.json
 
       - uses: actions/upload-artifact@v4
@@ -134,12 +149,14 @@ jobs:
           path: |
             evals/results/psychat_gold_source.json
             evals/results/psychat_real_isolation.json
-            evals/results/psychat_retrieval_mechanics.json
+            evals/results/psychat_retrieval_mechanics_upstream.json
             evals/results/psychat_change_surface.json
             evals/results/psychat_static_chassis.json
             evals/results/psychat_unpatched_composed_chassis.json
             evals/results/psychat_minimal_fork_patch.json
             evals/results/psychat_provider_replacement.json
+            evals/results/psychat_retrieval_mechanics_patched.json
+            evals/results/psychat_retrieval_preservation.json
             evals/results/psychat_patched_rag_chassis.json
           if-no-files-found: error
 
