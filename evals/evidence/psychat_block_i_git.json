@@ -1,9 +1,9 @@
 {
-  "metric_version": "psychat-block-i-git-v0.6",
+  "metric_version": "psychat-block-i-git-v0.7",
   "evidence_type": "github_git_compare_plus_pinned_corpus_simulation",
   "pinned_donor_commit": "5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4",
   "baseline_commit": "f2317be0fc27b1f4a6a39c5c89f22faf550045bf",
-  "patched_commit": "94cdf51f7dd989081913fb244d532c1c2627586d",
+  "patched_commit": "3ff8bf1daff37590e52f093e4231ffc015b35de4",
   "measurement_ref": "evidence/psychat-rag-block-correctness-v4-source",
   "preserving_ref": "evidence/psychat-rag-block-correctness-v4",
   "files_touched_exact": 4,
@@ -15,10 +15,10 @@
     "evals/evidence/psychat-block-i/data/processor.py"
   ],
   "original_lines": 1600,
-  "deleted_or_replaced_original_lines": 170,
-  "added_lines": 177,
-  "retained_original_lines": 1430,
-  "retained_original_line_ratio": 0.89375,
+  "deleted_or_replaced_original_lines": 176,
+  "added_lines": 263,
+  "retained_original_lines": 1424,
+  "retained_original_line_ratio": 0.89,
   "static_patched_invariants": {
     "direct_requests_post_count": 0,
     "psychology_agent_model_gateway_injected": true,
@@ -40,7 +40,12 @@
     "persisted_collection_metadata_validated": true,
     "knowledge_base_rebuild_defaults_to_replace": true,
     "knowledge_base_rebuild_clear_fails_closed": true,
-    "collection_contract_mismatch_fails_closed": true
+    "collection_contract_mismatch_fails_closed": true,
+    "knowledge_base_rebuild_uses_staging_generation": true,
+    "active_index_pointer_promoted_atomically": true,
+    "staging_validated_before_pointer_promotion": true,
+    "partial_staging_index_never_promoted": true,
+    "rag_destructive_preclear_removed": true
   },
   "pinned_corpus_parser_evidence": {
     "knowledge_file_count": 12,
@@ -69,11 +74,11 @@
   },
   "limitations": [
     "Git/content evidence proves exact current patch surface and source/corpus/observability/rebuild invariants, not Python runtime execution.",
-    "Dynamic DataProcessor, Chroma lifecycle, provider replacement, trace propagation, rebuild behavior, isolation and AtentoEval quality remain separate execution requirements.",
-    "The 89.375% retention ratio is a line-based approximation from baseline lines minus deleted/replaced lines.",
+    "Dynamic DataProcessor, Chroma lifecycle, provider replacement, trace propagation, atomic rebuild behavior, isolation and AtentoEval quality remain separate execution requirements.",
+    "The 89.00% retention ratio is a line-based approximation from baseline lines minus deleted/replaced lines.",
     "Earlier v4 snapshot commits before e60c7573 were superseded because vector schema/corpus constants were referenced but not defined in the manual evidence snapshot."
   ],
-  "preserving_ref_head": "78d406d33cf9ffcb3e03e88066040b2e561070ed",
+  "preserving_ref_head": "17de2094004545862d6c5a9829e030ddab758f93",
   "upstream_license_notice_present_in_preserving_ref": true,
   "surface_measurement_note": "files_touched_exact compares baseline_commit to patched_commit on v4-source. The preserving ref contains the MIT notice in its ancestry and must not be used as the head for source change-surface counting."
 }
