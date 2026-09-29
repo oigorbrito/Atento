@@ -1,17 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import replace
-from typing import Any, Mapping, Protocol
+from typing import Mapping
 
 from .contracts import ExecutionRequest, ExecutionResult, RouteDecision
-from .interfaces import SessionStore
+from .interfaces import SafetyPolicy, SessionStore, TraceSink
 from .registry import CapabilityRegistry
 from .safety import SpikeSafetyPolicy
 from .validator import ResultValidator
-
-
-class TraceSink(Protocol):
-    def emit(self, event: Mapping[str, Any]) -> None: ...
 
 
 class NullTraceSink:
@@ -25,7 +21,7 @@ class PsyChatSpikeRuntime:
         *,
         registry: CapabilityRegistry,
         sessions: SessionStore,
-        safety: SpikeSafetyPolicy | None = None,
+        safety: SafetyPolicy | None = None,
         validator: ResultValidator | None = None,
         trace_sink: TraceSink | None = None,
     ) -> None:
