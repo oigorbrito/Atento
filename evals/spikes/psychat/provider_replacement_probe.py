@@ -55,6 +55,54 @@ class RecordingModelGateway:
         return f"{self.label}:{purpose}"
 
 
+class RecordingRouteAgent:
+    def __init__(self):
+        self.force_flags = []
+
+    def analyze_user_input(
+        self,
+        user_message,
+        conversation_history,
+        vector_store,
+        force_retrieval=False,
+    ):
+        self.force_flags.append(bool(force_retrieval))
+        return {
+            "need_rag": bool(force_retrieval),
+            "topics": ["情绪"] if force_retrieval else [],
+            "topic": "情绪" if force_retrieval else None,
+            "search_queries": ["forced-query"] if force_retrieval else [],
+            "search_query": "forced-query" if force_retrieval else None,
+            "original_message": user_message,
+            "forced": bool(force_retrieval),
+        }
+
+
+class RecordingRetrievalStore:
+    def __init__(self):
+        self.calls = []
+
+    def search(self, query, *, topics=None, threshold=None, **kwargs):
+        self.calls.append(
+            {
+                "query": query,
+                "topics": list(topics or []),
+                "threshold": threshold,
+            }
+        )
+        return [
+            {
+                "content": "forced retrieval evidence",
+                "similarity": 0.9,
+                "metadata": {
+                    "source": "forced.txt",
+                    "topic": "情绪",
+                    "qa_id": "forced-doc",
+                },
+            }
+        ]
+
+
 class RecordingEmbeddingGateway:
     def __init__(self, vector):
         self.vector = list(vector)
@@ -143,6 +191,34 @@ def run(donor_root: Path) -> dict:
     if response_b != "B:psychat.rag.response":
         raise AssertionError("RAGSystem did not use model gateway B")
 
+    # Routing-authority probe: once Atento has selected knowledge.rag, the
+    # patched donor must accept force_retrieval from the outer Router instead
+    # of re-deciding that no retrieval is needed.
+    route_agent = RecordingRouteAgent()
+    route_store = RecordingRetrievalStore()
+    routed = rag_module.RAGSystem(
+        model_gateway=model_a,
+        embedding_gateway=embedding_a,
+        data_processor=StubDataProcessor(),
+        vector_store=route_store,
+        psychology_agent=route_agent,
+        tts_service=None,
+    )
+    routed_result = routed.generate_response(
+        "router-selected-rag",
+        force_retrieval=True,
+    )
+    if route_agent.force_flags != [True]:
+        raise AssertionError(
+            f"outer force_retrieval did not reach donor agent: {route_agent.force_flags}"
+        )
+    if not route_store.calls:
+        raise AssertionError("outer RAG route did not trigger donor retrieval")
+    if not routed_result.get("used_rag"):
+        raise AssertionError(
+            f"forced donor route did not report RAG usage: {routed_result}"
+        )
+
     # Lifecycle probe: reuse the long-lived vector resource while keeping
     # conversation state on separate per-session RAGSystem instances.
     session_a = rag_module.RAGSystem(
@@ -178,10 +254,12 @@ def run(donor_root: Path) -> dict:
         raise AssertionError("session A state leaked into session B")
 
     return {
-        "metric_version": "psychat-provider-replacement-v0.2",
+        "metric_version": "psychat-provider-replacement-v0.3",
         "model_provider_swap_pass": True,
         "embedding_provider_swap_pass": True,
         "rag_model_gateway_swap_pass": True,
+        "external_rag_route_enforcement_pass": True,
+        "external_rag_route_vector_calls": len(route_store.calls),
         "donor_source_edit_required_for_swap": False,
         "files_touched_to_swap_provider_after_boundary": 0,
         "shared_vector_resource_reused": True,
