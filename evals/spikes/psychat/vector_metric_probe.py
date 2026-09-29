@@ -233,7 +233,8 @@ def main() -> int:
             raise AssertionError(
                 "previous active generation identity changed during clear"
             )
-        if store.collection.count() != 0:
+        cleared_count = store.collection.count()
+        if cleared_count != 0:
             raise AssertionError("atomic clear promoted a non-empty generation")
         clear_pointer = json.loads(
             store.pointer_path.read_text(encoding="utf-8")
@@ -405,7 +406,7 @@ def main() -> int:
                 )
 
     report = {
-        "metric_version": "psychat-vector-metric-v0.13",
+        "metric_version": "psychat-vector-metric-v0.14",
         "runtime_shape": args.expect,
         "collection_name": collection_name,
         "collection_metadata": metadata,
@@ -466,7 +467,7 @@ def main() -> int:
             or (
                 cleared_name != pre_clear_name
                 and pre_clear_name in RecordingClient.collections
-                and store.collection.count() >= 0
+                and cleared_count == 0
                 and recreated.get("hnsw:space") == "cosine"
                 and recreated.get("atento:index_schema") == "rag-cosine-v1"
                 and recreated.get("atento:embedding_identity") == StubEmbeddingGateway.index_identity
@@ -477,7 +478,7 @@ def main() -> int:
             args.expect != "patched"
             or (
                 clear_pointer == cleared_name
-                and store.collection.count() >= 0
+                and cleared_count == 0
                 and pre_clear_name in RecordingClient.collections
             )
         ),
