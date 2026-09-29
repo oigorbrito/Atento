@@ -298,6 +298,34 @@ def main() -> int:
         finally:
             store.pointer_path.write_text(pointer_backup, encoding="utf-8")
 
+        second_doc = {
+            "content": "second-generation",
+            "source": "second.txt",
+            "size": 17,
+            "type": "psychology_qa",
+            "topic": "情绪",
+            "qa_id": "second-1",
+        }
+        if not store.rebuild_documents([second_doc]):
+            raise AssertionError("second healthy generation was not promoted")
+        second_promoted_name = store.collection_name
+        if second_promoted_name == promoted_name:
+            raise AssertionError("second promotion reused the prior generation name")
+        if reopened.collection_name != promoted_name:
+            raise AssertionError(
+                "long-lived reader changed generation before refresh boundary"
+            )
+        reopened_info = reopened.get_collection_info()
+        if reopened.collection_name != second_promoted_name:
+            raise AssertionError(
+                "long-lived reader did not refresh to newly promoted generation"
+            )
+        if reopened_info.get("name") != second_promoted_name:
+            raise AssertionError(
+                "collection info did not report refreshed active generation"
+            )
+        promoted_name = second_promoted_name
+
         healthy_gateway = store.embedding_gateway
         store.embedding_gateway = PartialFailureEmbeddingGateway()
         partial_docs = [
@@ -339,7 +367,7 @@ def main() -> int:
                 )
 
     report = {
-        "metric_version": "psychat-vector-metric-v0.10",
+        "metric_version": "psychat-vector-metric-v0.11",
         "runtime_shape": args.expect,
         "collection_name": collection_name,
         "collection_metadata": metadata,
@@ -383,6 +411,10 @@ def main() -> int:
         ),
         "corrupt_pointer_fails_closed": (
             args.expect != "patched" or True
+        ),
+        "long_lived_reader_refreshes_active_generation": (
+            args.expect != "patched"
+            or reopened.collection_name == second_promoted_name
         ),
         "explicit_hnsw_space": explicit_space,
         "similarity_transform_in_donor": "1 - distance",
