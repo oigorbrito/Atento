@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 import inspect
-import inspect
 from typing import Any
 
 
@@ -18,7 +17,11 @@ class PsyChatRagSystemPort:
         self._factory = rag_system_factory
 
     @staticmethod
-    def _normalize_result(raw_result: Any) -> tuple[str, dict]:
+    def _normalize_result(
+        raw_result: Any,
+        *,
+        force_retrieval: bool = False,
+    ) -> tuple[str, dict]:
         if isinstance(raw_result, str):
             return raw_result, {}
 
@@ -39,7 +42,12 @@ class PsyChatRagSystemPort:
             # Upstream sets topic/search_query only on the RAG branch. This lets
             # us distinguish an attempted retrieval with zero results from a
             # simple conversational turn that never entered RAG.
-            rag_attempted = used_rag or "topic" in raw_result or "search_query" in raw_result
+            rag_attempted = (
+                force_retrieval
+                or used_rag
+                or "topic" in raw_result
+                or "search_query" in raw_result
+            )
             turn_metadata = {
                 "rag_attempted": rag_attempted,
                 "used_rag": used_rag,
@@ -72,7 +80,7 @@ class PsyChatRagSystemPort:
             params = inspect.signature(donor.generate_response).parameters
             if "force_retrieval" not in params:
                 raise RuntimeError(
-                    "PsyChat donor does not expose force_retrieval; "
+                    "PsyChat donor does not expose external force_retrieval; "
                     "the minimal BLOCO I fork patch is required"
                 )
             raw_result = donor.generate_response(
@@ -81,7 +89,10 @@ class PsyChatRagSystemPort:
             )
         else:
             raw_result = donor.generate_response(message)
-        response, turn_metadata = self._normalize_result(raw_result)
+        response, turn_metadata = self._normalize_result(
+            raw_result,
+            force_retrieval=force_retrieval,
+        )
 
         next_state = {
             "conversation_history": list(
