@@ -1,0 +1,38 @@
+{
+  "agents": {
+    "entries": {
+      "naya-therapist": {
+        "default": true
+      }
+    },
+    "defaults": {
+      "sandbox": {
+        "mode": "all",
+        "scope": "session"
+      }
+    }
+  },
+  "tools": {
+    "profile": "minimal",
+    "exec": {
+      "host": "auto",
+      "mode": "deny"
+    },
+    "sessions": {
+      "visibility": "self"
+    },
+    "agentToAgent": {
+      "enabled": false
+    }
+  },
+  "plugins": {
+    "allow": [
+      "memory-core"
+    ]
+  },
+  "gateway": {
+    "terminal": {
+      "enabled": false
+    }
+  }
+}
