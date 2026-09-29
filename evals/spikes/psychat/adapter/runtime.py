@@ -4,9 +4,9 @@ from dataclasses import replace
 from typing import Any, Mapping, Protocol
 
 from .contracts import ExecutionRequest, ExecutionResult, RouteDecision
+from .interfaces import SessionStore
 from .registry import CapabilityRegistry
 from .safety import SpikeSafetyPolicy
-from .session import InMemorySessionStore
 from .validator import ResultValidator
 
 
@@ -24,7 +24,7 @@ class PsyChatSpikeRuntime:
         self,
         *,
         registry: CapabilityRegistry,
-        sessions: InMemorySessionStore,
+        sessions: SessionStore,
         safety: SpikeSafetyPolicy | None = None,
         validator: ResultValidator | None = None,
         trace_sink: TraceSink | None = None,
@@ -45,13 +45,20 @@ class PsyChatSpikeRuntime:
         )
         self._safety.precheck(request)
         executor = self._registry.resolve(route.capability, route.executor)
-        result = self._validator.validate(executor.execute(request))
+        result = self._validator.validate(
+            executor.execute(request),
+            expected_capability=route.capability,
+            expected_executor=route.executor,
+        )
         self._safety.postcheck(result)
 
         next_state = result.metadata.get("next_state", state)
         if not isinstance(next_state, Mapping):
             raise TypeError("next_state must be a mapping")
         self._sessions.save(session_id, next_state)
+
+        for trace_event in result.trace:
+            self._trace_sink.emit(trace_event)
 
         event = {
             "event": "executor.completed",
