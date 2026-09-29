@@ -181,6 +181,28 @@ def patch_rag_system(path: Path) -> None:
 """,
         label="RAGSystem constructor",
     )
+    text = replace_once(
+        text,
+        "    def generate_response(self, query: str, max_tokens: int = 1000) -> Dict[str, Any]:\n",
+        "    def generate_response(\n"
+        "        self,\n"
+        "        query: str,\n"
+        "        max_tokens: int = 1000,\n"
+        "        force_retrieval: bool = False,\n"
+        "    ) -> Dict[str, Any]:\n",
+        label="RAGSystem generate_response route seam",
+    )
+    text = replace_once(
+        text,
+        "            analysis = self.psychology_agent.analyze_user_input(query, self.conversation_history, self.vector_store)\n",
+        "            analysis = self.psychology_agent.analyze_user_input(\n"
+        "                query,\n"
+        "                self.conversation_history,\n"
+        "                self.vector_store,\n"
+        "                force_retrieval=force_retrieval,\n"
+        "            )\n",
+        label="RAGSystem external force_retrieval authority",
+    )
     text = replace_regex_once(
         text,
         r"""            headers = \{.*?            result = response\.json\(\)\n            if 'choices' in result and len\(result\['choices'\]\) > 0:\n                return result\['choices'\]\[0\]\['message'\]\['content'\]\n            else:\n                print\(f"LLM API响应格式错误: \{result\}"\)\n                return "抱歉，我无法生成有效的回答。"\n""",
@@ -201,6 +223,16 @@ def constructor_parameters(path: Path, class_name: str) -> set[str]:
         if isinstance(node, ast.ClassDef) and node.name == class_name:
             for item in node.body:
                 if isinstance(item, ast.FunctionDef) and item.name == "__init__":
+                    return {arg.arg for arg in item.args.args}
+    return set()
+
+
+def method_parameters(path: Path, class_name: str, method_name: str) -> set[str]:
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    for node in tree.body:
+        if isinstance(node, ast.ClassDef) and node.name == class_name:
+            for item in node.body:
+                if isinstance(item, ast.FunctionDef) and item.name == method_name:
                     return {arg.arg for arg in item.args.args}
     return set()
 
@@ -307,10 +339,20 @@ def apply_patch(donor_root: Path) -> dict:
     if "embedding_gateway" not in vector_params:
         raise AssertionError("VectorStore embedding gateway is not injectable")
 
+    generate_params = method_parameters(
+        donor_root / "core/rag_system.py",
+        "RAGSystem",
+        "generate_response",
+    )
+    if "force_retrieval" not in generate_params:
+        raise AssertionError(
+            "RAGSystem does not expose external force_retrieval routing authority"
+        )
+
     retention = retention_metrics(donor_root)
 
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.3",
+        "metric_version": "psychat-minimal-fork-patch-v0.4",
         "pinned_commit": head_before,
         "changed_files": changed,
         "donor_files_touched_to_introduce_provider_boundary": len(changed),
@@ -319,6 +361,8 @@ def apply_patch(donor_root: Path) -> dict:
         "provider_swap_mechanism": "constructor injection",
         "model_gateway_injectable": True,
         "embedding_gateway_injectable": True,
+        "external_rag_route_enforceable": True,
+        "rag_route_enforcement_parameter": "force_retrieval",
         "direct_provider_bypass_count_in_patched_rag_surface": remaining,
         "direct_provider_bypass_evidence": bypasses,
         "upstream_code_retention": retention,
