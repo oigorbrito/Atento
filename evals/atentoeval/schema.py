@@ -10,16 +10,25 @@ class Expected:
     memory_ids: List[str] = field(default_factory=list)
     tool_calls: List[str] = field(default_factory=list)
     safety_route: Optional[str] = None
+    rag_required: Optional[bool] = None
+    rag_document_ids: Optional[List[str]] = None
     required_behaviors: List[str] = field(default_factory=list)
     forbidden_behaviors: List[str] = field(default_factory=list)
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Expected":
+        rag_document_ids = (
+            list(data.get("rag_document_ids", []))
+            if "rag_document_ids" in data
+            else None
+        )
         return cls(
             accepted_strategies=list(data.get("accepted_strategies", [])),
             memory_ids=list(data.get("memory_ids", [])),
             tool_calls=list(data.get("tool_calls", [])),
             safety_route=data.get("safety_route"),
+            rag_required=data.get("rag_required"),
+            rag_document_ids=rag_document_ids,
             required_behaviors=list(data.get("required_behaviors", [])),
             forbidden_behaviors=list(data.get("forbidden_behaviors", [])),
         )
