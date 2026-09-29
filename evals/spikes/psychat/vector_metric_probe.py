@@ -6,6 +6,7 @@ import argparse
 import importlib.util
 import json
 import sys
+import tempfile
 import types
 from pathlib import Path
 
@@ -14,15 +15,18 @@ class StubCollection:
     def __init__(self, metadata=None):
         self.metadata = dict(metadata or {})
         self.upsert_calls = []
+        self.ids = set()
 
     def upsert(self, **kwargs):
         self.upsert_calls.append(dict(kwargs))
+        self.ids.update(str(item) for item in kwargs.get("ids", []))
 
     def count(self):
-        return sum(len(call.get("ids", [])) for call in self.upsert_calls)
+        return len(self.ids)
 
 
 class RecordingClient:
+    collections = {}
     last_metadata = None
     last_name = None
     last_deleted_name = None
@@ -35,18 +39,33 @@ class RecordingClient:
 
     def get_or_create_collection(self, *, name, metadata=None, **kwargs):
         type(self).last_name = str(name)
-        type(self).last_metadata = dict(metadata or {})
-        collection = StubCollection(metadata)
+        if name not in type(self).collections:
+            type(self).collections[name] = StubCollection(metadata)
+        collection = type(self).collections[name]
+        type(self).last_metadata = dict(collection.metadata or {})
+        type(self).last_collection = collection
+        return collection
+
+    def get_collection(self, *, name, **kwargs):
+        if name not in type(self).collections:
+            raise KeyError(name)
+        collection = type(self).collections[name]
+        type(self).last_name = str(name)
+        type(self).last_metadata = dict(collection.metadata or {})
         type(self).last_collection = collection
         return collection
 
     def delete_collection(self, name):
         type(self).last_deleted_name = str(name)
+        type(self).collections.pop(name, None)
 
     def create_collection(self, *, name, metadata=None, **kwargs):
+        if name in type(self).collections:
+            raise ValueError(f"collection already exists: {name}")
         type(self).last_created_name = str(name)
         type(self).last_created_metadata = dict(metadata or {})
         collection = StubCollection(metadata)
+        type(self).collections[name] = collection
         type(self).last_collection = collection
         return collection
 
@@ -60,6 +79,15 @@ class StubEmbeddingGateway:
     index_identity = "stub:text-embedding-v4:v1"
 
     def embed(self, *, text):
+        return [1.0, 0.0]
+
+
+class PartialFailureEmbeddingGateway:
+    index_identity = StubEmbeddingGateway.index_identity
+
+    def embed(self, *, text):
+        if text == "bad":
+            return []
         return [1.0, 0.0]
 
 
@@ -82,7 +110,7 @@ def install_stubs() -> None:
     config = types.ModuleType("config")
     config.ALIBABA_API_KEY = ""
     config.EMBEDDING_MODEL = "text-embedding-v4"
-    config.CHROMA_DB_PATH = "/tmp/atento-vector-metric-probe"
+    config.CHROMA_DB_PATH = tempfile.mkdtemp(prefix="atento-vector-metric-probe-")
     config.COLLECTION_NAME = "psychology_knowledge"
     config.TOP_K_RESULTS = 6
     config.SIMILARITY_THRESHOLD = 0.15
@@ -234,6 +262,48 @@ def main() -> int:
         finally:
             store.collection.metadata["atento:corpus_identity"] = original_corpus_metadata
 
+        active_before_atomic = store.collection_name
+        if not store.rebuild_documents([sample_doc]):
+            raise AssertionError("atomic staging rebuild did not promote healthy generation")
+        promoted_name = store.collection_name
+        if promoted_name == active_before_atomic:
+            raise AssertionError("healthy staging rebuild did not switch generations")
+        if not store.pointer_path.exists():
+            raise AssertionError("atomic staging rebuild did not write active pointer")
+        promoted_pointer = json.loads(
+            store.pointer_path.read_text(encoding="utf-8")
+        )["active_collection"]
+        if promoted_pointer != promoted_name:
+            raise AssertionError("active pointer does not match promoted generation")
+
+        healthy_gateway = store.embedding_gateway
+        store.embedding_gateway = PartialFailureEmbeddingGateway()
+        partial_docs = [
+            sample_doc,
+            {
+                "content": "bad",
+                "source": "bad.txt",
+                "size": 3,
+                "type": "psychology_qa",
+                "topic": "情绪",
+                "qa_id": "bad-1",
+            },
+        ]
+        if store.rebuild_documents(partial_docs):
+            raise AssertionError("partial staging rebuild must not be promoted")
+        store.embedding_gateway = healthy_gateway
+        pointer_after_failure = json.loads(
+            store.pointer_path.read_text(encoding="utf-8")
+        )["active_collection"]
+        if pointer_after_failure != promoted_name:
+            raise AssertionError(
+                "failed staging rebuild changed active generation pointer"
+            )
+        if store.collection_name != promoted_name:
+            raise AssertionError(
+                "failed staging rebuild replaced in-memory active generation"
+            )
+
         expected_info = {
             "name": collection_name,
             "index_schema": "rag-cosine-v1",
@@ -247,7 +317,7 @@ def main() -> int:
                 )
 
     report = {
-        "metric_version": "psychat-vector-metric-v0.8",
+        "metric_version": "psychat-vector-metric-v0.9",
         "runtime_shape": args.expect,
         "collection_name": collection_name,
         "collection_metadata": metadata,
@@ -279,6 +349,12 @@ def main() -> int:
         ),
         "collection_contract_mismatch_fails_closed": (
             args.expect != "patched" or True
+        ),
+        "atomic_generation_promotion_pass": (
+            args.expect != "patched" or promoted_pointer == promoted_name
+        ),
+        "partial_staging_never_promoted": (
+            args.expect != "patched" or pointer_after_failure == promoted_name
         ),
         "explicit_hnsw_space": explicit_space,
         "similarity_transform_in_donor": "1 - distance",
