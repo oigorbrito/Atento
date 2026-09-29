@@ -110,7 +110,15 @@ def audit(root: Path, source_id: str, upstream_commit: str | None = None) -> dic
 
     mutable_state_markers = {"conversation_history", "no_rag_counter", "last_retrieval_docs"}
     mutable_session_state = sorted(
-        {(path, attr) for path, attr in attrs if attr in mutable_state_markers}
+        {
+            (path, node.attr.lower())
+            for path, tree in trees.items()
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Attribute)
+            and isinstance(node.value, ast.Name)
+            and node.value.id == "self"
+            and node.attr.lower() in mutable_state_markers
+        }
     )
 
     routing_files = {
@@ -200,7 +208,14 @@ def audit(root: Path, source_id: str, upstream_commit: str | None = None) -> dic
         },
         "executor_abstraction": {
             "pass": executor_abstraction,
-            "evidence": sorted([{"path": p, "class": n} for p, n in classes if any(t in n for t in abstraction_tokens)], key=lambda x: (x["path"], x["class"])),
+            "evidence": sorted(
+                [
+                    {"path": p, "class": n}
+                    for p, n in classes
+                    if any(t in n for t in abstraction_tokens)
+                ],
+                key=lambda x: (x["path"], x["class"]),
+            ),
         },
         "capability_registry": {
             "pass": capability_registry,
@@ -251,7 +266,7 @@ def audit(root: Path, source_id: str, upstream_commit: str | None = None) -> dic
     score = passed * 10
 
     return {
-        "metric_version": "chassis-static-v0.1",
+        "metric_version": "chassis-static-v0.2",
         "source_id": source_id,
         "upstream_commit": upstream_commit,
         "root": str(root),
@@ -269,6 +284,7 @@ def audit(root: Path, source_id: str, upstream_commit: str | None = None) -> dic
         },
         "limitations": [
             "Static screening only; does not measure conversational quality.",
+            "Session-state ownership is counted only for self.<state> attributes; bridge access to donor state is not ownership.",
             "False positives/negatives are possible; dynamic replacement tests are required for ADR-000.",
             "A low score measures adaptation gap to Atento chassis, not scientific quality of the donor.",
         ],
