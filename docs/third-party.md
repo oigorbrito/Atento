@@ -6,6 +6,8 @@ Este arquivo é a fonte canônica para **provenance externo**: origem, commit/ve
 
 O Atento está atualmente em **modo de pesquisa/estudo**. A política interna permite `FULL_DONOR` quando empiricamente defensável.
 
+> **DECISION RESET:** os campos de status/adoption deste registro descrevem provenance, modo histórico de consideração ou possibilidade técnica. Eles **não constituem shortlist, preferência ou decisão atual** de chassis da NAIA ou da Anna. A seleção da Anna é regida por `docs/adr/ADR-ANNA-001-therapeutic-base-selection.md` enquanto o reset estiver ativo.
+
 > Importante: autorização interna para copiar/adaptar não altera direitos de terceiros. Para estudo é permitido clonar e executar donors; para redistribuir código copiado dentro deste repositório, preservar notices e observar os termos externos aplicáveis.
 
 ## Status legend
