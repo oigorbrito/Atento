@@ -99,6 +99,8 @@ def main() -> int:
                 and truthy(d, "same_identity_rebuild_uses_upsert")
                 and truthy(d, "collection_info_exposes_index_identity")
                 and truthy(d, "persisted_collection_metadata_validated")
+                and truthy(d, "knowledge_base_rebuild_defaults_to_replace")
+                and truthy(d, "knowledge_base_rebuild_clear_fails_closed")
             ),
         ),
         (
@@ -109,6 +111,8 @@ def main() -> int:
                 and truthy(d, "embedding_provider_swap_pass")
                 and truthy(d, "embedding_index_identity_isolated")
                 and truthy(d, "composition_provider_consistency_pass")
+                and truthy(d, "knowledge_base_rebuild_replace_default_pass")
+                and truthy(d, "knowledge_base_rebuild_clear_fail_closed_pass")
                 and truthy(d, "rag_model_gateway_swap_pass")
                 and truthy(d, "external_rag_route_enforcement_pass")
                 and equals(d, "donor_source_edit_required_for_swap", False)
@@ -389,7 +393,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.15",
+        "metric_version": "psychat-block-i-readiness-v0.16",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
