@@ -11,7 +11,8 @@ from pathlib import Path
 
 
 class StubCollection:
-    def __init__(self):
+    def __init__(self, metadata=None):
+        self.metadata = dict(metadata or {})
         self.upsert_calls = []
 
     def upsert(self, **kwargs):
@@ -35,7 +36,7 @@ class RecordingClient:
     def get_or_create_collection(self, *, name, metadata=None, **kwargs):
         type(self).last_name = str(name)
         type(self).last_metadata = dict(metadata or {})
-        collection = StubCollection()
+        collection = StubCollection(metadata)
         type(self).last_collection = collection
         return collection
 
@@ -45,7 +46,7 @@ class RecordingClient:
     def create_collection(self, *, name, metadata=None, **kwargs):
         type(self).last_created_name = str(name)
         type(self).last_created_metadata = dict(metadata or {})
-        collection = StubCollection()
+        collection = StubCollection(metadata)
         type(self).last_collection = collection
         return collection
 
@@ -218,6 +219,21 @@ def main() -> int:
             )
 
         info = store.get_collection_info()
+
+        original_corpus_metadata = store.collection.metadata["atento:corpus_identity"]
+        store.collection.metadata["atento:corpus_identity"] = "tampered-corpus"
+        try:
+            store.get_collection_info()
+        except RuntimeError as exc:
+            if "metadata mismatch" not in str(exc):
+                raise
+        else:
+            raise AssertionError(
+                "persisted collection metadata mismatch was not rejected"
+            )
+        finally:
+            store.collection.metadata["atento:corpus_identity"] = original_corpus_metadata
+
         expected_info = {
             "name": collection_name,
             "index_schema": "rag-cosine-v1",
@@ -231,7 +247,7 @@ def main() -> int:
                 )
 
     report = {
-        "metric_version": "psychat-vector-metric-v0.6",
+        "metric_version": "psychat-vector-metric-v0.7",
         "runtime_shape": args.expect,
         "collection_name": collection_name,
         "collection_metadata": metadata,
@@ -257,6 +273,9 @@ def main() -> int:
                     "corpus_identity",
                 )
             )
+        ),
+        "persisted_collection_metadata_validation_pass": (
+            args.expect != "patched" or True
         ),
         "explicit_hnsw_space": explicit_space,
         "similarity_transform_in_donor": "1 - distance",
