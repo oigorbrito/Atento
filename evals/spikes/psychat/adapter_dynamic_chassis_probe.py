@@ -36,7 +36,7 @@ class StatefulDonor:
     def __init__(self):
         self.calls = 0
 
-    def respond(self, *, message, session_state):
+    def respond(self, *, message, session_state, force_retrieval=False):
         self.calls += 1
         count = int(session_state.get("turns", 0)) + 1
         return "ok", {
