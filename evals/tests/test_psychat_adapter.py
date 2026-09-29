@@ -5,7 +5,7 @@ from evals.spikes.psychat.adapter.executor import PsyChatExecutorAdapter
 from evals.spikes.psychat.adapter.registry import CapabilityRegistry
 from evals.spikes.psychat.adapter.runtime import PsyChatSpikeRuntime
 from evals.spikes.psychat.adapter.session import InMemorySessionStore
-from evals.spikes.psychat.adapter.psychat_bridge import PsyChatRagSystemPort
+from evals.spikes.psychat.adapter.psychat_bridge import PsyChatRagSystemPort, build_patched_factory
 
 
 class FakePsyChatDonor:
@@ -173,6 +173,66 @@ class PsyChatAdapterTest(unittest.TestCase):
         _, second = port.respond(message="b", session_state={})
         self.assertEqual(first["no_rag_counter"], 1)
         self.assertEqual(second["no_rag_counter"], 1)
+
+    def test_patched_factory_reuses_long_lived_resources_but_not_session_runtime(self):
+        import sys
+        import types
+
+        created = []
+        rag_module = types.ModuleType("core.rag_system")
+
+        class FakePatchedRagSystem(FakeUpstreamRagSystem):
+            def __init__(self, **kwargs):
+                super().__init__()
+                self.resources = kwargs
+                created.append(self)
+
+        core = types.ModuleType("core")
+        core.__path__ = []
+        rag_module.RAGSystem = FakePatchedRagSystem
+        previous_core = sys.modules.get("core")
+        previous_rag = sys.modules.get("core.rag_system")
+        sys.modules["core"] = core
+        sys.modules["core.rag_system"] = rag_module
+        try:
+            shared_model = object()
+            shared_embedding = object()
+            shared_data = object()
+            shared_vector = object()
+            agents = []
+
+            def agent_factory():
+                agent = object()
+                agents.append(agent)
+                return agent
+
+            factory = build_patched_factory(
+                model_gateway=shared_model,
+                embedding_gateway=shared_embedding,
+                data_processor=shared_data,
+                vector_store=shared_vector,
+                psychology_agent_factory=agent_factory,
+            )
+            port = PsyChatRagSystemPort(factory)
+            port.respond(message="a", session_state={})
+            port.respond(message="b", session_state={})
+        finally:
+            if previous_core is None:
+                sys.modules.pop("core", None)
+            else:
+                sys.modules["core"] = previous_core
+            if previous_rag is None:
+                sys.modules.pop("core.rag_system", None)
+            else:
+                sys.modules["core.rag_system"] = previous_rag
+
+        self.assertEqual(len(created), 2)
+        self.assertIsNot(created[0], created[1])
+        self.assertIs(created[0].resources["model_gateway"], shared_model)
+        self.assertIs(created[1].resources["model_gateway"], shared_model)
+        self.assertIs(created[0].resources["vector_store"], shared_vector)
+        self.assertIs(created[1].resources["vector_store"], shared_vector)
+        self.assertIsNot(agents[0], agents[1])
 
     def test_executor_can_be_swapped_by_registration(self):
         runtime, registry = self.make_runtime()
