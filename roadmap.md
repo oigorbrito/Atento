@@ -1,18 +1,20 @@
 # Atento — Roadmap de Arquitetura e Implementação
 
-> Documento vivo para orientar a construção do Atento como um sistema conversacional de apoio emocional com arquitetura executiva explícita, memória longitudinal, planejamento, grounding, ferramentas, segurança e avaliação contínua.
+> **PRODUCT / DECISION RESET — 2026-09-29:** preservar Project Points, sources, medições, benchmarks e trabalho executado. A decomposição arquitetural e as ordens de execução anteriores estão em reconciliação e não devem ser tratadas como decisões finais. A definição conceitual corrente está em `docs/product-concept-reset.md`.
 
 ## 0. Contrato deste documento
 
 Este arquivo é a fonte canônica para:
 
-- escopo do projeto;
-- arquitetura alvo em nível de sistema;
+- ledger de blocos técnicos e evidência já produzida;
+- arquitetura histórica/em reconciliação em nível de sistema;
 - blocos A–S;
 - blocos A–S e suas dependências;
 - Project Points;
 - progresso global do projeto;
 - source mapping arquitetural.
+
+Durante o `DECISION_RESET`, a identidade do produto e a divisão NAIA/Anna/Apollo são definidas provisoriamente em `docs/product-concept-reset.md`.
 
 Este arquivo **não** é a fonte canônica para:
 
@@ -27,23 +29,40 @@ Em caso de duplicação, prevalece o documento que possui a responsabilidade can
 >
 > O score representa o **projeto inteiro**. Nenhum bloco individual possui uma porcentagem própria.
 
-## 1. Objetivo do projeto
+## 1. Objetivo do projeto — em reconciliação
 
-O Atento deve ser construído como **um sistema**, não apenas como um chatbot com um prompt longo.
+O Atento é o repositório canônico do produto composto por três agentes especializados:
 
-A arquitetura alvo separa:
+1. **NAIA — Nova Assistente Inteligente Artificial:** assistente pessoal persistente/secretária;
+2. **Anna:** assistente emocional/terapêutica;
+3. **Apollo:** nutrição/personal trainer, adiado neste momento.
 
-1. **interpretação da entrada**;
-2. **estado e hipóteses sobre a necessidade do usuário**;
-3. **memória longitudinal**;
-4. **planejamento da próxima ação conversacional**;
-5. **recuperação de conhecimento e uso de ferramentas**;
-6. **geração da resposta**;
-7. **crítica e validação**;
-8. **segurança e roteamento de risco**;
-9. **telemetria e avaliação**.
+Os agentes devem ter forte isolamento de chat, memória, ferramentas e autoridade. A topologia concreta de integração/handoff ainda não está selecionada.
 
-A premissa central é que cada bloco tenha **contratos estruturados, métricas próprias e testes independentes**.
+A arquitetura A–S abaixo nasceu principalmente da trilha emocional/terapêutica e continua valiosa como inventário técnico, source mapping e evidência. Ela **não deve ser presumida como decomposição final de todo o produto** até a reconciliação terminar.
+
+As decisões de chassis serão refeitas por categorias equivalentes:
+
+```text
+NAIA:
+persistent personal-assistant chassis
+→ enumerate comparable mature systems
+→ audit existing evidence/benchmarks
+→ measure real adaptation surface
+→ select or reject
+
+Anna:
+therapeutic/emotional-agent chassis
+→ separate complete bases from mechanism donors/models/benchmarks
+→ audit existing evidence/benchmarks
+→ measure real adaptation surface
+→ select or reject
+
+Apollo:
+DEFERRED
+```
+
+A regra de engenharia é preservar capacidade funcional comprovada e comparar o **custo total de adaptação** contra greenfield, em vez de privilegiar uma arquitetura mais limpa apenas por aparência.
 
 ---
 
@@ -1937,19 +1956,15 @@ O Atento será arquiteturalmente bem-sucedido quando conseguir demonstrar, com a
 
 ## Próximo passo
 
-**Gate pré-migração — Fork/Clone/Donor Spike & ADR-000**
+**Reconciliação de produto e candidatos antes de novos spikes.**
 
-Antes do Bootstrap, concluir a decisão defensável entre:
+1. preservar toda evidência já medida;
+2. manter ADR-000/001/002 em `DECISION_RESET`;
+3. reconstruir a lista comparável de chassis persistentes da NAIA;
+4. reconstruir a lista de bases completas da Anna, separando donors/modelos/benchmarks;
+5. reaproveitar benchmarks e testes upstream transferíveis;
+6. executar localmente apenas deltas materiais ou gaps realmente não provados;
+7. só então registrar novas decisões de fork/full donor/selective-port/native/hybrid.
 
-```text
-fork
-vs selective-port
-vs clean-room
-vs hybrid
-vs model-adapter
-```
-
-Executar PsyChat upstream e o spike adaptado, verificar licenças/provenance, comparar com um vertical slice clean-room usando AtentoEval e preencher `docs/adr/ADR-000-fork-vs-greenfield.md`.
-
-Somente após a ADR-000 sair de `Proposed` para uma decisão aceita, iniciar a migração pelos blocos A–S conforme dependências reais.
+Nenhum candidato recebe prioridade de execução apenas porque apareceu primeiro na reconciliação anterior.
 
