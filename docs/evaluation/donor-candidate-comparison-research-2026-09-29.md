@@ -22,9 +22,10 @@ Fontes canônicas relacionadas:
 
 Snapshot de referência:
 
-- Atento `main`: `0983f502d2884f24c52d400c09131449ec59ae8c`;
+- canonical repository: `oigorbrito/Atento`;
+- reconciliation point used in this chat: `main@63632aa082d3d6f00edf6b2aa16784bc29011e75`;
 - PsyChat donor: `wink-wink-wink555/PsyChat@5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4`;
-- PsyChat evidence branch: `spike/psychat-fork-eval@620c998332848d8100ecae51ca6180e64f28713e`.
+- PsyChat evidence branch was reconciled with `main` by merge commit `4c93bf75f5ddab3e96282c9f47155b8079b1f957`, yielding `behind_by=0` at that reconciliation point.
 
 ---
 
@@ -360,6 +361,34 @@ Reference:
 
 - https://docs.github.com/en/actions/concepts/workflows-and-actions/workflow-artifacts
 
+
+### 6.5 Git operations already researched in this chat
+
+The following Git mechanisms were explicitly researched for multi-candidate empirical evaluation:
+
+- `git worktree` — isolate candidate/revision worktrees while sharing one repository;
+- `git merge-base` — anchor comparisons at the best common ancestor;
+- `git diff` — measure exact change-surface after a real patch;
+- `git bisect` — use only for a known good/bad regression search, not as a donor-ranking mechanism.
+
+Official Git references consulted during this research:
+
+- https://git-scm.com/docs/git-worktree
+- https://git-scm.com/docs/git-merge-base
+- https://git-scm.com/docs/git-diff
+- https://git-scm.com/docs/git-bisect
+
+Operational conclusion already adopted by the benchmark methodology:
+
+```text
+git grep     -> reproducible lower bound before patch
+git diff     -> exact files_touched after concrete patch
+merge-base   -> comparison anchor
+worktree     -> candidate isolation
+bisect       -> regression localization only
+```
+
+
 ---
 
 ## 7. Why not submodules/vendor all candidates during qualification
@@ -632,3 +661,79 @@ Esta pesquisa suporta as seguintes regras metodológicas, sem selecionar candida
 12. manter ADR-000 aberta até runtime + quality + safety + architecture evidence serem suficientes.
 
 Nenhuma dessas regras altera o score global do projeto por si só.
+
+
+---
+
+## 12. External research and benchmark findings already obtained in this chat
+
+This section is a reconciliation record only. It does not introduce new research.
+
+### 12.1 Chroma / vector-index semantics
+
+Research already performed against Chroma documentation was used to establish:
+
+- the donor leaves `hnsw:space` unspecified;
+- the benchmark treats the upstream collection as using Chroma's default distance semantics;
+- the donor converts distance to similarity with `1 - distance`;
+- changing the collection distance metric is not treated as an in-place migration;
+- the experimental fork therefore uses a versioned cosine index identity instead of silently reusing the legacy collection.
+
+The concrete source/evidence consequences are preserved in:
+
+- `evals/spikes/psychat/index-migration-evidence.md`;
+- `evals/evidence/psychat_block_i_git.json`;
+- `evals/spikes/psychat/vector_metric_probe.py`.
+
+This is benchmark/forkability evidence, not a production-architecture decision.
+
+### 12.2 Alibaba embedding capability context
+
+Research already performed against Alibaba Cloud documentation established that the configured `text-embedding-v4` model is documented as multilingual and includes Chinese and Portuguese support.
+
+That fact is recorded only as provider capability context. It is **not** used as proof that PsyChat retrieves Chinese corpus evidence correctly from `pt-BR` queries.
+
+The benchmark therefore keeps a separate paired `pt-BR` / `zh-CN` retrieval experiment for gold IDs `328`, `350`, `1864`, and `1882`.
+
+### 12.3 External benchmark suite research
+
+The benchmark families already researched and retained as axis-specific evidence are:
+
+- ESConv;
+- PsychEval;
+- ENPMR-Bench;
+- TEA-Bench;
+- MentalHealthBench;
+- CounselBench;
+- PATIENT-Ψ;
+- MHSafeEval.
+
+Their references and intended Atento evidence axes are recorded in section 3 above.
+
+Rule preserved from this research:
+
+```text
+EXTERNAL BENCHMARK SIGNAL != LOCAL ATENTO PROOF
+```
+
+A paper/repository result is never promoted to a local PASS when runtime, population, language, policy, provider or protocol materially differ.
+
+### 12.4 PsyChat empirical benchmark findings already obtained
+
+The research in this chat established and versioned the following empirical/static findings:
+
+- upstream static CFS baseline: `10/100`;
+- provider/lifecycle fork surface: exactly `3` donor files;
+- full BLOCO I correctness surface: exactly `4` donor files after QA provenance correction;
+- original-line retention on the current four-file evidence surface: `1410 / 1600 = 88.125%`;
+- upstream parser loses QA provenance for all `30,255 / 30,255` emitted chunks;
+- corrected parser preserves all `4,760` unique record IDs and current gold IDs;
+- direct provider HTTP calls in the patched RAG surface: `0` in static Git evidence;
+- pinned donor contains `12` knowledge text files and no committed vector index;
+- deterministic RAG suite composition: `20` cases, including positive, negative, contextual, multi-evidence and insufficient-evidence controls;
+- GitHub Actions failure was reproduced with a one-command smoke workflow before any step allocation, therefore classified `INFRA_BLOCKED`, not `TEST_FAILURE`.
+
+The canonical status ledger remains:
+
+- `evals/spikes/psychat/evidence-matrix.md`.
+
