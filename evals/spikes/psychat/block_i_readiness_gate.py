@@ -153,7 +153,7 @@ def main() -> int:
             lambda d: (
                 equals(d, "runtime_shape", "patched")
                 and equals(d, "explicit_hnsw_space", "cosine")
-                and equals(d, "semantic_status", "EXPLICIT_COSINE")
+                and equals(d, "semantic_status", "EXPLICIT_COSINE_VERSIONED_INDEX")
             ),
         ),
         (
@@ -360,7 +360,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.5",
+        "metric_version": "psychat-block-i-readiness-v0.6",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
