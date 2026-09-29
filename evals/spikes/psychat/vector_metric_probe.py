@@ -17,6 +17,9 @@ class StubCollection:
 class RecordingClient:
     last_metadata = None
     last_name = None
+    last_deleted_name = None
+    last_created_name = None
+    last_created_metadata = None
 
     def __init__(self, *args, **kwargs):
         pass
@@ -24,6 +27,14 @@ class RecordingClient:
     def get_or_create_collection(self, *, name, metadata=None, **kwargs):
         type(self).last_name = str(name)
         type(self).last_metadata = dict(metadata or {})
+        return StubCollection()
+
+    def delete_collection(self, name):
+        type(self).last_deleted_name = str(name)
+
+    def create_collection(self, *, name, metadata=None, **kwargs):
+        type(self).last_created_name = str(name)
+        type(self).last_created_metadata = dict(metadata or {})
         return StubCollection()
 
 
@@ -83,9 +94,9 @@ def main() -> int:
 
     cls = load_vector_store(args.donor_root)
     if args.expect == "patched":
-        cls(embedding_gateway=StubEmbeddingGateway())
+        store = cls(embedding_gateway=StubEmbeddingGateway())
     else:
-        cls()
+        store = cls()
 
     metadata = dict(RecordingClient.last_metadata or {})
     collection_name = RecordingClient.last_name
@@ -119,8 +130,30 @@ def main() -> int:
             )
         semantic_status = "EXPLICIT_COSINE_VERSIONED_INDEX"
 
+        if not store.clear_collection():
+            raise AssertionError("patched clear_collection failed")
+        if RecordingClient.last_deleted_name != "psychology_knowledge__rag-cosine-v1":
+            raise AssertionError(
+                "patched clear_collection deleted the wrong collection: "
+                f"{RecordingClient.last_deleted_name!r}"
+            )
+        if RecordingClient.last_created_name != "psychology_knowledge__rag-cosine-v1":
+            raise AssertionError(
+                "patched clear_collection recreated the wrong collection: "
+                f"{RecordingClient.last_created_name!r}"
+            )
+        recreated = dict(RecordingClient.last_created_metadata or {})
+        if recreated.get("hnsw:space") != "cosine":
+            raise AssertionError(
+                f"recreated collection lost cosine metric: {recreated!r}"
+            )
+        if recreated.get("atento:index_schema") != "rag-cosine-v1":
+            raise AssertionError(
+                f"recreated collection lost index schema: {recreated!r}"
+            )
+
     report = {
-        "metric_version": "psychat-vector-metric-v0.2",
+        "metric_version": "psychat-vector-metric-v0.3",
         "runtime_shape": args.expect,
         "collection_name": collection_name,
         "collection_metadata": metadata,
@@ -128,6 +161,15 @@ def main() -> int:
         "explicit_hnsw_space": explicit_space,
         "similarity_transform_in_donor": "1 - distance",
         "semantic_status": semantic_status,
+        "clear_collection_contract_preserved": (
+            args.expect != "patched"
+            or (
+                RecordingClient.last_deleted_name == "psychology_knowledge__rag-cosine-v1"
+                and RecordingClient.last_created_name == "psychology_knowledge__rag-cosine-v1"
+                and (RecordingClient.last_created_metadata or {}).get("hnsw:space") == "cosine"
+                and (RecordingClient.last_created_metadata or {}).get("atento:index_schema") == "rag-cosine-v1"
+            )
+        ),
         "threshold": 0.15,
     }
     encoded = json.dumps(report, ensure_ascii=False, indent=2)
