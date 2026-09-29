@@ -13,7 +13,7 @@ from pathlib import Path
 
 from evals.atentoeval.metrics import score_turn
 from evals.atentoeval.runner import load_cases
-from evals.spikes.psychat.adapter.contracts import RouteDecision
+from evals.spikes.psychat.adapter.contracts import ExecutionResult, RouteDecision
 from evals.spikes.psychat.adapter.executor import PsyChatExecutorAdapter
 from evals.spikes.psychat.adapter.registry import CapabilityRegistry
 from evals.spikes.psychat.adapter.runtime import PsyChatSpikeRuntime
@@ -27,6 +27,10 @@ class FixtureDonor:
         self.retrieved_ids = list(retrieved_ids)
 
     def respond(self, *, message: str, session_state: dict, force_retrieval: bool = False):
+        if not self.attempted:
+            raise AssertionError("non-RAG case was incorrectly routed to PsyChat")
+        if not force_retrieval:
+            raise AssertionError("RAG route reached PsyChat without force_retrieval")
         docs = [{"id": doc_id} for doc_id in self.retrieved_ids]
         return "fixture-response", {
             **dict(session_state),
@@ -37,6 +41,19 @@ class FixtureDonor:
                 "sources": [],
             },
         }
+
+
+class DirectConversationExecutor:
+    capability = "conversation.direct"
+    executor_id = "direct"
+
+    def execute(self, request):
+        return ExecutionResult(
+            response="fixture-direct-response",
+            executor=self.executor_id,
+            capability=self.capability,
+            metadata={"next_state": dict(request.state)},
+        )
 
 
 def run_case(case) -> dict:
@@ -54,19 +71,30 @@ def run_case(case) -> dict:
             )
         )
     )
+    registry.register(DirectConversationExecutor())
     runtime = PsyChatSpikeRuntime(
         registry=registry,
         sessions=InMemorySessionStore(),
     )
+    selected_route = (
+        RouteDecision(
+            capability="knowledge.rag",
+            executor="psychat",
+            reason_code="rag_required",
+            confidence=1.0,
+        )
+        if attempted
+        else RouteDecision(
+            capability="conversation.direct",
+            executor="direct",
+            reason_code="rag_not_required",
+            confidence=1.0,
+        )
+    )
     result = runtime.execute(
         session_id=case.id,
         message=step.user,
-        route=RouteDecision(
-            capability="knowledge.rag",
-            executor="psychat",
-            reason_code="rag_fixture_probe",
-            confidence=1.0,
-        ),
+        route=selected_route,
     )
     turn = to_turn_result(
         case_id=case.id,
@@ -88,6 +116,8 @@ def run_case(case) -> dict:
 
     return {
         "case_id": case.id,
+        "selected_capability": selected_route.capability,
+        "selected_executor": selected_route.executor,
         "trace": turn.trace["rag"],
         "scores": {
             key: value for key, value in scores.items() if key.startswith("rag_")
