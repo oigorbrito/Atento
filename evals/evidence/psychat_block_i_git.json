@@ -1,9 +1,9 @@
 {
-  "metric_version": "psychat-block-i-git-v0.9",
+  "metric_version": "psychat-block-i-git-v0.10",
   "evidence_type": "github_git_compare_plus_pinned_corpus_simulation",
   "pinned_donor_commit": "5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4",
   "baseline_commit": "f2317be0fc27b1f4a6a39c5c89f22faf550045bf",
-  "patched_commit": "c8f15184f632ae0b8c31d5b5ecb8dfb4884df8a3",
+  "patched_commit": "7eb5d516f5b5d6491ad6babbed4e00018b690aa6",
   "measurement_ref": "evidence/psychat-rag-block-correctness-v4-source",
   "preserving_ref": "evidence/psychat-rag-block-correctness-v4",
   "files_touched_exact": 4,
@@ -15,10 +15,10 @@
     "evals/evidence/psychat-block-i/data/processor.py"
   ],
   "original_lines": 1600,
-  "deleted_or_replaced_original_lines": 180,
-  "added_lines": 294,
-  "retained_original_lines": 1420,
-  "retained_original_line_ratio": 0.8875,
+  "deleted_or_replaced_original_lines": 190,
+  "added_lines": 295,
+  "retained_original_lines": 1410,
+  "retained_original_line_ratio": 0.88125,
   "static_patched_invariants": {
     "direct_requests_post_count": 0,
     "psychology_agent_model_gateway_injected": true,
@@ -47,7 +47,8 @@
     "partial_staging_index_never_promoted": true,
     "rag_destructive_preclear_removed": true,
     "long_lived_vector_store_refreshes_active_generation": true,
-    "incremental_writes_refresh_active_generation": true
+    "incremental_writes_refresh_active_generation": true,
+    "clear_collection_uses_atomic_empty_generation": true
   },
   "pinned_corpus_parser_evidence": {
     "knowledge_file_count": 12,
@@ -76,19 +77,19 @@
   },
   "limitations": [
     "Git/content evidence proves exact current patch surface and source/corpus/observability/rebuild/refresh invariants, not Python runtime execution.",
-    "Dynamic DataProcessor, Chroma lifecycle, provider replacement, trace propagation, atomic rebuild behavior, long-lived refresh, incremental-write refresh, isolation and AtentoEval quality remain separate execution requirements.",
-    "The 88.75% retention ratio is a line-based approximation from baseline lines minus deleted/replaced lines.",
+    "Dynamic DataProcessor, Chroma lifecycle, provider replacement, trace propagation, atomic rebuild behavior, restart continuity, long-lived refresh, incremental-write refresh, isolation and AtentoEval quality remain separate execution requirements.",
+    "The 88.125% retention ratio is a line-based approximation from baseline lines minus deleted/replaced lines.",
     "A stable four-file surface does not by itself imply low fork-maintenance cost; patch concentration and retained-line ratio must also be considered.",
     "Earlier v4 snapshot commits before e60c7573 were superseded because vector schema/corpus constants were referenced but not defined in the manual evidence snapshot."
   ],
-  "preserving_ref_head": "30a0eae1f39317fd9ae6a410baab6166652f06e1",
+  "preserving_ref_head": "f74be929b056db8d7cb1035c4de9512a5796cdc9",
   "upstream_license_notice_present_in_preserving_ref": true,
   "surface_measurement_note": "files_touched_exact compares baseline_commit to patched_commit on v4-source. The preserving ref contains the MIT notice in its ancestry and must not be used as the head for source change-surface counting.",
   "patch_concentration": {
     "evals/evidence/psychat-block-i/core/vector_store.py": {
-      "added_lines": 190,
-      "deleted_or_replaced_original_lines": 56,
-      "note": "Atomic generation lifecycle, persisted-contract validation and active-generation refresh are concentrated here."
+      "added_lines": 191,
+      "deleted_or_replaced_original_lines": 66,
+      "note": "Provider abstraction, index identity, persisted-contract validation, atomic generation lifecycle, active-generation refresh and atomic clear are concentrated here."
     }
   }
 }
