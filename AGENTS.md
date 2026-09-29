@@ -32,6 +32,29 @@ Elas também se aplicam a spikes, forks, clones e experimentos que possam poster
 
 ---
 
+## 1.1 Repositório canônico e fronteira com donors
+
+O repositório canônico do projeto é:
+
+`https://github.com/oigorbrito/Atento`
+
+Repos listados em `docs/third-party.md` — incluindo NaIA, OpenMausBot, OpenClaw, PsychAgent, PsyChat e outros — são **donors, referências, clones de pesquisa ou candidatos externos**.
+
+Regras:
+
+- ADRs, roadmap, progresso, source registry e pareceres do projeto devem ser registrados no **Atento**;
+- não criar documentação canônica do Atento dentro de um donor;
+- uma alteração experimental feita no repositório de um donor não muda o estado do Atento por si só;
+- se um experimento ocorrer em donor/fork, registrar no Atento o commit/PR externo, resultado, limitações e decisão correspondente;
+- chat, branch externa ou PR de donor não substituem o registro canônico no Atento.
+
+```text
+ATENTO = PROJECT SOURCE OF TRUTH
+DONOR REPO = EXTERNAL IMPLEMENTATION / EXPERIMENT SOURCE
+```
+
+---
+
 ## 2. Hierarquia de documentos do projeto
 
 Antes de implementar, consultar nesta ordem:
