@@ -10,6 +10,9 @@ import hashlib
 from typing import List, Dict, Any
 from config import *
 
+ATENTO_INDEX_SCHEMA_VERSION = "rag-cosine-v1"
+ATENTO_DEFAULT_CORPUS_IDENTITY = "psychat@5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4"
+
 class VectorStore:
     def __init__(
         self,
@@ -32,6 +35,13 @@ class VectorStore:
         self.collection_name = (
             f"{COLLECTION_NAME}__{ATENTO_INDEX_SCHEMA_VERSION}__{identity_hash}"
         )
+        self.expected_collection_metadata = {
+            "description": "MCP知识库向量存储",
+            "hnsw:space": "cosine",
+            "atento:index_schema": ATENTO_INDEX_SCHEMA_VERSION,
+            "atento:embedding_identity": self.embedding_identity,
+            "atento:corpus_identity": self.corpus_identity,
+        }
 
         # 初始化ChromaDB客户端
         self.client = chromadb.PersistentClient(
@@ -45,11 +55,25 @@ class VectorStore:
         # 获取或创建集合
         self.collection = self.client.get_or_create_collection(
             name=self.collection_name,
-            metadata={"description": "MCP知识库向量存储", "hnsw:space": "cosine", "atento:index_schema": ATENTO_INDEX_SCHEMA_VERSION, "atento:embedding_identity": self.embedding_identity, "atento:corpus_identity": self.corpus_identity}
+            metadata=self.expected_collection_metadata,
         )
+        self._validate_collection_contract()
         
         print(f"向量存储初始化完成: {CHROMA_DB_PATH}")
     
+    def _validate_collection_contract(self) -> Dict[str, Any]:
+        metadata = dict(getattr(self.collection, 'metadata', {}) or {})
+        mismatches = {
+            key: {'expected': expected, 'actual': metadata.get(key)}
+            for key, expected in self.expected_collection_metadata.items()
+            if metadata.get(key) != expected
+        }
+        if mismatches:
+            raise RuntimeError(
+                f"vector collection metadata mismatch: {mismatches}"
+            )
+        return metadata
+
     def get_embedding(self, text: str) -> List[float]:
         """Generate embeddings through the injected gateway."""
         try:
@@ -245,14 +269,15 @@ class VectorStore:
     def get_collection_info(self) -> Dict[str, Any]:
         """获取集合信息"""
         try:
+            metadata = self._validate_collection_contract()
             count = self.collection.count()
             return {
                 'name': self.collection_name,
                 'document_count': count,
                 'path': CHROMA_DB_PATH,
-                'index_schema': ATENTO_INDEX_SCHEMA_VERSION,
-                'embedding_identity': self.embedding_identity,
-                'corpus_identity': self.corpus_identity,
+                'index_schema': metadata['atento:index_schema'],
+                'embedding_identity': metadata['atento:embedding_identity'],
+                'corpus_identity': metadata['atento:corpus_identity'],
             }
         except Exception as e:
             print(f"获取集合信息时出错: {e}")
@@ -264,14 +289,9 @@ class VectorStore:
             self.client.delete_collection(self.collection_name)
             self.collection = self.client.create_collection(
                 name=self.collection_name,
-                metadata={
-                    "description": "MCP知识库向量存储",
-                    "hnsw:space": "cosine",
-                    "atento:index_schema": ATENTO_INDEX_SCHEMA_VERSION,
-                    "atento:embedding_identity": self.embedding_identity,
-                    "atento:corpus_identity": self.corpus_identity,
-                }
+                metadata=self.expected_collection_metadata,
             )
+            self._validate_collection_contract()
             print("集合已清空")
             return True
         except Exception as e:
