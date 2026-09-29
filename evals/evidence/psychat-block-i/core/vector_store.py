@@ -279,6 +279,8 @@ class VectorStore:
                 'embedding_identity': metadata['atento:embedding_identity'],
                 'corpus_identity': metadata['atento:corpus_identity'],
             }
+        except RuntimeError:
+            raise
         except Exception as e:
             print(f"获取集合信息时出错: {e}")
             return {}
