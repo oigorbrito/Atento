@@ -42,3 +42,22 @@ NAIA_BASE = NOT_SELECTED
 ```
 
 Closing PR #11 does not delete its evidence. Its immutable head remains a historical evidence location; current decision authority belongs to the reset documents on PR #19.
+
+
+## PR #17 — OpenClaw evidence
+
+**Disposition:** `CLOSE_AFTER_RECONCILIATION`
+
+- OpenClaw qualification evidence: already preserved in the reset line.
+- Former finalist comparison: archived under `docs/evaluation/history/` and non-authoritative.
+- OpenClaw probe artifacts and historical runner: preserved under `evals/chassis/openclaw/` and `evals/chassis/openclaw_naya_probe.py`.
+- Exact legacy Anna/Therapist-specific artifact not promoted; it remains traceable at PR #17 head `d62626d03685b55ee9110b98c707e797465d4f60`.
+- Old shortlist ordering and execution priority: superseded.
+
+Current state remains:
+
+```text
+NAIA_BASE = NOT_SELECTED
+OPENCLAW_SHORTLIST = NOT_SELECTED
+ANNA = SEPARATE_DOMAIN
+```
