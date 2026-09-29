@@ -4,7 +4,8 @@
 The patch is intentionally narrow:
 - agent/psychology_agent.py: inject the LLM gateway;
 - core/vector_store.py: inject the embedding gateway;
-- core/rag_system.py: inject long-lived dependencies and remove its direct LLM call.
+- core/rag_system.py: inject long-lived dependencies and remove its direct LLM call;
+- data/processor.py: preserve corpus QA IDs across the donor's ## record delimiter.
 
 It does not patch the donor web/TTS chassis. Those are outside the RAG donor
 surface being evaluated.
@@ -23,10 +24,13 @@ from pathlib import Path
 
 
 PINNED_COMMIT = "5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4"
-PATCHED_FILES = (
+PROVIDER_BOUNDARY_FILES = (
     "agent/psychology_agent.py",
     "core/vector_store.py",
     "core/rag_system.py",
+)
+PATCHED_FILES = PROVIDER_BOUNDARY_FILES + (
+    "data/processor.py",
 )
 
 
@@ -217,6 +221,55 @@ def patch_rag_system(path: Path) -> None:
     path.write_text(text, encoding="utf-8")
 
 
+def patch_data_processor(path: Path) -> None:
+    text = path.read_text(encoding="utf-8")
+    text = replace_regex_once(
+        text,
+        r"""    def split_psychology_qa_pairs\(self, text: str, source: str\) -> List\[Dict\[str, Any\]\]:\n.*?\n    def _split_dialogue_by_turns""",
+        """    def split_psychology_qa_pairs(self, text: str, source: str) -> List[Dict[str, Any]]:
+        \"\"\"Split QA records while preserving the ID that precedes each ## dialogue block.\"\"\"
+        chunks = []
+        sections = text.split('##')
+        pending_qa_id = None
+
+        for i, section in enumerate(sections):
+            section = section.strip()
+            if not section:
+                continue
+
+            if i == 0 and ('心理咨询对话' in section or '==' in section):
+                continue
+
+            lines = section.split('\\n')
+            section_qa_id = None
+            content_lines = []
+
+            for line in lines:
+                line = line.strip()
+                if line.startswith('ID:'):
+                    section_qa_id = line.replace('ID:', '').strip()
+                elif line and not line.startswith('ID:'):
+                    content_lines.append(line)
+
+            if section_qa_id is not None:
+                pending_qa_id = section_qa_id
+
+            if content_lines:
+                dialogue_chunks = self._split_dialogue_by_turns(
+                    content_lines,
+                    source,
+                    pending_qa_id,
+                )
+                chunks.extend(dialogue_chunks)
+
+        return chunks
+
+    def _split_dialogue_by_turns""",
+        label="DataProcessor QA ID preservation",
+    )
+    path.write_text(text, encoding="utf-8")
+
+
 def constructor_parameters(path: Path, class_name: str) -> set[str]:
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     for node in tree.body:
@@ -244,7 +297,7 @@ def direct_provider_bypasses(root: Path) -> dict[str, list[str]]:
         "requests.request": re.compile(r"requests\.request\("),
     }
     result: dict[str, list[str]] = {key: [] for key in patterns}
-    for relative in PATCHED_FILES:
+    for relative in PROVIDER_BOUNDARY_FILES:
         text = (root / relative).read_text(encoding="utf-8")
         for name, pattern in patterns.items():
             if pattern.search(text):
@@ -293,7 +346,7 @@ def retention_metrics(root: Path) -> dict:
         ),
         "interpretation": (
             "Approximation from git diff --numstat: original lines not deleted "
-            "or replaced in the three-file RAG patch surface."
+            "or replaced in the BLOCO I RAG correctness patch surface."
         ),
     }
 
@@ -310,6 +363,7 @@ def apply_patch(donor_root: Path) -> dict:
     patch_psychology_agent(donor_root / "agent/psychology_agent.py")
     patch_vector_store(donor_root / "core/vector_store.py")
     patch_rag_system(donor_root / "core/rag_system.py")
+    patch_data_processor(donor_root / "data/processor.py")
 
     changed = [
         line for line in git(donor_root, "diff", "--name-only").splitlines() if line
@@ -352,10 +406,12 @@ def apply_patch(donor_root: Path) -> dict:
     retention = retention_metrics(donor_root)
 
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.4",
+        "metric_version": "psychat-minimal-fork-patch-v0.5",
         "pinned_commit": head_before,
         "changed_files": changed,
-        "donor_files_touched_to_introduce_provider_boundary": len(changed),
+        "donor_files_touched_to_introduce_provider_boundary": len(PROVIDER_BOUNDARY_FILES),
+        "donor_files_touched_for_bloco_i_rag_correctness": len(changed),
+        "qa_id_provenance_patch_required": True,
         "files_touched_to_swap_model_provider_after_boundary": 0,
         "files_touched_to_swap_embedding_provider_after_boundary": 0,
         "provider_swap_mechanism": "constructor injection",
