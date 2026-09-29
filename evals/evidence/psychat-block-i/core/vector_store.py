@@ -7,6 +7,10 @@
 import chromadb
 from chromadb.config import Settings
 import hashlib
+import json
+import os
+import uuid
+from pathlib import Path
 from typing import List, Dict, Any
 from config import *
 
@@ -32,9 +36,14 @@ class VectorStore:
         ).hexdigest()[:12]
         self.embedding_identity = embedding_identity
         self.corpus_identity = corpus_identity
-        self.collection_name = (
+        self.logical_collection_name = (
             f"{COLLECTION_NAME}__{ATENTO_INDEX_SCHEMA_VERSION}__{identity_hash}"
         )
+        self.pointer_path = (
+            Path(CHROMA_DB_PATH)
+            / f".atento-active-{identity_hash}.json"
+        )
+        self.collection_name = self._read_active_collection_name()
         self.expected_collection_metadata = {
             "description": "MCP知识库向量存储",
             "hnsw:space": "cosine",
@@ -53,14 +62,83 @@ class VectorStore:
         )
         
         # 获取或创建集合
-        self.collection = self.client.get_or_create_collection(
-            name=self.collection_name,
-            metadata=self.expected_collection_metadata,
-        )
+        if self.pointer_path.exists():
+            self.collection = self.client.get_collection(
+                name=self.collection_name,
+            )
+        else:
+            self.collection = self.client.get_or_create_collection(
+                name=self.collection_name,
+                metadata=self.expected_collection_metadata,
+            )
         self._validate_collection_contract()
         
         print(f"向量存储初始化完成: {CHROMA_DB_PATH}")
     
+    def _read_active_collection_name(self) -> str:
+        if not self.pointer_path.exists():
+            return self.logical_collection_name
+        try:
+            payload = json.loads(self.pointer_path.read_text(encoding="utf-8"))
+        except Exception as exc:
+            raise RuntimeError(f"invalid vector index pointer: {exc}") from exc
+        active = str(payload.get("active_collection", "")).strip()
+        if not active.startswith(self.logical_collection_name + "__gen-"):
+            raise RuntimeError(f"invalid active vector collection: {active!r}")
+        return active
+
+    def _write_active_collection_name(self, name: str) -> None:
+        self.pointer_path.parent.mkdir(parents=True, exist_ok=True)
+        temp = self.pointer_path.with_suffix(
+            self.pointer_path.suffix + f".{uuid.uuid4().hex}.tmp"
+        )
+        payload = {
+            "logical_collection": self.logical_collection_name,
+            "active_collection": name,
+        }
+        temp.write_text(json.dumps(payload, sort_keys=True), encoding="utf-8")
+        os.replace(temp, self.pointer_path)
+
+    def rebuild_documents(self, documents: List[Dict[str, Any]]) -> bool:
+        generation = uuid.uuid4().hex[:12]
+        staging_name = f"{self.logical_collection_name}__gen-{generation}"
+        staging_metadata = dict(self.expected_collection_metadata)
+        staging_metadata["atento:generation"] = generation
+        previous_collection = self.collection
+        previous_name = self.collection_name
+        staging = None
+        try:
+            staging = self.client.create_collection(
+                name=staging_name,
+                metadata=staging_metadata,
+            )
+            self.collection = staging
+            self.collection_name = staging_name
+            success = self.add_documents(documents)
+            complete = success and staging.count() == len(documents)
+            if not complete:
+                self.collection = previous_collection
+                self.collection_name = previous_name
+                self.client.delete_collection(staging_name)
+                return False
+            self._validate_collection_contract()
+            self.collection = previous_collection
+            self.collection_name = previous_name
+            self._write_active_collection_name(staging_name)
+            self.collection = staging
+            self.collection_name = staging_name
+            return True
+        except Exception as exc:
+            self.collection = previous_collection
+            self.collection_name = previous_name
+            if staging is not None:
+                try:
+                    self.client.delete_collection(staging_name)
+                except Exception:
+                    pass
+            print(f"原子重建向量索引失败: {exc}")
+            return False
+
     def _validate_collection_contract(self) -> Dict[str, Any]:
         metadata = dict(getattr(self.collection, 'metadata', {}) or {})
         mismatches = {
