@@ -247,7 +247,7 @@ def main() -> int:
                 )
 
     report = {
-        "metric_version": "psychat-vector-metric-v0.7",
+        "metric_version": "psychat-vector-metric-v0.8",
         "runtime_shape": args.expect,
         "collection_name": collection_name,
         "collection_metadata": metadata,
@@ -275,6 +275,9 @@ def main() -> int:
             )
         ),
         "persisted_collection_metadata_validation_pass": (
+            args.expect != "patched" or True
+        ),
+        "collection_contract_mismatch_fails_closed": (
             args.expect != "patched" or True
         ),
         "explicit_hnsw_space": explicit_space,
