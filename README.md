@@ -7,7 +7,7 @@ Atento é um projeto de engenharia para um sistema conversacional de apoio emoci
 ## Onde começar
 
 - **Regras para agentes/contribuidores:** [AGENTS.md](AGENTS.md)
-- **Arquitetura, fases e progresso global:** [roadmap.md](roadmap.md)
+- **Arquitetura, blocos e progresso global:** [roadmap.md](roadmap.md)
 - **Decisão fork vs greenfield:** [docs/adr/ADR-000-fork-vs-greenfield.md](docs/adr/ADR-000-fork-vs-greenfield.md)
 - **Evaluation harness:** [docs/evaluation/harness.md](docs/evaluation/harness.md)
 - **Provenance e licenças externas:** [docs/third-party.md](docs/third-party.md)

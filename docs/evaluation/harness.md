@@ -627,7 +627,7 @@ Não mostrar apenas média. Sempre mostrar distribuição e segmentos críticos.
 
 ## 14. Fork/clone evaluation
 
-A Fase -1 usa o mesmo harness.
+O gate pré-migração da ADR-000 e cada migração por bloco usam o mesmo harness.
 
 Para PsyChat, comparar:
 

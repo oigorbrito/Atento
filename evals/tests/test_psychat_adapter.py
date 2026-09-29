@@ -1,217 +1,84 @@
-from __future__ import annotations
-
 import unittest
 
-from evals.spikes.psychat.adapter import (
-    CapabilityRegistry,
-    ContractError,
-    EventTracer,
-    ExecutionRequest,
-    InMemorySessionStore,
-    PsyChatExecutor,
-    ResilientModelGateway,
-    RouteDecision,
-    SafetyDecision,
-)
+from evals.spikes.psychat.adapter.contracts import RouteDecision
+from evals.spikes.psychat.adapter.executor import PsyChatExecutorAdapter
+from evals.spikes.psychat.adapter.registry import CapabilityRegistry
+from evals.spikes.psychat.adapter.runtime import PsyChatSpikeRuntime
+from evals.spikes.psychat.adapter.session import InMemorySessionStore
 
 
-class FakeDelegateGateway:
-    def __init__(self, fail_first: bool = False):
-        self.calls = []
-        self.fail_first = fail_first
-
-    def generate(self, messages, *, max_tokens, temperature, top_p, timeout_s):
-        self.calls.append({"messages": messages, "timeout_s": timeout_s})
-        if self.fail_first and len(self.calls) == 1:
-            raise TimeoutError("simulated timeout")
-        return "gateway-output"
+class FakePsyChatDonor:
+    def respond(self, *, message, session_state):
+        count = int(session_state.get("turns", 0)) + 1
+        return f"{message}:{count}", {"turns": count}
 
 
-class FakeEmbeddingGateway:
-    def __init__(self):
-        self.calls = []
+class AlternateRagExecutor:
+    capability = "knowledge.rag"
+    executor_id = "alternate"
 
-    def embed(self, text, *, timeout_s):
-        self.calls.append((text, timeout_s))
-        return [0.1, 0.2]
-
-
-class FakeSafetyGate:
-    def validate(self, user_message, candidate_response):
-        if "UNSAFE" in candidate_response:
-            return SafetyDecision(False, "blocked", "test_block")
-        return SafetyDecision(True, candidate_response, "allow")
-
-
-class FakePsychologyAgent:
-    def _call_llm(self, prompt, max_tokens=1000):
-        raise AssertionError("direct donor LLM path should be overridden")
-
-
-class FakeVectorStore:
-    def get_embedding(self, text):
-        raise AssertionError("direct donor embedding path should be overridden")
-
-
-class FakePsyChatRuntime:
-    def __init__(self, registry):
-        self.psychology_agent = FakePsychologyAgent()
-        self.vector_store = FakeVectorStore()
-        self.tts_service = object()
-        self.conversation_history = []
-        self.no_rag_counter = 0
-        self.last_retrieval_docs = []
-        self._style_cache = {"topic": None, "analysis": ""}
-        registry.append(self)
-
-    def _generate_response(self, system_prompt, user_query, include_history=True):
-        raise AssertionError("direct donor generation path should be overridden")
-
-    def generate_response(self, query):
-        route = self.psychology_agent._call_llm("route", max_tokens=30)
-        emb = self.vector_store.get_embedding(query)
-        answer = self._generate_response("system", query)
-        self.conversation_history.append({"role": "user", "content": query})
-        self.conversation_history.append({"role": "assistant", "content": answer})
-        self.no_rag_counter += 1
-        return {
-            "success": True,
-            "response": answer,
-            "sources": [{"source": "fake", "similarity": emb[0]}],
-            "used_rag": route == "gateway-output",
-            "topic": "test",
-        }
-
-
-class AdapterTest(unittest.TestCase):
-    def build(self, fail_first=False):
-        runtimes = []
-        delegate = FakeDelegateGateway(fail_first=fail_first)
-        embedding = FakeEmbeddingGateway()
-        store = InMemorySessionStore()
-        tracer = EventTracer()
-        executor = PsyChatExecutor(
-            runtime_factory=lambda: FakePsyChatRuntime(runtimes),
-            model_gateway=ResilientModelGateway(
-                delegate,
-                attempts=2,
-                timeout_s=7.0,
-            ),
-            embedding_gateway=embedding,
-            session_store=store,
-            safety_gate=FakeSafetyGate(),
-            tracer=tracer,
-        )
-        return executor, delegate, embedding, store, tracer, runtimes
-
-    def test_known_provider_calls_are_intercepted(self):
-        executor, delegate, embedding, _, tracer, runtimes = self.build()
-        result = executor.execute(
-            ExecutionRequest(
-                "a",
-                "hello",
-                RouteDecision("rag.respond", "psychat_adapted"),
-            )
-        )
-        self.assertEqual(result.status, "ok")
-        self.assertEqual(len(delegate.calls), 2)
-        self.assertEqual(len(embedding.calls), 1)
-        self.assertIsNone(runtimes[0].tts_service)
-        self.assertEqual(runtimes[0].conversation_history, [])
-        self.assertEqual(
-            [event["event"] for event in tracer.events],
-            ["executor.started", "executor.completed"],
+    def execute(self, request):
+        from evals.spikes.psychat.adapter.contracts import ExecutionResult
+        return ExecutionResult(
+            response="alternate",
+            executor=self.executor_id,
+            capability=self.capability,
+            metadata={"next_state": dict(request.state)},
         )
 
-    def test_session_state_is_externalized_and_isolated(self):
-        executor, _, _, store, _, _ = self.build()
-        route = RouteDecision("rag.respond", "psychat_adapted")
-        executor.execute(ExecutionRequest("A", "a1", route))
-        executor.execute(ExecutionRequest("B", "b1", route))
-        executor.execute(ExecutionRequest("A", "a2", route))
-        session_a = store.load("A")["conversation_history"]
-        session_b = store.load("B")["conversation_history"]
-        self.assertEqual(
-            [x["content"] for x in session_a if x["role"] == "user"],
-            ["a1", "a2"],
-        )
-        self.assertEqual(
-            [x["content"] for x in session_b if x["role"] == "user"],
-            ["b1"],
-        )
 
-    def test_gateway_retry_boundary(self):
-        executor, delegate, _, _, _, _ = self.build(fail_first=True)
-        result = executor.execute(
-            ExecutionRequest(
-                "A",
-                "hello",
-                RouteDecision("rag.respond", "psychat_adapted"),
-            )
-        )
-        self.assertEqual(result.status, "ok")
-        self.assertGreaterEqual(len(delegate.calls), 3)
-        self.assertTrue(all(call["timeout_s"] == 7.0 for call in delegate.calls))
+def route(executor="psychat"):
+    return RouteDecision(
+        capability="knowledge.rag",
+        executor=executor,
+        reason_code="knowledge_needed",
+        confidence=0.9,
+    )
 
-    def test_registry_adds_executor_without_switch(self):
-        executor, *_ = self.build()
+
+class PsyChatAdapterTest(unittest.TestCase):
+    def make_runtime(self):
         registry = CapabilityRegistry()
-        registry.register("rag.respond", executor)
-        self.assertIs(
-            registry.resolve("rag.respond", "psychat_adapted"),
-            executor,
-        )
+        registry.register(PsyChatExecutorAdapter(FakePsyChatDonor()))
+        return PsyChatSpikeRuntime(
+            registry=registry,
+            sessions=InMemorySessionStore(),
+        ), registry
 
-    def test_validator_rejects_bad_donor_result(self):
-        class BadRuntime(FakePsyChatRuntime):
-            def generate_response(self, query):
-                return {"success": True, "response": "", "sources": []}
+    def test_sessions_are_isolated_outside_donor(self):
+        runtime, _ = self.make_runtime()
+        self.assertEqual(runtime.execute(session_id="a", message="x", route=route()).response, "x:1")
+        self.assertEqual(runtime.execute(session_id="a", message="x", route=route()).response, "x:2")
+        self.assertEqual(runtime.execute(session_id="b", message="x", route=route()).response, "x:1")
 
-        executor = PsyChatExecutor(
-            runtime_factory=lambda: BadRuntime([]),
-            model_gateway=ResilientModelGateway(FakeDelegateGateway()),
-            embedding_gateway=FakeEmbeddingGateway(),
-            session_store=InMemorySessionStore(),
-            safety_gate=FakeSafetyGate(),
-            tracer=EventTracer(),
-        )
-        with self.assertRaises(ContractError):
-            executor.execute(
-                ExecutionRequest(
-                    "A",
-                    "hello",
-                    RouteDecision("rag.respond", "psychat_adapted"),
-                )
-            )
+    def test_executor_can_be_swapped_by_registration(self):
+        runtime, registry = self.make_runtime()
+        registry.register(AlternateRagExecutor())
+        result = runtime.execute(session_id="a", message="x", route=route("alternate"))
+        self.assertEqual(result.response, "alternate")
+        self.assertEqual(result.executor, "alternate")
 
-    def test_independent_safety_gate_can_block(self):
-        class UnsafeRuntime(FakePsyChatRuntime):
-            def generate_response(self, query):
-                self.conversation_history.append({"role": "user", "content": query})
-                return {
-                    "success": True,
-                    "response": "UNSAFE",
-                    "sources": [],
-                    "used_rag": False,
-                }
+    def test_unknown_executor_fails_closed(self):
+        runtime, _ = self.make_runtime()
+        with self.assertRaises(LookupError):
+            runtime.execute(session_id="a", message="x", route=route("missing"))
 
-        executor = PsyChatExecutor(
-            runtime_factory=lambda: UnsafeRuntime([]),
-            model_gateway=ResilientModelGateway(FakeDelegateGateway()),
-            embedding_gateway=FakeEmbeddingGateway(),
-            session_store=InMemorySessionStore(),
-            safety_gate=FakeSafetyGate(),
-            tracer=EventTracer(),
+    def test_invalid_route_is_rejected_before_donor(self):
+        runtime, _ = self.make_runtime()
+        bad = RouteDecision(
+            capability="knowledge.rag",
+            executor="psychat",
+            reason_code="knowledge_needed",
+            confidence=2.0,
         )
-        result = executor.execute(
-            ExecutionRequest(
-                "A",
-                "hello",
-                RouteDecision("rag.respond", "psychat_adapted"),
-            )
-        )
-        self.assertEqual(result.status, "blocked")
-        self.assertEqual(result.response, "blocked")
+        with self.assertRaises(ValueError):
+            runtime.execute(session_id="a", message="x", route=bad)
+
+    def test_trace_records_executor_choice(self):
+        runtime, _ = self.make_runtime()
+        result = runtime.execute(session_id="a", message="x", route=route())
+        self.assertEqual(result.trace[-1]["event"], "executor.completed")
+        self.assertEqual(result.trace[-1]["executor"], "psychat")
 
 
 if __name__ == "__main__":

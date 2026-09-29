@@ -1,27 +1,6 @@
-from .contracts import (
-    ContractError,
-    ExecutionRequest,
-    ExecutionResult,
-    RouteDecision,
-)
-from .executor import PsyChatExecutor
-from .registry import CapabilityRegistry
-from .runtime import (
-    EventTracer,
-    InMemorySessionStore,
-    ResilientModelGateway,
-    SafetyDecision,
-)
+"""Thin Atento chassis used only for the PsyChat donor spike."""
 
-__all__ = [
-    "CapabilityRegistry",
-    "ContractError",
-    "EventTracer",
-    "ExecutionRequest",
-    "ExecutionResult",
-    "InMemorySessionStore",
-    "PsyChatExecutor",
-    "ResilientModelGateway",
-    "RouteDecision",
-    "SafetyDecision",
-]
+from .contracts import ExecutionRequest, ExecutionResult, RouteDecision
+from .runtime import PsyChatSpikeRuntime
+
+__all__ = ["ExecutionRequest", "ExecutionResult", "RouteDecision", "PsyChatSpikeRuntime"]

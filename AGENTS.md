@@ -76,7 +76,7 @@ O agente deve:
 
 1. ler o `roadmap.md` inteiro ou, no mínimo, suas seções de arquitetura, bloco afetado, fases, Project Point Ledger e status;
 2. registrar mentalmente o score atual `X/100`;
-3. identificar quais Project Points a tarefa pode concluir;
+3. identificar o BLOCO arquitetural em execução e quais Project Points podem ganhar evidência dentro dele;
 4. identificar os testes/evals necessários para ganhar esses pontos;
 5. verificar se existe ADR/gate pendente.
 
@@ -118,6 +118,47 @@ Mudança nos pesos ou na definição dos 100 Project Points exige ADR ou altera�
 - todos os release gates bloqueantes passarem;
 - a Fase 8 tiver seus critérios de saída satisfeitos;
 - não existir regressão crítica conhecida não resolvida.
+
+
+## 2.2 Migração obrigatoriamente por blocos
+
+A unidade de implementação/migração é um **BLOCO A–S do roadmap**.
+
+Project Points medem progresso; **não são tickets, prompts ou mini-fases**.
+
+O agente deve:
+
+1. selecionar um bloco arquitetural;
+2. ler a responsabilidade completa desse bloco;
+3. trabalhar o bloco como uma unidade coerente;
+4. integrar donor/native/hybrid através do chassi;
+5. testar/evaluar o bloco;
+6. atualizar seus Project Points conforme evidência;
+7. só declarar o bloco `DONE` quando todos os pontos e gates do bloco estiverem satisfeitos.
+
+É proibido criar um plano do tipo:
+
+```text
+prompt 1
+prompt 2
+prompt 3
+semana 1
+semana 2
+50% do bloco
+```
+
+para controlar a execução.
+
+Se o contexto ou uma limitação externa impedir a conclusão do bloco na mesma execução, o agente registra `BLOCKED` ou `IN_PROGRESS` com a evidência real e, na próxima execução, **retoma o mesmo bloco**, em vez de converter o restante em uma sequência planejada de prompts.
+
+Mudança de bloco antes de concluir o atual só é aceitável quando:
+
+- existe dependência arquitetural explícita;
+- o bloco atual está objetivamente bloqueado; ou
+- o usuário redefine a prioridade.
+
+A regra é: **bloco é unidade de migração; Project Point é unidade de medição.**
+
 
 ---
 
@@ -227,7 +268,7 @@ Antes de escolher o modo, medir:
 5. cobertura funcional;
 6. dívida de adaptação;
 7. quantidade de código que precisará ser substituída;
-8. tempo estimado até o próximo milestone;
+8. esforço/change-surface até completar o bloco;
 9. observabilidade e testabilidade;
 10. capacidade de rollback/substituição.
 
@@ -1107,7 +1148,7 @@ Antes de escrever código:
 3. ler `docs/adr/ADR-000-fork-vs-greenfield.md`;
 4. ler `docs/evaluation/harness.md`;
 5. ler `docs/third-party.md`;
-6. identificar a fase atual;
+6. identificar o bloco A–S que é a unidade arquitetural do trabalho;
 7. identificar `SOURCE_IDs`;
 8. identificar eval suite correspondente;
 9. verificar se há gate/ADR pendente;
