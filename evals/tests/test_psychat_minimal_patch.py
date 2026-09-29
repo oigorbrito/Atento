@@ -228,6 +228,9 @@ class PsyChatMinimalPatchGeneratorTest(unittest.TestCase):
                 '"atento:corpus_identity": self.corpus_identity',
                 patched,
             )
+            self.assertIn("'index_schema': ATENTO_INDEX_SCHEMA_VERSION", patched)
+            self.assertIn("'embedding_identity': self.embedding_identity", patched)
+            self.assertIn("'corpus_identity': self.corpus_identity", patched)
             self.assertNotIn("self.client.delete_collection(COLLECTION_NAME)", patched)
 
 
