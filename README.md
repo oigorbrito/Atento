@@ -9,6 +9,8 @@ Atento é um projeto de engenharia para um sistema conversacional de apoio emoci
 - **Regras para agentes/contribuidores:** [AGENTS.md](AGENTS.md)
 - **Arquitetura, blocos e progresso global:** [roadmap.md](roadmap.md)
 - **Decisão fork vs greenfield:** [docs/adr/ADR-000-fork-vs-greenfield.md](docs/adr/ADR-000-fork-vs-greenfield.md)
+- **Composição Nayá — Assistente × Terapeuta (proposta):** [docs/adr/ADR-001-naya-product-composition.md](docs/adr/ADR-001-naya-product-composition.md)
+- **Seleção da base da Assistente (em avaliação):** [docs/adr/ADR-002-assistant-base-selection.md](docs/adr/ADR-002-assistant-base-selection.md)
 - **Evaluation harness:** [docs/evaluation/harness.md](docs/evaluation/harness.md)
 - **Provenance e licenças externas:** [docs/third-party.md](docs/third-party.md)
 - **Mapa de autoridade da documentação:** [docs/documentation-map.md](docs/documentation-map.md)

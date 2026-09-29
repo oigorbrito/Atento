@@ -51,6 +51,42 @@ Se houver conflito entre documentos, **não escolher silenciosamente**. Abrir ou
 ---
 
 
+## 2.0 Preflight de evidência e não-repetição
+
+Antes de iniciar nova pesquisa, benchmark ou implementação de arquitetura:
+
+1. consultar `roadmap.md`, ADRs, `docs/third-party.md` e resultados/evidências já existentes;
+2. verificar se a propriedade já foi demonstrada externamente por paper, benchmark reproduzível ou testes upstream;
+3. registrar o protocolo, população/tarefa, versão/commit, métrica e limitações da evidência externa;
+4. identificar o **delta material do Atento** (por exemplo idioma, modelo, runtime, memória, safety, side effects, privacidade ou licença);
+5. criar teste local somente quando esse delta puder mudar a decisão de engenharia.
+6. para bibliotecas/frameworks, usar documentação oficial e Context7 quando isso acelerar a verificação de API/versão; para claims acadêmicos/terapêuticos, preferir paper, proceedings, benchmark repo e artefatos primários.
+
+Regra operacional:
+
+```text
+EXTERNAL_EVIDENCE
+        ↓
+TRANSFER / RELEVANCE CHECK
+        ↓
+REUSE PROVEN MECHANISM
+        ↓
+TEST ONLY MATERIAL LOCAL DELTAS
+        ↓
+LOCAL ACCEPTANCE
+```
+
+Não repetir benchmark apenas para produzir outro número local. Não tratar resultado externo como prova local quando população, protocolo ou runtime diferirem materialmente.
+
+```text
+BENCHMARK_SIGNAL != LOCAL_PROOF
+EXTERNAL_SUCCESS != LOCAL_COMPATIBILITY
+IMPLEMENTED != QUALIFIED
+QUALIFIED != PROMOTED
+```
+
+---
+
 ## 2.1 Roadmap e progresso global do projeto
 
 O `roadmap.md` é a **fonte canônica de escopo e progresso**.
