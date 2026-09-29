@@ -1,5 +1,11 @@
 # AtentoEval
 
+## Document contract
+
+Este README é **operacional**: como executar o harness, formatos de entrada/saída e status dos adapters.
+
+A metodologia pertence a `docs/evaluation/harness.md`. O progresso global pertence a `roadmap.md`. Não duplicar aqui thresholds, decisões arquiteturais ou regras de licença.
+
 Scaffold do evaluation harness do Atento.
 
 A especificação completa está em [docs/evaluation/harness.md](../docs/evaluation/harness.md).

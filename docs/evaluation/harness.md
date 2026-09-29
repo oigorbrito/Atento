@@ -1,5 +1,13 @@
 # AtentoEval — Evaluation Harness
 
+## 0. Document contract
+
+Este documento é a fonte canônica para **metodologia de avaliação**: schemas, suites, judges, métricas, comparação, adapters e release gates.
+
+Ele não define o progresso do projeto, não decide fork/greenfield e não autoriza uso de datasets. Esses papéis pertencem, respectivamente, a `roadmap.md`, `docs/adr/` e `docs/third-party.md`.
+
+Toda mudança metodológica material deve atualizar os testes do harness e, quando alterar um release gate ou política estrutural, exigir ADR conforme `AGENTS.md`.
+
 ## 1. Objetivo
 
 AtentoEval é o harness de avaliação do Atento. Ele deve medir tanto a **qualidade da resposta final** quanto o **processo interno do agente**.

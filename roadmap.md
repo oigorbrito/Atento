@@ -2,6 +2,31 @@
 
 > Documento vivo para orientar a construção do Atento como um sistema conversacional de apoio emocional com arquitetura executiva explícita, memória longitudinal, planejamento, grounding, ferramentas, segurança e avaliação contínua.
 
+## 0. Contrato deste documento
+
+Este arquivo é a fonte canônica para:
+
+- escopo do projeto;
+- arquitetura alvo em nível de sistema;
+- blocos A–S;
+- sequência de fases;
+- Project Points;
+- progresso global do projeto;
+- source mapping arquitetural.
+
+Este arquivo **não** é a fonte canônica para:
+
+- detalhes do protocolo de avaliação → `docs/evaluation/harness.md`;
+- decisão fork/greenfield → ADR correspondente em `docs/adr/`;
+- licença/provenance legal exata → `docs/third-party.md`;
+- instruções operacionais para agentes → `AGENTS.md`.
+
+Em caso de duplicação, prevalece o documento que possui a responsabilidade canônica definida em `docs/documentation-map.md`.
+
+> **PROJECT PROGRESS: 3/100 (3%)**
+>
+> O score representa o **projeto inteiro**. Nenhum bloco individual possui uma porcentagem própria.
+
 ## 1. Objetivo do projeto
 
 O Atento deve ser construído como **um sistema**, não apenas como um chatbot com um prompt longo.
@@ -545,6 +570,200 @@ Esses schemas devem ser versionados.
 ---
 
 # 5. Blocos do projeto
+
+
+## 5.0 Project Point Model — 100 pontos do projeto inteiro
+
+O progresso do Atento é medido por **100 Project Points verificáveis**.
+
+### Regra
+
+```text
+PROJECT PROGRESS = quantidade de Project Points [x] / 100
+```
+
+Os pontos são do **projeto inteiro**. Os blocos apenas recebem uma quantidade de pontos proporcional à sua contribuição arquitetural.
+
+| Bloco | Project Points | Papel |
+|---|---:|---|
+| A — Fundação | 3 | governança e base técnica |
+| B — API/Sessão | 4 | entrada e sessão |
+| C — Model Gateway | 4 | abstração de modelos |
+| D — State & Belief | 7 | percepção/estado |
+| E — Memória | 7 | continuidade |
+| F — Executive Controller | 8 | decisão executiva |
+| G — Planner | 6 | estratégia |
+| H — Skill Library | 3 | habilidades |
+| I — RAG | 5 | conhecimento |
+| J — Tools | 5 | ações/grounding |
+| K — Generator | 5 | resposta |
+| L — Critic | 4 | validação/reranking |
+| M — Safety | 9 | segurança conversacional |
+| N — Observabilidade | 5 | auditabilidade |
+| O — AtentoEval | 8 | medição |
+| P — Human Evaluation | 3 | validação humana |
+| Q — Produto/UX | 4 | experiência |
+| R — AppSec/Privacidade | 6 | segurança da aplicação |
+| S — Infra/Deploy | 4 | operação |
+| **TOTAL** | **100** | **projeto inteiro** |
+
+As fases são sequência de execução e **não adicionam pontos**, evitando dupla contagem.
+
+### Project Point Ledger
+
+#### A — Fundação — 3 pontos
+- [x] **A1** — governança de arquitetura, roadmap, ADR framework, provenance e regras de agente definidos.
+- [ ] **A2** — ambiente local reproduzível + secrets + lint + formatter + type-check + test bootstrap.
+- [ ] **A3** — CI e onboarding reproduzível com ambientes básicos definidos.
+
+#### B — API/Sessão — 4 pontos
+- [ ] **B1** — contrato de conversations/sessions e endpoints principais.
+- [ ] **B2** — streaming + idempotência + rate limit + correlation IDs/timeouts.
+- [ ] **B3** — persistência e recuperação de sessão/turnos.
+- [ ] **B4** — contract/integration tests do gateway conversacional.
+
+#### C — Model Gateway — 4 pontos
+- [ ] **C1** — interface canônica `generate/generate_structured/embed/rerank/moderate`.
+- [ ] **C2** — pelo menos um provider adapter funcional sem acoplamento de domínio.
+- [ ] **C3** — retries + timeout + circuit breaker/fallback explícito.
+- [ ] **C4** — usage/cost/model-version tracing + contract tests.
+
+#### D — State & Belief — 7 pontos
+- [ ] **D1** — schema versionado de conversation state.
+- [ ] **D2** — intent + emotion + distress como sinais operacionais.
+- [ ] **D3** — need hypotheses/belief state estruturado.
+- [ ] **D4** — uncertainty + `needs_clarification` com policy explícita.
+- [ ] **D5** — integração de risk signals sem transformar sinal em diagnóstico.
+- [ ] **D6** — calibration/eval de state e belief.
+- [ ] **D7** — testes multi-turn/adversariais de drift e inconsistência.
+
+#### E — Memória — 7 pontos
+- [ ] **E1** — schema/tipos de memória e provenance.
+- [ ] **E2** — working memory.
+- [ ] **E3** — episodic/cross-session memory.
+- [ ] **E4** — summaries/preferences com lifecycle explícito.
+- [ ] **E5** — retrieval por relevância + necessidade + sensibilidade.
+- [ ] **E6** — TTL/delete/deduplicação/controle de usuário.
+- [ ] **E7** — longitudinal eval + cross-user isolation gate.
+
+#### F — Executive Controller — 8 pontos
+- [ ] **F1** — schema de executive decision/actions.
+- [ ] **F2** — rule layer para rotas críticas.
+- [ ] **F3** — decisão LLM estruturada para casos não críticos.
+- [ ] **F4** — routing de memória.
+- [ ] **F5** — routing de RAG/knowledge.
+- [ ] **F6** — routing de tools.
+- [ ] **F7** — routing de safety/escalation/clarification.
+- [ ] **F8** — eval + tracing do executivo.
+
+#### G — Planner — 6 pontos
+- [ ] **G1** — schema de conversation plan.
+- [ ] **G2** — taxonomia interna versionada e mapeada às fontes.
+- [ ] **G3** — strategy selection.
+- [ ] **G4** — constraints/goal/response-shape e adherence.
+- [ ] **G5** — planner eval independente do generator.
+- [ ] **G6** — fallback/versioning e regressão.
+
+#### H — Skill Library — 3 pontos
+- [ ] **H1** — skill registry/schema/version.
+- [ ] **H2** — biblioteca inicial com condições/contra-indicações.
+- [ ] **H3** — skill retrieval + eval.
+
+#### I — Knowledge/RAG — 5 pontos
+- [ ] **I1** — corpus/chunk/provenance pipeline.
+- [ ] **I2** — query rewrite + retrieval.
+- [ ] **I3** — reranking + evidence packaging.
+- [ ] **I4** — RAG condicional + insufficient/conflicting evidence behavior.
+- [ ] **I5** — RAG eval de recall/precision/faithfulness.
+
+#### J — Tool Router — 5 pontos
+- [ ] **J1** — tool registry + schemas.
+- [ ] **J2** — permissions + confirmation model.
+- [ ] **J3** — execution + timeout/retry/error recovery.
+- [ ] **J4** — grounding e tratamento de tool output como conteúdo não confiável.
+- [ ] **J5** — tool-use eval incluindo unnecessary call e failure injection.
+
+#### K — Response Generator — 5 pontos
+- [ ] **K1** — generator contract separado do planner.
+- [ ] **K2** — model/provider via Model Gateway.
+- [ ] **K3** — condicionamento a plan/evidence/memory autorizada.
+- [ ] **K4** — streaming + idioma/style/length controls.
+- [ ] **K5** — generator eval + fallback.
+
+#### L — Critic/Reranker — 4 pontos
+- [ ] **L1** — critic schema/rubric.
+- [ ] **L2** — checks de adherence/grounding/repetition/safety.
+- [ ] **L3** — reranking/candidate logic condicional.
+- [ ] **L4** — critic eval + custo/latência.
+
+#### M — Safety — 9 pontos
+- [ ] **M1** — safety policy versionada.
+- [ ] **M2** — input pre-check independente.
+- [ ] **M3** — risk/acuity routing.
+- [ ] **M4** — constraints para geração.
+- [ ] **M5** — output safety gate.
+- [ ] **M6** — high-acuity/urgent-support flow.
+- [ ] **M7** — ambiguidade + false-positive controls.
+- [ ] **M8** — adversarial/red-team safety suite.
+- [ ] **M9** — release gate com zero falha crítica conhecida na suite bloqueante.
+
+#### N — Observabilidade — 5 pontos
+- [ ] **N1** — trace schema end-to-end.
+- [ ] **N2** — latency/token/cost metrics.
+- [ ] **N3** — eventos de state/executive/plan/RAG/tool/safety.
+- [ ] **N4** — sanitização/privacy de traces.
+- [ ] **N5** — reproducibility manifest + dashboards/alerts básicos.
+
+#### O — AtentoEval — 8 pontos
+- [x] **O1** — arquitetura/especificação do harness definida.
+- [x] **O2** — schema + scorer/runner offline implementados.
+- [ ] **O3** — registry/system matrix/release gates/seed cases com testes executados em CI/local.
+- [ ] **O4** — adapter do runtime Atento.
+- [ ] **O5** — deterministic process metrics completos.
+- [ ] **O6** — judge interface + pairwise/human-review export.
+- [ ] **O7** — adapters de benchmarks externos prioritários.
+- [ ] **O8** — release report reproduzível candidato vs baseline.
+
+#### P — Human Evaluation — 3 pontos
+- [ ] **P1** — rubric/reviewer protocol.
+- [ ] **P2** — blind pairwise + adjudication workflow.
+- [ ] **P3** — inter-rater/reports + calibração de judges.
+
+#### Q — Produto/UX — 4 pontos
+- [ ] **Q1** — onboarding + chat + streaming.
+- [ ] **Q2** — histórico + controles de memória.
+- [ ] **Q3** — feedback + transparência + safety UX.
+- [ ] **Q4** — acessibilidade + responsive + error/fallback flows.
+
+#### R — AppSec/Privacidade — 6 pontos
+- [ ] **R1** — threat model + auth/RBAC.
+- [ ] **R2** — encryption/secrets lifecycle.
+- [ ] **R3** — retention + export/delete data.
+- [ ] **R4** — audit + backup/restore.
+- [ ] **R5** — dependency/SAST/abuse/prompt-injection protections.
+- [ ] **R6** — security review/release gates.
+
+#### S — Infra/Deploy — 4 pontos
+- [ ] **S1** — containers/env/migrations.
+- [ ] **S2** — health checks + rollback/canary/autoscaling policy.
+- [ ] **S3** — backups + monitoring + alerts.
+- [ ] **S4** — staging/prod deployment runbook.
+
+### Regra para ganhar um Project Point
+
+Um item só muda de `[ ]` para `[x]` quando existir **evidência verificável** compatível com o verbo do item:
+
+- implementação → código + testes;
+- comportamento → eval/test executado;
+- gate → resultado do gate;
+- decisão → ADR aceita;
+- integração → execução ponta a ponta;
+- documentação/governança → documento canônico versionado.
+
+Código não executado não prova comportamento. Teste escrito mas não executado não prova passagem.
+
+---
+
 
 
 ## BLOCO A — Fundação do repositório
@@ -1359,6 +1578,7 @@ Postgres / Vector Store / Cache / Object Storage
 
 | Fase | Sources obrigatórias para leitura | Motivo |
 |---|---|---|
+| Fase -1 — Fork/Clone Spike | `SRC-PSYCHAT`, `SRC-PA`, `SRC-THERAPYMIND`, `SRC-SOULCHAT`, `SRC-EMOLLM`, `SRC-MINDCHAT`, `SRC-ATENTO` | decidir fork/selective-port/clean-room/model-adapter antes do bootstrap |
 | Fase 0 — Bootstrap | `SRC-ATENTO` | contratos, gateway, CI e esqueleto são próprios |
 | Fase 1 — Vertical Slice | `SRC-CADSS`, `SRC-ESCONV`, `SRC-MHB`, `SRC-COUNSEL` | state/planner/generator/safety |
 | Fase 2 — Memória + Executivo | `SRC-PA`, `SRC-UKA`, `SRC-ENPMR`, `SRC-PE`, `SRC-TEA` | continuidade, belief, proactive retrieval e routing |
@@ -1814,36 +2034,60 @@ O Atento será arquiteturalmente bem-sucedido quando conseguir demonstrar, com a
 
 ---
 
-## Status
+## Status global do projeto
 
-- [x] arquitetura conceitual definida;
-- [x] roadmap inicial;
-- [ ] bootstrap do repositório;
-- [ ] baseline single-pass;
-- [ ] Atento V1;
-- [ ] AtentoEval V1;
-- [ ] MVP fechado;
-- [ ] piloto;
-- [ ] produção.
+> **PROJECT PROGRESS: 3/100 (3%)**
+>
+> Este número é a soma dos Project Points marcados `[x]` no ledger da seção 5.0. Ele representa o projeto inteiro.
+
+| Bloco | Pontos do projeto | Pontos ganhos | Estado | Bloco concluído? | Evidência atual |
+|---|---:|---:|---|---|---|
+| A — Fundação | 3 | 1 | IN_PROGRESS | [ ] | roadmap, AGENTS, ADR/provenance/documentation governance |
+| B — API/Sessão | 4 | 0 | NOT_STARTED | [ ] | — |
+| C — Model Gateway | 4 | 0 | NOT_STARTED | [ ] | — |
+| D — State & Belief | 7 | 0 | NOT_STARTED | [ ] | — |
+| E — Memória | 7 | 0 | NOT_STARTED | [ ] | — |
+| F — Executive | 8 | 0 | NOT_STARTED | [ ] | — |
+| G — Planner | 6 | 0 | NOT_STARTED | [ ] | — |
+| H — Skills | 3 | 0 | NOT_STARTED | [ ] | — |
+| I — RAG | 5 | 0 | NOT_STARTED | [ ] | — |
+| J — Tools | 5 | 0 | NOT_STARTED | [ ] | — |
+| K — Generator | 5 | 0 | NOT_STARTED | [ ] | — |
+| L — Critic | 4 | 0 | NOT_STARTED | [ ] | — |
+| M — Safety | 9 | 0 | NOT_STARTED | [ ] | — |
+| N — Observabilidade | 5 | 0 | NOT_STARTED | [ ] | — |
+| O — AtentoEval | 8 | 2 | IN_PROGRESS | [ ] | harness spec + offline schema/scorer/runner |
+| P — Human Eval | 3 | 0 | NOT_STARTED | [ ] | — |
+| Q — Produto/UX | 4 | 0 | NOT_STARTED | [ ] | — |
+| R — AppSec/Privacidade | 6 | 0 | NOT_STARTED | [ ] | — |
+| S — Infra/Deploy | 4 | 0 | NOT_STARTED | [ ] | — |
+| **TOTAL** | **100** | **3** | **IN_PROGRESS** | — | — |
+
+### Regras de atualização
+
+- recalcular após trabalho que altere evidência real;
+- nunca marcar bloco concluído antes de todos os seus Project Points;
+- regressão pode reduzir o score;
+- mudanças de peso exigem decisão explícita de governança;
+- `100/100` exige todos os blocos concluídos + release gates + critérios de saída da Fase 8.
 
 ---
 
 ## Próximo passo
 
-**Milestone 0 — Bootstrap do Atento**
+**Fase -1 — Fork/Clone Spike & ADR-000**
 
-**Sources obrigatórias desta milestone:** `SRC-ATENTO`. Para os contratos de `State` e `Planner`, o agente deve também ler `SRC-CADSS`, `SRC-UKA` e `SRC-ESCONV` antes de congelar os schemas. Para `Safety`, ler `SRC-MHB` e `SRC-COUNSEL`.
-
-Criar a primeira versão executável com:
+Antes do Bootstrap, concluir a decisão defensável entre:
 
 ```text
-API
-→ Model Gateway
-→ State
-→ Planner
-→ Generator
-→ Safety
-→ Trace
+fork
+vs selective-port
+vs clean-room
+vs hybrid
+vs model-adapter
 ```
 
-e, em paralelo, criar o primeiro `evals/core_v0` para que a arquitetura seja mensurável desde o primeiro commit.
+Executar PsyChat upstream e o spike adaptado, verificar licenças/provenance, comparar com um vertical slice clean-room usando AtentoEval e preencher `docs/adr/ADR-000-fork-vs-greenfield.md`.
+
+Somente após a ADR-000 sair de `Proposed` para uma decisão aceita, iniciar a Fase 0 — Bootstrap.
+

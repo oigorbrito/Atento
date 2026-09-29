@@ -42,10 +42,82 @@ Antes de implementar, consultar nesta ordem:
 4. **`docs/evaluation/harness.md`** — critérios de avaliação;
 5. **`evals/config/`** — benchmarks, sistemas e release gates;
 6. **`docs/third-party.md`** — dependências externas, licença e provenance;
-7. documentação local do módulo;
-8. testes existentes.
+7. **`docs/documentation-map.md`** — autoridade, conteúdo e limites de cada documento;
+8. documentação local do módulo;
+9. testes existentes.
 
 Se houver conflito entre documentos, **não escolher silenciosamente**. Abrir ou atualizar ADR.
+
+---
+
+
+## 2.1 Roadmap e progresso global do projeto
+
+O `roadmap.md` é a **fonte canônica de escopo e progresso**.
+
+### Regra crítica
+
+**100% representa o projeto inteiro, não um bloco individual.**
+
+O projeto usa exatamente **100 Project Points**, distribuídos entre os blocos A–S do roadmap. Cada ponto corresponde a um critério verificável do **Project Point Ledger**.
+
+Portanto:
+
+- não escrever "Bloco D = 70%";
+- não atribuir 100% a um bloco;
+- usar `earned project points / 100`;
+- um bloco é apenas `NOT_STARTED`, `IN_PROGRESS`, `BLOCKED` ou `DONE`;
+- o bloco só é marcado `[x]` quando **todos** os Project Points daquele bloco estiverem concluídos e seus gates aplicáveis passarem;
+- somente o projeto inteiro pode chegar a `100/100 = 100%`.
+
+### Antes de qualquer trabalho
+
+O agente deve:
+
+1. ler o `roadmap.md` inteiro ou, no mínimo, suas seções de arquitetura, bloco afetado, fases, Project Point Ledger e status;
+2. registrar mentalmente o score atual `X/100`;
+3. identificar quais Project Points a tarefa pode concluir;
+4. identificar os testes/evals necessários para ganhar esses pontos;
+5. verificar se existe ADR/gate pendente.
+
+### Depois de qualquer trabalho que altere o estado real do projeto
+
+O agente deve:
+
+1. executar os testes/evals aplicáveis;
+2. marcar `[x]` **somente** os Project Points comprovadamente concluídos;
+3. adicionar/atualizar evidência no status do roadmap;
+4. recalcular a soma de pontos concluídos;
+5. atualizar `PROJECT PROGRESS: X/100 (X%)`;
+6. atualizar o status do bloco afetado;
+7. marcar o bloco `[x]` somente se todos os seus pontos estiverem concluídos;
+8. registrar regressões: se uma evidência deixar de valer, desmarcar o item e reduzir o score;
+9. citar no commit/PR a variação, por exemplo `progress: 12 -> 14/100`, quando houver mudança.
+
+### Proibições de progress tracking
+
+O agente não pode:
+
+- alterar pesos para aparentar avanço;
+- dividir uma tarefa em itens menores apenas para ganhar mais pontos;
+- marcar item pela existência de código não testado quando o critério exige comportamento;
+- contar documentação como implementação, salvo quando o Project Point explicitamente exigir documentação/governança;
+- contar benchmark baixado como benchmark integrado;
+- contar teste escrito como teste passado;
+- contar spike como produção;
+- arredondar subjetivamente o progresso.
+
+Mudança nos pesos ou na definição dos 100 Project Points exige ADR ou alteração explícita de governança aprovada no roadmap.
+
+### Condição de 100/100
+
+`100/100` só pode ser declarado quando:
+
+- os 100 Project Points estiverem `[x]`;
+- todos os blocos A–S estiverem `[x]`;
+- todos os release gates bloqueantes passarem;
+- a Fase 8 tiver seus critérios de saída satisfeitos;
+- não existir regressão crítica conhecida não resolvida.
 
 ---
 
@@ -997,7 +1069,7 @@ supor
 Antes de escrever código:
 
 1. ler este arquivo;
-2. ler `roadmap.md`;
+2. ler `roadmap.md`, incluindo o **Project Point Ledger**, o score global e o bloco afetado;
 3. ler `docs/adr/ADR-000-fork-vs-greenfield.md`;
 4. ler `docs/evaluation/harness.md`;
 5. ler `docs/third-party.md`;
@@ -1005,7 +1077,8 @@ Antes de escrever código:
 7. identificar `SOURCE_IDs`;
 8. identificar eval suite correspondente;
 9. verificar se há gate/ADR pendente;
-10. somente então implementar.
+10. somente então implementar;
+11. ao terminar, atualizar o Project Point Ledger e o score global do `roadmap.md` se o estado verificável do projeto mudou.
 
 ---
 

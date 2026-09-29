@@ -1,5 +1,13 @@
 # ADR-000 — Fork vs Greenfield
 
+## Document contract
+
+Esta ADR possui **uma única responsabilidade**: decidir a estratégia de adoção de upstream para a base executiva do Atento.
+
+Ela deve conter contexto, alternativas, evidência do spike, decisão e consequências. Não é roadmap, não é registry de licenças e não é benchmark spec.
+
+A fonte canônica de progresso continua sendo `roadmap.md`; a fonte canônica de licenças/provenance é `docs/third-party.md`.
+
 - **Status:** Proposed
 - **Date:** TBD
 - **Decision owners:** TBD
@@ -91,6 +99,18 @@ estimated_greenfield_to_mvp_days:
 ```
 
 If less than ~40% of the upstream core remains recognizably useful after provider abstraction, structured contracts, memory, safety and observability, prefer selective port or greenfield.
+
+## Acceptance criteria
+
+Esta ADR só pode mudar de `Proposed` para `Accepted` quando:
+
+- o upstream selecionado tiver sido executado sem alteração ou a impossibilidade estiver documentada;
+- licença do código e dos dados relevantes tiver sido verificada;
+- houver report AtentoEval comparando as alternativas executáveis;
+- custo de adaptação vs clean-room tiver sido estimado;
+- módulos mantidos/substituídos estiverem listados;
+- riscos de safety/privacidade/provider coupling estiverem documentados;
+- a decisão indicar estratégia de sync/rollback.
 
 ## Decision
 
