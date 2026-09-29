@@ -42,15 +42,15 @@ FEATURE_RICH != GOOD_CHASSIS
 
 Source: `SRC-OPENMAUS`
 
-Qualification snapshot:
+Original qualification snapshot:
 
 `947bef311bf5c3f55d3590849abf0eb329408519`
 
-Upstream had advanced to:
+Finalist-comparison repin on 2026-09-29:
 
-`7cd31c2a7f780757dd6933ec175d11e06103fd0f`
+`56ac27a01a2ceb27d44c3ef0cf8d63f692f68cb8`
 
-during the 2026-09-29 remote audit.
+The 7-commit delta was reviewed for transfer. It was concentrated in ChatGPT-plan/provider authentication, Cloud onboarding/UI and verification coverage. Targeted authority-adjacent checks did not establish a new generic durability or Nayá authority mechanism, so the original qualification findings remain transferable to the comparison repin.
 
 #### Expensive capability already present
 
@@ -352,12 +352,30 @@ STRICT_THERAPY_BOUNDARY         = SEPARATE_RUNTIME_REQUIRED
 GENERIC_TOOL_EFFECT_DURABILITY  = NOT_PROVEN
 LICENSE                         = MIT
 STATUS                          = STRONG_CANDIDATE / STATIC_QUALIFICATION_COMPLETE
-LOCAL_DELTA_TESTS               = PENDING
+LOCAL_DELTA_TESTS               = PARTIAL / PINNED_RUNTIME_INFRA_BLOCKED
 ```
 
 No winner selected.
 
 ---
+
+## Finalist decision-frontier record
+
+Detailed same-protocol comparison:
+
+`docs/evaluation/assistant-base-finalist-comparison-2026-09-29.md`
+
+The current direct product-base frontier is:
+
+```text
+OpenMausBot
+vs
+OpenClaw
+```
+
+NaIA remains an authority/evidence architecture donor and a higher-build-cost base candidate; this is not a rejection of its mechanisms and is not a winner declaration.
+
+The only remaining decision-changing gate is the pinned OpenClaw runtime execution for OC-NAYA-001/003/004/005. Generic external-effect durability remains unproven for every finalist and is therefore not used as an artificial tie-breaker.
 
 ## Current comparison
 
@@ -374,6 +392,7 @@ No winner selected.
 | Generic external-effect durability | not proven | not proven | not proven; explicitly not a general exactly-once claim |
 | Memory / bounded-context isolation | needs reinforcement | strong authority concepts, lower product integration | strong per-agent core state; strict Therapy boundary needs separate runtime |
 | Adaptation surface | product-rich; authority reinforcement required | higher product integration/build cost | low/moderate product adaptation; moderate hardening; generic effect protocol structural if universal |
+| Current decision frontier | product-rich finalist | authority/evidence donor + higher-build-cost base candidate | product-rich finalist |
 | Final selection | no | no | no |
 
 ## Local-test rule
@@ -394,10 +413,11 @@ Retain local tests only for material Atento/Nayá deltas:
 ```yaml
 decision: TBD
 winner: NOT_SELECTED
-openmausbot: strong-base-candidate
-naia: architectural-donor-and-higher-build-cost-base-candidate
-openclaw: strong-candidate-static-qualification-complete
-next_required_block: execute-openclaw-material-local-deltas-then-compare-finalists
+openmausbot: product-rich-finalist
+naia: architectural-authority-evidence-donor-and-higher-build-cost-base-candidate
+openclaw: product-rich-finalist-static-qualification-complete
+decision_frontier: [OpenMausBot, OpenClaw]
+next_required_block: resolve-openclaw-pinned-runtime-oc-naya-001-003-004-005
 ```
 
 ## Acceptance criteria
@@ -410,7 +430,9 @@ Before this ADR can be accepted:
 - [x] memory/privacy boundaries analyzed
 - [x] current security assumptions reviewed
 - [x] license/provenance constraints confirmed
-- [ ] OC-NAYA-001 through OC-NAYA-005 executed against the pinned candidate
-- [ ] empirical change surface / invasiveness recorded from OC-NAYA-005
-- [ ] same decision protocol applied to all finalists after local deltas
+- [ ] OC-NAYA-001/003/004/005 pinned-runtime portions executed
+- [x] OC-NAYA-002 controlled-adapter crash algorithm executed from exact Atento blobs
+- [ ] empirical change surface / invasiveness closed by OpenClaw plugin/runtime validation
+- [x] provisional same-protocol finalist decision frontier recorded
+- [ ] same decision protocol closed with the remaining material runtime deltas
 - [ ] final base decision recorded
