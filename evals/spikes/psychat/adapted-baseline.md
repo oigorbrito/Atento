@@ -103,12 +103,14 @@ The canonical patch is:
 
 `evals/spikes/psychat/minimal_fork_patch.py`
 
-It deliberately excludes donor web/TTS chassis and patches only RAG-core source:
+It deliberately excludes donor web/TTS chassis and patches only the BLOCO I RAG surface:
 
 - `agent/psychology_agent.py` — inject model gateway;
 - `core/vector_store.py` — inject embedding gateway;
 - `core/rag_system.py` — inject long-lived dependencies and remove direct LLM
-  access.
+  access;
+- `data/processor.py` — preserve the corpus QA ID that precedes each `##`
+  dialogue block.
 
 The patch fails closed on donor source drift and requires the pinned clean
 worktree.
@@ -119,26 +121,43 @@ Two different costs are measured:
 
 **Boundary introduction cost**
 
-Git-measured donor patch surface:
+Two Git-measured surfaces are now kept separate.
 
-> **3 donor RAG files**
+**Provider/lifecycle boundary**
 
-This value now has independent GitHub Git Data evidence, without relying on
-Actions:
+> **3 donor files**
 
-- pinned snapshot commit: `fb5368edbe23aeedf571e1f11935ae63b6da29b9`;
-- patched child commit: `15249e687c8a2fdea263cc0ae57650ab698a907f`;
-- preserving evidence ref: `evidence/psychat-rag-minimal-patch`;
-- Git compare reports exactly:
-  - `agent/psychology_agent.py`;
-  - `core/rag_system.py`;
-  - `core/vector_store.py`.
+Independent Git evidence:
 
-Across those three files, the pinned snapshot contains 1,365 lines. The compare
-deletes/replaces 123 original lines and adds 53, leaving an approximate
-**90.99% original-line retention** over the patch surface.
+- baseline: `fb5368edbe23aeedf571e1f11935ae63b6da29b9`;
+- patched: `15249e687c8a2fdea263cc0ae57650ab698a907f`;
+- ref: `evidence/psychat-rag-minimal-patch`.
 
-This proves the designed change-surface is narrow. It does **not** yet prove
+Files:
+
+- `agent/psychology_agent.py`;
+- `core/rag_system.py`;
+- `core/vector_store.py`.
+
+Approximate original-line retention: **90.99%** (1,242 / 1,365).
+
+**Full BLOCO I RAG correctness surface**
+
+> **4 donor files**
+
+A corpus-provenance defect requires `data/processor.py` in addition to the
+three provider/lifecycle files.
+
+Independent Git evidence:
+
+- baseline: `f2317be0fc27b1f4a6a39c5c89f22faf550045bf`;
+- patched: `7c780cd74f23be5e455600e7c0bd21cae60414a1`;
+- ref: `evidence/psychat-rag-block-correctness`.
+
+Approximate original-line retention over all four files: **91.06%**
+(1,457 / 1,600).
+
+This proves both designed change-surfaces are narrow. It does **not** yet prove
 that `minimal_fork_patch.py` executes cleanly against a full cloned worktree;
 that executable assertion remains pending runner access.
 
@@ -206,6 +225,34 @@ preserved under dedicated refs:
 
 The runtime behavior of Registry selection/rollback remains a separate dynamic
 assertion; Git evidence proves the source change-surface only.
+
+## Corpus QA-ID provenance defect
+
+Pinned `DataProcessor.split_psychology_qa_pairs()` splits source files on
+`##`, but each corpus ID appears in the section immediately *before* the
+dialogue section. The function resets `qa_id` for every section instead of
+carrying it forward.
+
+Source-level execution of that exact parser logic over all 12 pinned knowledge
+blobs gives:
+
+- dialogue sections: **4,760**;
+- dialogue sections with known `qa_id`: **0**;
+- dialogue sections with `qa_id=unknown`: **4,760 (100%)**.
+
+This means the unpatched vector index cannot preserve source-record identity in
+its `qa_id` metadata, including gold IDs 328, 350, 1864 and 1882.
+
+The corrected carry-forward parser logic over the same pinned blobs gives:
+
+- raw unique IDs: **4,760**;
+- preserved unique IDs: **4,760**;
+- unknown dialogue sections: **0**;
+- missing raw IDs: **0**;
+- all four current PsyChat gold IDs survive.
+
+`qa_id_provenance_probe.py` is committed to execute the real upstream and
+patched `DataProcessor` when a runner becomes available.
 
 ## AtentoEval RAG surface
 
