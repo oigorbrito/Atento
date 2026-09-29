@@ -209,6 +209,18 @@ def patch_vector_store(path: Path) -> None:
     )
     text = replace_once(
         text,
+        "        except Exception as e:\n"
+        "            print(f\"获取集合信息时出错: {e}\")\n"
+        "            return {}\n",
+        "        except RuntimeError:\n"
+        "            raise\n"
+        "        except Exception as e:\n"
+        "            print(f\"获取集合信息时出错: {e}\")\n"
+        "            return {}\n",
+        label="VectorStore collection contract fail closed",
+    )
+    text = replace_once(
+        text,
         "            self.client.delete_collection(COLLECTION_NAME)\n"
         "            self.collection = self.client.create_collection(\n"
         "                name=COLLECTION_NAME,\n"
@@ -585,7 +597,7 @@ def apply_patch(donor_root: Path) -> dict:
     retention = retention_metrics(donor_root)
 
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.13",
+        "metric_version": "psychat-minimal-fork-patch-v0.14",
         "pinned_commit": head_before,
         "changed_files": changed,
         "donor_files_touched_to_introduce_provider_boundary": len(PROVIDER_BOUNDARY_FILES),
@@ -603,6 +615,7 @@ def apply_patch(donor_root: Path) -> dict:
         "knowledge_base_rebuild_defaults_to_replace": True,
         "knowledge_base_rebuild_clear_fails_closed": True,
         "persisted_collection_metadata_validated": True,
+        "collection_contract_mismatch_fails_closed": True,
         "similarity_transform": "1 - cosine_distance",
         "files_touched_to_swap_model_provider_after_boundary": 0,
         "files_touched_to_swap_embedding_provider_after_boundary": 0,
