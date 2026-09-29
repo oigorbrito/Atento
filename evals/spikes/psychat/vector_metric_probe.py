@@ -216,34 +216,46 @@ def main() -> int:
 
         semantic_status = "EXPLICIT_COSINE_VERSIONED_INDEX"
 
+        pre_clear_name = store.collection_name
+        pre_clear_collection = store.collection
         if not store.clear_collection():
             raise AssertionError("patched clear_collection failed")
-        if RecordingClient.last_deleted_name != collection_name:
+        cleared_name = store.collection_name
+        if cleared_name == pre_clear_name:
             raise AssertionError(
-                "patched clear_collection deleted the wrong collection: "
-                f"{RecordingClient.last_deleted_name!r}"
+                "atomic clear must promote a new empty generation"
             )
-        if RecordingClient.last_created_name != collection_name:
+        if pre_clear_name not in RecordingClient.collections:
             raise AssertionError(
-                "patched clear_collection recreated the wrong collection: "
-                f"{RecordingClient.last_created_name!r}"
+                "atomic clear deleted the previously active generation"
             )
-        recreated = dict(RecordingClient.last_created_metadata or {})
+        if RecordingClient.collections[pre_clear_name] is not pre_clear_collection:
+            raise AssertionError(
+                "previous active generation identity changed during clear"
+            )
+        if store.collection.count() != 0:
+            raise AssertionError("atomic clear promoted a non-empty generation")
+        clear_pointer = json.loads(
+            store.pointer_path.read_text(encoding="utf-8")
+        )["active_collection"]
+        if clear_pointer != cleared_name:
+            raise AssertionError("atomic clear pointer does not match empty generation")
+        recreated = dict(store.collection.metadata or {})
         if recreated.get("hnsw:space") != "cosine":
             raise AssertionError(
-                f"recreated collection lost cosine metric: {recreated!r}"
+                f"cleared generation lost cosine metric: {recreated!r}"
             )
         if recreated.get("atento:index_schema") != "rag-cosine-v1":
             raise AssertionError(
-                f"recreated collection lost index schema: {recreated!r}"
+                f"cleared generation lost index schema: {recreated!r}"
             )
         if recreated.get("atento:embedding_identity") != StubEmbeddingGateway.index_identity:
             raise AssertionError(
-                f"recreated collection lost embedding identity: {recreated!r}"
+                f"cleared generation lost embedding identity: {recreated!r}"
             )
         if recreated.get("atento:corpus_identity") != corpus_identity:
             raise AssertionError(
-                f"recreated collection lost corpus identity: {recreated!r}"
+                f"cleared generation lost corpus identity: {recreated!r}"
             )
 
         info = store.get_collection_info()
@@ -393,7 +405,7 @@ def main() -> int:
                 )
 
     report = {
-        "metric_version": "psychat-vector-metric-v0.12",
+        "metric_version": "psychat-vector-metric-v0.13",
         "runtime_shape": args.expect,
         "collection_name": collection_name,
         "collection_metadata": metadata,
@@ -452,12 +464,21 @@ def main() -> int:
         "clear_collection_contract_preserved": (
             args.expect != "patched"
             or (
-                RecordingClient.last_deleted_name == collection_name
-                and RecordingClient.last_created_name == collection_name
-                and (RecordingClient.last_created_metadata or {}).get("hnsw:space") == "cosine"
-                and (RecordingClient.last_created_metadata or {}).get("atento:index_schema") == "rag-cosine-v1"
-                and (RecordingClient.last_created_metadata or {}).get("atento:embedding_identity") == StubEmbeddingGateway.index_identity
-                and (RecordingClient.last_created_metadata or {}).get("atento:corpus_identity") == corpus_identity
+                cleared_name != pre_clear_name
+                and pre_clear_name in RecordingClient.collections
+                and store.collection.count() >= 0
+                and recreated.get("hnsw:space") == "cosine"
+                and recreated.get("atento:index_schema") == "rag-cosine-v1"
+                and recreated.get("atento:embedding_identity") == StubEmbeddingGateway.index_identity
+                and recreated.get("atento:corpus_identity") == corpus_identity
+            )
+        ),
+        "clear_collection_atomic_empty_generation": (
+            args.expect != "patched"
+            or (
+                clear_pointer == cleared_name
+                and store.collection.count() >= 0
+                and pre_clear_name in RecordingClient.collections
             )
         ),
         "threshold": 0.15,
