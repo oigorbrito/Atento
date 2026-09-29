@@ -1,20 +1,22 @@
 # ADR-000 — Fork vs Greenfield
 
+> **DECISION RESET — 2026-09-29:** a evidência abaixo é preservada, mas nenhuma seleção, ordem de execução, shortlist ou gate derivado desta ADR possui autoridade decisória enquanto a reconciliação conceitual de NAIA/Anna/Apollo estiver aberta. Não apagar medições já produzidas; revalidar apenas as conclusões.
+
 ## Document contract
 
-Esta ADR possui **uma única responsabilidade**: decidir a estratégia de adoção de upstream para a base executiva do Atento.
+Esta ADR preserva a pesquisa histórica sobre estratégias de adoção de upstream. Seu escopo decisório está **reaberto** porque a reconciliação anterior misturou candidatos a chassis completos, donors de blocos, modelos e benchmarks.
 
 Ela deve conter contexto, alternativas, evidência do spike, decisão e consequências. Não é roadmap, não é registry de licenças e não é benchmark spec.
 
 A fonte canônica de progresso continua sendo `roadmap.md`; a fonte canônica de licenças/provenance é `docs/third-party.md`.
 
-- **Status:** Proposed
+- **Status:** Reopened — `DECISION_RESET`
 - **Date:** TBD
 - **Decision owners:** TBD
 
 ## Context
 
-O Atento pode ser implementado como arquitetura própria, selective port, **full donor**, fork de um projeto existente, model adapter ou combinação dessas estratégias. O projeto autoriza adoção integral de donors quando a evidência mostrar vantagem. Esta ADR deve ser concluída antes da migração dos blocos para a base executiva definitiva.
+O Atento pode ser implementado como arquitetura própria, selective port, **full donor**, fork de um projeto existente, model adapter ou combinação dessas estratégias. O projeto autoriza adoção integral de donors quando a evidência mostrar vantagem. Não usar esta ADR como gate de migração até que os conjuntos de candidatos de **NAIA** e **Anna** sejam reconstruídos por categoria equivalente.
 
 ## Candidates
 
@@ -71,7 +73,7 @@ Adoção integral não é penalizada por princípio. O donor pode ser copiado/fo
 
 A autorização interna do projeto não substitui os termos externos de redistribuição; isso é registrado separadamente em `docs/third-party.md`.
 
-## Evaluation matrix
+## Historical evaluation matrix — non-authoritative
 
 Preencher de 0–5:
 
@@ -176,7 +178,7 @@ Esse registro documenta:
 
 O documento **não seleciona um vencedor** e não altera o status `Proposed` desta ADR.
 
-## Mandatory spike results
+## Historical spike checklist — inactive
 
 ### Upstream execution
 - [ ] PsyChat runs unchanged
@@ -220,9 +222,11 @@ estimated_greenfield_effort:
 
 A porcentagem de código retido é informativa, não decisiva. Full donor continua válido se o ganho sistêmico em tempo, qualidade, safety, custo e manutenção for melhor.
 
-## Acceptance criteria
+## Historical acceptance criteria — inactive
 
-Esta ADR só pode mudar de `Proposed` para `Accepted` quando:
+Os critérios abaixo pertencem à formulação anterior e ficam preservados somente como histórico. Eles não autorizam seleção nem bloqueiam a nova enumeração de candidatos.
+
+A formulação anterior exigia:
 
 - o upstream selecionado tiver sido executado sem alteração ou a impossibilidade estiver documentada;
 - termos externos e estratégia de armazenamento/redistribuição tiverem sido registrados;
@@ -232,17 +236,17 @@ Esta ADR só pode mudar de `Proposed` para `Accepted` quando:
 - riscos de safety/privacidade/provider coupling estiverem documentados;
 - a decisão indicar estratégia de sync/rollback.
 
-## Decision
+## Decision reset
 
 ```yaml
-decision: TBD # full-donor | fork | selective-port | native | hybrid | model-adapter
-primary_reason:
-upstream_sync_strategy:
-modules_reused:
-modules_reimplemented:
-model_strategy:
-external_terms_note:
-data_provenance:
+decision: NOT_SELECTED
+status: DECISION_RESET
+naia_base: NOT_SELECTED
+anna_base: NOT_SELECTED
+adoption_mode: NOT_SELECTED
+reason: product framing and candidate equivalence are being reconciled
+preserve_existing_measurements: true
+reuse_existing_evidence: true
 ```
 
 ## Consequences
