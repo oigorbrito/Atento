@@ -169,21 +169,21 @@ def patch_vector_store(path: Path) -> None:
     )
     text = replace_once(
         text,
-        "name=COLLECTION_NAME,",
-        "name=self.collection_name,",
-        label="VectorStore versioned collection name",
-    )
-    text = replace_once(
-        text,
-        'metadata={"description": "MCP知识库向量存储"}',
-        'metadata={'
-        '"description": "MCP知识库向量存储", '
-        '"hnsw:space": "cosine", '
-        '"atento:index_schema": ATENTO_INDEX_SCHEMA_VERSION, '
-        '"atento:embedding_identity": self.embedding_identity, '
-        '"atento:corpus_identity": self.corpus_identity'
-        '}',
-        label="VectorStore cosine distance metric",
+        "        self.collection = self.client.get_or_create_collection(\n"
+        "            name=COLLECTION_NAME,\n"
+        "            metadata={\"description\": \"MCP知识库向量存储\"}\n"
+        "        )",
+        "        self.collection = self.client.get_or_create_collection(\n"
+        "            name=self.collection_name,\n"
+        "            metadata={\n"
+        "                \"description\": \"MCP知识库向量存储\",\n"
+        "                \"hnsw:space\": \"cosine\",\n"
+        "                \"atento:index_schema\": ATENTO_INDEX_SCHEMA_VERSION,\n"
+        "                \"atento:embedding_identity\": self.embedding_identity,\n"
+        "                \"atento:corpus_identity\": self.corpus_identity,\n"
+        "            }\n"
+        "        )",
+        label="VectorStore versioned cosine collection contract",
     )
     text = replace_once(
         text,
@@ -541,7 +541,7 @@ def apply_patch(donor_root: Path) -> dict:
     retention = retention_metrics(donor_root)
 
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.9",
+        "metric_version": "psychat-minimal-fork-patch-v0.10",
         "pinned_commit": head_before,
         "changed_files": changed,
         "donor_files_touched_to_introduce_provider_boundary": len(PROVIDER_BOUNDARY_FILES),
