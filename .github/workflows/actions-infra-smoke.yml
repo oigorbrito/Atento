@@ -13,8 +13,14 @@ permissions:
 
 jobs:
   smoke:
-    name: Runner smoke
-    runs-on: ubuntu-latest
+    name: Runner smoke (${{ matrix.runner }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-latest
+          - ubuntu-24.04
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Echo
         run: echo "actions-runner-ok"
