@@ -204,13 +204,15 @@ Qualification-start snapshot:
 
 `df97da27f07f6655d5678bdbf1f6f9e460678013`
 
-Upstream had advanced to:
+Qualification repin on 2026-09-29:
 
-`17cb0b6bf797d2d350f7268c00464b00aff7729a`
+`e9571d77e76bd6d35996273d9e8398ad539b26e1`
 
-during the same-day audit.
+The repin was 8 commits ahead of the previously observed `17cb0b6bf797d2d350f7268c00464b00aff7729a`.
 
-Therefore the next qualification run must re-pin before relying on "latest" behavior.
+Detailed evidence record:
+
+`docs/evaluation/openclaw-qualification-2026-09-29.md`
 
 #### Product surface
 
@@ -252,19 +254,24 @@ Observed recovery contracts include checks around:
 
 Later lineage is not automatically allowed to recreate missing historical authority.
 
-#### Approval evidence
+#### Policy/approval result
 
-Observed exec approvals:
+OpenClaw exposes:
 
-- persistent SQLite-backed state;
-- layered tool policy + allowlist + approval;
-- cancellation invalidates pending authority;
-- late approval cannot restart cancelled work;
-- standing/durable grant concepts.
+- persistent SQLite-backed approval state;
+- `deny`, `allowlist`, `ask`, `auto` and `full` exec modes;
+- layered host/config policy;
+- executable binding and revalidation;
+- plugin tool-policy/approval hooks;
+- cancellation and stale-authority defenses.
 
-#### Durable outbound evidence
+These primitives are strong, but the documented general-purpose defaults are not the Nayá target.
 
-Observed channel-message lifecycle includes concepts equivalent to:
+Nayá requires an explicit fail-closed hardening profile rather than inheriting permissive/trusted-operator assumptions.
+
+#### Durable outbound vs generic tool effects
+
+Channel-message delivery has strong durable semantics:
 
 ```text
 queued
@@ -274,33 +281,81 @@ failed
 unknown
 ```
 
-with persisted queue/recovery, delivery intent and idempotency/receipt machinery.
+with persisted intent, queue recovery, receipts and optional provider reconciliation for ambiguous sends.
 
-This is strong evidence for message delivery.
+However OpenClaw explicitly does not claim exactly-once external tool/provider effects generally.
 
-It does **not yet prove** a generalized exactly-once contract for arbitrary SaaS/tool side effects.
+Therefore:
 
-#### Unresolved qualification questions
+```text
+OUTBOUND_DELIVERY_DURABILITY   = STRONG_EVIDENCE
+GENERIC_TOOL_EFFECT_DURABILITY = NOT_PROVEN
+```
 
-1. Do arbitrary tool writes receive a general operation/effect reconciliation protocol, or are strongest guarantees channel-specific?
-2. How does default trust/exec policy compare with Nayá's intended least-privilege posture?
-3. Can personal memory be scoped appropriately while Therapy remains completely outside its authority?
-4. What code/change surface is required to impose Nayá-specific policy?
-5. Which current security assumptions require modification?
-6. Which local tests remain after using upstream evidence?
+A universal generic effect protocol would be cross-cutting; controlled high-risk adapters can instead implement localized idempotency/readback/reconciliation contracts.
+
+#### Memory and Therapist boundary
+
+OpenClaw supports per-agent:
+
+- workspace;
+- `agentDir`;
+- SQLite session store;
+- auth/config state;
+- same-agent built-in memory search.
+
+But:
+
+- plugin storage can require explicit per-agent scoping;
+- cross-agent session access is not narrow by default;
+- workspace alone is not a hard sandbox;
+- one Gateway is documented as trusted-operator infrastructure rather than a hostile multi-tenant boundary.
+
+Therefore ADR-001's strict Assistant ↔ Therapist authority boundary should use separate Gateway/runtime boundaries (or an equivalent independent service boundary), connected only through the explicit handoff broker.
+
+#### Change surface / invasiveness
+
+```text
+PRODUCT_ADAPTATION                = LOW_TO_MODERATE
+NAYA_SECURITY_HARDENING           = MODERATE
+STRICT_THERAPY_BOUNDARY           = DEPLOYMENT_TOPOLOGY_CHANGE
+UNIVERSAL_GENERIC_EFFECT_PROTOCOL = CROSS_CUTTING_IF_REQUIRED
+CRITICAL_TOOL_EFFECT_PROTOCOL     = LOCALIZED_IF_ADAPTER_CONTROLLED
+```
+
+The candidate exposes enough config/plugin seams that the ordinary Nayá product and policy adaptation does not currently imply a deep fork.
+
+#### Local tests that still matter
+
+Do not repeat upstream persistence/restart/channel benchmarks.
+
+Run only:
+
+- `OC-NAYA-001` — fail-closed authority profile;
+- `OC-NAYA-002` — arbitrary external-action crash ambiguity;
+- `OC-NAYA-003` — Assistant ↔ Therapist isolation;
+- `OC-NAYA-004` — plugin/global-store negative isolation;
+- `OC-NAYA-005` — integration touchpoint count.
 
 #### Current disposition
 
 ```text
-PRODUCT_MATURITY               = STRONG
-PERSISTENT_ASSISTANT_FIT       = STRONG
-RESTART_RECOVERY               = STRONG_EVIDENCE
-STALE_AUTHORITY_DEFENSE        = STRONG_EVIDENCE
-OUTBOUND_DELIVERY_DURABILITY   = STRONG_EVIDENCE
-GENERIC_TOOL_EFFECT_DURABILITY = NOT_YET_QUALIFIED
-NAYA_POLICY_FIT                = NOT_YET_QUALIFIED
-STATUS                         = STRONG_CANDIDATE / QUALIFICATION_IN_PROGRESS
+PRODUCT_MATURITY                = STRONG
+PERSISTENT_ASSISTANT_FIT        = STRONG
+RESTART_RECOVERY                = STRONG_EVIDENCE
+STALE_AUTHORITY_DEFENSE         = STRONG_EVIDENCE
+OUTBOUND_DELIVERY_DURABILITY    = STRONG_EVIDENCE
+POLICY_PRIMITIVES               = STRONG
+NAYA_POLICY_DEFAULT_FIT         = NEEDS_HARDENING
+PER_AGENT_CORE_STATE_ISOLATION  = STRONG
+STRICT_THERAPY_BOUNDARY         = SEPARATE_RUNTIME_REQUIRED
+GENERIC_TOOL_EFFECT_DURABILITY  = NOT_PROVEN
+LICENSE                         = MIT
+STATUS                          = STRONG_CANDIDATE / STATIC_QUALIFICATION_COMPLETE
+LOCAL_DELTA_TESTS               = PENDING
 ```
+
+No winner selected.
 
 ---
 
@@ -313,10 +368,12 @@ STATUS                         = STRONG_CANDIDATE / QUALIFICATION_IN_PROGRESS
 | Interrupted-turn recovery | not proven at OpenClaw level | contracts/research, less product integration | strong evidence |
 | Background/routines | strong | modules present | strong |
 | Multi-provider | strong | strong contract | strong |
-| Explicit policy/approval | needs reinforcement | strong | strong, different trust model |
+| Explicit policy/approval | needs reinforcement | strong | strong primitives; Nayá hardening required |
 | Stale execution defense | present | explicit research/contracts | strong evidence |
 | Durable outbound messaging | partial evidence | ambiguity remains | strong evidence |
-| Generic external-effect durability | not proven | not proven | not yet qualified |
+| Generic external-effect durability | not proven | not proven | not proven; explicitly not a general exactly-once claim |
+| Memory / bounded-context isolation | needs reinforcement | strong authority concepts, lower product integration | strong per-agent core state; strict Therapy boundary needs separate runtime |
+| Adaptation surface | product-rich; authority reinforcement required | higher product integration/build cost | low/moderate product adaptation; moderate hardening; generic effect protocol structural if universal |
 | Final selection | no | no | no |
 
 ## Local-test rule
@@ -339,19 +396,21 @@ decision: TBD
 winner: NOT_SELECTED
 openmausbot: strong-base-candidate
 naia: architectural-donor-and-higher-build-cost-base-candidate
-openclaw: qualification-in-progress
-next_required_block: finish-openclaw-qualification
+openclaw: strong-candidate-static-qualification-complete
+next_required_block: execute-openclaw-material-local-deltas-then-compare-finalists
 ```
 
 ## Acceptance criteria
 
 Before this ADR can be accepted:
 
-- [ ] OpenClaw qualification completed at a newly pinned revision
-- [ ] generic external-effect semantics compared across candidates
-- [ ] policy/approval fit compared
-- [ ] memory/privacy boundaries compared
-- [ ] change surface / invasiveness measured
-- [ ] current security assumptions reviewed
-- [ ] license/provenance constraints confirmed
-- [ ] same decision protocol applied to all finalists
+- [x] OpenClaw static qualification completed at a newly pinned revision
+- [x] generic external-effect semantics characterized for OpenClaw and compared with existing finalist evidence
+- [x] policy/approval fit analyzed
+- [x] memory/privacy boundaries analyzed
+- [x] current security assumptions reviewed
+- [x] license/provenance constraints confirmed
+- [ ] OC-NAYA-001 through OC-NAYA-005 executed against the pinned candidate
+- [ ] empirical change surface / invasiveness recorded from OC-NAYA-005
+- [ ] same decision protocol applied to all finalists after local deltas
+- [ ] final base decision recorded
