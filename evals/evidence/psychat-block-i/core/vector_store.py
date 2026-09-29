@@ -249,7 +249,10 @@ class VectorStore:
             return {
                 'name': self.collection_name,
                 'document_count': count,
-                'path': CHROMA_DB_PATH
+                'path': CHROMA_DB_PATH,
+                'index_schema': ATENTO_INDEX_SCHEMA_VERSION,
+                'embedding_identity': self.embedding_identity,
+                'corpus_identity': self.corpus_identity,
             }
         except Exception as e:
             print(f"获取集合信息时出错: {e}")
