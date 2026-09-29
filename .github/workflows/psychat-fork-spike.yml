@@ -28,7 +28,7 @@ jobs:
         run: python -m unittest discover -s evals/tests -p "test_*.py" -v
 
   psychat-static:
-    name: PsyChat static and isolation baseline
+    name: PsyChat upstream, isolation and fork patch
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -43,7 +43,7 @@ jobs:
           git checkout 5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4
           test "$(git rev-parse HEAD)" = "5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4"
 
-      - name: Compile donor Python sources
+      - name: Compile upstream donor Python sources
         run: |
           python -m compileall -q             /tmp/PsyChat/agent             /tmp/PsyChat/core             /tmp/PsyChat/data             /tmp/PsyChat/main.py             /tmp/PsyChat/config.py
 
@@ -59,41 +59,51 @@ jobs:
         run: |
           python evals/spikes/psychat/change_surface_probe.py             --donor-root /tmp/PsyChat             --output evals/results/psychat_change_surface.json
 
-      - name: Apply minimal real fork patch
-        run: |
-          python evals/spikes/psychat/apply_minimal_fork_patch.py --donor-root /tmp/PsyChat
-
-      - name: Validate exact minimal fork surface
-        run: |
-          python evals/spikes/psychat/minimal_fork_probe.py \
-            --donor-root /tmp/PsyChat \
-            --output evals/results/psychat_minimal_fork.json
-
-      - name: Static composed donor plus Atento chassis audit
+      - name: Audit unpatched donor plus Atento wrapper
         run: |
           rm -rf /tmp/PsyChatComposed
           cp -R /tmp/PsyChat /tmp/PsyChatComposed
           mkdir -p /tmp/PsyChatComposed/atento_adapter
           cp -R evals/spikes/psychat/adapter/. /tmp/PsyChatComposed/atento_adapter/
-          python evals/chassis/donor_static_audit.py             --root /tmp/PsyChatComposed             --source-id SRC-PSYCHAT+SRC-ATENTO             --upstream-commit 5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4             --output evals/results/psychat_composed_chassis.json
+          python evals/chassis/donor_static_audit.py             --root /tmp/PsyChatComposed             --source-id SRC-PSYCHAT+SRC-ATENTO-WRAPPER             --upstream-commit 5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4             --output evals/results/psychat_unpatched_composed_chassis.json
+
+      - name: Apply minimal BLOCO I fork patch
+        run: |
+          python evals/spikes/psychat/minimal_fork_patch.py             --donor-root /tmp/PsyChat             --output evals/results/psychat_minimal_fork_patch.json
+
+      - name: Compile patched RAG donor surface
+        run: |
+          python -m compileall -q             /tmp/PsyChat/agent/psychology_agent.py             /tmp/PsyChat/core/vector_store.py             /tmp/PsyChat/core/rag_system.py
+
+      - name: Audit patched BLOCO I donor plus Atento chassis
+        run: |
+          rm -rf /tmp/PsyChatRagBlock
+          mkdir -p             /tmp/PsyChatRagBlock/agent             /tmp/PsyChatRagBlock/core             /tmp/PsyChatRagBlock/atento_adapter
+          cp /tmp/PsyChat/agent/psychology_agent.py /tmp/PsyChatRagBlock/agent/
+          cp /tmp/PsyChat/core/vector_store.py /tmp/PsyChatRagBlock/core/
+          cp /tmp/PsyChat/core/rag_system.py /tmp/PsyChatRagBlock/core/
+          cp -R evals/spikes/psychat/adapter/. /tmp/PsyChatRagBlock/atento_adapter/
+          python evals/chassis/donor_static_audit.py             --root /tmp/PsyChatRagBlock             --source-id SRC-PSYCHAT-RAG-PATCH+SRC-ATENTO             --upstream-commit 5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4             --output evals/results/psychat_patched_rag_chassis.json
 
       - name: Print reports
         run: |
           cat evals/results/psychat_real_isolation.json
           cat evals/results/psychat_change_surface.json
-          cat evals/results/psychat_minimal_fork.json
           cat evals/results/psychat_static_chassis.json
-          cat evals/results/psychat_composed_chassis.json
+          cat evals/results/psychat_unpatched_composed_chassis.json
+          cat evals/results/psychat_minimal_fork_patch.json
+          cat evals/results/psychat_patched_rag_chassis.json
 
       - uses: actions/upload-artifact@v4
         with:
-          name: psychat-upstream-evidence
+          name: psychat-block-i-evidence
           path: |
             evals/results/psychat_real_isolation.json
             evals/results/psychat_change_surface.json
-            evals/results/psychat_minimal_fork.json
             evals/results/psychat_static_chassis.json
-            evals/results/psychat_composed_chassis.json
+            evals/results/psychat_unpatched_composed_chassis.json
+            evals/results/psychat_minimal_fork_patch.json
+            evals/results/psychat_patched_rag_chassis.json
           if-no-files-found: error
 
   adapted-static:
