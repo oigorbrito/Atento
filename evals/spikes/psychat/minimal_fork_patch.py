@@ -162,6 +162,13 @@ def patch_vector_store(path: Path) -> None:
         self.collection_name = (
             f"{COLLECTION_NAME}__{ATENTO_INDEX_SCHEMA_VERSION}__{identity_hash}"
         )
+        self.expected_collection_metadata = {
+            "description": "MCP知识库向量存储",
+            "hnsw:space": "cosine",
+            "atento:index_schema": ATENTO_INDEX_SCHEMA_VERSION,
+            "atento:embedding_identity": self.embedding_identity,
+            "atento:corpus_identity": self.corpus_identity,
+        }
 
         # 初始化ChromaDB客户端
 """,
@@ -175,27 +182,29 @@ def patch_vector_store(path: Path) -> None:
         "        )",
         "        self.collection = self.client.get_or_create_collection(\n"
         "            name=self.collection_name,\n"
-        "            metadata={\n"
-        "                \"description\": \"MCP知识库向量存储\",\n"
-        "                \"hnsw:space\": \"cosine\",\n"
-        "                \"atento:index_schema\": ATENTO_INDEX_SCHEMA_VERSION,\n"
-        "                \"atento:embedding_identity\": self.embedding_identity,\n"
-        "                \"atento:corpus_identity\": self.corpus_identity,\n"
-        "            }\n"
-        "        )",
+        "            metadata=self.expected_collection_metadata,\n"
+        "        )\n"
+        "        self._validate_collection_contract()",
         label="VectorStore versioned cosine collection contract",
     )
     text = replace_once(
         text,
+        "            count = self.collection.count()\n"
+        "            return {\n"
         "                'name': COLLECTION_NAME,\n"
         "                'document_count': count,\n"
-        "                'path': CHROMA_DB_PATH\n",
+        "                'path': CHROMA_DB_PATH\n"
+        "            }",
+        "            metadata = self._validate_collection_contract()\n"
+        "            count = self.collection.count()\n"
+        "            return {\n"
         "                'name': self.collection_name,\n"
         "                'document_count': count,\n"
         "                'path': CHROMA_DB_PATH,\n"
-        "                'index_schema': ATENTO_INDEX_SCHEMA_VERSION,\n"
-        "                'embedding_identity': self.embedding_identity,\n"
-        "                'corpus_identity': self.corpus_identity,\n",
+        "                'index_schema': metadata['atento:index_schema'],\n"
+        "                'embedding_identity': metadata['atento:embedding_identity'],\n"
+        "                'corpus_identity': metadata['atento:corpus_identity'],\n"
+        "            }",
         label="VectorStore observable collection identity",
     )
     text = replace_once(
@@ -208,14 +217,9 @@ def patch_vector_store(path: Path) -> None:
         "            self.client.delete_collection(self.collection_name)\n"
         "            self.collection = self.client.create_collection(\n"
         "                name=self.collection_name,\n"
-        "                metadata={\n"
-        "                    \"description\": \"MCP知识库向量存储\",\n"
-        "                    \"hnsw:space\": \"cosine\",\n"
-        "                    \"atento:index_schema\": ATENTO_INDEX_SCHEMA_VERSION,\n"
-        "                    \"atento:embedding_identity\": self.embedding_identity,\n"
-        "                    \"atento:corpus_identity\": self.corpus_identity,\n"
-        "                }\n"
-        "            )",
+        "                metadata=self.expected_collection_metadata,\n"
+        "            )\n"
+        "            self._validate_collection_contract()",
         label="VectorStore clear collection contract",
     )
     text = replace_once(
@@ -233,6 +237,24 @@ def patch_vector_store(path: Path) -> None:
                         metadatas=batch_metadatas
                     )""",
         label="VectorStore idempotent document upsert",
+    )
+    text = replace_once(
+        text,
+        "    def get_embedding(self, text: str) -> List[float]:\n",
+        "    def _validate_collection_contract(self) -> Dict[str, Any]:\n"
+        "        metadata = dict(getattr(self.collection, 'metadata', {}) or {})\n"
+        "        mismatches = {\n"
+        "            key: {'expected': expected, 'actual': metadata.get(key)}\n"
+        "            for key, expected in self.expected_collection_metadata.items()\n"
+        "            if metadata.get(key) != expected\n"
+        "        }\n"
+        "        if mismatches:\n"
+        "            raise RuntimeError(\n"
+        "                f\"vector collection metadata mismatch: {mismatches}\"\n"
+        "            )\n"
+        "        return metadata\n\n"
+        "    def get_embedding(self, text: str) -> List[float]:\n",
+        label="VectorStore persisted collection contract validation",
     )
     text = replace_regex_once(
         text,
@@ -548,7 +570,7 @@ def apply_patch(donor_root: Path) -> dict:
     retention = retention_metrics(donor_root)
 
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.11",
+        "metric_version": "psychat-minimal-fork-patch-v0.12",
         "pinned_commit": head_before,
         "changed_files": changed,
         "donor_files_touched_to_introduce_provider_boundary": len(PROVIDER_BOUNDARY_FILES),
@@ -563,6 +585,7 @@ def apply_patch(donor_root: Path) -> dict:
         "vector_collection_namespaced_by_corpus_identity": True,
         "same_identity_rebuild_uses_upsert": True,
         "collection_info_exposes_index_identity": True,
+        "persisted_collection_metadata_validated": True,
         "similarity_transform": "1 - cosine_distance",
         "files_touched_to_swap_model_provider_after_boundary": 0,
         "files_touched_to_swap_embedding_provider_after_boundary": 0,
