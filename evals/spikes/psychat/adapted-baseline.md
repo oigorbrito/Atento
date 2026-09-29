@@ -6,201 +6,267 @@
 - PsyChat donor: `wink-wink-wink555/PsyChat`
 - Pinned donor commit: `5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4`
 - Block: **BLOCO I — Knowledge / RAG**
-- Project Progress impact: **none**. This is spike evidence, not a completed production block.
+- Project Progress impact: **none**. This remains spike evidence.
 
 ## Branch coherence
 
-The spike was reconciled with `main` before continuing the experiment.
-
-At the reconciliation point:
+The spike was reconciled with `main` and remains **0 commits behind** the current
+project baseline used by this spike:
 
 - `main`: `70e54082b99bb055d2cac672a027432da1cdd02a`
-- spike merge commit: `3215339dc227dd88c1cba7a29fbbb2fb531594df`
-- merge-base after reconciliation: current `main`
-- behind `main`: **0**
+- merge-base: current `main` baseline above;
+- PR #1 remains **OPEN / DRAFT**;
+- no merge has been performed.
 
-No PR merge was performed. PR #1 remains draft/open.
+## Upstream chassis baseline
 
-## Deterministic adapter tests
+Pinned PsyChat upstream static baseline remains:
 
-Local deterministic execution on Python 3.13.5:
+> **CFS 10/100**
 
-> **11/11 passed**
+The only passing upstream static check is `routing_boundary`.
 
-Covered behavior:
+This score measures compatibility with the Atento evolvability chassis, not
+conversational quality.
 
-- external session isolation for distinct session IDs;
-- restoration and extraction of donor state;
-- prevention of accidental stateful donor reuse;
-- executor replacement through `CapabilityRegistry`;
-- route-level rollback from alternate executor to PsyChat;
-- addition of a new capability without modifying Registry/Runtime;
-- fail-closed behavior for unknown executor;
-- rejection of invalid structured `RouteDecision`;
-- tracing of executor/capability choice;
-- chassis audit sanity checks.
+## Adapter boundary
 
-### Integration defect found during the block
+The adapter now contains explicit:
 
-The first bridge test used a fake donor whose `generate_response()` returned a string.
+- structured `RouteDecision`, `ExecutionRequest` and `ExecutionResult`;
+- `CapabilityRegistry`;
+- executor protocol / PsyChat executor adapter;
+- output validator;
+- external `SessionStore`;
+- tracing;
+- retry / timeout boundary;
+- independent safety boundary;
+- Model Gateway protocol;
+- RAG trace extraction for AtentoEval.
 
-The real PsyChat `RAGSystem.generate_response()` returns a mapping containing a `response` field.
+### State ownership correction
 
-Therefore the original bridge was not compatible with the pinned donor API even though the fake-based test passed.
+Chassis audit v0.2 distinguishes:
 
-The bridge was corrected to normalize:
+- **ownership**: `self.conversation_history`, `self.no_rag_counter`,
+  `self.last_retrieval_docs`;
+- **bridge access**: `donor.conversation_history = ...` while restoring externally
+  owned state.
 
-- upstream mapping result → `result["response"]`;
-- string result → string, for compatibility with narrow test donors;
-- malformed/empty mapping → fail closed;
-- unsupported result type → fail closed.
+Bridge access is no longer counted as local session-state ownership.
 
-This finding is important evidence against treating fake-port tests alone as sufficient donor-integration proof.
+The adapter-only static CFS must be regenerated under v0.2 before a new numeric
+score is recorded. The previous adapter-only 90/100 value was produced by the
+more conservative v0.1 ownership heuristic and is historical, not the current
+metric result.
 
-## Chassis Fitness
+## Real donor API defect found
 
-### PsyChat upstream
+The original bridge fake returned a string, while pinned PsyChat
+`RAGSystem.generate_response()` returns a mapping.
 
-Static baseline:
+The bridge now:
 
-> **10/100**
+- accepts the real mapping shape;
+- extracts a non-empty `response`;
+- fails closed when `success=False`;
+- still supports a string response for narrow test doubles;
+- restores and extracts:
+  - `conversation_history`;
+  - `no_rag_counter`;
+  - `last_retrieval_docs`.
 
-See `static-baseline.md`.
+This is evidence that fake-port tests alone are insufficient for donor adoption.
 
-### Adapter-only surface
+## Session isolation
 
-Static audit of `evals/spikes/psychat/adapter`:
+`real_isolation_probe.py` loads the pinned donor's actual
+`core/rag_system.py`, replacing only external dependencies with deterministic
+stubs.
 
-> **90/100**
+It is designed to prove two separate facts:
 
-PASS:
+1. the upstream web ownership model (one shared `RAGSystem`) carries mutable
+   history across conceptual clients;
+2. the Atento bridge preserves same-session continuity while isolating a second
+   session.
 
-1. routing boundary
-2. executor abstraction
-3. capability registry
-4. structured contracts
-5. output validation
-6. provider boundary **within the adapter tree**
-7. observability hooks
-8. resilience boundary
-9. independent safety boundary
+The patched provider/lifecycle probe additionally tests reuse of a long-lived
+vector resource across distinct per-session RAG runtimes.
 
-FAIL:
+These dynamic probes are committed but **not yet recorded as passed**, because
+the current GitHub Actions jobs do not execute steps.
 
-- state externalization
+## Minimal BLOCO I fork patch
 
-The static state check is conservative because the bridge references donor fields such as
-`donor.conversation_history`, `donor.no_rag_counter` and
-`donor.last_retrieval_docs` while restoring/extracting externally owned state.
+The canonical patch is:
 
-### Important interpretation: adapter-only CFS is not composed-system CFS
+`evals/spikes/psychat/minimal_fork_patch.py`
 
-The adapter contains a `ModelGateway` protocol and no direct provider HTTP calls.
+It deliberately excludes donor web/TTS chassis and patches only RAG-core source:
 
-The pinned donor underneath it still contains direct provider calls.
+- `agent/psychology_agent.py` — inject model gateway;
+- `core/vector_store.py` — inject embedding gateway;
+- `core/rag_system.py` — inject long-lived dependencies and remove direct LLM
+  access.
 
-Therefore:
+The patch fails closed on donor source drift and requires the pinned clean
+worktree.
 
-> **The real provider boundary is NOT yet solved by the thin wrapper.**
+### Provider cost semantics
 
-A composed donor+adapter static audit was added to CI so the adapter cannot hide donor bypasses by being audited in isolation.
+Two different costs are measured:
 
-The composed audit is not yet recorded as passed because GitHub Actions has not allocated a runner.
+**Boundary introduction cost**
 
-## Change-surface / replaceability
+Expected exact donor patch surface:
 
-### Executor replacement
+> **3 donor RAG files**
 
-The runtime can register PsyChat and an alternate RAG executor simultaneously.
+This value is asserted by Git diff in the patch probe, but is not promoted to an
+executed PASS until the patch runs against a cloned pinned donor.
 
-Switching between them is controlled by `RouteDecision.executor`.
+**Provider swap after boundary**
 
-Observed result:
+The patched constructors accept model and embedding gateways by injection.
+`provider_replacement_probe.py` verifies that model and embedding providers can
+then be replaced by composition only.
 
-- Registry modifications required: **0**
-- Runtime modifications required: **0**
-- replacement contract test: **PASS**
-- rollback-by-route test: **PASS**
+Expected donor-source edits for a subsequent provider swap:
 
-The final production metric `files_touched_to_swap_executor` should be measured again once the composition root is fixed, because registration wiring is currently inside the spike/test setup.
+> **0 donor files**
 
-### Add capability
+Again, this remains pending dynamic execution.
 
-A second capability (`knowledge.lookup`) was registered and executed through the same Registry/Runtime.
+## Change-surface: executor and capability
 
-Observed result:
+`adapter_change_surface_probe.py` separates runtime selection from implementation
+cost.
 
-- Registry modifications required: **0**
-- Runtime modifications required: **0**
-- capability-extension contract test: **PASS**
+### Swap already-registered executor
 
-The final `files_touched_to_add_capability` must include the eventual executor implementation and composition-registration file; this spike only proves the chassis core does not need modification.
+The Registry resolves executor A, switches to executor B, then rolls back to A.
 
-### Provider replacement
+The probe compares Git status before and after selection.
 
-Still unresolved in the composed donor.
+Target metric:
 
-Pinned upstream evidence remains:
+- `files_touched_to_swap_executor = 0`;
+- rollback must pass.
 
-- LLM provider minimum change-surface: **3 files**
-  - `config.py`
-  - `agent/psychology_agent.py`
-  - `core/rag_system.py`
-- cross-provider implementation/config surface: **at least 5 files**
+### Introduce a new executor
 
-Therefore `files_touched_to_swap_provider` has **not improved yet** merely by wrapping PsyChat.
+The Git seam scenario adds one extension implementation file.
 
-A fork patch or block-level selective port is still required to make the provider boundary real.
+Target metrics:
 
-## Dynamic session-isolation probe
+- total files touched: **1 new extension file**;
+- existing adapter chassis files touched: **0**.
 
-A real-source probe now exists:
+### Add a new capability
 
-`evals/spikes/psychat/real_isolation_probe.py`
+The Git seam scenario adds one new capability implementation file.
 
-It loads the pinned donor's actual `core/rag_system.py` and stubs only external dependencies
-(provider/vector/TTS/data) so that `RAGSystem.generate_response()` remains donor code.
+Target metrics:
 
-The probe checks two conditions:
+- `files_touched_to_add_capability = 1`;
+- existing adapter chassis files touched: **0**.
 
-1. one shared upstream `RAGSystem` instance carries session-A conversation state into the next conceptual session;
-2. `PsyChatRagSystemPort` creates/restores isolated donor state so session-B receives only session-B state.
+These target values are encoded as executable assertions, not yet promoted to
+passed results while CI remains unavailable.
 
-The upstream web source independently shows a process-global:
+## AtentoEval RAG surface
 
-```python
-rag_system = RAGSystem()
-```
+AtentoEval now has deterministic RAG fields:
 
-However, the dynamic probe has **not yet executed in CI**, so the upstream finding remains a
-**cross-session isolation risk**, not a recorded confirmed leak.
+- `rag_required`;
+- `rag_document_ids`.
 
-## CI condition
+Metrics now include:
 
-Latest workflow attempts continue to finish before runner allocation:
+- `rag_route_hit`;
+- `rag_retrieval_precision`;
+- `rag_retrieval_recall`;
+- `rag_retrieval_f1`.
+
+The PsyChat adapter emits a `rag.completed` trace that distinguishes:
+
+- `attempted` — the donor entered the RAG branch;
+- `used` — retrieved evidence was actually used;
+- `retrieved_ids`;
+- `retrieved_count`.
+
+Turn-only donor metadata is removed before state is persisted.
+
+### RAG v0 cases
+
+`evals/cases/rag_v0.jsonl` currently contains **20** synthetic deterministic
+cases, including:
+
+- retrieval-positive cases;
+- negative controls;
+- contextual cases;
+- insufficient-evidence behavior;
+- four cases mapped to document IDs in the pinned PsyChat corpus.
+
+The four PsyChat-mapped cases pin both:
+
+- `gold_source = SRC-PSYCHAT`;
+- `gold_commit = 5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4`.
+
+`rag_harness_probe.py` is a **plumbing probe only**. It verifies that fixture
+route/retrieval data survives adapter → trace → AtentoEval scoring. It must not
+be interpreted as donor quality performance.
+
+Actual PsyChat RAG quality comparison remains pending real execution.
+
+## CI / execution state
+
+Latest observed Actions behavior remains:
 
 - jobs are created;
-- conclusion is reported as `failure`;
-- job steps are absent / empty;
-- no checkout, Python command, donor clone or test executes.
+- jobs finish with conclusion `failure`;
+- job `steps` are empty;
+- job logs do not exist (log fetch returns `BlobNotFound`);
+- no checkout, Python process, donor clone or test command runs.
 
 Classification:
 
 > **INFRA FAILURE**
 
-Do not record these runs as functional failures of PsyChat or the adapter.
+This is neither a PsyChat functional failure nor a passing test.
 
-## Current status
+The local execution environment also cannot resolve `github.com`, so it cannot
+clone the pinned donor as an alternate execution path.
+
+## Current evidence boundary
+
+Defensible now:
+
+- upstream CFS baseline is poor for direct chassis adoption;
+- wrapper boundaries materially improve replaceability structure;
+- a thin wrapper alone cannot remove upstream provider coupling;
+- a minimal RAG-core fork patch can be specified with a narrow three-file
+  adaptation surface;
+- provider/executor/capability replacement seams are encoded as executable,
+  Git-measured probes;
+- multi-session isolation, resource lifecycle and AtentoEval RAG plumbing have
+  executable probes;
+- the RAG test set is materially broader than the original seed cases.
+
+Not yet defensible:
+
+- marking the new dynamic probes PASS;
+- recording new adapted/composed CFS numbers;
+- claiming actual PsyChat RAG quality, cost or latency;
+- concluding ADR-000;
+- increasing Project Progress.
+
+## Status
 
 **BLOCO I — RAG: IN_PROGRESS**
 
-Evidence now supports:
-
-- the Atento chassis can improve replaceability around the donor;
-- a fake donor can mask real API incompatibilities, so real-source probes are mandatory;
-- the thin wrapper alone does not solve the donor's provider coupling;
-- real-source session isolation and composed-system CFS remain blocked by CI infrastructure;
-- AtentoEval RAG quality/cost/latency comparison remains pending.
-
-Do not conclude ADR-000 from this baseline alone.
-Do not increase Project Progress from this spike evidence alone.
+The next required evidence is execution of the committed probes against the
+pinned donor, followed by actual AtentoEval RAG comparison. If runner execution
+remains unavailable, that is an objective external blocker for closing this
+spike.
