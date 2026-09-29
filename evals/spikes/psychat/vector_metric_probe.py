@@ -44,6 +44,8 @@ class StubSettings:
 
 
 class StubEmbeddingGateway:
+    index_identity = "stub:text-embedding-v4:v1"
+
     def embed(self, *, text):
         return [1.0, 0.0]
 
@@ -102,6 +104,7 @@ def main() -> int:
     collection_name = RecordingClient.last_name
     explicit_space = metadata.get("hnsw:space")
     index_schema = metadata.get("atento:index_schema")
+    embedding_identity = metadata.get("atento:embedding_identity")
 
     if args.expect == "upstream":
         if explicit_space is not None:
@@ -124,20 +127,27 @@ def main() -> int:
             raise AssertionError(
                 f"patched donor must stamp index schema, got {index_schema!r}"
             )
-        if collection_name != "psychology_knowledge__rag-cosine-v1":
+        expected_prefix = "psychology_knowledge__rag-cosine-v1__"
+        if not collection_name.startswith(expected_prefix):
             raise AssertionError(
-                f"patched donor must use a versioned collection name, got {collection_name!r}"
+                "patched donor must namespace the versioned collection by "
+                f"embedding identity, got {collection_name!r}"
+            )
+        if embedding_identity != StubEmbeddingGateway.index_identity:
+            raise AssertionError(
+                "patched donor must persist embedding identity metadata, got "
+                f"{embedding_identity!r}"
             )
         semantic_status = "EXPLICIT_COSINE_VERSIONED_INDEX"
 
         if not store.clear_collection():
             raise AssertionError("patched clear_collection failed")
-        if RecordingClient.last_deleted_name != "psychology_knowledge__rag-cosine-v1":
+        if RecordingClient.last_deleted_name != collection_name:
             raise AssertionError(
                 "patched clear_collection deleted the wrong collection: "
                 f"{RecordingClient.last_deleted_name!r}"
             )
-        if RecordingClient.last_created_name != "psychology_knowledge__rag-cosine-v1":
+        if RecordingClient.last_created_name != collection_name:
             raise AssertionError(
                 "patched clear_collection recreated the wrong collection: "
                 f"{RecordingClient.last_created_name!r}"
@@ -151,23 +161,29 @@ def main() -> int:
             raise AssertionError(
                 f"recreated collection lost index schema: {recreated!r}"
             )
+        if recreated.get("atento:embedding_identity") != StubEmbeddingGateway.index_identity:
+            raise AssertionError(
+                f"recreated collection lost embedding identity: {recreated!r}"
+            )
 
     report = {
-        "metric_version": "psychat-vector-metric-v0.3",
+        "metric_version": "psychat-vector-metric-v0.4",
         "runtime_shape": args.expect,
         "collection_name": collection_name,
         "collection_metadata": metadata,
         "index_schema": index_schema,
+        "embedding_identity": embedding_identity,
         "explicit_hnsw_space": explicit_space,
         "similarity_transform_in_donor": "1 - distance",
         "semantic_status": semantic_status,
         "clear_collection_contract_preserved": (
             args.expect != "patched"
             or (
-                RecordingClient.last_deleted_name == "psychology_knowledge__rag-cosine-v1"
-                and RecordingClient.last_created_name == "psychology_knowledge__rag-cosine-v1"
+                RecordingClient.last_deleted_name == collection_name
+                and RecordingClient.last_created_name == collection_name
                 and (RecordingClient.last_created_metadata or {}).get("hnsw:space") == "cosine"
                 and (RecordingClient.last_created_metadata or {}).get("atento:index_schema") == "rag-cosine-v1"
+                and (RecordingClient.last_created_metadata or {}).get("atento:embedding_identity") == StubEmbeddingGateway.index_identity
             )
         ),
         "threshold": 0.15,
