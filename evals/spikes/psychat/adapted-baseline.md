@@ -151,7 +151,7 @@ three provider/lifecycle files.
 Independent Git evidence:
 
 - baseline: `f2317be0fc27b1f4a6a39c5c89f22faf550045bf`;
-- patched: `7c780cd74f23be5e455600e7c0bd21cae60414a1`;
+- patched: `afbd41eca44661e174e144e86620fbf611660420`;
 - ref: `evidence/psychat-rag-block-correctness`.
 
 Approximate original-line retention over all four files: **91.06%**
