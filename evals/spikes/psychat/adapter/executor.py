@@ -75,12 +75,26 @@ class PsyChatExecutorAdapter:
         used_rag = bool(
             turn_metadata.get("used_rag", bool(retrieval_docs))
         )
+        index_info = turn_metadata.get("index", {})
+        if not isinstance(index_info, Mapping):
+            index_info = {}
+
         rag_event = {
             "event": "rag.completed",
             "attempted": attempted,
             "used": used_rag,
             "retrieved_count": len(retrieval_docs),
             "retrieved_ids": retrieved_ids,
+            "index": {
+                key: index_info[key]
+                for key in (
+                    "name",
+                    "index_schema",
+                    "embedding_identity",
+                    "corpus_identity",
+                )
+                if key in index_info
+            },
         }
 
         return ExecutionResult(
