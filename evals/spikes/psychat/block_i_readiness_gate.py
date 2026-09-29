@@ -93,6 +93,7 @@ def main() -> int:
                 and truthy(d, "qa_id_provenance_patch_required")
                 and equals(d, "vector_distance_metric", "cosine")
                 and truthy(d, "vector_clear_preserves_index_contract")
+                and truthy(d, "clear_collection_uses_atomic_empty_generation")
                 and truthy(d, "embedding_identity_required_by_vector_store")
                 and truthy(d, "vector_collection_namespaced_by_embedding_identity")
                 and truthy(d, "vector_collection_namespaced_by_corpus_identity")
@@ -175,6 +176,7 @@ def main() -> int:
                 and equals(d, "explicit_hnsw_space", "cosine")
                 and equals(d, "semantic_status", "EXPLICIT_COSINE_VERSIONED_INDEX")
                 and truthy(d, "clear_collection_contract_preserved")
+                and truthy(d, "clear_collection_atomic_empty_generation")
                 and truthy(d, "embedding_identity")
                 and truthy(d, "corpus_identity")
                 and truthy(d, "corpus_identity_isolated")
@@ -414,7 +416,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.23",
+        "metric_version": "psychat-block-i-readiness-v0.24",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
