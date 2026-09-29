@@ -14,6 +14,11 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--donor-root", type=Path, required=True)
     parser.add_argument("--output", type=Path)
+    parser.add_argument(
+        "--integration-constraints",
+        type=Path,
+        default=Path("evals/spikes/psychat/constraints.txt"),
+    )
     args = parser.parse_args()
     root = args.donor_root
 
@@ -50,11 +55,29 @@ def main() -> int:
         and re.match(r"^chromadb==[^=<>!~]+$", chroma_requirement, re.I)
     )
 
+    constraints = (
+        args.integration_constraints.read_text(encoding="utf-8", errors="ignore").splitlines()
+        if args.integration_constraints.exists()
+        else []
+    )
+    integration_chroma_requirement = next(
+        (
+            line.strip()
+            for line in constraints
+            if line.strip().lower().startswith("chromadb")
+        ),
+        None,
+    )
+    integration_chroma_exact_pinned = bool(
+        integration_chroma_requirement
+        and re.match(r"^chromadb==[^=<>!~]+$", integration_chroma_requirement, re.I)
+    )
+
     committed_index_present = bool(index_paths)
     embedding_key_committed_nonempty = bool(key_match and key_match.group(1).strip())
 
     report = {
-        "metric_version": "psychat-retrieval-readiness-v0.2",
+        "metric_version": "psychat-retrieval-readiness-v0.3",
         "pinned_commit": PINNED_COMMIT,
         "knowledge_corpus_present": bool(knowledge_files),
         "knowledge_file_count": len(knowledge_files),
@@ -64,7 +87,9 @@ def main() -> int:
         "embedding_key_committed_nonempty": embedding_key_committed_nonempty,
         "chroma_requirement": chroma_requirement,
         "chroma_exact_version_pinned": chroma_exact_pinned,
-        "integration_environment_must_pin_chroma": not chroma_exact_pinned,
+        "integration_chroma_requirement": integration_chroma_requirement,
+        "integration_chroma_exact_version_pinned": integration_chroma_exact_pinned,
+        "integration_environment_must_pin_chroma": not integration_chroma_exact_pinned,
         "index_build_required": not committed_index_present,
         "external_embedding_provider_required_for_rebuild": not committed_index_present,
         "repository_alone_reproduces_semantic_retrieval": (
@@ -74,8 +99,9 @@ def main() -> int:
             "The corpus can be source-verified from Git. If no persisted vector "
             "index is committed, semantic retrieval quality requires rebuilding "
             "the index with a configured embedding provider before benchmarking. "
-            "The donor also leaves Chroma as a lower-bound dependency, so the "
-            "Atento integration environment must own an exact compatible version."
+            "The donor leaves Chroma as a lower-bound dependency. AtentoEval "
+            "therefore owns an exact integration constraint instead of inheriting "
+            "the donor's open-ended range."
         ),
     }
 
