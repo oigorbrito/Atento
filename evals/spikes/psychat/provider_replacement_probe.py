@@ -16,6 +16,8 @@ import sys
 import types
 from pathlib import Path
 
+from evals.spikes.psychat.adapter.psychat_bridge import build_patched_factory
+
 
 class StubCollection:
     def count(self):
@@ -200,6 +202,42 @@ def run(donor_root: Path) -> dict:
     if response_b != "B:psychat.rag.response":
         raise AssertionError("RAGSystem did not use model gateway B")
 
+    embedding_mismatch_factory = build_patched_factory(
+        model_gateway=model_a,
+        embedding_gateway=embedding_b,
+        data_processor=StubDataProcessor(),
+        vector_store=vector_a,
+        psychology_agent_factory=lambda: agent_a,
+        tts_service=None,
+    )
+    try:
+        embedding_mismatch_factory()
+    except ValueError as exc:
+        if "embedding gateway" not in str(exc):
+            raise
+    else:
+        raise AssertionError(
+            "composition root accepted a vector store bound to another embedding gateway"
+        )
+
+    model_mismatch_factory = build_patched_factory(
+        model_gateway=model_b,
+        embedding_gateway=embedding_a,
+        data_processor=StubDataProcessor(),
+        vector_store=vector_a,
+        psychology_agent_factory=lambda: agent_a,
+        tts_service=None,
+    )
+    try:
+        model_mismatch_factory()
+    except ValueError as exc:
+        if "model gateway" not in str(exc):
+            raise
+    else:
+        raise AssertionError(
+            "composition root accepted a psychology agent bound to another model gateway"
+        )
+
     # Routing-authority probe: once Atento has selected knowledge.rag, the
     # patched donor must accept force_retrieval from the outer Router instead
     # of re-deciding that no retrieval is needed.
@@ -263,10 +301,11 @@ def run(donor_root: Path) -> dict:
         raise AssertionError("session A state leaked into session B")
 
     return {
-        "metric_version": "psychat-provider-replacement-v0.4",
+        "metric_version": "psychat-provider-replacement-v0.5",
         "model_provider_swap_pass": True,
         "embedding_provider_swap_pass": True,
         "embedding_index_identity_isolated": True,
+        "composition_provider_consistency_pass": True,
         "embedding_a_collection_name": vector_a.collection_name,
         "embedding_b_collection_name": vector_b.collection_name,
         "rag_model_gateway_swap_pass": True,
