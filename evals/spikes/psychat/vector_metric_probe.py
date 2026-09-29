@@ -16,11 +16,13 @@ class StubCollection:
 
 class RecordingClient:
     last_metadata = None
+    last_name = None
 
     def __init__(self, *args, **kwargs):
         pass
 
     def get_or_create_collection(self, *, name, metadata=None, **kwargs):
+        type(self).last_name = str(name)
         type(self).last_metadata = dict(metadata or {})
         return StubCollection()
 
@@ -86,25 +88,43 @@ def main() -> int:
         cls()
 
     metadata = dict(RecordingClient.last_metadata or {})
+    collection_name = RecordingClient.last_name
     explicit_space = metadata.get("hnsw:space")
+    index_schema = metadata.get("atento:index_schema")
 
     if args.expect == "upstream":
         if explicit_space is not None:
             raise AssertionError(
                 f"upstream unexpectedly sets hnsw:space={explicit_space!r}"
             )
+        if collection_name != "psychology_knowledge":
+            raise AssertionError(
+                f"unexpected upstream collection name: {collection_name!r}"
+            )
+        if index_schema is not None:
+            raise AssertionError("upstream unexpectedly sets Atento index schema")
         semantic_status = "IMPLICIT_CHROMA_DEFAULT"
     else:
         if explicit_space != "cosine":
             raise AssertionError(
                 f"patched donor must set hnsw:space=cosine, got {explicit_space!r}"
             )
-        semantic_status = "EXPLICIT_COSINE"
+        if index_schema != "rag-cosine-v1":
+            raise AssertionError(
+                f"patched donor must stamp index schema, got {index_schema!r}"
+            )
+        if collection_name != "psychology_knowledge__rag-cosine-v1":
+            raise AssertionError(
+                f"patched donor must use a versioned collection name, got {collection_name!r}"
+            )
+        semantic_status = "EXPLICIT_COSINE_VERSIONED_INDEX"
 
     report = {
-        "metric_version": "psychat-vector-metric-v0.1",
+        "metric_version": "psychat-vector-metric-v0.2",
         "runtime_shape": args.expect,
+        "collection_name": collection_name,
         "collection_metadata": metadata,
+        "index_schema": index_schema,
         "explicit_hnsw_space": explicit_space,
         "similarity_transform_in_donor": "1 - distance",
         "semantic_status": semantic_status,
