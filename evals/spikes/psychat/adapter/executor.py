@@ -10,7 +10,13 @@ from .resilience import retry_with_timeout_boundary
 class PsyChatDonorPort(Protocol):
     """Narrow seam around the upstream RAG behavior."""
 
-    def respond(self, *, message: str, session_state: dict) -> tuple[str, dict]: ...
+    def respond(
+        self,
+        *,
+        message: str,
+        session_state: dict,
+        force_retrieval: bool = False,
+    ) -> tuple[str, dict]: ...
 
 
 def _retrieval_id(doc: Any) -> str | None:
@@ -44,6 +50,7 @@ class PsyChatExecutorAdapter:
             return self._donor.respond(
                 message=request.message,
                 session_state=dict(request.state),
+                force_retrieval=True,
             )
 
         response, returned_state = retry_with_timeout_boundary(invoke)
