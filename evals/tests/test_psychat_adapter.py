@@ -39,6 +39,27 @@ class FakePsyChatDonor:
         return f"{message}:{count}", {"turns": count}
 
 
+class FakeObservableIndexDonor:
+    def respond(self, *, message, session_state, force_retrieval=False):
+        return "grounded", {
+            **dict(session_state),
+            "last_retrieval_docs": [
+                {"metadata": {"qa_id": "qa-obs", "source": "obs.md"}},
+            ],
+            "_atento_turn": {
+                "rag_attempted": True,
+                "used_rag": True,
+                "sources": [],
+                "index": {
+                    "name": "psychology_knowledge__rag-cosine-v1__abc123",
+                    "index_schema": "rag-cosine-v1",
+                    "embedding_identity": "provider:model:v1",
+                    "corpus_identity": "psychat@pinned",
+                },
+            },
+        }
+
+
 class FakeRetrievalDonor:
     def respond(self, *, message, session_state, force_retrieval=False):
         return "grounded", {
@@ -278,6 +299,33 @@ class PsyChatAdapterTest(unittest.TestCase):
             ["qa-001", "doc-002"],
         )
         self.assertEqual(result.trace[-1]["event"], "executor.completed")
+
+    def test_rag_trace_exposes_index_identity_without_persisting_turn_metadata(self):
+        sessions = InMemorySessionStore()
+        registry = CapabilityRegistry()
+        registry.register(PsyChatExecutorAdapter(FakeObservableIndexDonor()))
+        runtime = PsyChatSpikeRuntime(
+            registry=registry,
+            sessions=sessions,
+        )
+
+        result = runtime.execute(
+            session_id="obs",
+            message="knowledge question",
+            route=route(),
+        )
+
+        rag_event = result.trace[0]
+        self.assertEqual(
+            rag_event["index"],
+            {
+                "name": "psychology_knowledge__rag-cosine-v1__abc123",
+                "index_schema": "rag-cosine-v1",
+                "embedding_identity": "provider:model:v1",
+                "corpus_identity": "psychat@pinned",
+            },
+        )
+        self.assertNotIn("_atento_turn", sessions.load("obs"))
 
     def test_rag_attempt_without_evidence_is_traced_but_not_persisted(self):
         sessions = InMemorySessionStore()
