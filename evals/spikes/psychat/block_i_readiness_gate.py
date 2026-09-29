@@ -97,6 +97,7 @@ def main() -> int:
                 and truthy(d, "vector_collection_namespaced_by_embedding_identity")
                 and truthy(d, "vector_collection_namespaced_by_corpus_identity")
                 and truthy(d, "same_identity_rebuild_uses_upsert")
+                and truthy(d, "collection_info_exposes_index_identity")
             ),
         ),
         (
@@ -166,6 +167,7 @@ def main() -> int:
                 and truthy(d, "corpus_identity")
                 and truthy(d, "corpus_identity_isolated")
                 and truthy(d, "same_identity_rebuild_uses_upsert")
+                and truthy(d, "collection_info_exposes_index_identity")
             ),
         ),
         (
@@ -174,6 +176,7 @@ def main() -> int:
             lambda d: (
                 equals(d, "schema_validation.schema_validation_coverage", 1.0)
                 and equals(d, "trace.trace_coverage", 1.0)
+                and truthy(d, "trace.observable_index_identity_pass")
                 and truthy(d, "rollback.rollback_test_pass")
                 and truthy(d, "safety.independent_safety_enforcement_pass")
                 and truthy(d, "resilience.resilience_boundary_dynamic_pass")
@@ -380,7 +383,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.11",
+        "metric_version": "psychat-block-i-readiness-v0.12",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
