@@ -50,6 +50,20 @@ class ChassisAuditTest(unittest.TestCase):
             self.assertFalse(report["checks"]["provider_boundary"]["pass"])
             self.assertFalse(report["checks"]["state_externalization"]["pass"])
 
+    def test_bridge_access_to_donor_state_is_not_local_state_ownership(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "bridge.py").write_text(
+                "class Bridge:\n"
+                "    def restore(self, donor, state):\n"
+                "        donor.conversation_history = list(state.get('conversation_history', []))\n"
+                "        donor.no_rag_counter = int(state.get('no_rag_counter', 0))\n",
+                encoding="utf-8",
+            )
+            report = audit(root, "TEST")
+            self.assertEqual(report["raw_metrics"]["mutable_session_state_count"], 0)
+            self.assertTrue(report["checks"]["state_externalization"]["pass"])
+
 
 if __name__ == "__main__":
     unittest.main()
