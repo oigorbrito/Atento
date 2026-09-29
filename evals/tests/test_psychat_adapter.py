@@ -80,6 +80,16 @@ class FakeUpstreamRagSystem:
         }
 
 
+class FakeForcedRouteRagSystem(FakeUpstreamRagSystem):
+    def __init__(self):
+        super().__init__()
+        self.force_flags = []
+
+    def generate_response(self, message, force_retrieval=False):
+        self.force_flags.append(bool(force_retrieval))
+        return super().generate_response(message)
+
+
 class FakeRetrievalStateRagSystem(FakeUpstreamRagSystem):
     def generate_response(self, message):
         result = super().generate_response(message)
@@ -245,6 +255,27 @@ class PsyChatAdapterTest(unittest.TestCase):
         self.assertEqual(response, "upstream:hello:5")
         self.assertEqual(state["no_rag_counter"], 5)
         self.assertEqual(len(state["conversation_history"]), 2)
+
+    def test_bridge_can_enforce_atento_rag_route_on_patched_donor(self):
+        created = []
+
+        def factory():
+            donor = FakeForcedRouteRagSystem()
+            created.append(donor)
+            return donor
+
+        port = PsyChatRagSystemPort(
+            factory,
+            force_retrieval=True,
+        )
+        response, _ = port.respond(
+            message="must retrieve",
+            session_state={},
+        )
+
+        self.assertEqual(response, "upstream:must retrieve:1")
+        self.assertEqual(len(created), 1)
+        self.assertEqual(created[0].force_flags, [True])
 
     def test_bridge_restores_retrieval_state(self):
         port = PsyChatRagSystemPort(FakeRetrievalStateRagSystem)
