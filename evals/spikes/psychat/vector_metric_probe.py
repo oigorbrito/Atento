@@ -11,7 +11,14 @@ from pathlib import Path
 
 
 class StubCollection:
-    pass
+    def __init__(self):
+        self.upsert_calls = []
+
+    def upsert(self, **kwargs):
+        self.upsert_calls.append(dict(kwargs))
+
+    def count(self):
+        return sum(len(call.get("ids", [])) for call in self.upsert_calls)
 
 
 class RecordingClient:
@@ -20,6 +27,7 @@ class RecordingClient:
     last_deleted_name = None
     last_created_name = None
     last_created_metadata = None
+    last_collection = None
 
     def __init__(self, *args, **kwargs):
         pass
@@ -27,7 +35,9 @@ class RecordingClient:
     def get_or_create_collection(self, *, name, metadata=None, **kwargs):
         type(self).last_name = str(name)
         type(self).last_metadata = dict(metadata or {})
-        return StubCollection()
+        collection = StubCollection()
+        type(self).last_collection = collection
+        return collection
 
     def delete_collection(self, name):
         type(self).last_deleted_name = str(name)
@@ -35,7 +45,9 @@ class RecordingClient:
     def create_collection(self, *, name, metadata=None, **kwargs):
         type(self).last_created_name = str(name)
         type(self).last_created_metadata = dict(metadata or {})
-        return StubCollection()
+        collection = StubCollection()
+        type(self).last_collection = collection
+        return collection
 
 
 class StubSettings:
@@ -105,6 +117,7 @@ def main() -> int:
     explicit_space = metadata.get("hnsw:space")
     index_schema = metadata.get("atento:index_schema")
     embedding_identity = metadata.get("atento:embedding_identity")
+    corpus_identity = metadata.get("atento:corpus_identity")
 
     if args.expect == "upstream":
         if explicit_space is not None:
@@ -138,6 +151,40 @@ def main() -> int:
                 "patched donor must persist embedding identity metadata, got "
                 f"{embedding_identity!r}"
             )
+        expected_corpus = "psychat@5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4"
+        if corpus_identity != expected_corpus:
+            raise AssertionError(
+                f"patched donor must persist corpus identity, got {corpus_identity!r}"
+            )
+
+        alternate = cls(
+            embedding_gateway=StubEmbeddingGateway(),
+            corpus_identity="psychat@alternate-corpus",
+        )
+        if alternate.collection_name == collection_name:
+            raise AssertionError(
+                "different corpus identities must not reuse the same persisted collection"
+            )
+
+        initial_collection = store.collection
+        sample_doc = {
+            "content": "sample",
+            "source": "sample.txt",
+            "size": 6,
+            "type": "psychology_qa",
+            "topic": "情绪",
+            "qa_id": "sample-1",
+        }
+        if not store.add_documents([sample_doc]):
+            raise AssertionError("first patched index build failed")
+        if not store.add_documents([sample_doc]):
+            raise AssertionError("same-identity rebuild failed")
+        if len(initial_collection.upsert_calls) != 2:
+            raise AssertionError(
+                "same-identity rebuild must use upsert on both builds, got "
+                f"{len(initial_collection.upsert_calls)} calls"
+            )
+
         semantic_status = "EXPLICIT_COSINE_VERSIONED_INDEX"
 
         if not store.clear_collection():
@@ -165,14 +212,27 @@ def main() -> int:
             raise AssertionError(
                 f"recreated collection lost embedding identity: {recreated!r}"
             )
+        if recreated.get("atento:corpus_identity") != corpus_identity:
+            raise AssertionError(
+                f"recreated collection lost corpus identity: {recreated!r}"
+            )
 
     report = {
-        "metric_version": "psychat-vector-metric-v0.4",
+        "metric_version": "psychat-vector-metric-v0.5",
         "runtime_shape": args.expect,
         "collection_name": collection_name,
         "collection_metadata": metadata,
         "index_schema": index_schema,
         "embedding_identity": embedding_identity,
+        "corpus_identity": corpus_identity,
+        "corpus_identity_isolated": (
+            args.expect != "patched"
+            or alternate.collection_name != collection_name
+        ),
+        "same_identity_rebuild_uses_upsert": (
+            args.expect != "patched"
+            or len(initial_collection.upsert_calls) == 2
+        ),
         "explicit_hnsw_space": explicit_space,
         "similarity_transform_in_donor": "1 - distance",
         "semantic_status": semantic_status,
@@ -184,6 +244,7 @@ def main() -> int:
                 and (RecordingClient.last_created_metadata or {}).get("hnsw:space") == "cosine"
                 and (RecordingClient.last_created_metadata or {}).get("atento:index_schema") == "rag-cosine-v1"
                 and (RecordingClient.last_created_metadata or {}).get("atento:embedding_identity") == StubEmbeddingGateway.index_identity
+                and (RecordingClient.last_created_metadata or {}).get("atento:corpus_identity") == corpus_identity
             )
         ),
         "threshold": 0.15,
