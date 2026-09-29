@@ -220,7 +220,7 @@ external_terms_note:
 
 ## 2.2 Gate obrigatório: donor vs fork vs selective-port vs native
 
-> **Este gate acontece antes da Fase 0.** A pergunta não é "podemos copiar?", e sim "qual opção é empiricamente melhor para o Atento?".
+> **Este gate acontece antes da migração arquitetural dos blocos.** A pergunta não é "podemos copiar?", e sim "qual opção é empiricamente melhor para o Atento?".
 
 ### Critérios de decisão
 

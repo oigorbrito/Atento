@@ -149,7 +149,7 @@ semana 2
 
 para controlar a execução.
 
-Se o contexto ou uma limitação externa impedir a conclusão do bloco na mesma execução, o agente registra `BLOCKED` ou `IN_PROGRESS` com a evidência real e, na próxima execução, **retoma o mesmo bloco**, em vez de inventar uma nova fragmentação.
+Se o contexto ou uma limitação externa impedir a conclusão do bloco na mesma execução, o agente registra `BLOCKED` ou `IN_PROGRESS` com a evidência real e, na próxima execução, **retoma o mesmo bloco**, em vez de converter o restante em uma sequência planejada de prompts.
 
 Mudança de bloco antes de concluir o atual só é aceitável quando:
 

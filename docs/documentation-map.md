@@ -10,7 +10,7 @@ Quando a mesma informação aparece em mais de um arquivo, prevalece o documento
 |---|---|---|---|---|
 | `README.md` | entrada/navegação | propósito, maturidade, links e quick orientation | progresso duplicado, arquitetura detalhada, licenças completas | navegação ou posicionamento mudar |
 | `AGENTS.md` | regras para agentes/contribuição automatizada | workflow, defensabilidade, gates, regras de progresso | arquitetura detalhada de módulo, decisões ADR específicas | regras de engenharia/governança mudarem |
-| `roadmap.md` | escopo + arquitetura macro + Project Points + progresso | blocos A–S, fases, source map arquitetural, ledger 100 pontos, status global | protocolo detalhado de benchmark, licença legal detalhada | escopo/progresso/fase/arquitetura macro mudar |
+| `roadmap.md` | escopo + arquitetura macro + Project Points + progresso | blocos A–S, dependências, source map arquitetural, ledger 100 pontos, status global | protocolo detalhado de benchmark, licença legal detalhada | escopo/progresso/dependências/arquitetura macro mudar |
 | `docs/adr/*.md` | decisão arquitetural específica | contexto, alternativas, evidência, decisão, consequências | status geral do projeto | decisão estrutural for proposta/aceita/substituída |
 | `docs/evaluation/harness.md` | metodologia AtentoEval | suites, schemas, judges, adapters, métricas, release comparison | progresso, escolha fork/greenfield, autorização de dataset | avaliação mudar |
 | `evals/README.md` | operação do harness | comandos, formatos, setup, troubleshooting | metodologia normativa ou thresholds duplicados | CLI/layout do harness mudar |
