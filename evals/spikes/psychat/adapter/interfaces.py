@@ -10,6 +10,11 @@ class ModelGateway(Protocol):
 
 
 class EmbeddingGateway(Protocol):
+    @property
+    def index_identity(self) -> str:
+        """Stable, non-secret identity for persisted-vector compatibility."""
+        ...
+
     def embed(self, *, text: str) -> list[float]: ...
 
 
