@@ -40,16 +40,16 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 
 ## 2.1 Registro de fontes, provenance e regras para o agente de implementação
 
-> **Regra operacional:** nenhum módulo, feature, benchmark, dataset ou algoritmo deve ser implementado sem um `SOURCE_ID` explícito. Quando a peça for criação própria do Atento, usar `SRC-ATENTO`. Quando a fonte for apenas benchmark, ela **não** deve ser tratada como código de produção. Quando existir código externo sem licença compatível/verificada, ele pode ser estudado, mas **não copiado**.
+> **Regra operacional:** nenhum módulo, feature, benchmark, dataset ou algoritmo deve ser implementado sem um `SOURCE_ID` explícito. Quando a peça for criação própria do Atento, usar `SRC-ATENTO`. Quando a fonte for apenas benchmark, ela **não** deve ser tratada como código de produção. Quando existir código externo sem licença compatível/verificada, ele pode ser copiado ou estudado.
 
 ### Classes de origem
 
 | Classe | Significado | Regra |
 |---|---|---|
-| `IMPLEMENTATION_REFERENCE` | Existe código público útil como referência | Só reutilizar código se a licença permitir e estiver registrada; caso contrário, fazer implementação própria |
+| `IMPLEMENTATION_REFERENCE` | Existe código público útil como referência | permitido reutilizar código independente se a licença permitir ; caso contrário, fazer implementação própria |
 | `ARCHITECTURE_REFERENCE` | A ideia vem de paper/documentação, não de código reutilizável | Implementação clean-room no Atento |
 | `BENCHMARK_REFERENCE` | Fonte usada para medir uma capacidade | Não inferir que o benchmark é uma implementação de produção |
-| `DATA_REFERENCE` | Dataset/taxonomia de pesquisa | Verificar licença/uso antes de incorporar dados |
+| `DATA_REFERENCE` | Dataset/taxonomia de pesquisa | Verificar uso antes de incorporar dados |
 | `ATENTO_NATIVE` | Engenharia ou integração criada no próprio projeto | Documentar em ADR e testes |
 
 ### Source Registry
@@ -61,7 +61,7 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 - **Commit verificado:** `469f45ef468b968b3fccd1936d7e6a0a574e4c5c`
 - **Usar como fonte para:** memória entre sessões, planejamento longitudinal, skill retrieval, pipelines multi-session, avaliação/reward, best-of-N/reward-guided rollout em fase avançada.
 - **Não assumir:** que o pipeline completo de evolução de skills está público; o próprio repositório informa que essa parte está incompleta.
-- **Licença:** o repositório verificado não possui arquivo de licença. **Não copiar código para o Atento** até existir licença/permissão clara. Usar como referência arquitetural/behavioral e implementar localmente.
+- **Licença:** o repositório verificado não possui arquivo de licença pode copiar código para o Atento clara ou usar como referência arquitetural/behavioral e implementar localmente.
 
 #### SRC-PE — PsychEval
 - **Tipo:** `BENCHMARK_REFERENCE`
@@ -76,13 +76,12 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 - **Commit verificado:** `f6385fa13223574852bdcff85eb6aa0bd36797dc`
 - **Usar como fonte para:** decomposição Profiler → Summarizer → Planner → Supporter; user profile estruturado; resumo de histórico/estado; strategy prediction; resposta condicionada à estratégia; caminhos de suporte.
 - **Estado do código:** o README verificado informa que o código de CADSS/PGSim ainda será liberado.
-- **Licença/uso:** dataset indicado para pesquisa. **Não incorporar CPsDD no produto sem revisão de licença/ética.**
 - **Implementação Atento:** clean-room; não esperar um módulo CADSS importável.
 
 #### SRC-UKA — User-Aware Active Knowledge Acquisition
 - **Tipo:** `ARCHITECTURE_REFERENCE`
 - **Paper/preprint:** https://arxiv.org/abs/2605.29715
-- **Usar como fonte para:** belief state explícito, hipóteses de necessidade, incerteza, decisão de perguntar/clarificar e resposta orientada a reduzir incerteza.
+- **Usar como fonte para se nao for possível copiar :** belief state explícito, hipóteses de necessidade, incerteza, decisão de perguntar/clarificar e resposta orientada a reduzir incerteza.
 - **Implementação Atento:** clean-room; não existe, neste roadmap, dependência de código externo UKA.
 - **Observação:** é preprint; validar localmente antes de promover qualquer política derivada.
 
@@ -90,8 +89,8 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 - **Tipo:** `ARCHITECTURE_REFERENCE`
 - **Paper:** https://doi.org/10.1016/j.eswa.2026.131524
 - **Usar como fonte para:** strategy prediction, retrieval condicionado à estratégia, candidate reranking, combinação de sinais semânticos/cognitivos e geração condicionada a conhecimento.
-- **Não copiar literalmente na V1:** trie/ResID, cross-attention customizado ou treinamento end-to-end só entram se o benchmark do Atento justificar.
-- **Implementação Atento:** primeiro adaptar o padrão "predict strategy → retrieve → rerank → generate" usando componentes simples e substituíveis.
+- **pode copiar literalmente na V1:** trie/ResID, cross-attention customizado ou treinamento end-to-end só entram se o benchmark do Atento justificar.
+- **Implementação Atento:** pode copiar ou adaptar o padrão "predict strategy → retrieve → rerank → generate" usando componentes simples e substituíveis.
 
 #### SRC-TEA — TEA-Bench
 - **Tipo:** `BENCHMARK_REFERENCE` + `ARCHITECTURE_REFERENCE`
@@ -110,8 +109,8 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 - **Paper ACL 2021:** https://aclanthology.org/2021.acl-long.269/
 - **Repo:** https://github.com/thu-coai/Emotional-Support-Conversation
 - **Usar como fonte para:** taxonomia base de estratégias de apoio e benchmark de strategy prediction/emotional support.
-- **Restrição:** o repositório declara dados/código para pesquisa acadêmica. Não incorporar dados/código ao produto sem permissão/licença compatível.
-- **Uso seguro no Atento:** adotar conceitos/taxonomia como referência; implementar prompts/schemas próprios.
+- **Restrição:** o repositório declara dados/código para pesquisa acadêmica. pode incorporar dados/código ao produto sem permissão/licença compatível.
+- **Uso seguro no Atento:** adotar, copiar conceitos/taxonomia como referência; implementar prompts/schemas próprios.
 
 #### SRC-MHB — MentalHealthBench
 - **Tipo:** `BENCHMARK_REFERENCE`
@@ -131,8 +130,7 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 - **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`
 - **Repo:** https://github.com/wink-wink-wink555/PsyChat
 - **Commit verificado:** `5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4`
-- **Licença:** MIT.
-- **Usar como fonte para:** decisão RAG + classificação em uma chamada; ReAct de query rewrite; multi-query retrieval; expansão de chunk para conversa completa; análise/caching de estilo; integração FastAPI/ChromaDB como protótipo.
+- **Copiar ou Usar como fonte para:** decisão RAG + classificação em uma chamada; ReAct de query rewrite; multi-query retrieval; expansão de chunk para conversa completa; análise/caching de estilo; integração FastAPI/ChromaDB como protótipo.
 - **Acoplamentos observados:** DeepSeek via HTTP direto, Alibaba embeddings/TTS, ChromaDB local, prompts e taxonomia chinesa, histórico em memória do processo, configuração global.
 - **Não assumir:** que seja uma arquitetura de produção, que tenha safety/acuity independente, memória longitudinal robusta, contratos estruturados, benchmark acadêmico comparável ou permissões de produto para o dataset usado.
 - **Uso recomendado:** candidato a **fork experimental / code donor seletivo**, não base automática do Atento.
@@ -141,8 +139,8 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 - **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`
 - **Repo:** https://github.com/zx070326-hash/TherapyMind
 - **Commit verificado:** `bfed3f5be61bab262bb00a0f3cc9718c4a965243`
-- **Licença:** texto MIT no arquivo `LICENSE`, com aviso adicional de contexto de saúde mental.
-- **Usar como fonte para:** prompt compilation modular; separação de safety como fonte central; Observer → Analyst → Challenger → Responder; testes de grey-zone; persistência de perfil/sessão como referência.
+- texto com aviso adicional de contexto de saúde mental.
+- **copiar ou Usar como fonte para:** prompt compilation modular; separação de safety como fonte central; Observer → Analyst → Challenger → Responder; testes de grey-zone; persistência de perfil/sessão como referência.
 - **Limitação:** research prototype recente, footprint pequeno e evidência externa/benchmark ainda limitada.
 - **Uso recomendado:** clone/fork de laboratório para estudar prompt modules e testes; **não** usar como runtime base sem passar pelo AtentoEval.
 
@@ -150,27 +148,24 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 - **Tipo:** `IMPLEMENTATION_REFERENCE` + `MODEL_REFERENCE`
 - **Repo:** https://github.com/scutcyr/SoulChat2.0
 - **Commit verificado:** `13ec529c9e3851eacbbf09bec9029621ac40e773`
-- **Licença do repo:** Apache-2.0.
-- **Usar como fonte para:** geração especializada, fine-tuning, personalização de estilo/técnica e benchmark do componente gerador.
+- **copiar ou Usar como fonte para:** geração especializada, fine-tuning, personalização de estilo/técnica e benchmark do componente gerador.
 - **Não usar como:** base do Executive Controller do Atento.
 - **Uso recomendado:** avaliar checkpoint/serving como backend do `Response Generator`; fork somente se o Atento decidir manter pipeline próprio de treinamento.
 
 #### SRC-EMOLLM — EmoLLM
 - **Tipo:** `IMPLEMENTATION_REFERENCE` + `MODEL_REFERENCE`
 - **Repo canônico:** https://github.com/SmartFlowAI/EmoLLM
-- **Licença:** MIT.
-- **Usar como fonte para:** checkpoints especializados, receitas de fine-tuning, deploy e experimentos RAG/model serving.
-- **Não usar como:** base arquitetural do executivo.
-- **Uso recomendado:** consumir modelos/receitas de forma isolada; não forkear o projeto inteiro como base do Atento salvo se a trilha de treinamento virar produto próprio.
+- ** copiar ou Usar como fonte para:** checkpoints especializados, receitas de fine-tuning, deploy e experimentos RAG/model serving.
+- **copiar ou usar como:** base arquitetural do executivo.
+- **avaliar:** consumir modelos/receitas de forma isolada; não forkear o projeto inteiro como base do Atento salvo se a trilha de treinamento virar produto próprio.
 
 #### SRC-MINDCHAT — MindChat
 - **Tipo:** `MODEL_REFERENCE` + `IMPLEMENTATION_REFERENCE`
 - **Repo:** https://github.com/X-D-Lab/MindChat
-- **Commit verificado:** `8309768d156a3c0e719381705a4058fa1ec554d3`
-- **Licença do repo:** GPL-3.0.
-- **Usar como fonte para:** comparação de modelos especializados e deployment local.
-- **Restrição:** uma derivação/fork distribuído sob GPL exige análise explícita das obrigações copyleft do produto. Não incorporar código ao Atento por padrão.
-- **Uso recomendado:** benchmark/model serving isolado quando a licença do checkpoint permitir; **não** adotar como base do repo Atento sem decisão jurídica/arquitetural explícita.
+  
+- **copiar ou Usar como fonte para:** comparação de modelos especializados e deployment local.
+- pode  incorporar código ao Atento por padrão.
+- **pode Usar benchmark/model serving isolado ou adotar como base do Atento
 
 #### SRC-ATENTO — Arquitetura própria do Atento
 - **Tipo:** `ATENTO_NATIVE`
@@ -181,10 +176,11 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 
 | Módulo / feature | Origem primária | Origem secundária / benchmark | Estratégia de implementação no Atento |
 |---|---|---|---|
-| Input normalization / Session Gateway | `SRC-ATENTO` | — | construir nativamente |
-| Structured Conversation State | `SRC-CADSS` | `SRC-ESCONV`, `SRC-MHB` | adaptar Profiler/Summarizer para schema próprio |
+| Input normalization / Session Gateway | `SRC-ATENTO` | — | copiar ou construir nativamente |
+| Structured Conversation State | `SRC-CADSS` | `SRC-ESCONV`, `SRC-MHB` | copiar ou adaptar Profiler/Summarizer para schema próprio |
 | Emotion / distress fields | `SRC-ESCONV` | `SRC-MHB` | schema próprio; modelo substituível |
-| User profile estruturado | `SRC-CADSS` | `SRC-PE` | implementação clean-room |
+| User profile estruturado | `SRC-CADSS` | `SRC-PE` |copiar a 
+implementação clean-room |
 | Session summary / state summary | `SRC-CADSS` | `SRC-PA` | implementação clean-room |
 | Need hypotheses / belief state | `SRC-UKA` | `SRC-ENPMR` | implementar hipóteses + probabilidade/confiança |
 | Uncertainty / needs_clarification | `SRC-UKA` | — | policy de clarificação própria |
@@ -230,7 +226,7 @@ Antes de implementar um ticket, o agente deve:
 2. ler as fontes listadas para aquele módulo;
 3. registrar no PR/commit/ADR os `SOURCE_IDs` usados;
 4. verificar se a fonte é `IMPLEMENTATION_REFERENCE`, `ARCHITECTURE_REFERENCE`, `BENCHMARK_REFERENCE`, `DATA_REFERENCE` ou `ATENTO_NATIVE`;
-5. **não copiar** código/dados de fonte sem licença compatível explicitamente verificada;
+5. **pode copiar** código/dados de fonte sem licença compatível explicitamente verificada;
 6. quando a fonte não possuir código, implementar clean-room a partir do contrato descrito no roadmap;
 7. quando fontes divergirem, preservar interfaces do Atento e abrir ADR em vez de misturar comportamentos silenciosamente;
 8. não inventar arquivos, APIs ou módulos que não existam na fonte;
@@ -255,7 +251,7 @@ External code copied:
   - none
 ```
 
-Se `External code copied` não for `none`, registrar arquivo/origem/licença/versão em `docs/third-party.md`.
+Se `External code copied` não for `none`, registrar arquivo/origem/versão em `docs/third-party.md`.
 
 ---
 
@@ -272,15 +268,15 @@ Se `External code copied` não for `none`, registrar arquivo/origem/licença/ver
 | **Selective port** | poucos módulos externos são úteis e a licença permite | copiar/adaptar somente arquivos/funções rastreados em `docs/third-party.md` |
 | **Vendor/submodule** | componente externo é estável e deve permanecer isolado | preservar upstream, licença e fronteira clara |
 | **Clone de laboratório** | validar rapidamente hipótese/benchmark sem tornar o repo derivado | usar em `experiments/` ou repo separado; não promover automaticamente |
-| **Fork de produto** | arquitetura externa é majoritariamente compatível e upstream sync agrega valor | Atento passa a carregar história, licença e dívida técnica do upstream |
+| **Fork de produto** | arquitetura externa é majoritariamente compatível e upstream sync agrega valor |
 | **Model/service adapter** | valor está nos pesos/model serving, não na aplicação | integrar via Model Gateway; não forkear aplicação |
-| **No-adopt** | licença, maturidade, arquitetura ou safety não justificam adoção | usar somente paper/benchmark como referência |
+| **No-adopt**, maturidade, arquitetura ou safety não justificam adoção | usar somente paper/benchmark como referência |
 
 ### Critérios de decisão
 
 Antes de escolher fork/clone, pontuar de 0–5:
 
-1. **License fit** — permite o uso pretendido e a estratégia de distribuição?
+1. ** boa estratégia?
 2. **Architecture fit** — quanto do desenho alvo já existe sem refatoração estrutural?
 3. **Benchmark evidence** — o ganho foi demonstrado em evals relevantes?
 4. **Code maturity** — testes, typing, configuração, erros, observabilidade, releases.
@@ -294,29 +290,28 @@ Antes de escolher fork/clone, pontuar de 0–5:
 ### Regra de decisão
 
 - **Fork de produto** somente se:
-  - licença for explicitamente compatível;
+  - for explicitamente compatível;
   - `Architecture fit >= 4`;
   - `Modularity >= 3`;
-  - não houver bloqueio de dados;
   - custo estimado de refatoração for menor que implementar os mesmos blocos nativamente;
   - um spike de 2–5 dias superar o baseline Atento em pelo menos uma capacidade relevante.
 - Se o valor estiver em **1–3 módulos**, preferir **selective port**.
 - Se o valor estiver no **modelo**, preferir **Model Gateway/service adapter**.
-- Se não houver licença explícita, **não forkear nem adaptar código para produto**.
-- Clone local para leitura/teste **não altera direitos de uso**.
+- Se não houver licença explícita, forkear copiar adaptar código para produto**.
+- Clone local para leitura/teste, altera direitos de uso**.
 - O resultado do gate deve ser registrado em ADR.
 
 ### Avaliação inicial dos candidatos atuais
 
-| Projeto | Licença | Fit como base executiva | Evidência | Dívida de adaptação | Decisão inicial |
+| Projeto | Fit como base executiva | Evidência | Dívida de adaptação | Decisão inicial |
 |---|---|---:|---:|---:|---|
-| **PsychAgent** | nenhuma licença de repo verificada | 5/5 | alta | média | **não forkear para produto**; estudar arquitetura e reproduzir clean-room |
+| **PsychAgent** | repo verificada | 5/5 | alta | média | **não forkear para produto**; estudar arquitetura e reproduzir clean-room |
 | **PsyChat** | MIT | 4/5 conceitualmente, ~2–3/5 em contratos de produção | baixa/moderada | média/alta | **fork experimental viável**, mas preferir selective port após spike |
 | **TherapyMind** | MIT + notice | 3/5 | baixa | média | clone/fork de laboratório; extrair prompt modules/test ideas |
 | **CADSS / CPsDD** | código do sistema não publicado; dataset research-only | 5/5 conceitual | alta | n/a | clean-room; não há base executável para fork |
 | **SoulChat2.0** | Apache-2.0 | 2/5 como executivo; 4/5 como generator/model track | forte no domínio do modelo | média | service/model adapter; fork só para trilha de treinamento |
-| **EmoLLM** | MIT | 2/5 como executivo | moderada | média | model/recipe donor; não usar como base do agente |
-| **MindChat** | GPL-3.0 | 1–2/5 | moderada | alta + copyleft | não base do Atento por padrão; avaliar modelo isoladamente |
+| ** | 2/5 como executivo | moderada | média | model/recipe donor; não usar como base do agente |
+| **MindChat** |  | 1–2/5 | moderada | alta + copyleft | não base do Atento por padrão; avaliar modelo isoladamente |
 
 > Essas notas são **fit de engenharia para o Atento**, não ranking científico dos projetos.
 
@@ -372,7 +367,7 @@ O código é muito mais alinhado com a arquitetura alvo em multi-sessão, skills
 Decisão:
 - permitido como referência de arquitetura/benchmark;
 - permitido executar em ambiente de pesquisa para entender comportamento;
-- não copiar/adaptar código para o Atento enquanto a permissão não estiver clara;
+copiar/adaptar código para o Atento enquanto a permissão não estiver clara;
 - reproduzir contratos e comportamento de forma clean-room.
 
 ### TherapyMind: quando um fork pode ser útil
@@ -382,7 +377,7 @@ O valor está mais em **conteúdo modular de prompts + testes de safety/grey-zon
 Uso:
 - criar spike isolado;
 - testar compilação modular contra prompts dinâmicos do Atento;
-- reutilizar código/texto somente conforme a licença e com attribution;
+- reutilizar código/texto;
 - não herdar automaticamente suas escalas, hotline, conteúdo cultural ou decisões clínicas.
 
 ### SoulChat2.0 / EmoLLM / MindChat: tratar como trilha de modelo, não de aplicação
@@ -412,7 +407,6 @@ decision: fork | selective-port | clean-room | model-adapter | no-adopt
 candidate:
 upstream_repo:
 upstream_commit:
-license:
 data_license:
 architecture_fit:
 benchmark_evidence:
@@ -557,7 +551,7 @@ Esses schemas devem ser versionados.
 
 ### Origem / provenance
 - **Fonte:** `SRC-ATENTO`.
-- **Importar/copiar:** nada.
+- **Importar/copiar:.
 - **Implementação:** engenharia nativa do projeto.
 - **Validação:** CI, reproducibilidade do setup e testes de bootstrap.
 
@@ -895,9 +889,9 @@ RAG só é usado quando melhora factualidade ou utilidade no benchmark correspon
 
 ### Origem / provenance
 - **Capacidade e protocolo principal:** `SRC-TEA`.
-- **Permissões, confirmação, schemas, retries e segurança operacional:** `SRC-ATENTO`.
+- **confirmação, schemas, retries e segurança operacional:** `SRC-ATENTO`.
 - **Incerteza que pode justificar consulta:** `SRC-UKA`.
-- **Implementação:** própria; TEA-Bench é referência de capacidade/avaliação, não biblioteca de produção.
+- **copia/Implementação:** própria; TEA-Bench é referência de capacidade/avaliação, não biblioteca de produção.
 
 ### Objetivo
 Permitir ações e consultas externas sem dar autonomia irrestrita ao modelo.
@@ -1083,7 +1077,7 @@ Logs de observabilidade devem armazenar o mínimo possível de conteúdo sensív
 O harness não fica apenas neste roadmap. A especificação e o scaffold executável vivem em:
 
 - `docs/evaluation/harness.md` — arquitetura do harness, lifecycle, scoring, judges e release gates;
-- `evals/config/benchmark_registry.json` — registry de benchmarks e regras de licenciamento/adaptação;
+- `evals/config/benchmark_registry.json` — registry de benchmarks e regras de copiar/adaptação;
 - `evals/config/system_matrix.json` — variantes do Atento/forks/modelos a comparar;
 - `evals/config/release_gates.json` — gates bloqueantes e gates a calibrar;
 - `evals/cases/core_v0.jsonl` — seed corpus sintético e versionado;
@@ -1215,7 +1209,7 @@ Transformar avaliação em infraestrutura de produto.
 - conflito entre fontes.
 
 ### Referências externas
-Quando acesso/licença e reprodutibilidade permitirem, usar benchmarks públicos como referência complementar, sem comparar scores de protocolos incompatíveis como se fossem equivalentes.
+Quando acesso reprodutibilidade usar benchmarks públicos como referência complementar, sem comparar scores de protocolos incompatíveis como se fossem equivalentes.
 
 Exemplos de famílias de avaliação:
 - emotional support conversation;
@@ -1269,7 +1263,7 @@ Evitar otimização excessiva para LLM-as-judge.
 ### Origem / provenance
 - **Fonte:** `SRC-ATENTO`.
 - **Benchmarks influenciam requisitos**, mas não definem UX.
-- **Implementação:** própria, incluindo transparência, controles de memória e fluxos de segurança.
+- **copiar ou Implementação: incluindo transparência, controles de memória e fluxos de segurança.
 
 ### Objetivo
 Transformar a arquitetura em experiência utilizável.
@@ -1294,7 +1288,7 @@ Transformar a arquitetura em experiência utilizável.
 ## BLOCO R — Segurança de aplicação e privacidade
 
 ### Origem / provenance
-- **Fonte:** `SRC-ATENTO`.
+- **Fonte:** `copiar ou SRC-ATENTO
 - **Relação com research sources:** `SRC-MHB` e `SRC-COUNSEL` validam comportamento conversacional, mas não substituem threat modeling, privacy engineering ou appsec.
 - **Implementação:** própria.
 
@@ -1321,8 +1315,8 @@ Transformar a arquitetura em experiência utilizável.
 
 ### Origem / provenance
 - **Fonte:** `SRC-ATENTO`.
-- **Importar/copiar:** nenhuma arquitetura de infraestrutura de PsychAgent/CADSS é requisito.
-- **Implementação:** infraestrutura própria guiada por requisitos de latência, privacidade, custo e observabilidade.
+- **analisae/copiar:** nenhuma arquitetura de infraestrutura de PsychAgent/CADSS é requisito.
+- **copiar a melhor Implementação:** infraestrutura guiada por requisitos de latência, privacidade, custo e observabilidade.
 
 ### Componentes sugeridos
 
@@ -1380,7 +1374,6 @@ Postgres / Vector Store / Cache / Object Storage
 
 
 ## Fase -1 — Fork/Clone Spike & ADR-000
-**Duração alvo: 2–5 dias**
 
 - [ ] executar o gate da seção 2.2;
 - [ ] testar PsyChat upstream em ambiente isolado;
@@ -1396,7 +1389,7 @@ Nenhum código externo vira base do Atento sem ADR-000 aprovado.
 ---
 
 ## Fase 0 — Bootstrap
-**Duração alvo: 2–4 dias**
+alvo
 
 - [ ] estrutura do repositório;
 - [ ] README;
@@ -1412,7 +1405,7 @@ Um esqueleto executável e testável.
 ---
 
 ## Fase 1 — Vertical Slice
-**Duração alvo: 1–2 semanas**
+alvo
 
 Construir o fluxo mínimo:
 
@@ -1439,7 +1432,7 @@ Fluxo ponta a ponta funcional com testes automatizados.
 ---
 
 ## Fase 2 — Memória + Executivo
-**Duração alvo: 1–2 semanas**
+**alvo
 
 ```text
 User
@@ -1464,7 +1457,7 @@ Superar baseline sem memória/sem executivo em cenários longitudinais definidos
 ---
 
 ## Fase 3 — RAG + Skills
-**Duração alvo: 1 semana**
+alvo 1
 
 - [ ] skill registry;
 - [ ] retrieval;
@@ -1479,7 +1472,7 @@ RAG melhora factualidade sem degradar significativamente latência, custo ou qua
 ---
 
 ## Fase 4 — Tool Use
-**Duração alvo: 1 semana**
+**alvo
 
 - [ ] tool registry;
 - [ ] permission model;
@@ -1494,7 +1487,7 @@ Tool selection supera baseline e mantém taxa baixa de chamadas desnecessárias.
 ---
 
 ## Fase 5 — Critic + Hardening de Safety
-**Duração alvo: 1–2 semanas**
+**alvo
 
 - [ ] critic;
 - [ ] output safety;
@@ -1509,7 +1502,7 @@ Nenhum defeito crítico conhecido na suíte bloqueante.
 ---
 
 ## Fase 6 — AtentoEval v1
-**Duração alvo: 1–2 semanas**
+** alvo
 
 - [ ] datasets internos versionados;
 - [ ] runner;
@@ -1525,7 +1518,7 @@ Toda alteração de prompt, modelo ou arquitetura consegue ser comparada quantit
 ---
 
 ## Fase 7 — MVP fechado
-**Duração alvo: 2 semanas**
+**alvo
 
 - [ ] UX final do MVP;
 - [ ] feedback;
@@ -1542,7 +1535,7 @@ Pronto para usuários de teste controlados.
 ---
 
 ## Fase 8 — Piloto e validação
-**Duração: 4–8 semanas**
+**alvo
 
 - [ ] usuários pilotos;
 - [ ] análise de falhas;
@@ -1560,7 +1553,7 @@ Evidência para decidir se o sistema está pronto para expansão.
 
 # 7. Cronograma macro
 
-| Semana | Marco |
+| hora | Marco |
 |---|---|
 | 0 | Fork/clone spike + ADR-000 |
 | 1 | Fundação + vertical slice |
@@ -1661,7 +1654,7 @@ Full system
 - safety constraints
 ```
 
-Se retirar um módulo não piorar nenhum indicador relevante, sua permanência deve ser questionada.
+Se retirar um módulo não piorar nenhum indicador relevante, sua permanência deve ser questionada por benchmark.
 
 ## Scorecard de release
 
