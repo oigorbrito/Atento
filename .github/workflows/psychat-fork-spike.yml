@@ -177,10 +177,16 @@ jobs:
           python evals/spikes/psychat/adapter_change_surface_probe.py \
             --adapter-root evals/spikes/psychat/adapter \
             --output evals/results/psychat_adapter_change_surface.json
+
+      - name: Measure dynamic adapter chassis evidence
+        run: |
+          python evals/spikes/psychat/adapter_dynamic_chassis_probe.py \
+            --output evals/results/psychat_adapter_dynamic_chassis.json
       - uses: actions/upload-artifact@v4
         with:
           name: psychat-adapted-chassis
           path: |
             evals/results/psychat_adapted_chassis.json
             evals/results/psychat_adapter_change_surface.json
+            evals/results/psychat_adapter_dynamic_chassis.json
           if-no-files-found: error
