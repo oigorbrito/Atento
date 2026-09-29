@@ -51,11 +51,21 @@ jobs:
         run: |
           python evals/chassis/donor_static_audit.py             --root /tmp/PsyChat             --source-id SRC-PSYCHAT             --upstream-commit 5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4             --output evals/results/psychat_static_chassis.json
 
-      - name: Print report
-        run: cat evals/results/psychat_static_chassis.json
+      - name: Forkability / injection-seam probe
+        run: |
+          python evals/spikes/psychat/forkability_probe.py \
+            --root /tmp/PsyChat \
+            --output evals/results/psychat_forkability.json
+
+      - name: Print reports
+        run: |
+          cat evals/results/psychat_static_chassis.json
+          cat evals/results/psychat_forkability.json
 
       - uses: actions/upload-artifact@v4
         with:
           name: psychat-static-chassis
-          path: evals/results/psychat_static_chassis.json
+          path: |
+            evals/results/psychat_static_chassis.json
+            evals/results/psychat_forkability.json
           if-no-files-found: error
