@@ -162,6 +162,30 @@ def patch_vector_store(path: Path) -> None:
         '}',
         label="VectorStore cosine distance metric",
     )
+    text = replace_once(
+        text,
+        "                'name': COLLECTION_NAME,",
+        "                'name': ATENTO_COLLECTION_NAME,",
+        label="VectorStore collection info name",
+    )
+    text = replace_once(
+        text,
+        "            self.client.delete_collection(COLLECTION_NAME)\n"
+        "            self.collection = self.client.create_collection(\n"
+        "                name=COLLECTION_NAME,\n"
+        "                metadata={\"description\": \"MCP知识库向量存储\"}\n"
+        "            )",
+        "            self.client.delete_collection(ATENTO_COLLECTION_NAME)\n"
+        "            self.collection = self.client.create_collection(\n"
+        "                name=ATENTO_COLLECTION_NAME,\n"
+        "                metadata={\n"
+        "                    \"description\": \"MCP知识库向量存储\",\n"
+        "                    \"hnsw:space\": \"cosine\",\n"
+        "                    \"atento:index_schema\": ATENTO_INDEX_SCHEMA_VERSION,\n"
+        "                }\n"
+        "            )",
+        label="VectorStore clear collection contract",
+    )
     text = replace_regex_once(
         text,
         r"""    def get_embedding\(self, text: str\) -> List\[float\]:\n.*?\n    def add_documents""",
@@ -476,7 +500,7 @@ def apply_patch(donor_root: Path) -> dict:
     retention = retention_metrics(donor_root)
 
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.6",
+        "metric_version": "psychat-minimal-fork-patch-v0.7",
         "pinned_commit": head_before,
         "changed_files": changed,
         "donor_files_touched_to_introduce_provider_boundary": len(PROVIDER_BOUNDARY_FILES),
@@ -485,6 +509,7 @@ def apply_patch(donor_root: Path) -> dict:
         "vector_distance_metric": "cosine",
         "vector_index_schema_version": "rag-cosine-v1",
         "vector_collection_versioned": True,
+        "vector_clear_preserves_index_contract": True,
         "similarity_transform": "1 - cosine_distance",
         "files_touched_to_swap_model_provider_after_boundary": 0,
         "files_touched_to_swap_embedding_provider_after_boundary": 0,
