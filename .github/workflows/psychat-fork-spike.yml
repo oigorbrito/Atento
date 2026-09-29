@@ -75,6 +75,12 @@ jobs:
         run: |
           python -m compileall -q             /tmp/PsyChat/agent/psychology_agent.py             /tmp/PsyChat/core/vector_store.py             /tmp/PsyChat/core/rag_system.py
 
+      - name: Dynamic provider replacement probe
+        run: |
+          python evals/spikes/psychat/provider_replacement_probe.py \
+            --donor-root /tmp/PsyChat \
+            --output evals/results/psychat_provider_replacement.json
+
       - name: Audit patched BLOCO I donor plus Atento chassis
         run: |
           rm -rf /tmp/PsyChatRagBlock
@@ -92,6 +98,7 @@ jobs:
           cat evals/results/psychat_static_chassis.json
           cat evals/results/psychat_unpatched_composed_chassis.json
           cat evals/results/psychat_minimal_fork_patch.json
+          cat evals/results/psychat_provider_replacement.json
           cat evals/results/psychat_patched_rag_chassis.json
 
       - uses: actions/upload-artifact@v4
@@ -103,6 +110,7 @@ jobs:
             evals/results/psychat_static_chassis.json
             evals/results/psychat_unpatched_composed_chassis.json
             evals/results/psychat_minimal_fork_patch.json
+            evals/results/psychat_provider_replacement.json
             evals/results/psychat_patched_rag_chassis.json
           if-no-files-found: error
 
