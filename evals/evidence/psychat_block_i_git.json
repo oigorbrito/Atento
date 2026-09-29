@@ -1,0 +1,59 @@
+{
+  "metric_version": "psychat-block-i-git-v0.1",
+  "evidence_type": "github_git_compare_plus_pinned_corpus_simulation",
+  "pinned_donor_commit": "5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4",
+  "baseline_commit": "f2317be0fc27b1f4a6a39c5c89f22faf550045bf",
+  "patched_commit": "afbd41eca44661e174e144e86620fbf611660420",
+  "preserving_ref": "evidence/psychat-rag-block-correctness",
+  "files_touched_exact": 4,
+  "provider_boundary_files_touched": 3,
+  "changed_files": [
+    "evals/evidence/psychat-block-i/agent/psychology_agent.py",
+    "evals/evidence/psychat-block-i/core/rag_system.py",
+    "evals/evidence/psychat-block-i/core/vector_store.py",
+    "evals/evidence/psychat-block-i/data/processor.py"
+  ],
+  "original_lines": 1600,
+  "deleted_or_replaced_original_lines": 143,
+  "added_lines": 67,
+  "retained_original_lines": 1457,
+  "retained_original_line_ratio": 0.910625,
+  "static_patched_invariants": {
+    "direct_requests_post_count": 0,
+    "psychology_agent_model_gateway_injected": true,
+    "rag_system_model_gateway_present": true,
+    "vector_store_embedding_gateway_injected": true,
+    "rag_system_force_retrieval_signature": true,
+    "explicit_hnsw_space": "cosine",
+    "qa_id_carry_forward_present": true
+  },
+  "pinned_corpus_parser_evidence": {
+    "knowledge_file_count": 12,
+    "raw_unique_qa_ids": 4760,
+    "upstream_dialogue_sections": 4760,
+    "upstream_unknown_qa_id_sections": 4760,
+    "upstream_unknown_ratio": 1.0,
+    "patched_dialogue_sections": 4760,
+    "patched_unknown_qa_id_sections": 0,
+    "patched_missing_raw_ids": 0,
+    "patched_preserved_unique_qa_ids": 4760,
+    "gold_id_survival": {
+      "328": true,
+      "350": true,
+      "1864": true,
+      "1882": true
+    }
+  },
+  "scope": {
+    "provider_lifecycle_boundary": "3 donor files",
+    "full_bloco_i_rag_correctness": "4 donor files",
+    "excluded": [
+      "web chassis",
+      "TTS chassis"
+    ]
+  },
+  "limitations": [
+    "Git/content evidence proves exact patch surface and source/corpus invariants, not Python runtime execution.",
+    "Dynamic DataProcessor, Chroma metadata, provider replacement, isolation and AtentoEval quality remain separate execution requirements."
+  ]
+}
