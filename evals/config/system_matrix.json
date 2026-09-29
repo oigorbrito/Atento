@@ -1,11 +1,12 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "comparison_policy": {
     "one_primary_architecture_change_per_ablation": true,
     "same_case_set_required": true,
     "same_tool_fixtures_required": true,
     "record_model_revision": true,
-    "record_prompt_hash": true
+    "record_prompt_hash": true,
+    "candidate_registry": "evals/config/candidates.json"
   },
   "systems": [
     {
@@ -24,19 +25,25 @@
       "id": "atento_no_memory",
       "kind": "ablation",
       "enabled": true,
-      "disable": ["longitudinal_memory"]
+      "disable": [
+        "longitudinal_memory"
+      ]
     },
     {
       "id": "atento_no_planner",
       "kind": "ablation",
       "enabled": true,
-      "disable": ["planner"]
+      "disable": [
+        "planner"
+      ]
     },
     {
       "id": "atento_no_critic",
       "kind": "ablation",
       "enabled": true,
-      "disable": ["critic"]
+      "disable": [
+        "critic"
+      ]
     },
     {
       "id": "atento_full",
@@ -49,14 +56,16 @@
       "kind": "fork_spike",
       "enabled": false,
       "source_id": "SRC-PSYCHAT",
-      "description": "Run upstream unchanged during ADR-000 spike."
+      "description": "Run upstream unchanged during ADR-000 spike.",
+      "candidate_ref": "psychat_upstream"
     },
     {
       "id": "psychat_adapted",
       "kind": "fork_spike",
       "enabled": false,
       "source_id": "SRC-PSYCHAT",
-      "description": "PsyChat with Atento Model Gateway, structured contracts, external session state and independent safety."
+      "description": "PsyChat with Atento Model Gateway, structured contracts, external session state and independent safety.",
+      "candidate_ref": "psychat_wrapped"
     },
     {
       "id": "psychagent_reference",

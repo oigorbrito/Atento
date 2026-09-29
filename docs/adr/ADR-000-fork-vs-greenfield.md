@@ -181,6 +181,22 @@ Local tests remain justified for:
 - therapy-memory isolation;
 - product-specific privacy/auth/runtime changes.
 
+## Multi-candidate comparison research
+
+O protocolo de comparação multi-candidato e a síntese da evidência Git/PsyChat produzida nesta rodada estão registrados em:
+
+- `docs/evaluation/donor-candidate-comparison-research-2026-09-29.md`
+
+Esse registro documenta:
+
+- comparação por bloco e contrato comum;
+- variantes `UPSTREAM`, `WRAPPED`, `FORKED` e `NATIVE`;
+- uso de Git change-surface como evidência empírica de evolvabilidade;
+- worktrees/matrix jobs/artifacts como infraestrutura de comparação reproduzível;
+- estado empírico atual do PsyChat, incluindo CFS estático, fork surface, provenance do corpus e gaps ainda não executados.
+
+O documento **não seleciona um vencedor** e não altera o status `Proposed` desta ADR.
+
 ## Mandatory spike results
 
 ### Upstream execution

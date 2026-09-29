@@ -1,0 +1,108 @@
+name: Candidate evaluation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "evals/config/candidates.json"
+      - "evals/atentoeval/candidates.py"
+      - "evals/chassis/**"
+      - "evals/tests/test_candidates.py"
+      - ".github/workflows/candidate-eval.yml"
+  push:
+    branches:
+      - main
+      - "spike/**"
+      - "research/**"
+    paths:
+      - "evals/config/candidates.json"
+      - "evals/atentoeval/candidates.py"
+      - "evals/chassis/**"
+      - "evals/tests/test_candidates.py"
+      - ".github/workflows/candidate-eval.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    name: Validate registry and build matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate candidate registry
+        run: python -m evals.atentoeval.candidates validate-registry --registry evals/config/candidates.json
+      - name: Run candidate schema tests
+        run: python -m unittest evals.tests.test_candidates -v
+      - id: matrix
+        name: Build candidate matrix
+        shell: bash
+        run: |
+          matrix="$(python -m evals.atentoeval.candidates github-matrix --registry evals/config/candidates.json)"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  candidate-static:
+    name: Static candidate / ${{ matrix.candidate_id }}
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    steps:
+      - name: Checkout Atento
+        uses: actions/checkout@v4
+        with:
+          path: atento
+
+      - name: Checkout pinned donor
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.repository }}
+          ref: ${{ matrix.upstream_sha }}
+          path: donor
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Verify donor pin
+        shell: bash
+        run: |
+          actual="$(git -C donor rev-parse HEAD)"
+          test "$actual" = "${{ matrix.upstream_sha }}"
+
+      - name: Compile Python donor sources
+        run: python -m compileall -q donor
+
+      - name: Static Chassis Fitness audit
+        run: |
+          python atento/evals/chassis/donor_static_audit.py \
+            --root donor \
+            --source-id "${{ matrix.source_id }}" \
+            --upstream-commit "${{ matrix.upstream_sha }}" \
+            --output "atento/evals/results/${{ matrix.candidate_id }}_static_chassis.json"
+
+      - name: Build typed candidate result
+        run: |
+          cd atento
+          python -m evals.atentoeval.candidates static-result \
+            --registry evals/config/candidates.json \
+            --candidate-id "${{ matrix.candidate_id }}" \
+            --audit "evals/results/${{ matrix.candidate_id }}_static_chassis.json" \
+            --atento-sha "$GITHUB_SHA" \
+            --output "evals/results/${{ matrix.candidate_id }}_candidate_result.json"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: candidate-${{ matrix.candidate_id }}
+          path: |
+            atento/evals/results/${{ matrix.candidate_id }}_static_chassis.json
+            atento/evals/results/${{ matrix.candidate_id }}_candidate_result.json
+          if-no-files-found: error
