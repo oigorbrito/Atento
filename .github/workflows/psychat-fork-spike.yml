@@ -106,6 +106,13 @@ jobs:
         run: |
           python -m compileall -q             /tmp/PsyChat/agent             /tmp/PsyChat/core             /tmp/PsyChat/data             /tmp/PsyChat/main.py             /tmp/PsyChat/config.py
 
+      - name: Measure upstream QA-ID provenance loss
+        run: |
+          python evals/spikes/psychat/qa_id_provenance_probe.py \
+            --donor-root /tmp/PsyChat \
+            --expect broken \
+            --output evals/results/psychat_qa_id_provenance_upstream.json
+
       - name: Dynamic shared-session isolation probe
         run: |
           python evals/spikes/psychat/real_isolation_probe.py             --donor-root /tmp/PsyChat             --output evals/results/psychat_real_isolation.json
@@ -138,7 +145,18 @@ jobs:
 
       - name: Compile patched RAG donor surface
         run: |
-          python -m compileall -q             /tmp/PsyChat/agent/psychology_agent.py             /tmp/PsyChat/core/vector_store.py             /tmp/PsyChat/core/rag_system.py
+          python -m compileall -q \
+            /tmp/PsyChat/agent/psychology_agent.py \
+            /tmp/PsyChat/core/vector_store.py \
+            /tmp/PsyChat/core/rag_system.py \
+            /tmp/PsyChat/data/processor.py
+
+      - name: Verify patched QA-ID provenance
+        run: |
+          python evals/spikes/psychat/qa_id_provenance_probe.py \
+            --donor-root /tmp/PsyChat \
+            --expect preserved \
+            --output evals/results/psychat_qa_id_provenance_patched.json
 
       - name: Dynamic provider replacement probe
         run: |
@@ -174,6 +192,7 @@ jobs:
           cat evals/results/psychat_gold_source.json
           cat evals/results/psychat_multilingual_gold.json
           cat evals/results/psychat_retrieval_readiness.json
+          cat evals/results/psychat_qa_id_provenance_upstream.json
           cat evals/results/psychat_multilingual_microbenchmark.json
           cat evals/results/psychat_real_isolation.json
           cat evals/results/psychat_retrieval_mechanics_upstream.json
@@ -181,6 +200,7 @@ jobs:
           cat evals/results/psychat_static_chassis.json
           cat evals/results/psychat_unpatched_composed_chassis.json
           cat evals/results/psychat_minimal_fork_patch.json
+          cat evals/results/psychat_qa_id_provenance_patched.json
           cat evals/results/psychat_provider_replacement.json
           cat evals/results/psychat_retrieval_mechanics_patched.json
           cat evals/results/psychat_retrieval_preservation.json
@@ -193,6 +213,7 @@ jobs:
             evals/results/psychat_gold_source.json
             evals/results/psychat_multilingual_gold.json
             evals/results/psychat_retrieval_readiness.json
+            evals/results/psychat_qa_id_provenance_upstream.json
             evals/results/psychat_multilingual_microbenchmark.json
             evals/results/psychat_real_isolation.json
             evals/results/psychat_retrieval_mechanics_upstream.json
@@ -200,6 +221,7 @@ jobs:
             evals/results/psychat_static_chassis.json
             evals/results/psychat_unpatched_composed_chassis.json
             evals/results/psychat_minimal_fork_patch.json
+            evals/results/psychat_qa_id_provenance_patched.json
             evals/results/psychat_provider_replacement.json
             evals/results/psychat_retrieval_mechanics_patched.json
             evals/results/psychat_retrieval_preservation.json
