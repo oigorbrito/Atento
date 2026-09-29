@@ -46,7 +46,11 @@ class PsyChatExecutorAdapter:
                 session_state=dict(request.state),
             )
 
-        response, next_state = retry_with_timeout_boundary(invoke)
+        response, returned_state = retry_with_timeout_boundary(invoke)
+        next_state = dict(returned_state)
+        turn_metadata = next_state.pop("_atento_turn", {})
+        if not isinstance(turn_metadata, Mapping):
+            turn_metadata = {}
 
         retrieval_docs = next_state.get("last_retrieval_docs", [])
         if not isinstance(retrieval_docs, list):
@@ -56,9 +60,17 @@ class PsyChatExecutorAdapter:
             for doc_id in (_retrieval_id(doc) for doc in retrieval_docs)
             if doc_id is not None
         ]
+
+        attempted = bool(
+            turn_metadata.get("rag_attempted", bool(retrieval_docs))
+        )
+        used_rag = bool(
+            turn_metadata.get("used_rag", bool(retrieval_docs))
+        )
         rag_event = {
             "event": "rag.completed",
-            "used": bool(retrieval_docs),
+            "attempted": attempted,
+            "used": used_rag,
             "retrieved_count": len(retrieval_docs),
             "retrieved_ids": retrieved_ids,
         }
