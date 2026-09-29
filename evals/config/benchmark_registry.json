@@ -1,0 +1,85 @@
+{
+  "registry_version": "0.2.0",
+  "policy": {
+    "vendor_external_datasets_by_default": false,
+    "preserve_original_splits": true,
+    "preserve_original_metrics": true,
+    "single_cross_benchmark_score": false,
+    "license_review_required": true
+  },
+  "benchmarks": [
+    {
+      "id": "esconv",
+      "source_id": "SRC-ESCONV",
+      "source": "https://aclanthology.org/2021.acl-long.269/",
+      "repo": "https://github.com/thu-coai/Emotional-Support-Conversation",
+      "capabilities": ["strategy", "emotional_support"],
+      "adapter_status": "planned",
+      "data_policy": "external_not_vendored",
+      "license_note": "Repository states data/code are for academic research use; review before use in product.",
+      "canonical_dimensions": ["strategy_accuracy", "strategy_macro_f1", "support_quality"]
+    },
+    {
+      "id": "psycheval",
+      "source_id": "SRC-PE",
+      "source": "https://aclanthology.org/2026.findings-acl.1115/",
+      "capabilities": ["multi_session", "longitudinal_memory", "planning", "multi_therapy"],
+      "adapter_status": "planned",
+      "data_policy": "external_not_vendored",
+      "license_note": "Use official assets only when available and license permits.",
+      "canonical_dimensions": ["continuity", "goal_tracking", "counselor_metrics", "client_metrics"]
+    },
+    {
+      "id": "enpmr",
+      "source_id": "SRC-ENPMR",
+      "source": "https://aclanthology.org/2026.findings-acl.2080/",
+      "capabilities": ["need_inference", "proactive_memory", "memory_alignment"],
+      "adapter_status": "planned",
+      "data_policy": "external_not_vendored",
+      "license_note": "Do not reconstruct or scrape benchmark data from the paper.",
+      "canonical_dimensions": ["need_accuracy", "memory_precision", "memory_recall", "need_memory_alignment"]
+    },
+    {
+      "id": "tea_bench",
+      "source_id": "SRC-TEA",
+      "source": "https://aclanthology.org/2026.acl-long.2152/",
+      "repo": "https://github.com/XingYuSSS/TEA-Bench",
+      "capabilities": ["tool_need", "tool_selection", "tool_execution", "grounding", "hallucination"],
+      "adapter_status": "planned",
+      "data_policy": "external_adapter",
+      "license_note": "Repository currently declares Apache-2.0; preserve notices and separately verify dataset terms.",
+      "canonical_dimensions": ["tool_precision", "tool_recall", "tool_f1", "groundedness", "hallucination"]
+    },
+    {
+      "id": "mental_health_bench",
+      "source_id": "SRC-MHB",
+      "source": "https://openai.com/index/introducing-mentalhealthbench/",
+      "capabilities": ["safety", "context_seeking", "user_agency", "actionability", "acuity", "persona"],
+      "adapter_status": "planned",
+      "data_policy": "official_release_only",
+      "license_note": "Use the official open release and preserve its rubric/weighting protocol.",
+      "canonical_dimensions": ["weighted_behavior_score", "acuity_slice", "persona_slice", "behavior_dimensions"]
+    },
+    {
+      "id": "counselbench",
+      "source_id": "SRC-COUNSEL",
+      "source": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/99946cb64d51ead9d3969db0af65ca2e-Abstract-Conference.html",
+      "repo": "https://github.com/llm-eval-mental-health/CounselBench",
+      "capabilities": ["expert_eval", "adversarial", "safety", "advice_boundaries", "judge_calibration"],
+      "adapter_status": "planned",
+      "data_policy": "external_not_vendored",
+      "license_note": "No repository license detected in initial review; do not copy code/data into Atento until terms are verified.",
+      "canonical_dimensions": ["expert_dimensions", "adversarial_failure_rate", "judge_human_gap"]
+    },
+    {
+      "id": "atento_internal",
+      "source_id": "SRC-ATENTO",
+      "source": "evals/cases/",
+      "capabilities": ["contracts", "belief", "memory", "tools", "safety", "privacy", "latency", "cost"],
+      "adapter_status": "active",
+      "data_policy": "repository_owned_synthetic",
+      "license_note": "Synthetic cases authored for Atento; keep provenance in each case.",
+      "canonical_dimensions": ["process_metrics", "release_gates"]
+    }
+  ]
+}

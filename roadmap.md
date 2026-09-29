@@ -1078,6 +1078,81 @@ Logs de observabilidade devem armazenar o mínimo possível de conteúdo sensív
 
 ## BLOCO O — Evaluation Harness / AtentoEval
 
+### Implementação canônica
+
+O harness não fica apenas neste roadmap. A especificação e o scaffold executável vivem em:
+
+- `docs/evaluation/harness.md` — arquitetura do harness, lifecycle, scoring, judges e release gates;
+- `evals/config/benchmark_registry.json` — registry de benchmarks e regras de licenciamento/adaptação;
+- `evals/config/system_matrix.json` — variantes do Atento/forks/modelos a comparar;
+- `evals/config/release_gates.json` — gates bloqueantes e gates a calibrar;
+- `evals/cases/core_v0.jsonl` — seed corpus sintético e versionado;
+- `evals/atentoeval/` — schemas, métricas, gates e runner offline;
+- `evals/tests/` — testes do próprio harness.
+
+### Princípio de composição
+
+O AtentoEval usa um **schema canônico interno**, mas não transforma benchmarks diferentes em uma pontuação única. Cada benchmark preserva sua tarefa, protocolo e métricas originais. O schema comum serve para armazenar traces, metadados, custos, resultados de judges e resultados de processo de forma comparável.
+
+### Modelo de avaliação em camadas
+
+```text
+SUT / variante
+   ↓
+Scenario runner
+   ↓
+Atento trace capture
+   ├── state
+   ├── beliefs
+   ├── memory
+   ├── executive decision
+   ├── plan
+   ├── RAG
+   ├── tools
+   ├── critic
+   └── safety
+   ↓
+Deterministic/process metrics
+   ↓
+Rubric / LLM judge
+   ↓
+Human review sample
+   ↓
+Benchmark-specific report
+   ↓
+Release gates
+```
+
+### Baselines obrigatórios no system matrix
+
+1. single-pass LLM;
+2. strong-prompt baseline;
+3. Atento sem memória;
+4. Atento sem planner;
+5. Atento sem critic;
+6. Atento completo;
+7. PsyChat upstream e adaptado durante o spike, se executáveis;
+8. geradores especializados apenas como `Model Gateway` candidates.
+
+### Benchmarks mapeados
+
+- **ESConv** → strategy prediction e emotional support;
+- **PsychEval** → continuidade multi-sessão, planejamento longitudinal e avaliação counselor/client;
+- **ENPMR-Bench** → inferência de necessidade emocional + proactive memory retrieval;
+- **TEA-Bench** → tool selection, tool execution, grounding e hallucination;
+- **MentalHealthBench** → safety, context-seeking, user agency, actionability e níveis de acuidade;
+- **CounselBench** → avaliação por profissionais, advice boundaries, factual consistency e adversarial failure modes;
+- **Atento internal suites** → contratos, belief calibration, memória cruzada, privacidade, latência, custo e regressões da arquitetura.
+
+### Regras de judge
+
+- versão/modelo do judge deve ser pinado no run manifest;
+- prompt/rubric do judge deve ter hash;
+- LLM-as-judge não pode ser único gate para safety;
+- cenários críticos exigem revisão humana amostrada ou rubric determinística quando aplicável;
+- divergência entre judges deve ser armazenada, não escondida por média;
+- scores externos não devem ser comparados diretamente quando os protocolos diferirem.
+
 ### Origem / provenance
 - **Multi-sessão:** `SRC-PE`.
 - **Strategy/ESC:** `SRC-ESCONV`, `SRC-CADSS`, `SRC-SAGE`.
