@@ -92,6 +92,7 @@ def main() -> int:
                 and equals(d, "donor_files_touched_for_bloco_i_rag_correctness", 4)
                 and truthy(d, "qa_id_provenance_patch_required")
                 and equals(d, "vector_distance_metric", "cosine")
+                and truthy(d, "vector_clear_preserves_index_contract")
             ),
         ),
         (
@@ -154,6 +155,7 @@ def main() -> int:
                 equals(d, "runtime_shape", "patched")
                 and equals(d, "explicit_hnsw_space", "cosine")
                 and equals(d, "semantic_status", "EXPLICIT_COSINE_VERSIONED_INDEX")
+                and truthy(d, "clear_collection_contract_preserved")
             ),
         ),
         (
@@ -360,7 +362,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.6",
+        "metric_version": "psychat-block-i-readiness-v0.7",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
