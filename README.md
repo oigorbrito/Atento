@@ -11,6 +11,7 @@ O projeto está reconciliando sua definição em três agentes: **NAIA** (assist
 ## Onde começar
 
 - **Handoff do reset/reconciliação:** [docs/handoff-2026-09-29-product-reset.md](docs/handoff-2026-09-29-product-reset.md)
+- **Auditoria da reconciliação do remoto:** [docs/reconciliation-2026-09-29.md](docs/reconciliation-2026-09-29.md)
 - **Regras para agentes/contribuidores:** [AGENTS.md](AGENTS.md)
 - **Arquitetura, blocos e progresso global:** [roadmap.md](roadmap.md)
 - **Decisão fork vs greenfield:** [docs/adr/ADR-000-fork-vs-greenfield.md](docs/adr/ADR-000-fork-vs-greenfield.md)
