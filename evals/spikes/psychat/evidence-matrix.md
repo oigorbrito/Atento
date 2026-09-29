@@ -28,7 +28,7 @@ Atento evaluation branch:
 | Area | Metric / question | Status | Current evidence |
 |---|---|---|---|
 | Upstream chassis | Static CFS | PASS_STATIC | Pinned PsyChat baseline: 10/100; only routing boundary passes static screening. |
-| Branch coherence | Spike behind main? | PASS_EMPIRICAL | Spike has repeatedly been reconciled to 0 behind main; compare must be rechecked before final ADR freeze. |
+| Branch coherence | Spike behind main? | PASS_EMPIRICAL | Reconciled with canonical `oigorbrito/Atento` remote by merge commit `751cd5d7e2d4addb09d7619f32a4b646dcbc72ba`: compare reports `behind_by=0`, `ahead_by=271`, with merge base at current `main` `0983f502d2884f24c52d400c09131449ec59ae8c`. |
 | Donor license | Fork/modification permission known | PASS_EMPIRICAL | Pinned donor `LICENSE` is MIT; modification/distribution/sublicensing are permitted subject to retaining the copyright and permission notice in copies or substantial portions. Versioned evidence: `evals/evidence/psychat_license.json`; the upstream MIT text is also stored alongside copied donor source in both evidence refs. |
 | Fork surface | Files touched to introduce model + embedding provider boundaries | PASS_EMPIRICAL | Git compare baseline `fb5368edbe23aeedf571e1f11935ae63b6da29b9` -> patched `15249e687c8a2fdea263cc0ae57650ab698a907f`: exactly 3 files. |
 | Fork surface | Provider/lifecycle boundary files | PASS_EMPIRICAL | `agent/psychology_agent.py`, `core/rag_system.py`, `core/vector_store.py`. |
@@ -82,7 +82,7 @@ Atento evaluation branch:
 | Multilingual retrieval | Low-cost real-evidence benchmark | PENDING_EXECUTION | `multilingual_microbenchmark.py` now uses donor-equivalent 6-utterance chunks (6 chunks for each current gold), explicit cosine similarity, top-k 6 and threshold 0.15; compares pt-BR vs zh-CN without rebuilding the full Chroma index. |
 | Multilingual retrieval | Required external dependency for microbenchmark | QUALITY_RISK | Requires a functioning embedding provider credential; workflow records `SKIPPED_NO_EMBEDDING_CREDENTIAL` instead of treating a missing secret as PASS. |
 | GitHub Actions | Minimal one-step runner smoke | INFRA_BLOCKED | Smoke run #2: both `ubuntu-latest` and `ubuntu-24.04` fail with `steps=null`; log fetch returns `BlobNotFound`. |
-| Main BLOCO I workflow | Test execution | INFRA_BLOCKED | Latest verified run `36580046685` at HEAD `a8a87ad918db1fa016a2a8ea78d00628033565ca` created all 4 jobs, but every job completed `failure` with `steps=null` and `logs_url=null` before checkout or commands. No functional failure may be inferred. |
+| Main BLOCO I workflow | Test execution | INFRA_BLOCKED | Post-reconciliation run `36631948308` at merge HEAD `751cd5d7e2d4addb09d7619f32a4b646dcbc72ba` created all 4 jobs, but every job completed `failure` with `steps=null` and `logs_url=null` before checkout or commands. No functional failure may be inferred. |
 | ADR-000 | Fork/full donor decision | NOT_DECIDED | Architecture evidence improved, but runtime and RAG-quality evidence remain incomplete. |
 | Project progress | Global progress | NOT_DECIDED | Remains 3/100; spike evidence alone does not advance project completion. |
 
