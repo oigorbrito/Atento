@@ -1,10 +1,11 @@
 {
-  "metric_version": "psychat-block-i-git-v0.1",
+  "metric_version": "psychat-block-i-git-v0.2",
   "evidence_type": "github_git_compare_plus_pinned_corpus_simulation",
   "pinned_donor_commit": "5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4",
   "baseline_commit": "f2317be0fc27b1f4a6a39c5c89f22faf550045bf",
-  "patched_commit": "afbd41eca44661e174e144e86620fbf611660420",
-  "preserving_ref": "evidence/psychat-rag-block-correctness",
+  "patched_commit": "395f0ab05af529c901e006e6318ead0d0eb52432",
+  "measurement_ref": "evidence/psychat-rag-block-correctness-v4-source",
+  "preserving_ref": "evidence/psychat-rag-block-correctness-v4",
   "files_touched_exact": 4,
   "provider_boundary_files_touched": 3,
   "changed_files": [
@@ -14,17 +15,24 @@
     "evals/evidence/psychat-block-i/data/processor.py"
   ],
   "original_lines": 1600,
-  "deleted_or_replaced_original_lines": 143,
-  "added_lines": 67,
-  "retained_original_lines": 1457,
-  "retained_original_line_ratio": 0.910625,
+  "deleted_or_replaced_original_lines": 160,
+  "added_lines": 142,
+  "retained_original_lines": 1440,
+  "retained_original_line_ratio": 0.9,
   "static_patched_invariants": {
     "direct_requests_post_count": 0,
     "psychology_agent_model_gateway_injected": true,
     "rag_system_model_gateway_present": true,
     "vector_store_embedding_gateway_injected": true,
     "rag_system_force_retrieval_signature": true,
+    "rag_system_force_retrieval_propagated": true,
+    "final_response_messages_constructed_locally": true,
     "explicit_hnsw_space": "cosine",
+    "embedding_identity_required": true,
+    "corpus_identity_required": true,
+    "collection_namespaced_by_index_identity": true,
+    "same_identity_rebuild_uses_upsert": true,
+    "legacy_collection_add_remaining": false,
     "qa_id_carry_forward_present": true
   },
   "pinned_corpus_parser_evidence": {
@@ -53,10 +61,11 @@
     ]
   },
   "limitations": [
-    "Git/content evidence proves exact patch surface and source/corpus invariants, not Python runtime execution.",
-    "Dynamic DataProcessor, Chroma metadata, provider replacement, isolation and AtentoEval quality remain separate execution requirements."
+    "Git/content evidence proves exact current patch surface and source/corpus invariants, not Python runtime execution.",
+    "Dynamic DataProcessor, Chroma lifecycle, provider replacement, isolation and AtentoEval quality remain separate execution requirements.",
+    "The 90.00% retention ratio is a line-based approximation from baseline lines minus deleted/replaced lines."
   ],
-  "preserving_ref_head": "a6c5c38c5a020ecaaba281c4b1f11c0e6fbe0428",
+  "preserving_ref_head": "c879c65f313b4b6ba37b999f006047017cd2a859",
   "upstream_license_notice_present_in_preserving_ref": true,
-  "surface_measurement_note": "files_touched_exact compares baseline_commit to patched_commit; the preserving ref has a later license-notice-only descendant and must not be used as the head for change-surface counting."
+  "surface_measurement_note": "files_touched_exact compares baseline_commit to patched_commit on v4-source. The preserving ref contains the MIT notice in its ancestry and must not be used as the head for source change-surface counting."
 }
