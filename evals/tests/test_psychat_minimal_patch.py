@@ -268,6 +268,7 @@ class PsyChatMinimalPatchGeneratorTest(unittest.TestCase):
             self.assertIn("self._refresh_active_collection()", patched)
             self.assertIn("staging.count() == len(documents)", patched)
             self.assertIn("self._validate_collection_contract()", patched)
+            self.assertIn("return self.rebuild_documents([])", patched)
             self.assertNotIn("self.client.delete_collection(COLLECTION_NAME)", patched)
 
 
