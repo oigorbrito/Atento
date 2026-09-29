@@ -32,7 +32,7 @@ Atento evaluation branch:
 | Fork surface | Provider/lifecycle boundary files | PASS_EMPIRICAL | `agent/psychology_agent.py`, `core/rag_system.py`, `core/vector_store.py`. |
 | Fork preservation | Original-line retention over 3-file provider-boundary surface | PASS_EMPIRICAL | Approx. 90.99% retained: 1,242 / 1,365 original lines not deleted/replaced. |
 | BLOCO I correctness surface | Files touched for provider/lifecycle + QA provenance correctness | PASS_EMPIRICAL | Git compare baseline `f2317be0fc27b1f4a6a39c5c89f22faf550045bf` -> patched `7c780cd74f23be5e455600e7c0bd21cae60414a1`: exactly 4 files, adding `data/processor.py`; preserved ref `evidence/psychat-rag-block-correctness`. |
-| BLOCO I correctness surface | Original-line retention over 4-file block patch | PASS_EMPIRICAL | Approx. 91.06% retained: 1,457 / 1,600 original lines not deleted/replaced. |
+| BLOCO I correctness surface | Original-line retention over 4-file block patch | PASS_EMPIRICAL | Current evidence ref head `66e359826096e540e8ecbc34a732fde6fd00710f`; approx. 91.00% retained: 1,456 / 1,600 original lines not deleted/replaced. |
 | Provider boundary | Direct `requests.post` in patched RAG surface | PASS_STATIC | 0 in preserved patched ref `evidence/psychat-rag-minimal-patch`. |
 | Provider boundary | Model provider injectable | PASS_STATIC | `PsychologyAgent` and `RAGSystem` contain model-gateway seams in preserved patched Git content. |
 | Provider boundary | Embedding provider injectable | PASS_STATIC | `VectorStore` and `RAGSystem` contain embedding-gateway seams in preserved patched Git content. |
@@ -47,6 +47,10 @@ Atento evaluation branch:
 | Adapter validation | Schema validation coverage | PENDING_EXECUTION | Dynamic chassis probe requires 100% of encoded validation checks. |
 | Adapter tracing | Required trace coverage | PENDING_EXECUTION | Dynamic chassis probe requires RAG + executor trace events. |
 | Retrieval mechanics | Multi-query merge/dedup/ranking preserved after fork patch | PENDING_EXECUTION | Upstream/patched mechanics probes + preservation comparator exist. |
+| Vector metric | Upstream distance semantics match `1 - distance` similarity transform | PASS_STATIC | No `hnsw:space` is configured in pinned `VectorStore`; Chroma documents L2 as the default, while donor interprets `1 - distance` as similarity. |
+| Vector metric | Patched distance semantics | PASS_STATIC | BLOCO I patch sets `hnsw:space=cosine` in the already-touched `core/vector_store.py`, making `1 - cosine_distance` a cosine-similarity score. |
+| Vector metric | Runtime metadata before/after | PENDING_EXECUTION | `vector_metric_probe.py` dynamically records collection metadata upstream vs patched without real Chroma/network access. |
+| Dependency reproducibility | Chroma version pinned | QUALITY_RISK | Donor requirement is `chromadb>=0.4.0`, not an exact/locked version; Atento integration environment must own/pin the effective Chroma version before production adoption. |
 | QA provenance | Upstream parser preserves corpus IDs in indexed chunks | PASS_EMPIRICAL | No. Applying the pinned parser logic to all 12 corpus blobs yields 4,760 / 4,760 dialogue sections with `qa_id=unknown`; 0 known IDs survive. |
 | QA provenance | Corrected parser preserves corpus IDs | PASS_EMPIRICAL | Corrected carry-forward logic over the same 12 pinned blobs preserves all 4,760 unique IDs, emits 0 unknown dialogue sections, and retains gold IDs 328/350/1864/1882. |
 | QA provenance | Real DataProcessor before/after runtime probe | PENDING_EXECUTION | `qa_id_provenance_probe.py` dynamically loads the actual donor processor and asserts upstream broken vs patched preserved behavior; runner unavailable. |
@@ -59,7 +63,7 @@ Atento evaluation branch:
 | Retrieval reproducibility | Repository alone reproduces semantic retrieval | QUALITY_RISK | No committed vector index; rebuild requires a functioning embedding provider. |
 | Multilingual retrieval | pt-BR query retrieves Chinese gold evidence | QUALITY_RISK | Not yet measured. Paired pt-BR/zh-CN gold manifest exists for IDs 328, 350, 1864, 1882. Alibaba Cloud documentation states `text-embedding-v4` supports 100+ languages including Chinese and Portuguese, but provider capability is not donor retrieval evidence. |
 | Multilingual retrieval | Source-language vs pt-BR retrieval gap | PENDING_EXECUTION | `multilingual_retrieval_score.py` reports hit-rate/MRR by language and zh-minus-pt gap once real retrieval results exist. |
-| Multilingual retrieval | Low-cost real-evidence benchmark | PENDING_EXECUTION | `multilingual_microbenchmark.py` embeds 4 exact pinned gold conversations plus deterministic same-corpus distractors and compares pt-BR vs zh-CN hit@k/MRR without rebuilding the full Chroma index. |
+| Multilingual retrieval | Low-cost real-evidence benchmark | PENDING_EXECUTION | `multilingual_microbenchmark.py` now uses donor-equivalent 6-utterance chunks (6 chunks for each current gold), explicit cosine similarity, top-k 6 and threshold 0.15; compares pt-BR vs zh-CN without rebuilding the full Chroma index. |
 | Multilingual retrieval | Required external dependency for microbenchmark | QUALITY_RISK | Requires a functioning embedding provider credential; workflow records `SKIPPED_NO_EMBEDDING_CREDENTIAL` instead of treating a missing secret as PASS. |
 | GitHub Actions | Minimal one-step runner smoke | INFRA_BLOCKED | Smoke run #2: both `ubuntu-latest` and `ubuntu-24.04` fail with `steps=null`; log fetch returns `BlobNotFound`. |
 | Main BLOCO I workflow | Test execution | INFRA_BLOCKED | Jobs are created then fail before checkout or any command. No functional failure may be inferred. |
