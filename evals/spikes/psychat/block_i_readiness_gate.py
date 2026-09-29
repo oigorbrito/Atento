@@ -102,6 +102,9 @@ def main() -> int:
                 and truthy(d, "collection_contract_mismatch_fails_closed")
                 and truthy(d, "knowledge_base_rebuild_defaults_to_replace")
                 and truthy(d, "knowledge_base_rebuild_clear_fails_closed")
+                and truthy(d, "knowledge_base_rebuild_uses_staging_generation")
+                and truthy(d, "active_index_pointer_promoted_atomically")
+                and truthy(d, "partial_staging_index_never_promoted")
             ),
         ),
         (
@@ -114,6 +117,7 @@ def main() -> int:
                 and truthy(d, "composition_provider_consistency_pass")
                 and truthy(d, "knowledge_base_rebuild_replace_default_pass")
                 and truthy(d, "knowledge_base_rebuild_clear_fail_closed_pass")
+                and truthy(d, "knowledge_base_rebuild_atomic_path_pass")
                 and truthy(d, "rag_model_gateway_swap_pass")
                 and truthy(d, "external_rag_route_enforcement_pass")
                 and equals(d, "donor_source_edit_required_for_swap", False)
@@ -176,6 +180,8 @@ def main() -> int:
                 and truthy(d, "collection_info_exposes_index_identity")
                 and truthy(d, "persisted_collection_metadata_validation_pass")
                 and truthy(d, "collection_contract_mismatch_fails_closed")
+                and truthy(d, "atomic_generation_promotion_pass")
+                and truthy(d, "partial_staging_never_promoted")
             ),
         ),
         (
@@ -397,7 +403,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.18",
+        "metric_version": "psychat-block-i-readiness-v0.19",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
