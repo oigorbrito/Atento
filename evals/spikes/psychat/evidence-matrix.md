@@ -54,6 +54,8 @@ Atento evaluation branch:
 | Retrieval reproducibility | Repository alone reproduces semantic retrieval | QUALITY_RISK | No committed vector index; rebuild requires a functioning embedding provider. |
 | Multilingual retrieval | pt-BR query retrieves Chinese gold evidence | QUALITY_RISK | Not yet measured. Paired pt-BR/zh-CN gold manifest exists for IDs 328, 350, 1864, 1882. |
 | Multilingual retrieval | Source-language vs pt-BR retrieval gap | PENDING_EXECUTION | `multilingual_retrieval_score.py` reports hit-rate/MRR by language and zh-minus-pt gap once real retrieval results exist. |
+| Multilingual retrieval | Low-cost real-evidence benchmark | PENDING_EXECUTION | `multilingual_microbenchmark.py` embeds 4 exact pinned gold conversations plus deterministic same-corpus distractors and compares pt-BR vs zh-CN hit@k/MRR without rebuilding the full Chroma index. |
+| Multilingual retrieval | Required external dependency for microbenchmark | QUALITY_RISK | Requires a functioning embedding provider credential; workflow records `SKIPPED_NO_EMBEDDING_CREDENTIAL` instead of treating a missing secret as PASS. |
 | GitHub Actions | Minimal one-step runner smoke | INFRA_BLOCKED | Smoke run #2: both `ubuntu-latest` and `ubuntu-24.04` fail with `steps=null`; log fetch returns `BlobNotFound`. |
 | Main BLOCO I workflow | Test execution | INFRA_BLOCKED | Jobs are created then fail before checkout or any command. No functional failure may be inferred. |
 | ADR-000 | Fork/full donor decision | NOT_DECIDED | Architecture evidence improved, but runtime and RAG-quality evidence remain incomplete. |
