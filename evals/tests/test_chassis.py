@@ -30,6 +30,8 @@ class ChassisAuditTest(unittest.TestCase):
                 "def safety_check(x): return True\n", encoding="utf-8"
             )
             report = audit(root, "TEST")
+            self.assertFalse(report["decision_authority"])
+            self.assertEqual(report["selection_meaning"], "NONE")
             self.assertGreaterEqual(report["chassis_fitness_score"], 70)
 
     def test_direct_provider_and_local_session_state_are_visible(self):
