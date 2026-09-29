@@ -55,6 +55,16 @@ jobs:
         run: |
           python evals/spikes/psychat/change_surface_probe.py             --donor-root /tmp/PsyChat             --output evals/results/psychat_change_surface.json
 
+      - name: Apply minimal real fork patch
+        run: |
+          python evals/spikes/psychat/apply_minimal_fork_patch.py --donor-root /tmp/PsyChat
+
+      - name: Validate exact minimal fork surface
+        run: |
+          python evals/spikes/psychat/minimal_fork_probe.py \
+            --donor-root /tmp/PsyChat \
+            --output evals/results/psychat_minimal_fork.json
+
       - name: Static upstream Chassis Fitness audit
         run: |
           python evals/chassis/donor_static_audit.py             --root /tmp/PsyChat             --source-id SRC-PSYCHAT             --upstream-commit 5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4             --output evals/results/psychat_static_chassis.json
@@ -71,6 +81,7 @@ jobs:
         run: |
           cat evals/results/psychat_real_isolation.json
           cat evals/results/psychat_change_surface.json
+          cat evals/results/psychat_minimal_fork.json
           cat evals/results/psychat_static_chassis.json
           cat evals/results/psychat_composed_chassis.json
 
@@ -80,6 +91,7 @@ jobs:
           path: |
             evals/results/psychat_real_isolation.json
             evals/results/psychat_change_surface.json
+            evals/results/psychat_minimal_fork.json
             evals/results/psychat_static_chassis.json
             evals/results/psychat_composed_chassis.json
           if-no-files-found: error
