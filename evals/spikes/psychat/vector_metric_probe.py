@@ -276,6 +276,28 @@ def main() -> int:
         if promoted_pointer != promoted_name:
             raise AssertionError("active pointer does not match promoted generation")
 
+        reopened = cls(embedding_gateway=StubEmbeddingGateway())
+        if reopened.collection_name != promoted_name:
+            raise AssertionError(
+                "new VectorStore instance did not reopen promoted generation"
+            )
+        if reopened.collection is not store.collection:
+            raise AssertionError(
+                "new VectorStore instance resolved a different active collection"
+            )
+
+        pointer_backup = store.pointer_path.read_text(encoding="utf-8")
+        store.pointer_path.write_text("{not-json", encoding="utf-8")
+        try:
+            cls(embedding_gateway=StubEmbeddingGateway())
+        except RuntimeError as exc:
+            if "invalid vector index pointer" not in str(exc):
+                raise
+        else:
+            raise AssertionError("corrupt active pointer did not fail closed")
+        finally:
+            store.pointer_path.write_text(pointer_backup, encoding="utf-8")
+
         healthy_gateway = store.embedding_gateway
         store.embedding_gateway = PartialFailureEmbeddingGateway()
         partial_docs = [
@@ -317,7 +339,7 @@ def main() -> int:
                 )
 
     report = {
-        "metric_version": "psychat-vector-metric-v0.9",
+        "metric_version": "psychat-vector-metric-v0.10",
         "runtime_shape": args.expect,
         "collection_name": collection_name,
         "collection_metadata": metadata,
@@ -355,6 +377,12 @@ def main() -> int:
         ),
         "partial_staging_never_promoted": (
             args.expect != "patched" or pointer_after_failure == promoted_name
+        ),
+        "promoted_generation_survives_restart": (
+            args.expect != "patched" or reopened.collection_name == promoted_name
+        ),
+        "corrupt_pointer_fails_closed": (
+            args.expect != "patched" or True
         ),
         "explicit_hnsw_space": explicit_space,
         "similarity_transform_in_donor": "1 - distance",
