@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
+import inspect
 from typing import Any
 
 
@@ -12,14 +13,8 @@ class PsyChatRagSystemPort:
     ownership must be redesigned without reintroducing cross-session state.
     """
 
-    def __init__(
-        self,
-        rag_system_factory: Callable[[], Any],
-        *,
-        force_retrieval: bool = False,
-    ) -> None:
+    def __init__(self, rag_system_factory: Callable[[], Any]) -> None:
         self._factory = rag_system_factory
-        self._force_retrieval = force_retrieval
 
     @staticmethod
     def _normalize_result(raw_result: Any) -> tuple[str, dict]:
@@ -53,7 +48,13 @@ class PsyChatRagSystemPort:
 
         raise TypeError("donor generate_response must return str or mapping")
 
-    def respond(self, *, message: str, session_state: dict) -> tuple[str, dict]:
+    def respond(
+        self,
+        *,
+        message: str,
+        session_state: dict,
+        force_retrieval: bool = False,
+    ) -> tuple[str, dict]:
         donor = self._factory()
 
         history = list(session_state.get("conversation_history", []))
@@ -66,7 +67,13 @@ class PsyChatRagSystemPort:
                 session_state.get("last_retrieval_docs", [])
             )
 
-        if self._force_retrieval:
+        if force_retrieval:
+            params = inspect.signature(donor.generate_response).parameters
+            if "force_retrieval" not in params:
+                raise RuntimeError(
+                    "PsyChat donor does not expose force_retrieval; "
+                    "the minimal BLOCO I fork patch is required"
+                )
             raw_result = donor.generate_response(
                 message,
                 force_retrieval=True,
