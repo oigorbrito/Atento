@@ -5,12 +5,26 @@ from evals.spikes.psychat.adapter.executor import PsyChatExecutorAdapter
 from evals.spikes.psychat.adapter.registry import CapabilityRegistry
 from evals.spikes.psychat.adapter.runtime import PsyChatSpikeRuntime
 from evals.spikes.psychat.adapter.session import InMemorySessionStore
+from evals.spikes.psychat.adapter.psychat_bridge import PsyChatRagSystemPort
 
 
 class FakePsyChatDonor:
     def respond(self, *, message, session_state):
         count = int(session_state.get("turns", 0)) + 1
         return f"{message}:{count}", {"turns": count}
+
+
+class FakeUpstreamRagSystem:
+    def __init__(self):
+        self.conversation_history = []
+        self.no_rag_counter = 0
+        self.last_retrieval_docs = []
+
+    def generate_response(self, message):
+        self.no_rag_counter += 1
+        self.conversation_history.append({"role": "user", "content": message})
+        self.conversation_history.append({"role": "assistant", "content": "ok"})
+        return f"upstream:{message}:{self.no_rag_counter}"
 
 
 class AlternateRagExecutor:
@@ -58,6 +72,23 @@ class PsyChatAdapterTest(unittest.TestCase):
         self.assertEqual(runtime.execute(session_id="a", message="x", route=route()).response, "x:1")
         self.assertEqual(runtime.execute(session_id="a", message="x", route=route()).response, "x:2")
         self.assertEqual(runtime.execute(session_id="b", message="x", route=route()).response, "x:1")
+
+    def test_real_bridge_shape_restores_and_extracts_donor_state(self):
+        port = PsyChatRagSystemPort(FakeUpstreamRagSystem)
+        response, state = port.respond(
+            message="hello",
+            session_state={"conversation_history": [], "no_rag_counter": 4},
+        )
+        self.assertEqual(response, "upstream:hello:5")
+        self.assertEqual(state["no_rag_counter"], 5)
+        self.assertEqual(len(state["conversation_history"]), 2)
+
+    def test_bridge_factory_prevents_state_reuse_between_calls(self):
+        port = PsyChatRagSystemPort(FakeUpstreamRagSystem)
+        _, first = port.respond(message="a", session_state={})
+        _, second = port.respond(message="b", session_state={})
+        self.assertEqual(first["no_rag_counter"], 1)
+        self.assertEqual(second["no_rag_counter"], 1)
 
     def test_executor_can_be_swapped_by_registration(self):
         runtime, registry = self.make_runtime()

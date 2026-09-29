@@ -223,3 +223,38 @@ The next adapted-donor test should preserve the donor's RAG logic while moving t
 7. tracing/resilience.
 
 The test should measure whether this can be done with a thin wrapper rather than a rewrite.
+
+
+## Test batch 3 — thin donor bridge
+
+A concrete `PsyChatRagSystemPort` was added to test whether upstream `RAGSystem` can sit behind the Atento Executor boundary without modifying upstream source.
+
+The bridge deliberately creates a fresh donor runtime for each invocation, restores session state before `generate_response()`, and extracts the next state afterward.
+
+This tests an important fork hypothesis:
+
+> Can session ownership move outside PsyChat while preserving its RAG behavior?
+
+The spike has deterministic tests for:
+
+- restoring donor state from external session state;
+- extracting the next state after execution;
+- preventing accidental donor instance reuse across independent calls.
+
+### Trade-off exposed by the bridge
+
+Per-call donor construction is intentionally conservative for isolation but may be too expensive because upstream construction also owns vector-store/provider resources.
+
+Therefore the bridge is **architecturally useful evidence, not the final runtime design**.
+
+If PsyChat is adopted for BLOCO I, the next design problem is to separate:
+
+```text
+long-lived stateless resources
+(vector index / clients)
+        from
+per-session mutable state
+(history / counters / retrieval trace)
+```
+
+without moving session ownership back into a process-global donor instance.
