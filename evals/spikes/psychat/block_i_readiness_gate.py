@@ -88,6 +88,10 @@ def main() -> int:
                 and truthy(d, "model_gateway_injectable")
                 and truthy(d, "embedding_gateway_injectable")
                 and truthy(d, "external_rag_route_enforceable")
+                and equals(d, "donor_files_touched_to_introduce_provider_boundary", 3)
+                and equals(d, "donor_files_touched_for_bloco_i_rag_correctness", 4)
+                and truthy(d, "qa_id_provenance_patch_required")
+                and equals(d, "vector_distance_metric", "cosine")
             ),
         ),
         (
@@ -111,6 +115,45 @@ def main() -> int:
             lambda d: (
                 truthy(d, "donor_replacement_test_pass")
                 and truthy(d, "retrieval_mechanics_preserved")
+            ),
+        ),
+        (
+            "qa_id_provenance_upstream",
+            "psychat_qa_id_provenance_upstream.json",
+            lambda d: (
+                equals(d, "pinned_commit", PINNED_COMMIT)
+                and equals(d, "unknown_chunk_ratio", 1.0)
+                and equals(d, "known_unique_qa_id_count", 0)
+            ),
+        ),
+        (
+            "qa_id_provenance_patched",
+            "psychat_qa_id_provenance_patched.json",
+            lambda d: (
+                equals(d, "pinned_commit", PINNED_COMMIT)
+                and equals(d, "unknown_chunk_count", 0)
+                and equals(d, "missing_raw_id_count", 0)
+                and truthy(d, "gold_id_survival.328")
+                and truthy(d, "gold_id_survival.350")
+                and truthy(d, "gold_id_survival.1864")
+                and truthy(d, "gold_id_survival.1882")
+            ),
+        ),
+        (
+            "vector_metric_upstream",
+            "psychat_vector_metric_upstream.json",
+            lambda d: (
+                equals(d, "runtime_shape", "upstream")
+                and equals(d, "semantic_status", "IMPLICIT_CHROMA_DEFAULT")
+            ),
+        ),
+        (
+            "vector_metric_patched",
+            "psychat_vector_metric_patched.json",
+            lambda d: (
+                equals(d, "runtime_shape", "patched")
+                and equals(d, "explicit_hnsw_space", "cosine")
+                and equals(d, "semantic_status", "EXPLICIT_COSINE")
             ),
         ),
         (
@@ -177,6 +220,25 @@ def main() -> int:
                 and truthy(d, "static_patched_invariants.psychology_agent_model_gateway_injected")
                 and truthy(d, "static_patched_invariants.vector_store_embedding_gateway_injected")
                 and truthy(d, "static_patched_invariants.rag_system_force_retrieval_signature")
+            ),
+        ),
+        (
+            "full_bloco_i_git_surface",
+            evidence_root / "psychat_block_i_git.json",
+            lambda d: (
+                equals(d, "pinned_donor_commit", PINNED_COMMIT)
+                and equals(d, "files_touched_exact", 4)
+                and equals(d, "provider_boundary_files_touched", 3)
+                and equals(d, "static_patched_invariants.direct_requests_post_count", 0)
+                and equals(d, "static_patched_invariants.explicit_hnsw_space", "cosine")
+                and truthy(d, "static_patched_invariants.qa_id_carry_forward_present")
+                and equals(d, "pinned_corpus_parser_evidence.upstream_unknown_qa_id_sections", 4760)
+                and equals(d, "pinned_corpus_parser_evidence.patched_unknown_qa_id_sections", 0)
+                and equals(d, "pinned_corpus_parser_evidence.patched_missing_raw_ids", 0)
+                and truthy(d, "pinned_corpus_parser_evidence.gold_id_survival.328")
+                and truthy(d, "pinned_corpus_parser_evidence.gold_id_survival.350")
+                and truthy(d, "pinned_corpus_parser_evidence.gold_id_survival.1864")
+                and truthy(d, "pinned_corpus_parser_evidence.gold_id_survival.1882")
             ),
         ),
         (
@@ -280,7 +342,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.2",
+        "metric_version": "psychat-block-i-readiness-v0.3",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
