@@ -1,0 +1,4 @@
+# BLOCO I — RAG reproducibility constraint.
+# PsyChat upstream declares chromadb>=0.4.0, which is too broad for a
+# reproducible persisted-index experiment. AtentoEval owns the exact version.
+chromadb==0.5.23
