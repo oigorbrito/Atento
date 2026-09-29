@@ -1,0 +1,18 @@
+{
+  "id": "atento-naya-effect-qualification",
+  "name": "Atento Nayá Effect Qualification",
+  "description": "Controlled external-effect reconciliation probe for OpenClaw qualification.",
+  "activation": {
+    "onStartup": true
+  },
+  "contracts": {
+    "tools": [
+      "naya_controlled_effect"
+    ]
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}
