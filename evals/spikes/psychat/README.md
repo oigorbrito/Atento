@@ -21,7 +21,10 @@ This spike evaluates PsyChat as a donor for **BLOCO I — Knowledge / RAG**. It 
 ### Adapted-donor boundary
 A thin Atento chassis is placed around a donor port without rewriting donor internals.
 
-Current evidence: `adapted-baseline.md`.
+Current evidence:
+
+- `evidence-matrix.md` — canonical status ledger; separates PASS, pending execution, infra blockers and quality risks;
+- `adapted-baseline.md` — detailed architectural baseline and interpretation.
 
 A real-source session probe is available at
 `real_isolation_probe.py`; it loads the pinned donor's actual
@@ -76,8 +79,8 @@ Do not interpret this spike as a production migration.
 ## Current execution status
 
 - branch remains aligned with current `main` ancestry;
-- current deterministic Python test inventory: **34 tests** across the BLOCO I
-  adapter/chassis/AtentoEval test modules;
+- do not rely on a hard-coded test-count snapshot; the current suite evolves on
+  the spike and evidence status is tracked in `evidence-matrix.md`;
 - the historical **11/11** local result predates the current suite and must not
   be used as evidence for the present HEAD;
 - the historical adapter-only **CFS 90/100** was produced under the older
@@ -90,7 +93,16 @@ Do not interpret this spike as a production migration.
 - real-source session isolation and composed CFS remain
   **BLOCKED_BY_INFRA**;
 - GitHub Actions jobs continue to terminate before runner steps are created,
-  and job logs are not materialized.
+  and job logs are not materialized;
+- an independent one-command Actions smoke workflow reproduces the same failure
+  on both `ubuntu-latest` and `ubuntu-24.04`, isolating the problem from the
+  BLOCO I workflow content;
+- the pinned donor contains 12 knowledge text files but no committed
+  `storage/` vector index; semantic retrieval therefore requires an index
+  rebuild with a functioning embedding provider;
+- paired `pt-BR` / `zh-CN` gold controls are now defined for PsyChat IDs
+  328, 350, 1864 and 1882 so multilingual retrieval quality can be measured
+  independently from chassis quality.
 
 No stale historical PASS is promoted to the current HEAD.
 
