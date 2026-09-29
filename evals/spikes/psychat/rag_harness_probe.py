@@ -26,7 +26,7 @@ class FixtureDonor:
         self.attempted = attempted
         self.retrieved_ids = list(retrieved_ids)
 
-    def respond(self, *, message: str, session_state: dict):
+    def respond(self, *, message: str, session_state: dict, force_retrieval: bool = False):
         docs = [{"id": doc_id} for doc_id in self.retrieved_ids]
         return "fixture-response", {
             **dict(session_state),
