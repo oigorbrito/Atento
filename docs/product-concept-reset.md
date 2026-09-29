@@ -248,17 +248,20 @@ LEGAL_ADOPTION_CLEARED
 
 ## 10. Reconciliação provisória da trilha terapêutica existente
 
-O remoto atual já contém vários projetos relacionados à Anna, mas eles não estão todos na mesma categoria.
+A decisão de base da Anna possui agora uma ADR própria:
 
-### Candidatos atuais que exigem comparação como possível base/fork
+- `docs/adr/ADR-ANNA-001-therapeutic-base-selection.md`
 
-- **PsychAgent** — forte candidato/referência de engine terapêutica; possui evidência multi-session, planejamento, skills e mecanismos terapêuticos, mas ainda tem gaps de produto/safety/transferência.
-- **TherapyMind** (`zx070326-hash/TherapyMind`) — candidato explícito a full donor/fork/lab spike.
-- **PsyChat** — atualmente registrado como full donor/fork/selective-port candidate, mas grande parte da evidência existente está concentrada em RAG/chassis; precisa ser reavaliado quanto a ser realmente um chassis terapêutico completo e não apenas donor de componentes.
+O remoto atual contém vários projetos relacionados à Anna, mas **nenhum deles pertence à shortlist neste momento**.
 
-### Donor suplementar, não equivalente a chassis completo no estado atual
+Até nova auditoria homogênea:
 
-- **TheraMind** (`Emo-gml/TheraMind`) — donor de mecanismo/arquitetura longitudinal e adaptação terapêutica; projeto distinto de TherapyMind.
+- **PsychAgent** — `UNCLASSIFIED_PENDING_AUDIT`; evidência terapêutica já medida permanece válida.
+- **TherapyMind** (`zx070326-hash/TherapyMind`) — `UNCLASSIFIED_PENDING_AUDIT`; evidência já coletada permanece válida.
+- **PsyChat** — `UNCLASSIFIED_PENDING_AUDIT`; precisa ser classificado como chassis completo ou donor de componentes com base em auditoria, não no label histórico.
+- **TheraMind** (`Emo-gml/TheraMind`) — `UNCLASSIFIED_PENDING_AUDIT`; a interpretação histórica como donor de mecanismo é preservada apenas como evidência anterior.
+
+Nenhum label histórico como `FULL_DONOR_CANDIDATE`, `adoption HOLD`, “preferido” ou “não preferido” possui autoridade de seleção enquanto `DECISION_RESET` estiver ativo.
 
 ### Modelos/checkpoints, não chassis por padrão
 
