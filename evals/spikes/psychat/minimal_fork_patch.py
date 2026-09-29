@@ -313,6 +313,21 @@ def patch_rag_system(path: Path) -> None:
     )
     text = replace_once(
         text,
+        "    def build_knowledge_base(self, use_psychology_qa: bool = True, use_header_splitting: bool = True, clear_existing: bool = False) -> bool:\n",
+        "    def build_knowledge_base(self, use_psychology_qa: bool = True, use_header_splitting: bool = True, clear_existing: bool = True) -> bool:\n",
+        label="RAGSystem rebuild replacement default",
+    )
+    text = replace_once(
+        text,
+        "            if clear_existing:\n"
+        "                self.vector_store.clear_collection()\n",
+        "            if clear_existing and not self.vector_store.clear_collection():\n"
+        "                print(\"知识库清空失败，终止重建\")\n"
+        "                return False\n",
+        label="RAGSystem rebuild clear fail closed",
+    )
+    text = replace_once(
+        text,
         "    def generate_response(self, query: str, max_tokens: int = 1000) -> Dict[str, Any]:\n",
         "    def generate_response(\n"
         "        self,\n"
@@ -570,7 +585,7 @@ def apply_patch(donor_root: Path) -> dict:
     retention = retention_metrics(donor_root)
 
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.12",
+        "metric_version": "psychat-minimal-fork-patch-v0.13",
         "pinned_commit": head_before,
         "changed_files": changed,
         "donor_files_touched_to_introduce_provider_boundary": len(PROVIDER_BOUNDARY_FILES),
@@ -585,6 +600,8 @@ def apply_patch(donor_root: Path) -> dict:
         "vector_collection_namespaced_by_corpus_identity": True,
         "same_identity_rebuild_uses_upsert": True,
         "collection_info_exposes_index_identity": True,
+        "knowledge_base_rebuild_defaults_to_replace": True,
+        "knowledge_base_rebuild_clear_fails_closed": True,
         "persisted_collection_metadata_validated": True,
         "similarity_transform": "1 - cosine_distance",
         "files_touched_to_swap_model_provider_after_boundary": 0,
