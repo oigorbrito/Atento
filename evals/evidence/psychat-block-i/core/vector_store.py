@@ -75,29 +75,129 @@ class VectorStore:
         
         print(f"向量存储初始化完成: {CHROMA_DB_PATH}")
     
-    def _read_active_collection_name(self) -> str:
+    def _is_owned_collection_name(self, name: str) -> bool:
+        return (
+            name == self.logical_collection_name
+            or name.startswith(self.logical_collection_name + "__gen-")
+        )
+
+    def _read_pointer_payload(self) -> Dict[str, Any]:
         if not self.pointer_path.exists():
-            return self.logical_collection_name
+            return {
+                "logical_collection": self.logical_collection_name,
+                "active_collection": self.logical_collection_name,
+                "previous_collections": [],
+            }
         try:
             payload = json.loads(self.pointer_path.read_text(encoding="utf-8"))
         except Exception as exc:
             raise RuntimeError(f"invalid vector index pointer: {exc}") from exc
+        if payload.get("logical_collection") != self.logical_collection_name:
+            raise RuntimeError("vector index pointer logical collection mismatch")
         active = str(payload.get("active_collection", "")).strip()
-        if not active.startswith(self.logical_collection_name + "__gen-"):
+        if not self._is_owned_collection_name(active):
             raise RuntimeError(f"invalid active vector collection: {active!r}")
-        return active
+        previous_raw = payload.get("previous_collections", [])
+        if not isinstance(previous_raw, list):
+            raise RuntimeError("invalid vector index pointer history")
+        previous = []
+        for raw in previous_raw:
+            candidate = str(raw).strip()
+            if not self._is_owned_collection_name(candidate):
+                raise RuntimeError(
+                    f"invalid previous vector collection: {candidate!r}"
+                )
+            if candidate != active and candidate not in previous:
+                previous.append(candidate)
+        return {
+            "logical_collection": self.logical_collection_name,
+            "active_collection": active,
+            "previous_collections": previous,
+        }
 
-    def _write_active_collection_name(self, name: str) -> None:
+    def _read_active_collection_name(self) -> str:
+        return self._read_pointer_payload()["active_collection"]
+
+    def _write_pointer_payload(
+        self,
+        *,
+        active_collection: str,
+        previous_collections: List[str],
+    ) -> None:
+        if not self._is_owned_collection_name(active_collection):
+            raise RuntimeError("refusing to persist unowned active collection")
+        previous = []
+        for name in previous_collections:
+            if not self._is_owned_collection_name(name):
+                raise RuntimeError(
+                    f"refusing to persist unowned previous collection: {name!r}"
+                )
+            if name != active_collection and name not in previous:
+                previous.append(name)
         self.pointer_path.parent.mkdir(parents=True, exist_ok=True)
         temp = self.pointer_path.with_suffix(
             self.pointer_path.suffix + f".{uuid.uuid4().hex}.tmp"
         )
         payload = {
             "logical_collection": self.logical_collection_name,
-            "active_collection": name,
+            "active_collection": active_collection,
+            "previous_collections": previous,
         }
         temp.write_text(json.dumps(payload, sort_keys=True), encoding="utf-8")
         os.replace(temp, self.pointer_path)
+
+    def _write_active_collection_name(self, name: str) -> None:
+        current = self._read_pointer_payload()
+        previous = list(current.get("previous_collections", []))
+        old_active = current["active_collection"]
+        if old_active != name:
+            previous = [old_active] + [
+                item for item in previous if item not in {old_active, name}
+            ]
+        self._write_pointer_payload(
+            active_collection=name,
+            previous_collections=previous,
+        )
+
+    def prune_inactive_generations(
+        self,
+        *,
+        keep_previous: int = 2,
+        confirm_quiescent: bool = False,
+    ) -> Dict[str, Any]:
+        """Explicit offline GC; never runs automatically.
+
+        The caller must guarantee that no process/thread still holds a
+        reference to an older generation. The active generation is never
+        eligible for deletion.
+        """
+        if not confirm_quiescent:
+            raise RuntimeError(
+                "generation GC requires explicit confirm_quiescent=True"
+            )
+        if keep_previous < 0:
+            raise ValueError("keep_previous must be >= 0")
+        self._refresh_active_collection()
+        payload = self._read_pointer_payload()
+        active = payload["active_collection"]
+        history = list(payload.get("previous_collections", []))
+        retained = history[:keep_previous]
+        candidates = history[keep_previous:]
+        deleted = []
+        for name in candidates:
+            if name == active:
+                raise RuntimeError("active vector generation cannot be pruned")
+            self.client.delete_collection(name)
+            deleted.append(name)
+        self._write_pointer_payload(
+            active_collection=active,
+            previous_collections=retained,
+        )
+        return {
+            "active_collection": active,
+            "retained_previous": retained,
+            "deleted_collections": deleted,
+        }
 
     def _refresh_active_collection(self) -> None:
         active_name = self._read_active_collection_name()
