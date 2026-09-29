@@ -54,6 +54,14 @@ class StatefulDonor:
         }
 
 
+class RecordingTraceSink:
+    def __init__(self):
+        self.events = []
+
+    def emit(self, event):
+        self.events.append(dict(event))
+
+
 class AlternateExecutor:
     capability = "knowledge.rag"
     executor_id = "alternate"
@@ -118,6 +126,19 @@ def schema_validation_probe() -> dict:
         TypeError,
         lambda: validator.validate("not-an-execution-result"),
     )
+    checks["route_identity_mismatch"] = assert_raises(
+        ValueError,
+        lambda: validator.validate(
+            ExecutionResult(
+                response="ok",
+                executor="other",
+                capability="knowledge.rag",
+            ),
+            expected_capability="knowledge.rag",
+            expected_executor="psychat",
+        ),
+    )
+
     checks["empty_output"] = assert_raises(
         ValueError,
         lambda: validator.validate(
@@ -142,25 +163,29 @@ def trace_probe() -> dict:
     donor = StatefulDonor()
     registry = CapabilityRegistry()
     registry.register(PsyChatExecutorAdapter(donor))
+    sink = RecordingTraceSink()
     runtime = PsyChatSpikeRuntime(
         registry=registry,
         sessions=InMemorySessionStore(),
+        trace_sink=sink,
     )
     result = runtime.execute(
         session_id="trace",
         message="knowledge",
         route=route(),
     )
-    events = [str(event.get("event")) for event in result.trace]
+    result_events = [str(event.get("event")) for event in result.trace]
+    sink_events = [str(event.get("event")) for event in sink.events]
     required = ["rag.completed", "executor.completed"]
-    covered = [event for event in required if event in events]
+    covered = [event for event in required if event in sink_events]
     if donor.force_flags != [True]:
         raise AssertionError(
             f"RAG executor did not enforce retrieval: {donor.force_flags}"
         )
     return {
         "required_events": required,
-        "observed_events": events,
+        "result_events": result_events,
+        "sink_events": sink_events,
         "covered": covered,
         "trace_coverage": len(covered) / len(required),
         "rag_force_retrieval_contract_pass": True,
@@ -297,7 +322,7 @@ def main() -> int:
         raise AssertionError("trace coverage is incomplete")
 
     report = {
-        "metric_version": "atento-adapter-dynamic-v0.1",
+        "metric_version": "atento-adapter-dynamic-v0.2",
         "schema_validation": schema,
         "trace": trace,
         "rollback": rollback,
