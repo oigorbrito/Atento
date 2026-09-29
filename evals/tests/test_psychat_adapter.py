@@ -101,6 +101,20 @@ class FakeEmptyForcedRouteRagSystem(FakeUpstreamRagSystem):
         }
 
 
+class FakeStyleCacheRagSystem(FakeUpstreamRagSystem):
+    def __init__(self):
+        super().__init__()
+        self._style_cache = {"topic": None, "analysis": ""}
+
+    def generate_response(self, message):
+        prior = dict(self._style_cache)
+        self._style_cache = {
+            "topic": "情绪",
+            "analysis": f"{prior.get('analysis', '')}|{message}",
+        }
+        return super().generate_response(message)
+
+
 class FakeRetrievalStateRagSystem(FakeUpstreamRagSystem):
     def generate_response(self, message):
         result = super().generate_response(message)
@@ -368,6 +382,29 @@ class PsyChatAdapterTest(unittest.TestCase):
         self.assertTrue(rag_event["attempted"])
         self.assertFalse(rag_event["used"])
         self.assertEqual(rag_event["retrieved_ids"], [])
+
+    def test_bridge_preserves_style_cache_in_external_session_state(self):
+        port = PsyChatRagSystemPort(FakeStyleCacheRagSystem)
+        response, state = port.respond(
+            message="next",
+            session_state={
+                "conversation_history": [],
+                "no_rag_counter": 0,
+                "_style_cache": {
+                    "topic": "情绪",
+                    "analysis": "cached-style",
+                },
+            },
+        )
+
+        self.assertEqual(response, "upstream:next:1")
+        self.assertEqual(
+            state["_style_cache"],
+            {
+                "topic": "情绪",
+                "analysis": "cached-style|next",
+            },
+        )
 
     def test_bridge_restores_retrieval_state(self):
         port = PsyChatRagSystemPort(FakeRetrievalStateRagSystem)
