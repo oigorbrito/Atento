@@ -1,7 +1,7 @@
 import unittest
 
-from evals.atentoeval.metrics import score_turn, summarize_scores
-from evals.atentoeval.schema import Expected, TurnResult
+from evals.atentoeval.metrics import score_results, score_turn, summarize_scores
+from evals.atentoeval.schema import EvalCase, EvalStep, Expected, TurnResult
 
 
 class MetricsTest(unittest.TestCase):
@@ -31,6 +31,43 @@ class MetricsTest(unittest.TestCase):
         self.assertEqual(scores["memory_recall"], 0.5)
         self.assertEqual(scores["tool_f1"], 1.0)
         self.assertEqual(scores["safety_route_hit"], 1.0)
+
+    def test_agent_scope_is_preserved_and_summarized_separately(self):
+        cases = {
+            "anna": EvalCase(
+                id="anna",
+                suite="core",
+                source_id="SRC-ATENTO",
+                agent_scope="ANNA",
+                steps=[EvalStep(user="x", expected=Expected(safety_route="normal"))],
+            ),
+            "naia": EvalCase(
+                id="naia",
+                suite="tools",
+                source_id="SRC-ATENTO",
+                agent_scope="NAIA",
+                steps=[EvalStep(user="y", expected=Expected(tool_calls=["lookup"]))],
+            ),
+        }
+        results = [
+            TurnResult(
+                case_id="anna",
+                step_index=0,
+                response="ok",
+                trace={"safety": {"route": "normal"}},
+            ),
+            TurnResult(
+                case_id="naia",
+                step_index=0,
+                response="ok",
+                trace={"tools": [{"name": "lookup"}]},
+            ),
+        ]
+        rows = score_results(cases, results)
+        self.assertEqual({row["agent_scope"] for row in rows}, {"ANNA", "NAIA"})
+        summary = summarize_scores(rows)
+        self.assertIn("ANNA", summary["by_agent_scope"])
+        self.assertIn("NAIA", summary["by_agent_scope"])
 
     def test_summary_counts_critical_failures(self):
         rows = [
