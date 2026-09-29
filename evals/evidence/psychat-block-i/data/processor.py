@@ -86,40 +86,40 @@ class DataProcessor:
         return chunks
     
     def split_psychology_qa_pairs(self, text: str, source: str) -> List[Dict[str, Any]]:
-        """按##分割心理学问答对，然后按2-3轮对话再分块"""
+        """Split QA records while preserving the ID that precedes each ## dialogue block."""
         chunks = []
-        
-        # 按##分割文本
         sections = text.split('##')
-        
+        pending_qa_id = None
+
         for i, section in enumerate(sections):
             section = section.strip()
             if not section:
                 continue
-                
-            # 跳过文件头部信息
-            if i == 0 and ('心理咨询对话' in section or '==' in section):
-                continue
-                
-            # 提取ID（如果存在）
-            lines = section.split('\n')
-            qa_id = None
+
+            lines = section.split('\\n')
+            section_qa_id = None
             content_lines = []
-            
+
             for line in lines:
                 line = line.strip()
                 if line.startswith('ID:'):
-                    qa_id = line.replace('ID:', '').strip()
-                elif line and not line.startswith('ID:'):
+                    section_qa_id = line.replace('ID:', '').strip()
+                elif not line:
+                    continue
+                elif i == 0 and ('心理咨询对话' in line or set(line) == {'='}):
+                    continue
+                else:
                     content_lines.append(line)
-            
+
+            if section_qa_id is not None:
+                pending_qa_id = section_qa_id
+
             if content_lines:
-                # 将完整对话按用户-助手轮次分块
-                dialogue_chunks = self._split_dialogue_by_turns(content_lines, source, qa_id)
+                dialogue_chunks = self._split_dialogue_by_turns(content_lines, source, pending_qa_id)
                 chunks.extend(dialogue_chunks)
-        
+
         return chunks
-    
+
     def _split_dialogue_by_turns(self, content_lines: List[str], source: str, qa_id: str) -> List[Dict[str, Any]]:
         """将对话按2-3轮用户-助手交互分块"""
         chunks = []
