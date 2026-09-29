@@ -79,14 +79,25 @@ def main() -> int:
     summary = summarize_scores(rows)
 
     evaluated_scopes = sorted({case.agent_scope for case in cases.values()})
+    primary_scopes = sorted(set(evaluated_scopes) - {"SHARED"})
+    mixed_primary_agent_scopes = len(primary_scopes) > 1
+
     report = {
         "case_count": len(cases),
         "result_count": len(results),
         "agent_scopes": evaluated_scopes,
+        "primary_agent_scopes": primary_scopes,
         "mixed_agent_scopes": len(evaluated_scopes) > 1,
+        "mixed_primary_agent_scopes": mixed_primary_agent_scopes,
         "summary": summary,
         "rows": rows,
     }
+
+    if args.gates and mixed_primary_agent_scopes:
+        raise ValueError(
+            "release/selection gates cannot mix multiple primary agent scopes: "
+            f"{primary_scopes}; run each agent separately, optionally with SHARED cases"
+        )
 
     if args.gates:
         gates = load_json(args.gates)
