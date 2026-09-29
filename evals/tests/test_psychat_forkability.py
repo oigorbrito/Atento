@@ -62,7 +62,8 @@ class PsyChatForkabilityProbeTest(unittest.TestCase):
                 "        self.vector_store=VectorStore(); self.agent=PsychologyAgent(); self.conversation_history=[]\n"
                 "    def x(self):\n"
                 "        a=MAX_NO_RAG_ROUNDS\n"
-                "        return force_retrieval=True\n",
+                "        marker='force_retrieval=True'\n"
+                "        return marker\n",
                 encoding="utf-8",
             )
             (root / "web/interface.py").write_text(
