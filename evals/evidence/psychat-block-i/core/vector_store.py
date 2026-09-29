@@ -6,16 +6,33 @@
 
 import chromadb
 from chromadb.config import Settings
-import requests
+import hashlib
 from typing import List, Dict, Any
 from config import *
 
 class VectorStore:
-    def __init__(self):
-        # 初始化阿里云百炼Embedding API配置
-        self.api_key = ALIBABA_API_KEY
-        self.embedding_url = "https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings"
-        
+    def __init__(
+        self,
+        embedding_gateway,
+        corpus_identity=ATENTO_DEFAULT_CORPUS_IDENTITY,
+    ):
+        self.embedding_gateway = embedding_gateway
+        embedding_identity = str(embedding_gateway.index_identity).strip()
+        corpus_identity = str(corpus_identity).strip()
+        if not embedding_identity:
+            raise ValueError("embedding_gateway.index_identity must be non-empty")
+        if not corpus_identity:
+            raise ValueError("corpus_identity must be non-empty")
+        index_identity = f"{embedding_identity}|{corpus_identity}"
+        identity_hash = hashlib.sha256(
+            index_identity.encode("utf-8")
+        ).hexdigest()[:12]
+        self.embedding_identity = embedding_identity
+        self.corpus_identity = corpus_identity
+        self.collection_name = (
+            f"{COLLECTION_NAME}__{ATENTO_INDEX_SCHEMA_VERSION}__{identity_hash}"
+        )
+
         # 初始化ChromaDB客户端
         self.client = chromadb.PersistentClient(
             path=CHROMA_DB_PATH,
@@ -27,39 +44,20 @@ class VectorStore:
         
         # 获取或创建集合
         self.collection = self.client.get_or_create_collection(
-            name=COLLECTION_NAME,
-            metadata={"description": "MCP知识库向量存储"}
+            name=self.collection_name,
+            metadata={"description": "MCP知识库向量存储", "hnsw:space": "cosine", "atento:index_schema": ATENTO_INDEX_SCHEMA_VERSION, "atento:embedding_identity": self.embedding_identity, "atento:corpus_identity": self.corpus_identity}
         )
         
         print(f"向量存储初始化完成: {CHROMA_DB_PATH}")
     
     def get_embedding(self, text: str) -> List[float]:
-        """使用阿里云百炼Qwen3 Embedding模型生成文本嵌入向量"""
+        """Generate embeddings through the injected gateway."""
         try:
-            headers = {
-                "Authorization": f"Bearer {self.api_key}",
-                "Content-Type": "application/json"
-            }
-            
-            data = {
-                "model": EMBEDDING_MODEL,
-                "input": text
-            }
-            
-            response = requests.post(self.embedding_url, headers=headers, json=data)
-            response.raise_for_status()
-            
-            result = response.json()
-            if 'data' in result and len(result['data']) > 0:
-                return result['data'][0]['embedding']
-            else:
-                print(f"API响应格式错误: {result}")
-                return []
-                
+            return list(self.embedding_gateway.embed(text=text))
         except Exception as e:
             print(f"生成嵌入向量时出错: {e}")
             return []
-    
+
     def add_documents(self, documents: List[Dict[str, Any]]) -> bool:
         """将文档添加到向量存储"""
         try:
@@ -124,7 +122,7 @@ class VectorStore:
                     batch_embeddings = embeddings[i:end_idx]
                     batch_metadatas = metadatas[i:end_idx]
                     
-                    self.collection.add(
+                    self.collection.upsert(
                         ids=batch_ids,
                         documents=batch_texts,
                         embeddings=batch_embeddings,
@@ -249,7 +247,7 @@ class VectorStore:
         try:
             count = self.collection.count()
             return {
-                'name': COLLECTION_NAME,
+                'name': self.collection_name,
                 'document_count': count,
                 'path': CHROMA_DB_PATH
             }
@@ -260,10 +258,16 @@ class VectorStore:
     def clear_collection(self) -> bool:
         """清空集合"""
         try:
-            self.client.delete_collection(COLLECTION_NAME)
+            self.client.delete_collection(self.collection_name)
             self.collection = self.client.create_collection(
-                name=COLLECTION_NAME,
-                metadata={"description": "MCP知识库向量存储"}
+                name=self.collection_name,
+                metadata={
+                    "description": "MCP知识库向量存储",
+                    "hnsw:space": "cosine",
+                    "atento:index_schema": ATENTO_INDEX_SCHEMA_VERSION,
+                    "atento:embedding_identity": self.embedding_identity,
+                    "atento:corpus_identity": self.corpus_identity,
+                }
             )
             print("集合已清空")
             return True
