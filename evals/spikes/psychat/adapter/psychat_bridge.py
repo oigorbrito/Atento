@@ -150,12 +150,25 @@ def build_patched_factory(
     def factory():
         from core.rag_system import RAGSystem
 
+        vector_gateway = getattr(vector_store, "embedding_gateway", None)
+        if vector_gateway is not None and vector_gateway is not embedding_gateway:
+            raise ValueError(
+                "vector_store embedding gateway does not match composition gateway"
+            )
+
+        psychology_agent = psychology_agent_factory()
+        agent_gateway = getattr(psychology_agent, "model_gateway", None)
+        if agent_gateway is not None and agent_gateway is not model_gateway:
+            raise ValueError(
+                "psychology_agent model gateway does not match composition gateway"
+            )
+
         return RAGSystem(
             model_gateway=model_gateway,
             embedding_gateway=embedding_gateway,
             data_processor=data_processor,
             vector_store=vector_store,
-            psychology_agent=psychology_agent_factory(),
+            psychology_agent=psychology_agent,
             tts_service=tts_service,
         )
 
