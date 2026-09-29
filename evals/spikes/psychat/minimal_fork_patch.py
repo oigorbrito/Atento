@@ -254,7 +254,7 @@ def patch_data_processor(path: Path) -> None:
             if not section:
                 continue
 
-            lines = section.split('\\n')
+            lines = section.splitlines()
             section_qa_id = None
             content_lines = []
 
