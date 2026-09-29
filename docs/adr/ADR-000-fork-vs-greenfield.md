@@ -14,7 +14,7 @@ A fonte canônica de progresso continua sendo `roadmap.md`; a fonte canônica de
 
 ## Context
 
-O Atento pode ser implementado como arquitetura própria, selective port, **full donor**, fork de um projeto existente, model adapter ou combinação dessas estratégias. O projeto autoriza adoção integral de donors quando a evidência mostrar vantagem. Esta ADR deve ser concluída antes do bootstrap da base de produção.
+O Atento pode ser implementado como arquitetura própria, selective port, **full donor**, fork de um projeto existente, model adapter ou combinação dessas estratégias. O projeto autoriza adoção integral de donors quando a evidência mostrar vantagem. Esta ADR deve ser concluída antes da migração dos blocos para a base executiva definitiva.
 
 ## Candidates
 
@@ -38,6 +38,25 @@ O Atento pode ser implementado como arquitetura própria, selective port, **full
 
 ### SoulChat2.0 / EmoLLM / MindChat
 Tratar primariamente como trilha de modelos/checkpoints, não como base do Executive Runtime.
+
+## Block-migration rule
+
+A decisão desta ADR deve mapear a estratégia escolhida para **blocos A–S completos**. Não definir migração por semanas, prompts ou frações artificiais.
+
+Exemplo:
+
+```text
+BLOCO I — RAG
+  adoption_mode: FULL_DONOR
+  donor: PsyChat
+  integration: Atento chassis
+
+BLOCO E — Memory
+  adoption_mode: SELECTIVE_PORT
+  donor: PsychAgent
+```
+
+Project Points são usados para medir a evidência produzida durante a migração do bloco, não para fracionar a migração.
 
 ## Full donor rule
 
@@ -112,8 +131,8 @@ loc_unchanged:
 loc_modified:
 loc_replaced:
 percent_core_recognizably_retained:
-estimated_fork_to_mvp_days:
-estimated_greenfield_to_mvp_days:
+estimated_fork_effort:
+estimated_greenfield_effort:
 ```
 
 A porcentagem de código retido é informativa, não decisiva. Full donor continua válido se o ganho sistêmico em tempo, qualidade, safety, custo e manutenção for melhor.

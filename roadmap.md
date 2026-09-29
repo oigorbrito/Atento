@@ -9,7 +9,7 @@ Este arquivo é a fonte canônica para:
 - escopo do projeto;
 - arquitetura alvo em nível de sistema;
 - blocos A–S;
-- sequência de fases;
+- blocos A–S e suas dependências;
 - Project Points;
 - progresso global do projeto;
 - source mapping arquitetural.
@@ -235,7 +235,7 @@ Pontuar/medir:
 7. observability/testability;
 8. migration effort;
 9. latency/cost;
-10. time-to-milestone.
+10. change-surface / maintenance effort.
 
 ### Regra de decisão
 
@@ -293,8 +293,8 @@ benchmark_evidence:
 atentoeval_result:
 modules_reused:
 modules_replaced:
-estimated_time_donor:
-estimated_time_native:
+estimated_effort_donor:
+estimated_effort_native:
 latency_delta:
 cost_delta:
 safety_delta:
@@ -465,7 +465,11 @@ Os pontos são do **projeto inteiro**. Os blocos apenas recebem uma quantidade d
 | S — Infra/Deploy | 4 | operação |
 | **TOTAL** | **100** | **projeto inteiro** |
 
-As fases são sequência de execução e **não adicionam pontos**, evitando dupla contagem.
+Os Project Points são **métrica de evolução do projeto**, não unidades de trabalho, prompts, sprints ou etapas de migração.
+
+> **Unidade de migração = BLOCO inteiro (A–S).**
+>
+> O agente não deve transformar os Project Points de um bloco em uma sequência artificial de prompts. Os pontos existem para medir evidência dentro do bloco; a migração/implementação é conduzida pelo bloco como uma responsabilidade arquitetural coerente.
 
 ### Project Point Ledger
 
@@ -1429,224 +1433,150 @@ Postgres / Vector Store / Cache / Object Storage
 
 ---
 
-# 6. Fases de implementação
+# 6. Regra de migração e execução por blocos
 
+## 6.1 Unidade de trabalho arquitetural
 
-## 6.0 Source map por fase
+A migração do Atento é feita **por BLOCO do roadmap**, nunca por prazo, semana, sessão, número de prompts ou frações arbitrárias de implementação.
 
-| Fase | Sources obrigatórias para leitura | Motivo |
-|---|---|---|
-| Fase -1 — Fork/Clone Spike | `SRC-PSYCHAT`, `SRC-PA`, `SRC-THERAPYMIND`, `SRC-SOULCHAT`, `SRC-EMOLLM`, `SRC-MINDCHAT`, `SRC-ATENTO` | decidir fork/selective-port/clean-room/model-adapter antes do bootstrap |
-| Fase 0 — Bootstrap | `SRC-ATENTO` | contratos, gateway, CI e esqueleto são próprios |
-| Fase 1 — Vertical Slice | `SRC-CADSS`, `SRC-ESCONV`, `SRC-MHB`, `SRC-COUNSEL` | state/planner/generator/safety |
-| Fase 2 — Memória + Executivo | `SRC-PA`, `SRC-UKA`, `SRC-ENPMR`, `SRC-PE`, `SRC-TEA` | continuidade, belief, proactive retrieval e routing |
-| Fase 3 — RAG + Skills | `SRC-SAGE`, `SRC-PA`, `SRC-ESCONV` | retrieval/rerank/skills |
-| Fase 4 — Tool Use | `SRC-TEA`, `SRC-ATENTO` | tool selection, grounding e permissions |
-| Fase 5 — Critic + Safety | `SRC-SAGE`, `SRC-MHB`, `SRC-COUNSEL`, `SRC-PA` | critic, adversarial eval e optional best-of-N |
-| Fase 6 — AtentoEval | `SRC-PE`, `SRC-ESCONV`, `SRC-ENPMR`, `SRC-TEA`, `SRC-MHB`, `SRC-COUNSEL` | cobertura segmentada |
-| Fase 7–8 — MVP/Piloto | `SRC-ATENTO` + todos os benchmarks aplicáveis | produto, operação, human eval e release gates |
-
-> O agente deve ler primeiro a **fonte primária do módulo**, depois a fonte de benchmark. Benchmark não deve ser usado para inventar detalhes de implementação.
-
----
-
-
-## Fase -1 — Fork/Clone Spike & ADR-000
-
-- [ ] executar o gate da seção 2.2;
-- [ ] testar PsyChat upstream em ambiente isolado, incluindo Chassis Fitness;
-- [ ] mapear PsyChat → contratos Atento;
-- [ ] verificar licenças/datasets dos candidatos;
-- [ ] comparar full-donor/fork/selective-port/native usando qualidade + safety + custo/latência + Chassis Fitness;
-- [ ] escrever `ADR-000-fork-vs-greenfield.md`;
-- [ ] congelar decisão antes do bootstrap.
-
-### Gate
-Nenhum código externo vira base do Atento sem ADR-000 aprovado.
-
----
-
-## Fase 0 — Bootstrap
-alvo
-
-- [ ] estrutura do repositório;
-- [ ] README;
-- [ ] arquitetura inicial;
-- [ ] CI;
-- [ ] ambiente local;
-- [ ] Model Gateway mínimo;
-- [ ] contratos JSON iniciais.
-
-### Saída
-Um esqueleto executável e testável.
-
----
-
-## Fase 1 — Vertical Slice
-alvo
-
-Construir o fluxo mínimo:
+Exemplo correto:
 
 ```text
-User
-→ State
-→ Planner
-→ Generator
-→ Safety
-→ User
+Selecionar BLOCO I — Knowledge / RAG
+→ definir contrato do bloco
+→ escolher donor/native/hybrid
+→ migrar a responsabilidade completa do bloco
+→ integrar ao chassi
+→ validar
+→ rodar AtentoEval
+→ passar gates aplicáveis
+→ marcar Project Points comprovados
+→ fechar o bloco quando todos os pontos estiverem [x]
 ```
 
-- [ ] sessão;
-- [ ] structured state;
-- [ ] planner;
-- [ ] resposta;
-- [ ] safety;
-- [ ] tracing;
-- [ ] baseline de avaliação.
-
-### Gate
-Fluxo ponta a ponta funcional com testes automatizados.
-
----
-
-## Fase 2 — Memória + Executivo
-**alvo
+Exemplo incorreto:
 
 ```text
-User
-→ State/Belief
-→ Memory
-→ Executive Controller
-→ Planner
-→ Generator
-→ Safety
+prompt 1 → criar interface
+prompt 2 → criar adapter
+prompt 3 → ajustar provider
+prompt 4 → talvez testar
+prompt 5 → continuar depois
 ```
 
-- [ ] working memory;
-- [ ] episodic memory;
-- [ ] belief state;
-- [ ] uncertainty;
-- [ ] executive routing;
-- [ ] testes multi-turn.
+O agente pode executar quantas operações técnicas forem necessárias dentro do bloco, mas **não deve planejar nem interromper artificialmente o trabalho por "fatias de prompt"**.
 
-### Gate
-Superar baseline sem memória/sem executivo em cenários longitudinais definidos.
+## 6.2 Project Points não são pacotes de execução
 
----
+Os 100 Project Points permanecem como métrica global:
 
-## Fase 3 — RAG + Skills
-alvo 1
+```text
+PROJECT PROGRESS = pontos comprovados / 100
+```
 
-- [ ] skill registry;
-- [ ] retrieval;
-- [ ] reranking;
-- [ ] provenance;
-- [ ] planner integrado às skills;
-- [ ] testes de grounding.
+Eles servem para registrar evidência e progresso.
 
-### Gate
-RAG melhora factualidade sem degradar significativamente latência, custo ou qualidade conversacional.
+Eles **não** autorizam o agente a tratar, por exemplo, `C1`, `C2`, `C3`, `C4` como quatro migrações independentes. A unidade de migração continua sendo:
 
----
+```text
+BLOCO C — Model Gateway
+```
 
-## Fase 4 — Tool Use
-**alvo
+O bloco pode ficar `IN_PROGRESS` enquanto alguns pontos já possuem evidência, mas o trabalho deve continuar orientado à responsabilidade completa do bloco.
 
-- [ ] tool registry;
-- [ ] permission model;
-- [ ] tool decision;
-- [ ] validation;
-- [ ] error recovery;
-- [ ] observabilidade.
+## 6.3 Gate pré-migração — ADR-000
 
-### Gate
-Tool selection supera baseline e mantém taxa baixa de chamadas desnecessárias.
+Antes de escolher a base executiva definitiva, concluir o gate de donor/fork:
 
----
+- executar donor upstream;
+- medir Chassis Fitness;
+- mapear donor → blocos A–S;
+- comparar `FULL_DONOR`, `FORK`, `SELECTIVE_PORT`, `NATIVE` e `HYBRID`;
+- medir qualidade, safety, custo, latência, change-surface e Chassis Fitness;
+- registrar decisão em `docs/adr/ADR-000-fork-vs-greenfield.md`.
 
-## Fase 5 — Critic + Hardening de Safety
-**alvo
+Este gate **não é uma fase cronológica** e não adiciona Project Points por si só. É uma condição para evitar que a migração comece sobre uma base não avaliada.
 
-- [ ] critic;
-- [ ] output safety;
-- [ ] adversarial suite;
-- [ ] worst-case suite;
-- [ ] fallback;
-- [ ] red-team interno.
+## 6.4 Como migrar um bloco usando donor
 
-### Gate
-Nenhum defeito crítico conhecido na suíte bloqueante.
+Quando um donor implementa parte ou toda a responsabilidade de um bloco:
 
----
+```text
+Atento contract
+      ↓
+Chassis boundary
+      ↓
+Donor adapter/executor
+      ↓
+Donor code
+      ↓
+Validator/normalizer
+      ↓
+Atento trace + eval
+```
 
-## Fase 6 — AtentoEval v1
-** alvo
+A migração do bloco deve incluir, como uma unidade coerente:
 
-- [ ] datasets internos versionados;
-- [ ] runner;
-- [ ] dashboards;
-- [ ] baseline registry;
-- [ ] pairwise evaluation;
-- [ ] custo/latência;
-- [ ] relatório por release.
+- contrato;
+- donor/native implementation;
+- integração ao Router/Registry/Executor quando aplicável;
+- validação de output;
+- tracing;
+- error/fallback;
+- safety boundary quando aplicável;
+- testes;
+- AtentoEval;
+- rollback/substituição.
 
-### Gate
-Toda alteração de prompt, modelo ou arquitetura consegue ser comparada quantitativamente com a versão anterior.
+Não considerar o bloco migrado apenas porque o código donor foi copiado.
 
----
+## 6.5 Dependências entre blocos
 
-## Fase 7 — MVP fechado
-**alvo
+A ordem é determinada por **dependências reais**, não por calendário.
 
-- [ ] UX final do MVP;
-- [ ] feedback;
-- [ ] analytics;
-- [ ] privacy controls;
-- [ ] incident workflow;
-- [ ] staging;
-- [ ] load tests;
-- [ ] revisão de segurança.
+O agente deve escolher o próximo bloco entre os blocos não concluídos que estejam desbloqueados. Quando um bloco depender de outro, pode:
 
-### Gate
-Pronto para usuários de teste controlados.
+1. concluir primeiro o bloco dependência; ou
+2. implementar a dependência necessária no mesmo ciclo, desde que ela seja tratada como responsabilidade do respectivo bloco e sua evidência seja registrada corretamente.
 
----
+Não criar "mini-fases" para contornar dependências.
 
-## Fase 8 — Piloto e validação
-**alvo
+## 6.6 Chassi antes de expansão de features
 
-- [ ] usuários pilotos;
-- [ ] análise de falhas;
-- [ ] human evaluation;
-- [ ] revisão de casos difíceis;
-- [ ] refinamento de políticas;
-- [ ] calibração de memória;
-- [ ] calibração de planner;
-- [ ] revisão de custo e latência.
+O agente deve verificar se uma nova capability/feature está sendo montada sobre o chassi existente.
 
-### Saída
-Evidência para decidir se o sistema está pronto para expansão.
+Uma capability não é considerada migração sustentável se bypassar:
 
----
+- contracts/schemas;
+- Router/Executive quando aplicável;
+- Capability/Executor Registry;
+- Executor/Adapter boundary;
+- Validator/Normalizer;
+- Model Gateway quando aplicável;
+- tracing;
+- error/fallback;
+- safety boundary.
 
-# 7. Cronograma macro
+A métrica de Chassis Fitness existe para impedir que o projeto avance em features enquanto acumula dívida estrutural.
 
-| hora | Marco |
-|---|---|
-| 0 | Fork/clone spike + ADR-000 |
-| 1 | Fundação + vertical slice |
-| 2 | State + Planner + Safety |
-| 3 | Memória + Executive Controller |
-| 4 | Belief/uncertainty + multi-turn |
-| 5 | RAG + Skill Library |
-| 6 | Tool Router |
-| 7 | Critic + safety hardening |
-| 8 | AtentoEval v1 |
-| 9–10 | MVP fechado + hardening |
-| 11–12 | Testes, otimização e preparação de piloto |
-| 13+ | Piloto, human evaluation e iteração |
+## 6.7 Estados de um bloco
 
-> O cronograma assume uso de modelos existentes e não inclui treinamento de um foundation model do zero.
+Cada bloco possui apenas estados arquiteturais:
+
+- `NOT_STARTED`
+- `IN_PROGRESS`
+- `BLOCKED`
+- `DONE`
+
+Não usar:
+
+- "semana 1";
+- "dia 3";
+- "50% do bloco";
+- "prompt 2 de 5";
+- "sprint do bloco".
+
+O progresso percentual existe **somente para o projeto inteiro**, via `X/100`.
 
 ---
 
@@ -1934,7 +1864,7 @@ O Atento será arquiteturalmente bem-sucedido quando conseguir demonstrar, com a
 
 ## Próximo passo
 
-**Fase -1 — Fork/Clone Spike & ADR-000**
+**Gate pré-migração — Fork/Clone/Donor Spike & ADR-000**
 
 Antes do Bootstrap, concluir a decisão defensável entre:
 
@@ -1948,5 +1878,5 @@ vs model-adapter
 
 Executar PsyChat upstream e o spike adaptado, verificar licenças/provenance, comparar com um vertical slice clean-room usando AtentoEval e preencher `docs/adr/ADR-000-fork-vs-greenfield.md`.
 
-Somente após a ADR-000 sair de `Proposed` para uma decisão aceita, iniciar a Fase 0 — Bootstrap.
+Somente após a ADR-000 sair de `Proposed` para uma decisão aceita, iniciar a migração pelos blocos A–S conforme dependências reais.
 
