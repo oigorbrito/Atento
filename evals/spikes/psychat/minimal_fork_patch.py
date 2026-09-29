@@ -125,7 +125,8 @@ def patch_vector_store(path: Path) -> None:
         text,
         "from config import *\n\nclass VectorStore:",
         "from config import *\n\n"
-        "ATENTO_INDEX_SCHEMA_VERSION = \"rag-cosine-v1\"\n\n"
+        "ATENTO_INDEX_SCHEMA_VERSION = \"rag-cosine-v1\"\n"
+        "ATENTO_DEFAULT_CORPUS_IDENTITY = \"psychat@5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4\"\n\n"
         "class VectorStore:",
         label="VectorStore index schema version",
     )
@@ -140,15 +141,24 @@ def patch_vector_store(path: Path) -> None:
         # 初始化ChromaDB客户端
 """,
         """class VectorStore:
-    def __init__(self, embedding_gateway):
+    def __init__(
+        self,
+        embedding_gateway,
+        corpus_identity=ATENTO_DEFAULT_CORPUS_IDENTITY,
+    ):
         self.embedding_gateway = embedding_gateway
         embedding_identity = str(embedding_gateway.index_identity).strip()
+        corpus_identity = str(corpus_identity).strip()
         if not embedding_identity:
             raise ValueError("embedding_gateway.index_identity must be non-empty")
+        if not corpus_identity:
+            raise ValueError("corpus_identity must be non-empty")
+        index_identity = f"{embedding_identity}|{corpus_identity}"
         identity_hash = hashlib.sha256(
-            embedding_identity.encode("utf-8")
+            index_identity.encode("utf-8")
         ).hexdigest()[:12]
         self.embedding_identity = embedding_identity
+        self.corpus_identity = corpus_identity
         self.collection_name = (
             f"{COLLECTION_NAME}__{ATENTO_INDEX_SCHEMA_VERSION}__{identity_hash}"
         )
@@ -170,7 +180,8 @@ def patch_vector_store(path: Path) -> None:
         '"description": "MCP知识库向量存储", '
         '"hnsw:space": "cosine", '
         '"atento:index_schema": ATENTO_INDEX_SCHEMA_VERSION, '
-        '"atento:embedding_identity": self.embedding_identity'
+        '"atento:embedding_identity": self.embedding_identity, '
+        '"atento:corpus_identity": self.corpus_identity'
         '}',
         label="VectorStore cosine distance metric",
     )
@@ -195,9 +206,26 @@ def patch_vector_store(path: Path) -> None:
         "                    \"hnsw:space\": \"cosine\",\n"
         "                    \"atento:index_schema\": ATENTO_INDEX_SCHEMA_VERSION,\n"
         "                    \"atento:embedding_identity\": self.embedding_identity,\n"
+        "                    \"atento:corpus_identity\": self.corpus_identity,\n"
         "                }\n"
         "            )",
         label="VectorStore clear collection contract",
+    )
+    text = replace_once(
+        text,
+        """                    self.collection.add(
+                        ids=batch_ids,
+                        documents=batch_texts,
+                        embeddings=batch_embeddings,
+                        metadatas=batch_metadatas
+                    )""",
+        """                    self.collection.upsert(
+                        ids=batch_ids,
+                        documents=batch_texts,
+                        embeddings=batch_embeddings,
+                        metadatas=batch_metadatas
+                    )""",
+        label="VectorStore idempotent document upsert",
     )
     text = replace_regex_once(
         text,
@@ -513,7 +541,7 @@ def apply_patch(donor_root: Path) -> dict:
     retention = retention_metrics(donor_root)
 
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.8",
+        "metric_version": "psychat-minimal-fork-patch-v0.9",
         "pinned_commit": head_before,
         "changed_files": changed,
         "donor_files_touched_to_introduce_provider_boundary": len(PROVIDER_BOUNDARY_FILES),
@@ -525,6 +553,8 @@ def apply_patch(donor_root: Path) -> dict:
         "vector_clear_preserves_index_contract": True,
         "embedding_identity_required_by_vector_store": True,
         "vector_collection_namespaced_by_embedding_identity": True,
+        "vector_collection_namespaced_by_corpus_identity": True,
+        "same_identity_rebuild_uses_upsert": True,
         "similarity_transform": "1 - cosine_distance",
         "files_touched_to_swap_model_provider_after_boundary": 0,
         "files_touched_to_swap_embedding_provider_after_boundary": 0,
