@@ -106,6 +106,7 @@ def main() -> int:
                 truthy(d, "model_provider_swap_pass")
                 and truthy(d, "embedding_provider_swap_pass")
                 and truthy(d, "embedding_index_identity_isolated")
+                and truthy(d, "composition_provider_consistency_pass")
                 and truthy(d, "rag_model_gateway_swap_pass")
                 and truthy(d, "external_rag_route_enforcement_pass")
                 and equals(d, "donor_source_edit_required_for_swap", False)
@@ -379,7 +380,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.10",
+        "metric_version": "psychat-block-i-readiness-v0.11",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
