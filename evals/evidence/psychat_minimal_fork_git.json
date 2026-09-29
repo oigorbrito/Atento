@@ -28,5 +28,8 @@
   "limitations": [
     "Git evidence proves patch surface/content invariants, not Python execution.",
     "Runtime/compile evidence remains a separate requirement."
-  ]
+  ],
+  "preserving_ref_head": "75707879a8ced08e1f5e48af517156b6c4a414e5",
+  "upstream_license_notice_present_in_preserving_ref": true,
+  "surface_measurement_note": "files_touched_exact compares baseline_commit to patched_commit; the preserving ref has a later license-notice-only descendant and must not be used as the head for change-surface counting."
 }
