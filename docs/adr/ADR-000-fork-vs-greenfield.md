@@ -18,31 +18,34 @@ A fonte canônica de progresso continua sendo `roadmap.md`; a fonte canônica de
 
 O Atento pode ser implementado como arquitetura própria, selective port, **full donor**, fork de um projeto existente, model adapter ou combinação dessas estratégias. O projeto autoriza adoção integral de donors quando a evidência mostrar vantagem. Não usar esta ADR como gate de migração até que os conjuntos de candidatos de **NAIA** e **Anna** sejam reconstruídos por categoria equivalente.
 
-## Candidates
+## Historical Anna-related candidate set — shortlist reset
+
+> This list is evidence inventory only. The canonical current Anna selection state is `docs/adr/ADR-ANNA-001-therapeutic-base-selection.md`.
+
 
 ### PsyChat
 - Repo: https://github.com/wink-wink-wink555/PsyChat
 - Commit avaliado: `5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4`
 - Terms: MIT
-- Current status: candidate for full donor / fork / selective port
+- Historical status: candidate for full donor / fork / selective port. **Current Anna decision status:** `UNCLASSIFIED_PENDING_AUDIT`.
 
 ### PsychAgent
 - Repo: https://github.com/ECNU-ICALK/PsychAgent
 - Commit avaliado: `469f45ef468b968b3fccd1936d7e6a0a574e4c5c`
 - Terms: nenhuma licença de repo verificada na revisão
-- Current status: external research clone / architecture donor candidate
+- Historical status: external research clone / architecture donor candidate. **Current Anna decision status:** `UNCLASSIFIED_PENDING_AUDIT`.
 
 ### TherapyMind
 - Repo: https://github.com/zx070326-hash/TherapyMind
 - Commit avaliado: `bfed3f5be61bab262bb00a0f3cc9718c4a965243`
 - Terms: MIT + contextual notice
-- Current status: full donor / lab spike candidate
+- Historical status: full donor / lab spike candidate. **Current Anna decision status:** `UNCLASSIFIED_PENDING_AUDIT`.
 
 ### TheraMind (Emo-gml) — supplemental candidate/donor
 - Repo: https://github.com/Emo-gml/TheraMind
 - Commit avaliado: `416d0a00ecc8c76229512197765dc95be6513de5`
 - Terms: README limits use to research and education
-- Current status: architecture/mechanism donor; not a cleared product-base candidate
+- Historical status: architecture/mechanism donor; not a cleared product-base candidate. **Current Anna decision status:** `UNCLASSIFIED_PENDING_AUDIT`.
 - Important: **distinct project from TherapyMind above**
 
 ### SoulChat2.0 / EmoLLM / MindChat
@@ -115,7 +118,7 @@ This batch did **not** compare every ADR candidate under one common AtentoEval r
 - **Product gaps:** demo-grade auth/privacy surface; no qualified crisis/suicide/escalation runtime found in inspected source.
 - **Release gap:** public repo does not contain the complete paper-scale post-session evolution/training pipeline.
 - **Terms blocker:** repository license was not detected; checkpoint terms were not cleared for product adoption in this audit.
-- **Disposition:** strong therapeutic-engine reference/candidate, **adoption HOLD** pending terms, safety boundary and local transfer tests.
+- **Historical disposition (non-authoritative):** strong therapeutic-engine reference/candidate; prior audit recorded an adoption HOLD. Current selection authority is reset; underlying gaps/evidence remain preserved.
 
 #### TheraMind (Emo-gml)
 - **Pinned commit:** `416d0a00ecc8c76229512197765dc95be6513de5`.
@@ -123,7 +126,7 @@ This batch did **not** compare every ADR candidate under one common AtentoEval r
 - **Observed chassis concerns:** JSON/file-backed state, hard-coded provider paths and concrete state-access inconsistencies in the public research implementation.
 - **Safety:** no independent crisis/safety subsystem was established in the inspected source.
 - **Terms blocker:** research/educational use only.
-- **Disposition:** mechanism/architecture donor; not preferred as a direct product base.
+- **Historical disposition (non-authoritative):** mechanism/architecture donor; prior audit did not prefer it as a direct product base. Current selection authority is reset; reclassification is pending.
 
 #### Scope limitation
 The result above means only:
