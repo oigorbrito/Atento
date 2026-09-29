@@ -113,6 +113,13 @@ jobs:
             --expect broken \
             --output evals/results/psychat_qa_id_provenance_upstream.json
 
+      - name: Measure upstream vector metric semantics
+        run: |
+          python evals/spikes/psychat/vector_metric_probe.py \
+            --donor-root /tmp/PsyChat \
+            --expect upstream \
+            --output evals/results/psychat_vector_metric_upstream.json
+
       - name: Dynamic shared-session isolation probe
         run: |
           python evals/spikes/psychat/real_isolation_probe.py             --donor-root /tmp/PsyChat             --output evals/results/psychat_real_isolation.json
@@ -158,6 +165,13 @@ jobs:
             --expect preserved \
             --output evals/results/psychat_qa_id_provenance_patched.json
 
+      - name: Verify patched vector metric semantics
+        run: |
+          python evals/spikes/psychat/vector_metric_probe.py \
+            --donor-root /tmp/PsyChat \
+            --expect patched \
+            --output evals/results/psychat_vector_metric_patched.json
+
       - name: Dynamic provider replacement probe
         run: |
           python evals/spikes/psychat/provider_replacement_probe.py \
@@ -193,6 +207,7 @@ jobs:
           cat evals/results/psychat_multilingual_gold.json
           cat evals/results/psychat_retrieval_readiness.json
           cat evals/results/psychat_qa_id_provenance_upstream.json
+          cat evals/results/psychat_vector_metric_upstream.json
           cat evals/results/psychat_multilingual_microbenchmark.json
           cat evals/results/psychat_real_isolation.json
           cat evals/results/psychat_retrieval_mechanics_upstream.json
@@ -201,6 +216,7 @@ jobs:
           cat evals/results/psychat_unpatched_composed_chassis.json
           cat evals/results/psychat_minimal_fork_patch.json
           cat evals/results/psychat_qa_id_provenance_patched.json
+          cat evals/results/psychat_vector_metric_patched.json
           cat evals/results/psychat_provider_replacement.json
           cat evals/results/psychat_retrieval_mechanics_patched.json
           cat evals/results/psychat_retrieval_preservation.json
@@ -214,6 +230,7 @@ jobs:
             evals/results/psychat_multilingual_gold.json
             evals/results/psychat_retrieval_readiness.json
             evals/results/psychat_qa_id_provenance_upstream.json
+            evals/results/psychat_vector_metric_upstream.json
             evals/results/psychat_multilingual_microbenchmark.json
             evals/results/psychat_real_isolation.json
             evals/results/psychat_retrieval_mechanics_upstream.json
@@ -222,6 +239,7 @@ jobs:
             evals/results/psychat_unpatched_composed_chassis.json
             evals/results/psychat_minimal_fork_patch.json
             evals/results/psychat_qa_id_provenance_patched.json
+            evals/results/psychat_vector_metric_patched.json
             evals/results/psychat_provider_replacement.json
             evals/results/psychat_retrieval_mechanics_patched.json
             evals/results/psychat_retrieval_preservation.json
