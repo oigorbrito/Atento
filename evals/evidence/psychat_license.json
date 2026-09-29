@@ -1,0 +1,15 @@
+{
+  "metric_version": "psychat-license-v0.1",
+  "pinned_donor_commit": "5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4",
+  "repository": "wink-wink-wink555/PsyChat",
+  "license_file": "LICENSE",
+  "license": "MIT",
+  "copyright": "Copyright (c) 2025 wink-wink-wink555",
+  "fork_modification_permission_present": true,
+  "distribution_permission_present": true,
+  "sublicense_permission_present": true,
+  "notice_retention_required": true,
+  "notice_requirement": "The copyright notice and permission notice must be included in all copies or substantial portions of the Software.",
+  "warranty_disclaimer_present": true,
+  "interpretation_scope": "Repository license evidence for ADR/forkability screening; not a substitute for project-specific legal review."
+}
