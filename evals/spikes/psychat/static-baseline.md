@@ -134,3 +134,92 @@ The adapted-donor test must record:
 - quality/safety/cost/latency deltas.
 
 No decision on ADR-000 should be made from the static score alone.
+
+
+## Test batch 2 — integration surface audit
+
+### Provider swap surface
+
+Static search on the pinned upstream shows provider configuration/calls spread across multiple core files.
+
+#### LLM provider
+- `config.py`
+- `agent/psychology_agent.py`
+- `core/rag_system.py`
+
+#### Embedding provider
+- `config.py`
+- `core/vector_store.py`
+
+#### TTS provider
+- `config.py`
+- `core/tts_service.py`
+
+This confirms that provider replacement is not currently isolated behind a gateway.
+
+**Observed minimum LLM provider change-surface:** 3 files.  
+**Observed cross-provider change-surface:** at least 5 implementation/config files.
+
+### Session isolation risk
+
+The web app creates a process-global runtime:
+
+```python
+rag_system = RAGSystem()
+```
+
+and the chat endpoint calls that shared instance.
+
+Static search found no `session`, `cookie` or `user_id` handling in the repository.
+
+At the same time, `RAGSystem` stores mutable conversation state on the instance:
+
+- `conversation_history`;
+- `no_rag_counter`;
+- `last_retrieval_docs`;
+- style cache cleared by `clear_conversation_history()`.
+
+**Finding:** upstream architecture has a **cross-session isolation risk** in web deployment because mutable conversation state is attached to a global process instance.
+
+This is not recorded as a confirmed privacy leak until a dynamic multi-client test runs, but it is a blocking chassis concern for direct adoption.
+
+### Routing behavior coupling
+
+The upstream decision layer is useful, but policy is mixed with implementation details:
+
+- `PsychologyAgent.analyze_user_input()` selects RAG need and query rewrite;
+- `RAGSystem.generate_response()` owns conversation counters and can force retrieval;
+- `MAX_NO_RAG_ROUNDS = 3` causes forced retrieval after consecutive non-RAG turns.
+
+That means routing is separated enough to be reusable, but not yet expressed as a capability contract independent from RAG policy.
+
+### Parser / validation finding
+
+The routing LLM is instructed to return:
+
+```text
+NO
+YES,topic1,topic2
+```
+
+and the result is parsed using string splitting.
+
+Fallback behavior includes broad `except` branches, including one that returns `need_rag=True` when classification fails.
+
+**Finding:** the donor does not currently provide a schema-validation boundary. This supports keeping `structured_contracts` and `output_validation` as FAIL in the baseline.
+
+### Revised fork hypothesis
+
+PsyChat remains a plausible donor for the **RAG block**, but the evidence currently argues against adopting its web/session/runtime chassis unchanged.
+
+The next adapted-donor test should preserve the donor's RAG logic while moving these responsibilities outside it:
+
+1. session ownership;
+2. provider access;
+3. capability registration;
+4. structured route contract;
+5. output validation;
+6. safety gate;
+7. tracing/resilience.
+
+The test should measure whether this can be done with a thin wrapper rather than a rewrite.
