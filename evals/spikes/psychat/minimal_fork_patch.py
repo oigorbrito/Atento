@@ -241,7 +241,13 @@ def patch_rag_system(path: Path) -> None:
     )
     text = replace_regex_once(
         text,
-        r"""            headers = \{.*?            result = response\.json\(\)\n            if 'choices' in result and len\(result\['choices'\]\) > 0:\n                return result\['choices'\]\[0\]\['message'\]\['content'\]\n            else:\n                print\(f"LLM API响应格式错误: \{result\}"\)\n                return "抱歉，我无法生成有效的回答。"\n""",
+        r"""            headers = \{.*?            \}\n            \n""",
+        "",
+        label="RAGSystem direct LLM headers",
+    )
+    text = replace_regex_once(
+        text,
+        r"""            data = \{.*?            result = response\.json\(\)\n            if 'choices' in result and len\(result\['choices'\]\) > 0:\n                return result\['choices'\]\[0\]\['message'\]\['content'\]\n            else:\n                print\(f"LLM API响应格式错误: \{result\}"\)\n                return "抱歉，我无法生成有效的回答。"\n""",
         """            return self.model_gateway.complete(
                 purpose="psychat.rag.response",
                 messages=messages,
@@ -325,6 +331,22 @@ def method_parameters(path: Path, class_name: str, method_name: str) -> set[str]
             for item in node.body:
                 if isinstance(item, ast.FunctionDef) and item.name == method_name:
                     return {arg.arg for arg in item.args.args}
+    return set()
+
+
+def method_assigned_names(path: Path, class_name: str, method_name: str) -> set[str]:
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    for node in tree.body:
+        if isinstance(node, ast.ClassDef) and node.name == class_name:
+            for item in node.body:
+                if isinstance(item, ast.FunctionDef) and item.name == method_name:
+                    return {
+                        target.id
+                        for child in ast.walk(item)
+                        if isinstance(child, ast.Assign)
+                        for target in child.targets
+                        if isinstance(target, ast.Name)
+                    }
     return set()
 
 
@@ -441,10 +463,20 @@ def apply_patch(donor_root: Path) -> dict:
             "RAGSystem does not expose external force_retrieval routing authority"
         )
 
+    response_locals = method_assigned_names(
+        donor_root / "core/rag_system.py",
+        "RAGSystem",
+        "_generate_response",
+    )
+    if "messages" not in response_locals:
+        raise AssertionError(
+            "RAGSystem _generate_response lost local messages construction"
+        )
+
     retention = retention_metrics(donor_root)
 
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.5",
+        "metric_version": "psychat-minimal-fork-patch-v0.6",
         "pinned_commit": head_before,
         "changed_files": changed,
         "donor_files_touched_to_introduce_provider_boundary": len(PROVIDER_BOUNDARY_FILES),
