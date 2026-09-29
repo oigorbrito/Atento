@@ -187,9 +187,16 @@ def patch_vector_store(path: Path) -> None:
     )
     text = replace_once(
         text,
-        "                'name': COLLECTION_NAME,",
-        "                'name': self.collection_name,",
-        label="VectorStore collection info name",
+        "                'name': COLLECTION_NAME,\n"
+        "                'document_count': count,\n"
+        "                'path': CHROMA_DB_PATH\n",
+        "                'name': self.collection_name,\n"
+        "                'document_count': count,\n"
+        "                'path': CHROMA_DB_PATH,\n"
+        "                'index_schema': ATENTO_INDEX_SCHEMA_VERSION,\n"
+        "                'embedding_identity': self.embedding_identity,\n"
+        "                'corpus_identity': self.corpus_identity,\n",
+        label="VectorStore observable collection identity",
     )
     text = replace_once(
         text,
@@ -541,7 +548,7 @@ def apply_patch(donor_root: Path) -> dict:
     retention = retention_metrics(donor_root)
 
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.10",
+        "metric_version": "psychat-minimal-fork-patch-v0.11",
         "pinned_commit": head_before,
         "changed_files": changed,
         "donor_files_touched_to_introduce_provider_boundary": len(PROVIDER_BOUNDARY_FILES),
@@ -555,6 +562,7 @@ def apply_patch(donor_root: Path) -> dict:
         "vector_collection_namespaced_by_embedding_identity": True,
         "vector_collection_namespaced_by_corpus_identity": True,
         "same_identity_rebuild_uses_upsert": True,
+        "collection_info_exposes_index_identity": True,
         "similarity_transform": "1 - cosine_distance",
         "files_touched_to_swap_model_provider_after_boundary": 0,
         "files_touched_to_swap_embedding_provider_after_boundary": 0,
