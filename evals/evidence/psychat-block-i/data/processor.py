@@ -96,7 +96,7 @@ class DataProcessor:
             if not section:
                 continue
 
-            lines = section.split('\\n')
+            lines = section.splitlines()
             section_qa_id = None
             content_lines = []
 
