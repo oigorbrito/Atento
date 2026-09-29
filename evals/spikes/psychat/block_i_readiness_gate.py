@@ -58,11 +58,17 @@ def at_least(data: dict[str, Any], dotted: str, minimum: float) -> bool:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--results-dir", type=Path, required=True)
+    parser.add_argument(
+        "--repo-evidence-dir",
+        type=Path,
+        default=Path("evals/evidence"),
+    )
     parser.add_argument("--output", type=Path)
     parser.add_argument("--report-only", action="store_true")
     args = parser.parse_args()
 
     root = args.results_dir
+    evidence_root = args.repo_evidence_dir
     requirements: list[tuple[str, str, Callable[[dict[str, Any]], bool]]] = [
         (
             "real_session_isolation",
@@ -74,11 +80,10 @@ def main() -> int:
             ),
         ),
         (
-            "minimal_fork_surface",
+            "minimal_fork_execution",
             "psychat_minimal_fork_patch.json",
             lambda d: (
                 equals(d, "pinned_commit", PINNED_COMMIT)
-                and equals(d, "donor_files_touched_to_introduce_provider_boundary", 3)
                 and equals(d, "direct_provider_bypass_count_in_patched_rag_surface", 0)
                 and truthy(d, "model_gateway_injectable")
                 and truthy(d, "embedding_gateway_injectable")
@@ -117,16 +122,6 @@ def main() -> int:
                 and truthy(d, "rollback.rollback_test_pass")
                 and truthy(d, "safety.independent_safety_enforcement_pass")
                 and truthy(d, "resilience.resilience_boundary_dynamic_pass")
-            ),
-        ),
-        (
-            "adapter_change_surface",
-            "psychat_adapter_change_surface.json",
-            lambda d: (
-                equals(d, "files_touched_to_swap_executor", 0)
-                and truthy(d, "rollback_test_pass")
-                and equals(d, "files_touched_to_add_capability", 1)
-                and equals(d, "existing_chassis_files_touched_to_add_capability", 0)
             ),
         ),
         (
@@ -169,8 +164,60 @@ def main() -> int:
         ),
     ]
 
+    static_requirements: list[
+        tuple[str, Path, Callable[[dict[str, Any]], bool]]
+    ] = [
+        (
+            "minimal_fork_git_surface",
+            evidence_root / "psychat_minimal_fork_git.json",
+            lambda d: (
+                equals(d, "pinned_donor_commit", PINNED_COMMIT)
+                and equals(d, "files_touched_exact", 3)
+                and equals(d, "static_patched_invariants.direct_requests_post_count", 0)
+                and truthy(d, "static_patched_invariants.psychology_agent_model_gateway_injected")
+                and truthy(d, "static_patched_invariants.vector_store_embedding_gateway_injected")
+                and truthy(d, "static_patched_invariants.rag_system_force_retrieval_signature")
+            ),
+        ),
+        (
+            "adapter_git_change_surface",
+            evidence_root / "psychat_adapter_change_surface_git.json",
+            lambda d: (
+                equals(d, "scenarios.swap_registered_executor.files_touched_total", 0)
+                and equals(d, "scenarios.introduce_new_executor.files_touched_total", 1)
+                and equals(d, "scenarios.introduce_new_executor.existing_chassis_files_touched", 0)
+                and equals(d, "scenarios.add_new_capability.files_touched_total", 1)
+                and equals(d, "scenarios.add_new_capability.existing_chassis_files_touched", 0)
+            ),
+        ),
+    ]
+
     checks = []
     blockers = []
+
+    for requirement_id, path, predicate in static_requirements:
+        data = load_optional(path)
+        if data is None:
+            status = "MISSING"
+            detail = "required versioned Git evidence does not exist"
+        else:
+            passed = bool(predicate(data))
+            status = "PASS" if passed else "FAIL"
+            detail = (
+                "versioned Git evidence satisfied"
+                if passed
+                else "versioned Git evidence failed required assertions"
+            )
+        row = {
+            "id": requirement_id,
+            "file": str(path),
+            "status": status,
+            "detail": detail,
+        }
+        checks.append(row)
+        if status != "PASS":
+            blockers.append(row)
+
     for requirement_id, filename, predicate in requirements:
         path = root / filename
         data = load_optional(path)
@@ -233,7 +280,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.1",
+        "metric_version": "psychat-block-i-readiness-v0.2",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
