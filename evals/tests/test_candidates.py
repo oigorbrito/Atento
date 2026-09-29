@@ -4,8 +4,11 @@ import unittest
 from pathlib import Path
 
 from evals.atentoeval.candidates import (
+    AgentScope,
+    CandidateClass,
     CandidateResult,
     EvidenceStatus,
+    SelectionStatus,
     github_matrix,
     load_registry,
     write_static_result,
@@ -25,6 +28,19 @@ class CandidateRegistryTest(unittest.TestCase):
             "5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4",
         )
         self.assertIsNone(by_id["atento_native_rag"].repository)
+        self.assertEqual(by_id["psychat_upstream"].agent_scope, AgentScope.ANNA)
+        self.assertEqual(
+            by_id["psychat_upstream"].candidate_class,
+            CandidateClass.UNCLASSIFIED_PENDING_AUDIT,
+        )
+        self.assertEqual(
+            by_id["psychat_upstream"].selection_status,
+            SelectionStatus.NOT_SELECTED,
+        )
+        self.assertEqual(
+            by_id["atento_native_rag"].selection_status,
+            SelectionStatus.NOT_APPLICABLE,
+        )
 
     def test_ci_matrix_contains_only_enabled_supported_candidates(self):
         matrix = github_matrix(REGISTRY)
@@ -73,6 +89,8 @@ class CandidateRegistryTest(unittest.TestCase):
             self.assertEqual(result.evidence_status, EvidenceStatus.PASS_STATIC.value)
             saved = json.loads(output.read_text(encoding="utf-8"))
             self.assertEqual(saved["evaluation_kind"], "static_chassis")
+            self.assertEqual(saved["agent_scope"], "ANNA")
+            self.assertEqual(saved["selection_status"], "NOT_SELECTED")
             self.assertEqual(saved["chassis"]["chassis_fitness_score"], 10)
 
     def test_candidate_result_rejects_unknown_status(self):
