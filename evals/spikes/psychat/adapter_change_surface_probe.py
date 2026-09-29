@@ -62,7 +62,7 @@ def run_git(root: Path, *args: str) -> str:
 
 
 def status_paths(root: Path) -> list[str]:
-    output = run_git(root, "status", "--porcelain")
+    output = run_git(root, "status", "--porcelain", "--untracked-files=all")
     return sorted(
         line[3:].strip()
         for line in output.splitlines()
@@ -115,8 +115,25 @@ def main() -> int:
         type=Path,
         default=Path("evals/spikes/psychat/adapter"),
     )
+    parser.add_argument("--repo-root", type=Path, default=Path("."))
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
+
+    adapter_path = args.adapter_root.resolve()
+    repo_root = args.repo_root.resolve()
+    adapter_relative = adapter_path.relative_to(repo_root)
+    before_swap = run_git(
+        repo_root,
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--",
+        str(adapter_relative),
+    )
+    if before_swap:
+        raise AssertionError(
+            f"adapter worktree must be clean before swap probe: {before_swap}"
+        )
 
     registry = CapabilityRegistry()
     registry.register(ExecutorA())
@@ -128,6 +145,19 @@ def main() -> int:
     selected_a = registry.resolve("knowledge.rag", "a")
     if selected_b.executor_id != "b" or selected_a.executor_id != "a":
         raise AssertionError("executor swap/rollback resolution failed")
+
+    after_swap = run_git(
+        repo_root,
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--",
+        str(adapter_relative),
+    )
+    if after_swap != before_swap:
+        raise AssertionError(
+            f"executor swap mutated adapter source: before={before_swap!r} after={after_swap!r}"
+        )
 
     new_executor = scenario_surface(
         args.adapter_root,
@@ -149,6 +179,7 @@ def main() -> int:
     result = {
         "metric_version": "atento-adapter-change-surface-v0.1",
         "files_touched_to_swap_executor": 0,
+        "swap_executor_measurement": "git status before/after runtime registry selection",
         "swap_executor_scope": "switch between already-registered executors",
         "rollback_test_pass": True,
         "introduce_new_executor": new_executor,
