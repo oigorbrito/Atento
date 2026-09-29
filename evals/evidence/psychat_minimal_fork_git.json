@@ -1,0 +1,32 @@
+{
+  "metric_version": "psychat-minimal-fork-git-v0.1",
+  "evidence_type": "github_git_compare",
+  "pinned_donor_commit": "5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4",
+  "baseline_commit": "fb5368edbe23aeedf571e1f11935ae63b6da29b9",
+  "patched_commit": "15249e687c8a2fdea263cc0ae57650ab698a907f",
+  "preserving_ref": "evidence/psychat-rag-minimal-patch",
+  "files_touched_exact": 3,
+  "changed_files": [
+    "evals/evidence/psychat-pinned/agent/psychology_agent.py",
+    "evals/evidence/psychat-pinned/core/rag_system.py",
+    "evals/evidence/psychat-pinned/core/vector_store.py"
+  ],
+  "original_lines": 1365,
+  "deleted_or_replaced_original_lines": 123,
+  "added_lines": 53,
+  "retained_original_lines": 1242,
+  "retained_original_line_ratio": 0.9098901098901099,
+  "static_patched_invariants": {
+    "direct_requests_post_count": 0,
+    "requests_import_count": 0,
+    "psychology_agent_model_gateway_injected": true,
+    "vector_store_embedding_gateway_injected": true,
+    "rag_system_model_gateway_present": true,
+    "rag_system_embedding_gateway_present": true,
+    "rag_system_force_retrieval_signature": true
+  },
+  "limitations": [
+    "Git evidence proves patch surface/content invariants, not Python execution.",
+    "Runtime/compile evidence remains a separate requirement."
+  ]
+}
