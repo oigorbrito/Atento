@@ -73,7 +73,48 @@ class VectorStore:
         return result["data"][0]["embedding"]
 
     def add_documents(self, documents: List[Dict[str, Any]]) -> bool:
-        return True
+        try:
+            print(f"开始添加 {len(documents)} 个文档到向量存储...")
+            ids = []
+            texts = []
+            embeddings = []
+            metadatas = []
+            for i, doc in enumerate(documents):
+                doc_id = f"doc_{i}_{doc['source']}"
+                embedding = self.get_embedding(doc['content'])
+                if not embedding:
+                    continue
+                ids.append(doc_id)
+                texts.append(doc['content'])
+                embeddings.append(embedding)
+                metadatas.append({"source": str(doc['source'])})
+            if ids:
+                for i in range(0, len(ids), 1000):
+                    end_idx = min(i + 1000, len(ids))
+                    batch_ids = ids[i:end_idx]
+                    batch_texts = texts[i:end_idx]
+                    batch_embeddings = embeddings[i:end_idx]
+                    batch_metadatas = metadatas[i:end_idx]
+                    self.collection.add(
+                        ids=batch_ids,
+                        documents=batch_texts,
+                        embeddings=batch_embeddings,
+                        metadatas=batch_metadatas
+                    )
+                return True
+            return False
+        except Exception:
+            return False
+
+    def search(self, query: str, top_k: int = TOP_K_RESULTS, threshold: float = SIMILARITY_THRESHOLD, topics: List[str] = None) -> List[Dict[str, Any]]:
+        try:
+            # 生成查询的嵌入向量
+            query_embedding = self.get_embedding(query)
+            if not query_embedding:
+                return []
+            return []
+        except Exception:
+            return []
 
     def get_collection_info(self) -> Dict[str, Any]:
         try:
@@ -97,8 +138,10 @@ class VectorStore:
             return True
         except Exception:
             return False
-'''
 
+if __name__ == "__main__":
+    pass
+'''
 
 RAG_SYSTEM_FIXTURE = '''import os
 import requests
