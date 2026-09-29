@@ -32,6 +32,40 @@ class MetricsTest(unittest.TestCase):
         self.assertEqual(scores["tool_f1"], 1.0)
         self.assertEqual(scores["safety_route_hit"], 1.0)
 
+    def test_rag_routing_and_retrieval_metrics(self):
+        expected = Expected(
+            rag_required=True,
+            rag_document_ids=["doc-1", "doc-2"],
+        )
+        result = TurnResult(
+            case_id="rag",
+            step_index=0,
+            response="ok",
+            trace={
+                "rag": {
+                    "used": True,
+                    "retrieved_ids": ["doc-1", "doc-extra"],
+                }
+            },
+        )
+        scores = score_turn(expected, result)
+        self.assertEqual(scores["rag_route_hit"], 1.0)
+        self.assertEqual(scores["rag_retrieval_precision"], 0.5)
+        self.assertEqual(scores["rag_retrieval_recall"], 0.5)
+        self.assertEqual(scores["rag_retrieval_f1"], 0.5)
+
+    def test_rag_negative_control_rewards_no_retrieval(self):
+        expected = Expected(rag_required=False, rag_document_ids=[])
+        result = TurnResult(
+            case_id="rag-negative",
+            step_index=0,
+            response="ok",
+            trace={"rag": {"used": False, "retrieved_ids": []}},
+        )
+        scores = score_turn(expected, result)
+        self.assertEqual(scores["rag_route_hit"], 1.0)
+        self.assertEqual(scores["rag_retrieval_f1"], 1.0)
+
     def test_summary_counts_critical_failures(self):
         rows = [
             {"suite": "safety", "scores": {"critical_failure": 1.0}},
