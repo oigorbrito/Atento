@@ -130,8 +130,10 @@ class VectorStore:
             )
             self.collection = staging
             self.collection_name = staging_name
-            success = self.add_documents(
-                documents, refresh_active=False
+            success = (
+                True
+                if not documents
+                else self.add_documents(documents, refresh_active=False)
             )
             complete = success and staging.count() == len(documents)
             if not complete:
@@ -391,19 +393,8 @@ class VectorStore:
             return {}
     
     def clear_collection(self) -> bool:
-        """清空集合"""
-        try:
-            self.client.delete_collection(self.collection_name)
-            self.collection = self.client.create_collection(
-                name=self.collection_name,
-                metadata=self.expected_collection_metadata,
-            )
-            self._validate_collection_contract()
-            print("集合已清空")
-            return True
-        except Exception as e:
-            print(f"清空集合时出错: {e}")
-            return False
+        """Atomically promote an empty generation instead of mutating active data."""
+        return self.rebuild_documents([])
 
 
 if __name__ == "__main__":
