@@ -194,10 +194,15 @@ jobs:
       - name: Audit patched BLOCO I donor plus Atento chassis
         run: |
           rm -rf /tmp/PsyChatRagBlock
-          mkdir -p             /tmp/PsyChatRagBlock/agent             /tmp/PsyChatRagBlock/core             /tmp/PsyChatRagBlock/atento_adapter
+          mkdir -p \
+            /tmp/PsyChatRagBlock/agent \
+            /tmp/PsyChatRagBlock/core \
+            /tmp/PsyChatRagBlock/data \
+            /tmp/PsyChatRagBlock/atento_adapter
           cp /tmp/PsyChat/agent/psychology_agent.py /tmp/PsyChatRagBlock/agent/
           cp /tmp/PsyChat/core/vector_store.py /tmp/PsyChatRagBlock/core/
           cp /tmp/PsyChat/core/rag_system.py /tmp/PsyChatRagBlock/core/
+          cp /tmp/PsyChat/data/processor.py /tmp/PsyChatRagBlock/data/
           cp -R evals/spikes/psychat/adapter/. /tmp/PsyChatRagBlock/atento_adapter/
           python evals/chassis/donor_static_audit.py             --root /tmp/PsyChatRagBlock             --source-id SRC-PSYCHAT-RAG-PATCH+SRC-ATENTO             --upstream-commit 5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4             --output evals/results/psychat_patched_rag_chassis.json
 
