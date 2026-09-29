@@ -265,6 +265,7 @@ def main() -> int:
                 and truthy(d, "static_patched_invariants.collection_namespaced_by_index_identity")
                 and truthy(d, "static_patched_invariants.same_identity_rebuild_uses_upsert")
                 and equals(d, "static_patched_invariants.legacy_collection_add_remaining", False)
+                and truthy(d, "static_patched_invariants.collection_info_exposes_index_identity")
                 and truthy(d, "static_patched_invariants.qa_id_carry_forward_present")
                 and equals(d, "pinned_corpus_parser_evidence.upstream_unknown_qa_id_sections", 4760)
                 and equals(d, "pinned_corpus_parser_evidence.patched_unknown_qa_id_sections", 0)
@@ -383,7 +384,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.12",
+        "metric_version": "psychat-block-i-readiness-v0.13",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
