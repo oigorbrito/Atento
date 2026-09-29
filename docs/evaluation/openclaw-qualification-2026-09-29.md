@@ -273,82 +273,62 @@ CRITICAL_TOOL_ONLY_DURABILITY = LOCALIZED_IF_ADAPTER_CONTROLLED
 
 ---
 
-## 7. Upstream evidence and local tests that remain
+## 7. Evidence transfer and the one remaining pre-selection delta
 
-### Do not repeat locally
+### Upstream evidence accepted with audit
 
-No new generic local benchmark is justified for:
+The following properties have directly relevant implementation/tests at the inspected pin and should not be reimplemented as Atento tests merely to obtain another pass:
 
-- basic persistent conversation/session state;
-- restart/recovery of accepted turns;
-- subagent lifecycle persistence;
-- channel outbound queue/reconciliation semantics;
-- existence of approval and policy primitives.
+- persistent operator approval state, including reopen/recovery behavior;
+- terminal/CAS approval semantics and stale-resolution defenses;
+- restart/recovery mechanisms already exercised upstream;
+- outbound delivery queue/reconciliation semantics;
+- per-agent core state separation;
+- explicit cross-agent/session policy surfaces.
 
-Those properties already have upstream source/docs/test evidence at the inspected pin.
+This is not blind trust in donor documentation. Reuse requires that the claim be tied to code and tests at the pinned SHA. Hosted CI status for the exact pin was not observable through the available GitHub interface, so no "CI green" claim is made.
 
-### Material local tests still required
+### Transfer constraints
 
-#### OC-NAYA-001 — fail-closed authority profile
+Some upstream evidence transfers only when Nayá preserves the relevant boundary:
 
-Configure the candidate with the intended Nayá policy and verify:
+- policy evidence transfers only if Nayá uses the supported policy/config hooks rather than bypassing them;
+- per-agent state isolation does not prove isolation for every plugin-owned global store;
+- same-Gateway multi-agent controls do not satisfy ADR-001's strict Assistant ↔ Therapist authority boundary;
+- outbound-message durability does not generalize to arbitrary external tool effects.
 
-- unknown/high-risk tools are denied by default;
-- approval is required where specified;
-- cancelled/stale approval cannot authorize later work;
-- effective policy remains narrow after restart;
-- no implicit broadening through nested/code-mode tool calls.
+### OC-NAYA-001 — minimal Nayá hardening/profile probe
 
-#### OC-NAYA-002 — arbitrary external-action crash ambiguity
+This is the **only OpenClaw-specific local probe required before finalist comparison**.
 
-Use a controlled fake external provider with an observable side effect.
+Implement the smallest Nayá profile using supported OpenClaw seams and prove:
 
-Fault point:
+- the authored configuration is valid;
+- effective exec/tool policy is fail-closed for the intended Assistant deployment;
+- cross-agent/session reach is narrowed as required;
+- sandbox/isolation settings required by the Assistant profile are expressible without a core fork;
+- restart/reload does not broaden the effective policy;
+- the adaptation can be maintained as config/plugin/deployment glue, or any required core patch is explicitly counted.
 
-```text
-persist intent
-→ provider effect succeeds
-→ crash before local terminal commit
-→ restart
-```
+Record as part of the same probe:
 
-Expected behavior for any promoted high-risk adapter:
+- Atento files added/changed;
+- OpenClaw upstream files patched, if any;
+- config/plugin-only touchpoints;
+- whether the candidate remains upstream-trackable.
 
-- no blind duplicate;
-- outcome becomes reconciled, terminally unknown, or requires operator action;
-- retry is permitted only when non-execution is proved.
+Do **not** rewrite OpenClaw's stale-approval/restart test suite. Reuse the upstream tests for the mechanism and test only the Nayá profile that composes them.
 
-This test is expected to fail for an arbitrary unmodified generic tool path unless the adapter participates in an effect protocol.
+### Reclassified work
 
-#### OC-NAYA-003 — Assistant ↔ Therapist isolation
+The previously proposed candidate-local tests are moved to the blocks that own the real adaptation:
 
-Run Assistant and Therapist under the proposed strict topology.
+- **generic external-action crash ambiguity** → Block J / external-action adapter. The unmodified OpenClaw generic tool path is already documented as not providing universal exactly-once effects. The useful empirical test is the real Atento high-risk adapter after it implements idempotency/readback/reconciliation.
+- **Assistant ↔ Therapist isolation** → ADR-001 composition/deployment. Test separate runtime/Gateway authority plus the explicit broker once that composition exists.
+- **plugin/global-store isolation** → the concrete plugin/memory integration that selects the store. Do not test an arbitrary plugin before one is adopted.
+- **integration touchpoint count** → measurement inside OC-NAYA-001 rather than a separate test.
 
-Verify:
-
-- Assistant cannot enumerate/query Therapy sessions or memory;
-- Therapist cannot enumerate/query Assistant sessions or memory;
-- Assistant cannot invoke Therapy internals;
-- Therapist cannot invoke personal side-effect tools;
-- restart does not widen authority;
-- only the handoff broker can carry an explicitly allowed minimal payload.
-
-#### OC-NAYA-004 — plugin/global-store negative test
-
-Enable representative memory/plugin storage and prove that no supposedly per-agent store silently resolves to a shared/global backend.
-
-This protects against treating core per-agent state separation as proof for every plugin.
-
-#### OC-NAYA-005 — integration touchpoint count
-
-Implement the hardening profile and one controlled external-action adapter, then record:
-
-- changed upstream files;
-- plugin/config-only changes;
-- required core patches;
-- maintained fork touchpoints.
-
-This is the empirical invasiveness measurement required by ADR-002.
+This preserves empirical engineering while avoiding duplicate suites and context/test debt.
 
 ---
 
@@ -369,9 +349,9 @@ STRICT_THERAPY_BOUNDARY         = SEPARATE_RUNTIME_REQUIRED
 GENERIC_TOOL_EFFECT_DURABILITY  = NOT_PROVEN
 LICENSE                         = MIT
 STATUS                          = STRONG_CANDIDATE / STATIC_QUALIFICATION_COMPLETE
-LOCAL_DELTA_TESTS               = PENDING
+LOCAL_PRESELECTION_DELTA        = OC-NAYA-001_PENDING
 ```
 
 No base winner is selected by this record.
 
-The next decision step is to execute only OC-NAYA-001 through OC-NAYA-005, then compare OpenClaw, OpenMausBot and NaIA using the same ADR-002 decision protocol.
+The next decision step is to execute OC-NAYA-001 only, then compare OpenClaw, OpenMausBot and NaIA using the same ADR-002 decision protocol. The reclassified tests run later in the blocks that actually introduce those adaptations.
