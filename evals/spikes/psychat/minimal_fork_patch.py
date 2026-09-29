@@ -220,6 +220,52 @@ def direct_provider_bypasses(root: Path) -> dict[str, list[str]]:
     return result
 
 
+def retention_metrics(root: Path) -> dict:
+    rows = []
+    total_original = 0
+    total_deleted = 0
+
+    for line in git(root, "diff", "--numstat").splitlines():
+        if not line.strip():
+            continue
+        added_raw, deleted_raw, path = line.split("\t", 2)
+        if path not in PATCHED_FILES:
+            continue
+        added = int(added_raw)
+        deleted = int(deleted_raw)
+        original = len(git(root, "show", f"HEAD:{path}").splitlines())
+        retained = max(original - deleted, 0)
+        rows.append(
+            {
+                "path": path,
+                "original_lines": original,
+                "added_lines": added,
+                "deleted_or_replaced_original_lines": deleted,
+                "retained_original_lines": retained,
+                "retained_original_line_ratio": (
+                    retained / original if original else 1.0
+                ),
+            }
+        )
+        total_original += original
+        total_deleted += deleted
+
+    total_retained = max(total_original - total_deleted, 0)
+    return {
+        "files": sorted(rows, key=lambda item: item["path"]),
+        "original_lines": total_original,
+        "deleted_or_replaced_original_lines": total_deleted,
+        "retained_original_lines": total_retained,
+        "retained_original_line_ratio": (
+            total_retained / total_original if total_original else 1.0
+        ),
+        "interpretation": (
+            "Approximation from git diff --numstat: original lines not deleted "
+            "or replaced in the three-file RAG patch surface."
+        ),
+    }
+
+
 def apply_patch(donor_root: Path) -> dict:
     head_before = git(donor_root, "rev-parse", "HEAD")
     if head_before != PINNED_COMMIT:
@@ -261,8 +307,10 @@ def apply_patch(donor_root: Path) -> dict:
     if "embedding_gateway" not in vector_params:
         raise AssertionError("VectorStore embedding gateway is not injectable")
 
+    retention = retention_metrics(donor_root)
+
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.2",
+        "metric_version": "psychat-minimal-fork-patch-v0.3",
         "pinned_commit": head_before,
         "changed_files": changed,
         "donor_files_touched_to_introduce_provider_boundary": len(changed),
@@ -273,6 +321,7 @@ def apply_patch(donor_root: Path) -> dict:
         "embedding_gateway_injectable": True,
         "direct_provider_bypass_count_in_patched_rag_surface": remaining,
         "direct_provider_bypass_evidence": bypasses,
+        "upstream_code_retention": retention,
         "scope": "BLOCO I RAG core only; donor web/TTS chassis intentionally excluded",
         "git_diff_stat": git(donor_root, "diff", "--stat"),
     }
