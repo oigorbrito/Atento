@@ -99,6 +99,45 @@ APOLLO_SHORTLIST = NOT_SELECTED
 APOLLO_RESEARCH = NOT_STARTED
 ```
 
+## Canonical responsibility split
+
+Use this split when resuming work:
+
+```text
+NAIA
+= primary personal executive assistant / secretary
+= general operational side-effect executor
+= calendar + communications + research + shopping + browser/computer + apps + routines + automation
+
+Anna
+= emotional / therapeutic domain authority
+= therapeutic conversation + longitudinal therapeutic memory + strategy/interventions + safety + multi-session follow-up
+= delegates general operational tasks to NAIA through explicit minimal handoff
+
+Apollo
+= nutrition / fitness / personal-trainer domain authority
+= goals + training + nutrition scope + progress/adherence + domain metrics/wearables + longitudinal plan adaptation
+= delegates general operational tasks to NAIA through explicit minimal handoff
+```
+
+Important:
+
+```text
+NAIA_IS_PRIMARY_ASSISTANT
+!=
+NAIA_IS_SUPERUSER_OF_ANNA_OR_APOLLO
+
+SHARED_INFRASTRUCTURE
+!=
+SHARED_PRIVATE_MEMORY
+
+HANDOFF
+!=
+TRANSFER_OF_FULL_CONTEXT
+```
+
+Anna and Apollo own decisions inside their domains. NAIA owns general personal logistics and external operational execution unless a future domain-specific contract explicitly authorizes otherwise.
+
 ## Cross-agent boundaries
 
 NAIA, Anna and Apollo are separate bounded agents.
