@@ -12,7 +12,7 @@ class CountingDonor:
     def __init__(self):
         self.calls = 0
 
-    def respond(self, *, message, session_state):
+    def respond(self, *, message, session_state, force_retrieval=False):
         self.calls += 1
         return "counted", {"turns": int(session_state.get("turns", 0)) + 1}
 
@@ -34,13 +34,13 @@ class BlockingPostSafety:
 
 
 class FakePsyChatDonor:
-    def respond(self, *, message, session_state):
+    def respond(self, *, message, session_state, force_retrieval=False):
         count = int(session_state.get("turns", 0)) + 1
         return f"{message}:{count}", {"turns": count}
 
 
 class FakeRetrievalDonor:
-    def respond(self, *, message, session_state):
+    def respond(self, *, message, session_state, force_retrieval=False):
         return "grounded", {
             **dict(session_state),
             "last_retrieval_docs": [
@@ -51,7 +51,7 @@ class FakeRetrievalDonor:
 
 
 class FakeAttemptedEmptyRagDonor:
-    def respond(self, *, message, session_state):
+    def respond(self, *, message, session_state, force_retrieval=False):
         return "no evidence", {
             **dict(session_state),
             "last_retrieval_docs": [],
