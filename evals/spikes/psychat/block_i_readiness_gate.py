@@ -291,12 +291,16 @@ def main() -> int:
                 and equals(d, "static_patched_invariants.legacy_collection_add_remaining", False)
                 and truthy(d, "static_patched_invariants.collection_info_exposes_index_identity")
                 and truthy(d, "static_patched_invariants.persisted_collection_metadata_validated")
+                and truthy(d, "static_patched_invariants.collection_contract_mismatch_fails_closed")
                 and truthy(d, "static_patched_invariants.knowledge_base_rebuild_defaults_to_replace")
                 and truthy(d, "static_patched_invariants.knowledge_base_rebuild_clear_fails_closed")
                 and truthy(d, "static_patched_invariants.knowledge_base_rebuild_uses_staging_generation")
                 and truthy(d, "static_patched_invariants.active_index_pointer_promoted_atomically")
                 and truthy(d, "static_patched_invariants.staging_validated_before_pointer_promotion")
                 and truthy(d, "static_patched_invariants.partial_staging_index_never_promoted")
+                and truthy(d, "static_patched_invariants.clear_collection_uses_atomic_empty_generation")
+                and truthy(d, "static_patched_invariants.long_lived_vector_store_refreshes_active_generation")
+                and truthy(d, "static_patched_invariants.incremental_writes_refresh_active_generation")
                 and truthy(d, "static_patched_invariants.rag_destructive_preclear_removed")
                 and truthy(d, "static_patched_invariants.qa_id_carry_forward_present")
                 and equals(d, "pinned_corpus_parser_evidence.upstream_unknown_qa_id_sections", 4760)
@@ -416,7 +420,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.24",
+        "metric_version": "psychat-block-i-readiness-v0.25",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
