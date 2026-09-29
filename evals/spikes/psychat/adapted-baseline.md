@@ -119,12 +119,28 @@ Two different costs are measured:
 
 **Boundary introduction cost**
 
-Expected exact donor patch surface:
+Git-measured donor patch surface:
 
 > **3 donor RAG files**
 
-This value is asserted by Git diff in the patch probe, but is not promoted to an
-executed PASS until the patch runs against a cloned pinned donor.
+This value now has independent GitHub Git Data evidence, without relying on
+Actions:
+
+- pinned snapshot commit: `fb5368edbe23aeedf571e1f11935ae63b6da29b9`;
+- patched child commit: `15249e687c8a2fdea263cc0ae57650ab698a907f`;
+- preserving evidence ref: `evidence/psychat-rag-minimal-patch`;
+- Git compare reports exactly:
+  - `agent/psychology_agent.py`;
+  - `core/rag_system.py`;
+  - `core/vector_store.py`.
+
+Across those three files, the pinned snapshot contains 1,365 lines. The compare
+deletes/replaces 123 original lines and adds 53, leaving an approximate
+**90.99% original-line retention** over the patch surface.
+
+This proves the designed change-surface is narrow. It does **not** yet prove
+that `minimal_fork_patch.py` executes cleanly against a full cloned worktree;
+that executable assertion remains pending runner access.
 
 **Provider swap after boundary**
 
@@ -219,6 +235,22 @@ route/retrieval data survives adapter → trace → AtentoEval scoring. It must 
 be interpreted as donor quality performance.
 
 Actual PsyChat RAG quality comparison remains pending real execution.
+
+### Cross-language quality risk
+
+The gold-source check is provenance evidence, not retrieval-quality evidence.
+
+Atento RAG cases are `pt-BR`, while direct repository evidence for PsyChat gold
+documents (for example IDs `1864` and `1882`) contains Chinese-language
+dialogue. `gold_source_probe.py` now records whether each pinned gold target has
+CJK text near the matched ID and flags:
+
+- `multilingual_retrieval_required`;
+- `cross_language_gold_case_count`;
+- `multilingual_retrieval_quality_status`.
+
+Therefore a green chassis/replacement result cannot be used to infer Portuguese
+semantic-retrieval quality. That remains a separate feature-quality requirement.
 
 ## CI / execution state
 
