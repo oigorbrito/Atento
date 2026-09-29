@@ -1,16 +1,9 @@
-name: PsyChat fork spike
+name: Historical PsyChat evidence probe
 
+# DECISION_RESET: preserved for reproducibility only.
+# Manual execution does not imply Anna shortlist or candidate priority.
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-      - "spike/**"
-    paths:
-      - "evals/**"
-      - "docs/evaluation/harness.md"
-      - "docs/adr/ADR-000-fork-vs-greenfield.md"
-      - ".github/workflows/psychat-fork-spike.yml"
 
 permissions:
   contents: read
