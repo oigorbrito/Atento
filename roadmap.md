@@ -99,6 +99,8 @@ A regra de engenharia é preservar capacidade funcional comprovada e comparar o 
 
 ### Source Registry
 
+> **DECISION RESET:** este registry preserva fontes, pins e uso histórico/possível. Labels como candidato, donor integral ou modo permitido **não constituem shortlist nem preferência atual**. Seleção de chassis pertence às ADRs específicas de NAIA/Anna/Apollo.
+
 #### SRC-PA — PsychAgent
 - **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
 - **Paper:** https://arxiv.org/abs/2604.00931
@@ -229,7 +231,7 @@ A regra de engenharia é preservar capacidade funcional comprovada e comparar o 
 - **Snapshot qualificado:** `947bef311bf5c3f55d3590849abf0eb329408519`.
 - **Candidato para:** base da Assistente pessoal persistente: bots, rotinas, mensagens, computer/browser, apps e model/provider switching.
 - **Termos:** core Apache-2.0; `enterprise/` possui licença separada source-available para produção.
-- **Estado:** candidato forte, não selecionado; ver ADR específica.
+- **Estado de evidência:** qualificado historicamente como candidato forte. **Estado de seleção atual:** shortlist reset / não selecionado; ver ADR da NAIA.
 
 #### SRC-OPENCLAW — OpenClaw
 - **Tipo:** `IMPLEMENTATION_REFERENCE`.
@@ -238,12 +240,13 @@ A regra de engenharia é preservar capacidade funcional comprovada e comparar o 
 - **Pin da qualificação estática:** `e9571d77e76bd6d35996273d9e8398ad539b26e1`.
 - **Candidato para:** base da Assistente pessoal: Gateway, multi-channel, restart recovery, approvals e durable outbound delivery.
 - **Termos:** MIT.
-- **Estado:** candidato forte; qualificação estática concluída; `ASSISTANT_BASE_WINNER = NOT_SELECTED`.
-- **Próximo delta:** provar apenas o perfil mínimo Nayá de autoridade/isolamento configurável e medir a surface de adaptação. Não repetir restart, approval persistence ou outbound durability já cobertos por evidência upstream no pin.
+- **Estado de evidência:** qualificação estática concluída e preservada. **Estado de seleção atual:** shortlist reset / não selecionado.
+- **Execução:** o antigo delta OpenClaw/Nayá fica inativo até OpenClaw ser reclassificado na nova enumeração comparável da NAIA. Não repetir evidência upstream já válida.
 
-#### SRC-NAIA — NaIA
+#### SRC-NAIA — repositório histórico NaIa (donor)
 - **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
 - **Repo:** https://github.com/oigorbrito/NaIa
+- **Importante:** esta fonte é a implementação/repositório histórico e **não** deve ser confundida com **NAIA — Nova Assistente Inteligente Artificial**, o agente atual do produto.
 - **Commit qualificado:** `23e4ca55abfaf399844047792018a22415ed3738`.
 - **Candidato para:** policy/approval/evidence, semantic operation identity, sensitive-memory authority e fault/durability research.
 - **Estado:** donor arquitetural forte; maior custo de integração como base completa da Assistente no snapshot avaliado.
@@ -291,9 +294,9 @@ external_terms_note:
 
 ---
 
-## 2.2 Gate obrigatório: donor vs fork vs selective-port vs native
+## 2.2 Gate de adoção: donor vs fork vs selective-port vs native
 
-> **Este gate acontece antes da migração arquitetural dos blocos.** A pergunta não é "podemos copiar?", e sim "qual opção é empiricamente melhor para o Atento?".
+> Durante o `DECISION_RESET`, este gate só pode ser aplicado **depois** de o candidato ter sido classificado na categoria correta e ligado a uma decisão específica de NAIA, Anna, Apollo ou infraestrutura compartilhada. A pergunta não é "podemos copiar?", e sim "qual opção minimiza o custo total para a responsabilidade real em avaliação?".
 
 ### Critérios de decisão
 
@@ -312,7 +315,7 @@ Pontuar/medir:
 
 ### Regra de decisão
 
-- **FULL_DONOR** é aceitável quando o projeto externo entrega a maior parte da capacidade necessária e os resultados justificam herdar sua base.
+- **FULL_DONOR** é aceitável quando um candidato comparável entrega a maior parte da capacidade necessária e os resultados justificam herdar sua base.
 - **FORK** é preferível ao copy-paste quando acompanhar upstream agrega valor.
 - **SELECTIVE_PORT** é preferível quando poucas peças são claramente superiores.
 - **MODEL_ADAPTER** é preferível quando o valor está principalmente nos pesos.
