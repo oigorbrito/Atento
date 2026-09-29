@@ -25,7 +25,7 @@ class VectorStore:
         # 获取或创建集合
         self.collection = self.client.get_or_create_collection(
             name=COLLECTION_NAME,
-            metadata={"description": "MCP知识库向量存储"}
+            metadata={"description": "MCP知识库向量存储", "hnsw:space": "cosine"}
         )
         
         print(f"向量存储初始化完成: {CHROMA_DB_PATH}")
