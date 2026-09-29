@@ -20,16 +20,40 @@ from evals.spikes.psychat.adapter.psychat_bridge import build_patched_factory
 
 
 class StubCollection:
+    def __init__(self, metadata=None):
+        self.metadata = dict(metadata or {})
+        self.ids = set()
+
     def count(self):
-        return 0
+        return len(self.ids)
+
+    def upsert(self, **kwargs):
+        self.ids.update(str(item) for item in kwargs.get("ids", []))
 
 
 class StubPersistentClient:
+    collections = {}
+
     def __init__(self, *args, **kwargs):
         pass
 
-    def get_or_create_collection(self, *args, **kwargs):
-        return StubCollection()
+    def get_or_create_collection(self, *, name, metadata=None, **kwargs):
+        if name not in type(self).collections:
+            type(self).collections[name] = StubCollection(metadata)
+        return type(self).collections[name]
+
+    def get_collection(self, *, name, **kwargs):
+        return type(self).collections[name]
+
+    def create_collection(self, *, name, metadata=None, **kwargs):
+        if name in type(self).collections:
+            raise ValueError(name)
+        collection = StubCollection(metadata)
+        type(self).collections[name] = collection
+        return collection
+
+    def delete_collection(self, name):
+        type(self).collections.pop(name, None)
 
 
 class StubSettings:
@@ -116,14 +140,14 @@ class StubBuildProcessor:
 
 
 class RecordingBuildStore:
-    def __init__(self, *, clear_ok=True):
-        self.clear_ok = bool(clear_ok)
-        self.clear_calls = 0
+    def __init__(self, *, rebuild_ok=True):
+        self.rebuild_ok = bool(rebuild_ok)
+        self.rebuild_calls = 0
         self.add_calls = 0
 
-    def clear_collection(self):
-        self.clear_calls += 1
-        return self.clear_ok
+    def rebuild_documents(self, documents):
+        self.rebuild_calls += 1
+        return self.rebuild_ok
 
     def add_documents(self, documents):
         self.add_calls += 1
@@ -272,7 +296,7 @@ def run(donor_root: Path) -> dict:
             "composition root accepted a psychology agent bound to another model gateway"
         )
 
-    build_store = RecordingBuildStore(clear_ok=True)
+    build_store = RecordingBuildStore(rebuild_ok=True)
     build_runtime = rag_module.RAGSystem(
         model_gateway=model_a,
         embedding_gateway=embedding_a,
@@ -282,13 +306,13 @@ def run(donor_root: Path) -> dict:
         tts_service=None,
     )
     if not build_runtime.build_knowledge_base():
-        raise AssertionError("default replacement rebuild failed")
-    if build_store.clear_calls != 1 or build_store.add_calls != 1:
+        raise AssertionError("default atomic replacement rebuild failed")
+    if build_store.rebuild_calls != 1 or build_store.add_calls != 0:
         raise AssertionError(
-            "default rebuild must clear exactly once before adding documents"
+            "default rebuild must use atomic rebuild_documents exactly once"
         )
 
-    failing_build_store = RecordingBuildStore(clear_ok=False)
+    failing_build_store = RecordingBuildStore(rebuild_ok=False)
     failing_build_runtime = rag_module.RAGSystem(
         model_gateway=model_a,
         embedding_gateway=embedding_a,
@@ -298,10 +322,10 @@ def run(donor_root: Path) -> dict:
         tts_service=None,
     )
     if failing_build_runtime.build_knowledge_base():
-        raise AssertionError("rebuild must fail when collection clear fails")
-    if failing_build_store.clear_calls != 1 or failing_build_store.add_calls != 0:
+        raise AssertionError("failed staging rebuild must fail closed")
+    if failing_build_store.rebuild_calls != 1 or failing_build_store.add_calls != 0:
         raise AssertionError(
-            "failed clear must prevent document writes during rebuild"
+            "failed atomic rebuild must not fall back to incremental writes"
         )
 
     # Routing-authority probe: once Atento has selected knowledge.rag, the
@@ -367,13 +391,14 @@ def run(donor_root: Path) -> dict:
         raise AssertionError("session A state leaked into session B")
 
     return {
-        "metric_version": "psychat-provider-replacement-v0.6",
+        "metric_version": "psychat-provider-replacement-v0.7",
         "model_provider_swap_pass": True,
         "embedding_provider_swap_pass": True,
         "embedding_index_identity_isolated": True,
         "composition_provider_consistency_pass": True,
         "knowledge_base_rebuild_replace_default_pass": True,
         "knowledge_base_rebuild_clear_fail_closed_pass": True,
+        "knowledge_base_rebuild_atomic_path_pass": True,
         "embedding_a_collection_name": vector_a.collection_name,
         "embedding_b_collection_name": vector_b.collection_name,
         "rag_model_gateway_swap_pass": True,
