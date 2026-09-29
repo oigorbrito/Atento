@@ -99,6 +99,22 @@ class VectorStore:
         temp.write_text(json.dumps(payload, sort_keys=True), encoding="utf-8")
         os.replace(temp, self.pointer_path)
 
+    def _refresh_active_collection(self) -> None:
+        active_name = self._read_active_collection_name()
+        if active_name == self.collection_name:
+            return
+        collection = self.client.get_collection(name=active_name)
+        previous_collection = self.collection
+        previous_name = self.collection_name
+        self.collection = collection
+        self.collection_name = active_name
+        try:
+            self._validate_collection_contract()
+        except Exception:
+            self.collection = previous_collection
+            self.collection_name = previous_name
+            raise
+
     def rebuild_documents(self, documents: List[Dict[str, Any]]) -> bool:
         generation = uuid.uuid4().hex[:12]
         staging_name = f"{self.logical_collection_name}__gen-{generation}"
@@ -247,6 +263,7 @@ class VectorStore:
     def search(self, query: str, top_k: int = TOP_K_RESULTS, threshold: float = SIMILARITY_THRESHOLD, topics: List[str] = None) -> List[Dict[str, Any]]:
         """搜索相关文档"""
         try:
+            self._refresh_active_collection()
             # 生成查询的嵌入向量
             query_embedding = self.get_embedding(query)
             if not query_embedding:
@@ -347,6 +364,7 @@ class VectorStore:
     def get_collection_info(self) -> Dict[str, Any]:
         """获取集合信息"""
         try:
+            self._refresh_active_collection()
             metadata = self._validate_collection_contract()
             count = self.collection.count()
             return {
