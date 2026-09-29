@@ -90,6 +90,17 @@ class FakeForcedRouteRagSystem(FakeUpstreamRagSystem):
         return super().generate_response(message)
 
 
+class FakeEmptyForcedRouteRagSystem(FakeUpstreamRagSystem):
+    def generate_response(self, message, force_retrieval=False):
+        return {
+            "success": True,
+            "response": "no evidence",
+            "sources": [],
+            "used_rag": False,
+            "reason": "no matching evidence",
+        }
+
+
 class FakeRetrievalStateRagSystem(FakeUpstreamRagSystem):
     def generate_response(self, message):
         result = super().generate_response(message)
@@ -315,6 +326,30 @@ class PsyChatAdapterTest(unittest.TestCase):
                 message="must retrieve",
                 route=route(),
             )
+
+    def test_bridge_traces_forced_empty_retrieval_as_attempted(self):
+        registry = CapabilityRegistry()
+        registry.register(
+            PsyChatExecutorAdapter(
+                PsyChatRagSystemPort(FakeEmptyForcedRouteRagSystem)
+            )
+        )
+        runtime = PsyChatSpikeRuntime(
+            registry=registry,
+            sessions=InMemorySessionStore(),
+        )
+
+        result = runtime.execute(
+            session_id="empty-rag",
+            message="find evidence",
+            route=route(),
+        )
+
+        rag_event = result.trace[0]
+        self.assertEqual(rag_event["event"], "rag.completed")
+        self.assertTrue(rag_event["attempted"])
+        self.assertFalse(rag_event["used"])
+        self.assertEqual(rag_event["retrieved_ids"], [])
 
     def test_bridge_restores_retrieval_state(self):
         port = PsyChatRagSystemPort(FakeRetrievalStateRagSystem)
