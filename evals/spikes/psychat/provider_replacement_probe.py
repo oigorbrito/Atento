@@ -105,6 +105,40 @@ class RecordingRetrievalStore:
         ]
 
 
+class StubBuildProcessor:
+    def process_documents(self, *args, **kwargs):
+        return [{
+            "content": "build-doc",
+            "source": "build.txt",
+            "size": 9,
+            "type": "psychology_qa",
+        }]
+
+
+class RecordingBuildStore:
+    def __init__(self, *, clear_ok=True):
+        self.clear_ok = bool(clear_ok)
+        self.clear_calls = 0
+        self.add_calls = 0
+
+    def clear_collection(self):
+        self.clear_calls += 1
+        return self.clear_ok
+
+    def add_documents(self, documents):
+        self.add_calls += 1
+        return True
+
+    def get_collection_info(self):
+        return {
+            "name": "build-index",
+            "document_count": 1,
+            "index_schema": "rag-cosine-v1",
+            "embedding_identity": "build:model:v1",
+            "corpus_identity": "psychat@pinned",
+        }
+
+
 class RecordingEmbeddingGateway:
     def __init__(self, vector, identity):
         self.vector = list(vector)
@@ -238,6 +272,38 @@ def run(donor_root: Path) -> dict:
             "composition root accepted a psychology agent bound to another model gateway"
         )
 
+    build_store = RecordingBuildStore(clear_ok=True)
+    build_runtime = rag_module.RAGSystem(
+        model_gateway=model_a,
+        embedding_gateway=embedding_a,
+        data_processor=StubBuildProcessor(),
+        vector_store=build_store,
+        psychology_agent=agent_a,
+        tts_service=None,
+    )
+    if not build_runtime.build_knowledge_base():
+        raise AssertionError("default replacement rebuild failed")
+    if build_store.clear_calls != 1 or build_store.add_calls != 1:
+        raise AssertionError(
+            "default rebuild must clear exactly once before adding documents"
+        )
+
+    failing_build_store = RecordingBuildStore(clear_ok=False)
+    failing_build_runtime = rag_module.RAGSystem(
+        model_gateway=model_a,
+        embedding_gateway=embedding_a,
+        data_processor=StubBuildProcessor(),
+        vector_store=failing_build_store,
+        psychology_agent=agent_a,
+        tts_service=None,
+    )
+    if failing_build_runtime.build_knowledge_base():
+        raise AssertionError("rebuild must fail when collection clear fails")
+    if failing_build_store.clear_calls != 1 or failing_build_store.add_calls != 0:
+        raise AssertionError(
+            "failed clear must prevent document writes during rebuild"
+        )
+
     # Routing-authority probe: once Atento has selected knowledge.rag, the
     # patched donor must accept force_retrieval from the outer Router instead
     # of re-deciding that no retrieval is needed.
@@ -301,11 +367,13 @@ def run(donor_root: Path) -> dict:
         raise AssertionError("session A state leaked into session B")
 
     return {
-        "metric_version": "psychat-provider-replacement-v0.5",
+        "metric_version": "psychat-provider-replacement-v0.6",
         "model_provider_swap_pass": True,
         "embedding_provider_swap_pass": True,
         "embedding_index_identity_isolated": True,
         "composition_provider_consistency_pass": True,
+        "knowledge_base_rebuild_replace_default_pass": True,
+        "knowledge_base_rebuild_clear_fail_closed_pass": True,
         "embedding_a_collection_name": vector_a.collection_name,
         "embedding_b_collection_name": vector_b.collection_name,
         "rag_model_gateway_swap_pass": True,
