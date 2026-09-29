@@ -28,6 +28,7 @@ Atento evaluation branch:
 |---|---|---|---|
 | Upstream chassis | Static CFS | PASS_STATIC | Pinned PsyChat baseline: 10/100; only routing boundary passes static screening. |
 | Branch coherence | Spike behind main? | PASS_EMPIRICAL | Spike has repeatedly been reconciled to 0 behind main; compare must be rechecked before final ADR freeze. |
+| Donor license | Fork/modification permission known | PASS_EMPIRICAL | Pinned donor `LICENSE` is MIT; modification/distribution/sublicensing are permitted subject to retaining the copyright and permission notice in copies or substantial portions. Versioned evidence: `evals/evidence/psychat_license.json`. |
 | Fork surface | Files touched to introduce model + embedding provider boundaries | PASS_EMPIRICAL | Git compare baseline `fb5368edbe23aeedf571e1f11935ae63b6da29b9` -> patched `15249e687c8a2fdea263cc0ae57650ab698a907f`: exactly 3 files. |
 | Fork surface | Provider/lifecycle boundary files | PASS_EMPIRICAL | `agent/psychology_agent.py`, `core/rag_system.py`, `core/vector_store.py`. |
 | Fork preservation | Original-line retention over 3-file provider-boundary surface | PASS_EMPIRICAL | Approx. 90.99% retained: 1,242 / 1,365 original lines not deleted/replaced. |
@@ -40,7 +41,7 @@ Atento evaluation branch:
 | Router authority | Atento can force RAG after selecting `knowledge.rag` | PASS_STATIC | Minimal patch adds `force_retrieval`; bridge now propagates it and fails closed for unpatched donors. |
 | Router authority | Runtime propagation through real patched donor | PENDING_EXECUTION | Unit/dynamic probes exist; Actions cannot run. |
 | Session isolation | Shared upstream runtime risks cross-session state | PENDING_EXECUTION | Real-source isolation probe exists against pinned `RAGSystem`; not yet executed by a functioning runner. |
-| Session lifecycle | Long-lived vector/gateway resources can be shared while session runtime remains isolated | PENDING_EXECUTION | Factory seam and unit probe exist; runtime execution pending. |
+| Session lifecycle | Long-lived vector/gateway resources can be shared while session runtime remains isolated | PENDING_EXECUTION | Factory seam and unit probe exist; runtime execution pending. `_style_cache` is now restored/persisted through the external SessionStore so fresh runtimes do not lose the upstream style-analysis optimization. |
 | Adapter replaceability | Runtime executor swap touches existing source | PENDING_EXECUTION | Git-backed adapter change-surface probe asserts 0 source edits for switching already-registered executors. |
 | Adapter extensibility | Add new capability touches existing chassis | PENDING_EXECUTION | Probe asserts 1 new extension file and 0 existing chassis files. |
 | Adapter safety | Independent pre/post safety enforcement | PENDING_EXECUTION | Dynamic chassis probe exists. |
@@ -50,7 +51,7 @@ Atento evaluation branch:
 | Vector metric | Upstream distance semantics match `1 - distance` similarity transform | PASS_STATIC | No `hnsw:space` is configured in pinned `VectorStore`; Chroma documents L2 as the default, while donor interprets `1 - distance` as similarity. |
 | Vector metric | Patched distance semantics | PASS_STATIC | BLOCO I patch sets `hnsw:space=cosine` in the already-touched `core/vector_store.py`, making `1 - cosine_distance` a cosine-similarity score. |
 | Vector metric | Runtime metadata before/after | PENDING_EXECUTION | `vector_metric_probe.py` dynamically records collection metadata upstream vs patched without real Chroma/network access. |
-| Dependency reproducibility | Chroma version pinned | QUALITY_RISK | Donor requirement is `chromadb>=0.4.0`, not an exact/locked version; Atento integration environment must own/pin the effective Chroma version before production adoption. |
+| Dependency reproducibility | Chroma version pinned | QUALITY_RISK | Donor requirement is `chromadb>=0.4.0`, not an exact/locked version; `retrieval_readiness_probe.py` now reports the requirement and whether it is exact. Atento integration environment must own/pin the effective Chroma version before production adoption. |
 | QA provenance | Upstream parser preserves corpus IDs in indexed chunks | PASS_EMPIRICAL | No. Applying the pinned parser logic to all 12 corpus blobs yields 4,760 / 4,760 dialogue sections with `qa_id=unknown`; 0 known IDs survive. |
 | QA provenance | Corrected parser preserves corpus IDs | PASS_EMPIRICAL | Corrected carry-forward logic over the same 12 pinned blobs preserves all 4,760 unique IDs, emits 0 unknown dialogue sections, and retains gold IDs 328/350/1864/1882. |
 | QA provenance | Real DataProcessor before/after runtime probe | PENDING_EXECUTION | `qa_id_provenance_probe.py` dynamically loads the actual donor processor and asserts upstream broken vs patched preserved behavior; runner unavailable. |
