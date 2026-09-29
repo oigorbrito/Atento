@@ -143,27 +143,42 @@ def run_probe(donor_root: Path) -> dict:
     port = PsyChatRagSystemPort(lambda: make_runtime(rag_system_cls))
     response_a, state_a = port.respond(message="session-A-secret", session_state={})
     response_b, state_b = port.respond(message="session-B-message", session_state={})
+    response_a_followup, state_a_followup = port.respond(
+        message="session-A-followup",
+        session_state=state_a,
+    )
 
-    if response_a != "stub-response" or response_b != "stub-response":
+    if (
+        response_a != "stub-response"
+        or response_b != "stub-response"
+        or response_a_followup != "stub-response"
+    ):
         raise AssertionError("bridge did not normalize the real donor response mapping")
 
     state_a_history = state_a.get("conversation_history", [])
     state_b_history = state_b.get("conversation_history", [])
+    state_a_followup_history = state_a_followup.get("conversation_history", [])
+
     adapted_bridge_isolated = (
         contains_content(state_a_history, "session-A-secret")
         and contains_content(state_b_history, "session-B-message")
         and not contains_content(state_b_history, "session-A-secret")
+        and contains_content(state_a_followup_history, "session-A-secret")
+        and contains_content(state_a_followup_history, "session-A-followup")
+        and not contains_content(state_a_followup_history, "session-B-message")
     )
     if not adapted_bridge_isolated:
-        raise AssertionError("adapted bridge failed session isolation")
+        raise AssertionError("adapted bridge failed session isolation or continuity")
 
     return {
         "pinned_commit": PINNED_COMMIT,
         "upstream_shared_instance_cross_session_state": True,
         "adapted_bridge_isolated": True,
+        "adapted_bridge_session_continuity": True,
         "upstream_second_request_history_items": len(history_seen_by_second_request),
         "adapter_session_a_history_items": len(state_a_history),
         "adapter_session_b_history_items": len(state_b_history),
+        "adapter_session_a_followup_history_items": len(state_a_followup_history),
     }
 
 
