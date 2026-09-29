@@ -178,7 +178,7 @@ Mudança nos pesos ou na definição dos 100 Project Points exige ADR ou altera�
 - os 100 Project Points estiverem `[x]`;
 - todos os blocos A–S estiverem `[x]`;
 - todos os release gates bloqueantes passarem;
-- a Fase 8 tiver seus critérios de saída satisfeitos;
+- o `DECISION_RESET` estiver encerrado e os critérios de saída/release da arquitetura então vigente estiverem satisfeitos;
 - não existir regressão crítica conhecida não resolvida.
 
 
