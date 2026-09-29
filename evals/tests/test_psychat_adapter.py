@@ -45,6 +45,20 @@ class AlternateRagExecutor:
         )
 
 
+class LookupExecutor:
+    capability = "knowledge.lookup"
+    executor_id = "lookup"
+
+    def execute(self, request):
+        from evals.spikes.psychat.adapter.contracts import ExecutionResult
+        return ExecutionResult(
+            response="lookup",
+            executor=self.executor_id,
+            capability=self.capability,
+            metadata={"next_state": dict(request.state)},
+        )
+
+
 def route(executor="psychat"):
     return RouteDecision(
         capability="knowledge.rag",
@@ -100,6 +114,37 @@ class PsyChatAdapterTest(unittest.TestCase):
         result = runtime.execute(session_id="a", message="x", route=route("alternate"))
         self.assertEqual(result.response, "alternate")
         self.assertEqual(result.executor, "alternate")
+
+    def test_executor_route_can_roll_back_without_registry_mutation(self):
+        runtime, registry = self.make_runtime()
+        registry.register(AlternateRagExecutor())
+
+        switched = runtime.execute(
+            session_id="a", message="x", route=route("alternate")
+        )
+        rolled_back = runtime.execute(
+            session_id="a", message="x", route=route("psychat")
+        )
+
+        self.assertEqual(switched.executor, "alternate")
+        self.assertEqual(rolled_back.executor, "psychat")
+        self.assertEqual(rolled_back.response, "x:1")
+
+    def test_new_capability_registers_without_chassis_change(self):
+        runtime, registry = self.make_runtime()
+        registry.register(LookupExecutor())
+        result = runtime.execute(
+            session_id="a",
+            message="x",
+            route=RouteDecision(
+                capability="knowledge.lookup",
+                executor="lookup",
+                reason_code="lookup_needed",
+                confidence=0.9,
+            ),
+        )
+        self.assertEqual(result.response, "lookup")
+        self.assertEqual(result.capability, "knowledge.lookup")
 
     def test_unknown_executor_fails_closed(self):
         runtime, _ = self.make_runtime()
