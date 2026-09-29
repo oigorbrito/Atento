@@ -228,9 +228,18 @@ class PsyChatMinimalPatchGeneratorTest(unittest.TestCase):
                 '"atento:corpus_identity": self.corpus_identity',
                 patched,
             )
-            self.assertIn("'index_schema': ATENTO_INDEX_SCHEMA_VERSION", patched)
-            self.assertIn("'embedding_identity': self.embedding_identity", patched)
-            self.assertIn("'corpus_identity': self.corpus_identity", patched)
+            self.assertIn("'index_schema': metadata['atento:index_schema']", patched)
+            self.assertIn(
+                "'embedding_identity': metadata['atento:embedding_identity']",
+                patched,
+            )
+            self.assertIn(
+                "'corpus_identity': metadata['atento:corpus_identity']",
+                patched,
+            )
+            self.assertIn("self.expected_collection_metadata", patched)
+            self.assertIn("def _validate_collection_contract", patched)
+            self.assertIn("vector collection metadata mismatch", patched)
             self.assertNotIn("self.client.delete_collection(COLLECTION_NAME)", patched)
 
 
