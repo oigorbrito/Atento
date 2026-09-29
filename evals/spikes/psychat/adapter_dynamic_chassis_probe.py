@@ -50,6 +50,12 @@ class StatefulDonor:
                 "rag_attempted": True,
                 "used_rag": True,
                 "sources": [],
+                "index": {
+                    "name": "psychology_knowledge__rag-cosine-v1__trace",
+                    "index_schema": "rag-cosine-v1",
+                    "embedding_identity": "probe:model:v1",
+                    "corpus_identity": "psychat@pinned",
+                },
             },
         }
 
@@ -182,6 +188,24 @@ def trace_probe() -> dict:
         raise AssertionError(
             f"RAG executor did not enforce retrieval: {donor.force_flags}"
         )
+    rag_event = next(
+        event for event in result.trace
+        if event.get("event") == "rag.completed"
+    )
+    expected_index_keys = {
+        "name",
+        "index_schema",
+        "embedding_identity",
+        "corpus_identity",
+    }
+    observable_index_identity_pass = (
+        set(rag_event.get("index", {})) == expected_index_keys
+    )
+    if not observable_index_identity_pass:
+        raise AssertionError(
+            f"RAG trace lost index identity: {rag_event!r}"
+        )
+
     return {
         "required_events": required,
         "result_events": result_events,
@@ -189,6 +213,8 @@ def trace_probe() -> dict:
         "covered": covered,
         "trace_coverage": len(covered) / len(required),
         "rag_force_retrieval_contract_pass": True,
+        "observable_index_identity_pass": True,
+        "index_trace": dict(rag_event["index"]),
     }
 
 
@@ -322,7 +348,7 @@ def main() -> int:
         raise AssertionError("trace coverage is incomplete")
 
     report = {
-        "metric_version": "atento-adapter-dynamic-v0.2",
+        "metric_version": "atento-adapter-dynamic-v0.3",
         "schema_validation": schema,
         "trace": trace,
         "rollback": rollback,
