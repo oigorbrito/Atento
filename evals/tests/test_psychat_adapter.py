@@ -151,6 +151,24 @@ class LookupExecutor:
         )
 
 
+class MisreportingExecutor:
+    capability = "knowledge.rag"
+    executor_id = "misreporting"
+
+    def __init__(self, *, result_capability="knowledge.rag", result_executor="misreporting"):
+        self.result_capability = result_capability
+        self.result_executor = result_executor
+
+    def execute(self, request):
+        from evals.spikes.psychat.adapter.contracts import ExecutionResult
+        return ExecutionResult(
+            response="wrong-identity",
+            executor=self.result_executor,
+            capability=self.result_capability,
+            metadata={"next_state": dict(request.state)},
+        )
+
+
 def route(executor="psychat"):
     return RouteDecision(
         capability="knowledge.rag",
@@ -476,6 +494,59 @@ class PsyChatAdapterTest(unittest.TestCase):
         )
         self.assertEqual(result.response, "lookup")
         self.assertEqual(result.capability, "knowledge.lookup")
+
+    def test_runtime_rejects_result_with_wrong_capability_identity(self):
+        registry = CapabilityRegistry()
+        registry.register(
+            MisreportingExecutor(result_capability="conversation.direct")
+        )
+        runtime = PsyChatSpikeRuntime(
+            registry=registry,
+            sessions=InMemorySessionStore(),
+        )
+        with self.assertRaisesRegex(ValueError, "capability does not match"):
+            runtime.execute(
+                session_id="identity",
+                message="x",
+                route=route("misreporting"),
+            )
+
+    def test_runtime_rejects_result_with_wrong_executor_identity(self):
+        registry = CapabilityRegistry()
+        registry.register(
+            MisreportingExecutor(result_executor="other")
+        )
+        runtime = PsyChatSpikeRuntime(
+            registry=registry,
+            sessions=InMemorySessionStore(),
+        )
+        with self.assertRaisesRegex(ValueError, "id does not match"):
+            runtime.execute(
+                session_id="identity",
+                message="x",
+                route=route("misreporting"),
+            )
+
+    def test_trace_sink_receives_rag_and_executor_events(self):
+        sink = RecordingTraceSink()
+        registry = CapabilityRegistry()
+        registry.register(PsyChatExecutorAdapter(FakeRetrievalDonor()))
+        runtime = PsyChatSpikeRuntime(
+            registry=registry,
+            sessions=InMemorySessionStore(),
+            trace_sink=sink,
+        )
+
+        runtime.execute(
+            session_id="trace-all",
+            message="knowledge question",
+            route=route(),
+        )
+
+        self.assertEqual(
+            [event["event"] for event in sink.events],
+            ["rag.completed", "executor.completed"],
+        )
 
     def test_unknown_executor_fails_closed(self):
         runtime, _ = self.make_runtime()
