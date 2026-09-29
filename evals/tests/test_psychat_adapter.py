@@ -25,6 +25,19 @@ class FakeRetrievalDonor:
         }
 
 
+class FakeAttemptedEmptyRagDonor:
+    def respond(self, *, message, session_state):
+        return "no evidence", {
+            **dict(session_state),
+            "last_retrieval_docs": [],
+            "_atento_turn": {
+                "rag_attempted": True,
+                "used_rag": False,
+                "sources": [],
+            },
+        }
+
+
 class FakeUpstreamRagSystem:
     def __init__(self):
         self.conversation_history = []
@@ -135,6 +148,26 @@ class PsyChatAdapterTest(unittest.TestCase):
             ["qa-001", "doc-002"],
         )
         self.assertEqual(result.trace[-1]["event"], "executor.completed")
+
+    def test_rag_attempt_without_evidence_is_traced_but_not_persisted(self):
+        sessions = InMemorySessionStore()
+        registry = CapabilityRegistry()
+        registry.register(PsyChatExecutorAdapter(FakeAttemptedEmptyRagDonor()))
+        runtime = PsyChatSpikeRuntime(
+            registry=registry,
+            sessions=sessions,
+        )
+
+        result = runtime.execute(
+            session_id="a",
+            message="question with no evidence",
+            route=route(),
+        )
+
+        self.assertTrue(result.trace[0]["attempted"])
+        self.assertFalse(result.trace[0]["used"])
+        self.assertEqual(result.trace[0]["retrieved_ids"], [])
+        self.assertNotIn("_atento_turn", sessions.load("a"))
 
     def test_real_bridge_shape_restores_and_extracts_donor_state(self):
         port = PsyChatRagSystemPort(FakeUpstreamRagSystem)
