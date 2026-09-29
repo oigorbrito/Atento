@@ -60,8 +60,10 @@ def _rag_ids(trace: Dict[str, Any]) -> List[str]:
     return [str(x) for x in ids]
 
 
-def _rag_used(trace: Dict[str, Any]) -> bool:
+def _rag_attempted(trace: Dict[str, Any]) -> bool:
     rag = _rag(trace)
+    if "attempted" in rag:
+        return bool(rag["attempted"])
     if "used" in rag:
         return bool(rag["used"])
     return bool(rag.get("retrieved_ids"))
@@ -91,7 +93,7 @@ def score_turn(expected: Expected, result: TurnResult) -> Dict[str, float]:
 
     if expected.rag_required is not None:
         scores["rag_route_hit"] = (
-            1.0 if _rag_used(result.trace) == expected.rag_required else 0.0
+            1.0 if _rag_attempted(result.trace) == expected.rag_required else 0.0
         )
 
     if expected.rag_document_ids is not None:
