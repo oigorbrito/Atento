@@ -37,6 +37,182 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 
 ---
 
+
+## 2.1 Registro de fontes, provenance e regras para o agente de implementação
+
+> **Regra operacional:** nenhum módulo, feature, benchmark, dataset ou algoritmo deve ser implementado sem um `SOURCE_ID` explícito. Quando a peça for criação própria do Atento, usar `SRC-ATENTO`. Quando a fonte for apenas benchmark, ela **não** deve ser tratada como código de produção. Quando existir código externo sem licença compatível/verificada, ele pode ser estudado, mas **não copiado**.
+
+### Classes de origem
+
+| Classe | Significado | Regra |
+|---|---|---|
+| `IMPLEMENTATION_REFERENCE` | Existe código público útil como referência | Só reutilizar código se a licença permitir e estiver registrada; caso contrário, fazer implementação própria |
+| `ARCHITECTURE_REFERENCE` | A ideia vem de paper/documentação, não de código reutilizável | Implementação clean-room no Atento |
+| `BENCHMARK_REFERENCE` | Fonte usada para medir uma capacidade | Não inferir que o benchmark é uma implementação de produção |
+| `DATA_REFERENCE` | Dataset/taxonomia de pesquisa | Verificar licença/uso antes de incorporar dados |
+| `ATENTO_NATIVE` | Engenharia ou integração criada no próprio projeto | Documentar em ADR e testes |
+
+### Source Registry
+
+#### SRC-PA — PsychAgent
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`
+- **Paper:** https://arxiv.org/abs/2604.00931
+- **Repo:** https://github.com/ECNU-ICALK/PsychAgent
+- **Commit verificado:** `469f45ef468b968b3fccd1936d7e6a0a574e4c5c`
+- **Usar como fonte para:** memória entre sessões, planejamento longitudinal, skill retrieval, pipelines multi-session, avaliação/reward, best-of-N/reward-guided rollout em fase avançada.
+- **Não assumir:** que o pipeline completo de evolução de skills está público; o próprio repositório informa que essa parte está incompleta.
+- **Licença:** o repositório verificado não possui arquivo de licença. **Não copiar código para o Atento** até existir licença/permissão clara. Usar como referência arquitetural/behavioral e implementar localmente.
+
+#### SRC-PE — PsychEval
+- **Tipo:** `BENCHMARK_REFERENCE`
+- **Paper:** https://aclanthology.org/2026.findings-acl.1115/
+- **Usar como fonte para:** avaliação multi-sessão, continuidade longitudinal, dimensões counselor/client e avaliação específica por abordagem.
+- **Não usar como:** fonte de arquitetura de produção ou prova de segurança clínica.
+
+#### SRC-CADSS — CADSS / CPsDD
+- **Tipo:** `ARCHITECTURE_REFERENCE` + `DATA_REFERENCE`
+- **Paper AAAI 2026:** https://ojs.aaai.org/index.php/AAAI/article/view/38825
+- **Repo:** https://github.com/FakerBoom/CPsDD
+- **Commit verificado:** `f6385fa13223574852bdcff85eb6aa0bd36797dc`
+- **Usar como fonte para:** decomposição Profiler → Summarizer → Planner → Supporter; user profile estruturado; resumo de histórico/estado; strategy prediction; resposta condicionada à estratégia; caminhos de suporte.
+- **Estado do código:** o README verificado informa que o código de CADSS/PGSim ainda será liberado.
+- **Licença/uso:** dataset indicado para pesquisa. **Não incorporar CPsDD no produto sem revisão de licença/ética.**
+- **Implementação Atento:** clean-room; não esperar um módulo CADSS importável.
+
+#### SRC-UKA — User-Aware Active Knowledge Acquisition
+- **Tipo:** `ARCHITECTURE_REFERENCE`
+- **Paper/preprint:** https://arxiv.org/abs/2605.29715
+- **Usar como fonte para:** belief state explícito, hipóteses de necessidade, incerteza, decisão de perguntar/clarificar e resposta orientada a reduzir incerteza.
+- **Implementação Atento:** clean-room; não existe, neste roadmap, dependência de código externo UKA.
+- **Observação:** é preprint; validar localmente antes de promover qualquer política derivada.
+
+#### SRC-SAGE — Self-Retrieval-Augmented Generative LLM for ESC
+- **Tipo:** `ARCHITECTURE_REFERENCE`
+- **Paper:** https://doi.org/10.1016/j.eswa.2026.131524
+- **Usar como fonte para:** strategy prediction, retrieval condicionado à estratégia, candidate reranking, combinação de sinais semânticos/cognitivos e geração condicionada a conhecimento.
+- **Não copiar literalmente na V1:** trie/ResID, cross-attention customizado ou treinamento end-to-end só entram se o benchmark do Atento justificar.
+- **Implementação Atento:** primeiro adaptar o padrão "predict strategy → retrieve → rerank → generate" usando componentes simples e substituíveis.
+
+#### SRC-TEA — TEA-Bench
+- **Tipo:** `BENCHMARK_REFERENCE` + `ARCHITECTURE_REFERENCE`
+- **Paper ACL 2026:** https://aclanthology.org/2026.acl-long.2152/
+- **Usar como fonte para:** decisão de quando chamar ferramenta, escolha de ferramenta, grounding com resultado externo, métricas de tool-use e hallucination após tool use/failure.
+- **Implementação Atento:** Tool Router próprio; o benchmark define capacidades e protocolo de avaliação, não um controlador de produção a ser copiado.
+
+#### SRC-ENPMR — ENPMR-Bench
+- **Tipo:** `BENCHMARK_REFERENCE` + `ARCHITECTURE_REFERENCE`
+- **Paper ACL Findings 2026:** https://aclanthology.org/2026.findings-acl.2080/
+- **Usar como fonte para:** inferência de necessidade emocional antes de recuperar memória; proactive/need-aware memory retrieval; avaliação de alinhamento necessidade ↔ memória.
+- **Implementação Atento:** recuperar memória por relevância + necessidade + sensibilidade, não apenas similaridade vetorial.
+
+#### SRC-ESCONV — ESConv / Emotional Support Conversation
+- **Tipo:** `DATA_REFERENCE` + `BENCHMARK_REFERENCE`
+- **Paper ACL 2021:** https://aclanthology.org/2021.acl-long.269/
+- **Repo:** https://github.com/thu-coai/Emotional-Support-Conversation
+- **Usar como fonte para:** taxonomia base de estratégias de apoio e benchmark de strategy prediction/emotional support.
+- **Restrição:** o repositório declara dados/código para pesquisa acadêmica. Não incorporar dados/código ao produto sem permissão/licença compatível.
+- **Uso seguro no Atento:** adotar conceitos/taxonomia como referência; implementar prompts/schemas próprios.
+
+#### SRC-MHB — MentalHealthBench
+- **Tipo:** `BENCHMARK_REFERENCE`
+- **Fonte:** https://openai.com/index/introducing-mentalhealthbench/
+- **Usar como fonte para:** rubricas de safety, busca de contexto, preservação da autonomia, orientação prática, cobertura de níveis de acuidade e diferentes perfis de usuário.
+- **Não usar como:** substituto de revisão humana/clinicamente informada do Atento.
+
+#### SRC-COUNSEL — CounselBench
+- **Tipo:** `BENCHMARK_REFERENCE`
+- **ICLR 2026:** https://proceedings.iclr.cc/paper_files/paper/2026/hash/99946cb64d51ead9d3969db0af65ca2e-Abstract-Conference.html
+- **Repo:** https://github.com/llm-eval-mental-health/CounselBench
+- **Usar como fonte para:** avaliação humana, factual consistency, advice boundaries, adversarial stress tests e diferença entre LLM-as-judge e avaliador humano.
+- **Uso principal:** safety eval e human eval; não é arquitetura de agente.
+
+#### SRC-ATENTO — Arquitetura própria do Atento
+- **Tipo:** `ATENTO_NATIVE`
+- **Usar para:** API/session gateway, contratos JSON, Model Gateway, storage lifecycle, policy integration, privacy, RBAC, observabilidade, CI/CD, infraestrutura, composição final do Executive Controller e integrações.
+- **Regra:** toda decisão `SRC-ATENTO` relevante deve gerar ADR quando afetar contratos, segurança, persistência, roteamento ou avaliação.
+
+### Matriz de provenance por módulo/feature
+
+| Módulo / feature | Origem primária | Origem secundária / benchmark | Estratégia de implementação no Atento |
+|---|---|---|---|
+| Input normalization / Session Gateway | `SRC-ATENTO` | — | construir nativamente |
+| Structured Conversation State | `SRC-CADSS` | `SRC-ESCONV`, `SRC-MHB` | adaptar Profiler/Summarizer para schema próprio |
+| Emotion / distress fields | `SRC-ESCONV` | `SRC-MHB` | schema próprio; modelo substituível |
+| User profile estruturado | `SRC-CADSS` | `SRC-PE` | implementação clean-room |
+| Session summary / state summary | `SRC-CADSS` | `SRC-PA` | implementação clean-room |
+| Need hypotheses / belief state | `SRC-UKA` | `SRC-ENPMR` | implementar hipóteses + probabilidade/confiança |
+| Uncertainty / needs_clarification | `SRC-UKA` | — | policy de clarificação própria |
+| Risk / acuity fields | `SRC-ATENTO` | `SRC-MHB`, `SRC-COUNSEL` | safety policy independente |
+| Working memory | `SRC-ATENTO` | `SRC-PA` | contexto recente controlado |
+| Longitudinal / cross-session memory | `SRC-PA` | `SRC-PE` | implementação própria; sem copiar código |
+| Need-aware proactive memory retrieval | `SRC-ENPMR` | `SRC-UKA` | relevance + need + sensitivity |
+| Memory planning / continuity | `SRC-PA` | `SRC-PE` | planner lê memória recuperada, não DB bruto |
+| Executive Controller | `SRC-ATENTO` | `SRC-UKA`, `SRC-TEA`, `SRC-CADSS` | síntese própria; nenhuma fonte isolada é o executivo do Atento |
+| Ask/clarify decision | `SRC-UKA` | `SRC-MHB` | baseada em incerteza + policy |
+| Strategy planning | `SRC-CADSS` | `SRC-SAGE`, `SRC-ESCONV`, `SRC-PA` | planner separado do generator |
+| Strategy taxonomy | `SRC-ESCONV` | `SRC-CADSS` | taxonomia interna mapeada/versionada |
+| Skill Library | `SRC-PA` | `SRC-ESCONV` | registry próprio com metadata e versão |
+| Skill retrieval | `SRC-PA` | `SRC-SAGE` | retrieval simples primeiro; evolução posterior |
+| Skill evolution | `SRC-PA` | — | P3; não implementar da release incompleta sem especificação própria |
+| Knowledge/RAG decision | `SRC-ATENTO` | `SRC-SAGE`, `SRC-UKA` | RAG condicional |
+| Query rewrite / retrieval / rerank | `SRC-SAGE` | `SRC-ATENTO` | componentes simples/substituíveis |
+| Evidence packaging / provenance | `SRC-ATENTO` | `SRC-TEA` | sempre carregar source IDs |
+| Tool-use decision | `SRC-TEA` | `SRC-UKA` | executivo decide necessidade antes de tool call |
+| Tool Registry / permissions | `SRC-ATENTO` | `SRC-TEA` | whitelist + schema + autorização |
+| Tool grounding | `SRC-TEA` | — | resultado externo entra como evidência, não como instrução |
+| Response Generator | `SRC-CADSS` | `SRC-SAGE`, `SRC-ESCONV` | geração condicionada a plano/estratégia |
+| Candidate reranking | `SRC-SAGE` | `SRC-COUNSEL` | V1 critic simples; V2 reranking se benchmark justificar |
+| Best-of-N / reward selection | `SRC-PA` | — | P2/P3; somente em casos seletivos |
+| Output Critic | `SRC-ATENTO` | `SRC-SAGE`, `SRC-COUNSEL`, `SRC-MHB` | rubric própria, separada do generator |
+| Safety pre-check | `SRC-ATENTO` | `SRC-MHB`, `SRC-COUNSEL` | determinístico + classificador/LLM quando necessário |
+| Safety output gate | `SRC-ATENTO` | `SRC-MHB`, `SRC-COUNSEL` | bloqueante para casos críticos |
+| Human escalation | `SRC-ATENTO` | `SRC-MHB` | policy e produto próprios |
+| Tracing / metrics | `SRC-ATENTO` | — | observabilidade nativa |
+| Multi-session eval | `SRC-PE` | `SRC-PA` | adaptar rubricas, respeitando licenças |
+| Strategy eval | `SRC-ESCONV` | `SRC-CADSS`, `SRC-SAGE` | accuracy/F1 + human preference |
+| Memory eval | `SRC-ENPMR` | `SRC-PE` | retrieval alignment + continuity |
+| Tool-use eval | `SRC-TEA` | — | seleção, sucesso, grounding, hallucination |
+| Safety eval | `SRC-MHB` | `SRC-COUNSEL` | internal suite + benchmarks externos quando permitido |
+| Human evaluation | `SRC-COUNSEL` | `SRC-PE` | pareada, cega, rubricada |
+| API / auth / RBAC / CI/CD / deploy | `SRC-ATENTO` | — | engenharia própria |
+
+### Regra de execução para qualquer agente de código
+
+Antes de implementar um ticket, o agente deve:
+
+1. localizar o módulo na matriz acima;
+2. ler as fontes listadas para aquele módulo;
+3. registrar no PR/commit/ADR os `SOURCE_IDs` usados;
+4. verificar se a fonte é `IMPLEMENTATION_REFERENCE`, `ARCHITECTURE_REFERENCE`, `BENCHMARK_REFERENCE`, `DATA_REFERENCE` ou `ATENTO_NATIVE`;
+5. **não copiar** código/dados de fonte sem licença compatível explicitamente verificada;
+6. quando a fonte não possuir código, implementar clean-room a partir do contrato descrito no roadmap;
+7. quando fontes divergirem, preservar interfaces do Atento e abrir ADR em vez de misturar comportamentos silenciosamente;
+8. não inventar arquivos, APIs ou módulos que não existam na fonte;
+9. pinçar commit/versão da fonte externa quando ela for realmente usada em engenharia;
+10. adicionar teste/benchmark correspondente antes de marcar o item como concluído.
+
+### Formato obrigatório de provenance em novos módulos
+
+Todo módulo relevante deve começar com documentação equivalente a:
+
+```text
+Module: services/planner
+Sources:
+  - SRC-CADSS: strategy planning decomposition
+  - SRC-SAGE: strategy-aware retrieval/reranking
+  - SRC-ESCONV: base strategy taxonomy
+Implementation:
+  - ATENTO clean-room
+Validation:
+  - AtentoEval/strategy
+External code copied:
+  - none
+```
+
+Se `External code copied` não for `none`, registrar arquivo/origem/licença/versão em `docs/third-party.md`.
+
+---
+
 ## 3. Arquitetura alvo
 
 ```mermaid
@@ -161,7 +337,14 @@ Esses schemas devem ser versionados.
 
 # 5. Blocos do projeto
 
+
 ## BLOCO A — Fundação do repositório
+
+### Origem / provenance
+- **Fonte:** `SRC-ATENTO`.
+- **Importar/copiar:** nada.
+- **Implementação:** engenharia nativa do projeto.
+- **Validação:** CI, reproducibilidade do setup e testes de bootstrap.
 
 ### Objetivo
 Criar a base técnica para desenvolvimento reproduzível.
@@ -183,7 +366,14 @@ Um novo desenvolvedor consegue clonar, configurar e executar o sistema com um pr
 
 ---
 
+
 ## BLOCO B — API, sessão e gateway conversacional
+
+### Origem / provenance
+- **Fonte:** `SRC-ATENTO`.
+- **Importar/copiar:** nada.
+- **Implementação:** contrato de produto próprio; deve apenas transportar estado/IDs e nunca embutir lógica de aconselhamento.
+- **Validação:** testes de sessão, idempotência, streaming, rate limit e falhas.
 
 ### Objetivo
 Criar a porta de entrada estável do sistema.
@@ -208,7 +398,14 @@ Criar a porta de entrada estável do sistema.
 
 ---
 
+
 ## BLOCO C — Model Gateway
+
+### Origem / provenance
+- **Fonte:** `SRC-ATENTO`.
+- **Importar/copiar:** nada de PsychAgent/CADSS; seus endpoints são apenas referências de integração.
+- **Implementação:** adapter próprio para providers OpenAI-compatible e/ou outros providers escolhidos.
+- **Validação:** contract tests e fallback/provider switching.
 
 ### Objetivo
 Desacoplar o Atento de um fornecedor ou modelo específico.
@@ -236,7 +433,16 @@ Trocar o modelo principal exige configuração, não alteração da arquitetura 
 
 ---
 
+
 ## BLOCO D — State & Belief Estimator
+
+### Origem / provenance
+- **Profiler + summary/state:** `SRC-CADSS`.
+- **Belief hypotheses + uncertainty:** `SRC-UKA`.
+- **Need-aware signals para memória:** `SRC-ENPMR`.
+- **Taxonomia emocional/strategy context:** `SRC-ESCONV`.
+- **Risk/acuity:** `SRC-ATENTO`, validado por `SRC-MHB` e `SRC-COUNSEL`.
+- **Implementação:** clean-room em schema próprio. Não criar um agente separado por subcampo na V1.
 
 ### Objetivo
 Transformar a conversa em um estado operacional estruturado.
@@ -266,7 +472,15 @@ O bloco só substitui heurísticas simples se superar o baseline no conjunto de 
 
 ---
 
+
 ## BLOCO E — Memória longitudinal
+
+### Origem / provenance
+- **Cross-session continuity + memory/planning:** `SRC-PA`.
+- **Need-aware proactive retrieval:** `SRC-ENPMR`.
+- **Critério multi-sessão:** `SRC-PE`.
+- **Lifecycle/TTL/privacy/storage:** `SRC-ATENTO`.
+- **Implementação:** própria. PsychAgent está sem licença de repo verificada; não copiar código.
 
 ### Objetivo
 Dar continuidade sem carregar todo o histórico bruto em cada chamada.
@@ -308,7 +522,16 @@ retrieval contextual no próximo turno
 
 ---
 
+
 ## BLOCO F — Executive Controller
+
+### Origem / provenance
+- **Integração final:** `SRC-ATENTO`.
+- **Decisão sob incerteza / perguntar:** `SRC-UKA`.
+- **Decisão de usar ferramentas:** `SRC-TEA`.
+- **Decomposição profile/summary/plan/response:** `SRC-CADSS`.
+- **Memória/plano longitudinal:** `SRC-PA`.
+- **Nota:** nenhuma fonte acima contém exatamente o Executive Controller do Atento. Este módulo é uma síntese própria com contratos explícitos.
 
 ### Objetivo
 Ser o núcleo decisório do Atento.
@@ -339,7 +562,15 @@ Policy híbrida:
 
 ---
 
+
 ## BLOCO G — Planner
+
+### Origem / provenance
+- **Strategy prediction / planner separado:** `SRC-CADSS`.
+- **Strategy-aware selection/retrieval/reranking:** `SRC-SAGE`.
+- **Taxonomia base de suporte:** `SRC-ESCONV`.
+- **Planejamento longitudinal:** `SRC-PA`.
+- **Implementação:** clean-room e model-agnostic; output estruturado.
 
 ### Objetivo
 Converter estado + decisão executiva em estratégia de conversa.
@@ -368,7 +599,14 @@ Plano pequeno, estruturado e audível.
 
 ---
 
+
 ## BLOCO H — Skill Library
+
+### Origem / provenance
+- **Skill retrieval/library:** `SRC-PA`.
+- **Vocabulário inicial de estratégias:** `SRC-ESCONV` + `SRC-CADSS`.
+- **Skill evolution automática:** somente P3, inspirada em `SRC-PA`; a release pública verificada não traz o pipeline completo.
+- **Implementação:** registry próprio; conteúdo deve ter autoria/licença rastreável.
 
 ### Objetivo
 Separar habilidades reutilizáveis da lógica geral.
@@ -395,7 +633,15 @@ Separar habilidades reutilizáveis da lógica geral.
 
 ---
 
+
 ## BLOCO I — Knowledge / RAG
+
+### Origem / provenance
+- **Strategy-aware retrieval/reranking:** `SRC-SAGE`.
+- **Query/knowledge decision sob incerteza:** `SRC-UKA`.
+- **Grounding e avaliação de informação externa:** `SRC-TEA`.
+- **Storage, chunking, provenance e retrieval stack:** `SRC-ATENTO`.
+- **Implementação:** simples primeiro; não reproduzir arquitetura neural específica do SAGE sem ablation favorável.
 
 ### Objetivo
 Trazer grounding factual quando o problema exige conhecimento externo ou conteúdo curado.
@@ -429,7 +675,14 @@ RAG só é usado quando melhora factualidade ou utilidade no benchmark correspon
 
 ---
 
+
 ## BLOCO J — Tool Router
+
+### Origem / provenance
+- **Capacidade e protocolo principal:** `SRC-TEA`.
+- **Permissões, confirmação, schemas, retries e segurança operacional:** `SRC-ATENTO`.
+- **Incerteza que pode justificar consulta:** `SRC-UKA`.
+- **Implementação:** própria; TEA-Bench é referência de capacidade/avaliação, não biblioteca de produção.
 
 ### Objetivo
 Permitir ações e consultas externas sem dar autonomia irrestrita ao modelo.
@@ -462,7 +715,15 @@ Permitir ações e consultas externas sem dar autonomia irrestrita ao modelo.
 
 ---
 
+
 ## BLOCO K — Response Generator
+
+### Origem / provenance
+- **Supporter separado do planner:** `SRC-CADSS`.
+- **Geração condicionada à estratégia/conhecimento:** `SRC-SAGE`.
+- **Estratégias de suporte:** `SRC-ESCONV`.
+- **Provider/modelo final:** `SRC-ATENTO`.
+- **Implementação:** generator não pode redefinir silenciosamente a decisão do Executive/Planner.
 
 ### Objetivo
 Transformar o plano em linguagem natural de alta qualidade.
@@ -488,7 +749,15 @@ O gerador **não redefine livremente a estratégia**. Se o plano estiver inváli
 
 ---
 
+
 ## BLOCO L — Critic / Reranker
+
+### Origem / provenance
+- **Reranking multi-sinal:** `SRC-SAGE`.
+- **Best-of-N/reward selection opcional:** `SRC-PA`.
+- **Rubricas de safety/qualidade:** `SRC-MHB` + `SRC-COUNSEL`.
+- **Composição do critic:** `SRC-ATENTO`.
+- **Implementação:** V1 uma resposta + critic; Best-of-N só após benchmark de custo/latência/ganho.
 
 ### Objetivo
 Detectar respostas inadequadas antes da entrega.
@@ -511,7 +780,15 @@ Detectar respostas inadequadas antes da entrega.
 
 ---
 
+
 ## BLOCO M — Safety & Acuity Engine
+
+### Origem / provenance
+- **Policy e implementação:** `SRC-ATENTO`.
+- **Rubricas/cobertura de acuidade e autonomia:** `SRC-MHB`.
+- **Adversarial safety + medical-advice/factuality failure modes:** `SRC-COUNSEL`.
+- **Tool grounding em apoio emocional:** `SRC-TEA`.
+- **Importante:** safety não é copiado de PsychAgent/CADSS; é camada independente e bloqueante.
 
 ### Objetivo
 Criar uma camada separada para situações de maior risco.
@@ -539,7 +816,13 @@ Nenhuma release promove se houver falha conhecida em caso crítico da suíte de 
 
 ---
 
+
 ## BLOCO N — Observabilidade
+
+### Origem / provenance
+- **Fonte:** `SRC-ATENTO`.
+- **O que observar:** interfaces e decisões derivadas de todos os outros módulos.
+- **Implementação:** tracing nativo com IDs de módulo, versão, modelo, prompt, source provenance e resultado de gate.
 
 ### Objetivo
 Ser capaz de explicar operacionalmente o que aconteceu em qualquer turno.
@@ -577,7 +860,18 @@ Logs de observabilidade devem armazenar o mínimo possível de conteúdo sensív
 
 ---
 
+
 ## BLOCO O — Evaluation Harness / AtentoEval
+
+### Origem / provenance
+- **Multi-sessão:** `SRC-PE`.
+- **Strategy/ESC:** `SRC-ESCONV`, `SRC-CADSS`, `SRC-SAGE`.
+- **Memory retrieval:** `SRC-ENPMR`.
+- **Tool-use:** `SRC-TEA`.
+- **Mental-health safety/context/agency:** `SRC-MHB`.
+- **Expert/adversarial evaluation:** `SRC-COUNSEL`.
+- **Harness, regressão, release gates e datasets internos:** `SRC-ATENTO`.
+- **Regra:** não misturar scores de benchmarks diferentes numa única nota como se fossem comparáveis.
 
 ### Objetivo
 Transformar avaliação em infraestrutura de produto.
@@ -651,7 +945,14 @@ Toda mudança relevante deve rodar:
 
 ---
 
+
 ## BLOCO P — Human Evaluation
+
+### Origem / provenance
+- **Metodologia principal:** `SRC-COUNSEL`.
+- **Complemento multi-sessão:** `SRC-PE`.
+- **Processo operacional/recrutamento/rubricas internas:** `SRC-ATENTO`.
+- **Regra:** LLM-as-judge é auxiliar, nunca único critério de promoção em safety.
 
 ### Objetivo
 Evitar otimização excessiva para LLM-as-judge.
@@ -672,7 +973,13 @@ Evitar otimização excessiva para LLM-as-judge.
 
 ---
 
+
 ## BLOCO Q — Produto e experiência
+
+### Origem / provenance
+- **Fonte:** `SRC-ATENTO`.
+- **Benchmarks influenciam requisitos**, mas não definem UX.
+- **Implementação:** própria, incluindo transparência, controles de memória e fluxos de segurança.
 
 ### Objetivo
 Transformar a arquitetura em experiência utilizável.
@@ -693,7 +1000,13 @@ Transformar a arquitetura em experiência utilizável.
 
 ---
 
+
 ## BLOCO R — Segurança de aplicação e privacidade
+
+### Origem / provenance
+- **Fonte:** `SRC-ATENTO`.
+- **Relação com research sources:** `SRC-MHB` e `SRC-COUNSEL` validam comportamento conversacional, mas não substituem threat modeling, privacy engineering ou appsec.
+- **Implementação:** própria.
 
 ### Entregáveis
 - [ ] threat model;
@@ -713,7 +1026,13 @@ Transformar a arquitetura em experiência utilizável.
 
 ---
 
+
 ## BLOCO S — Infraestrutura e deploy
+
+### Origem / provenance
+- **Fonte:** `SRC-ATENTO`.
+- **Importar/copiar:** nenhuma arquitetura de infraestrutura de PsychAgent/CADSS é requisito.
+- **Implementação:** infraestrutura própria guiada por requisitos de latência, privacidade, custo e observabilidade.
 
 ### Componentes sugeridos
 
@@ -750,6 +1069,25 @@ Postgres / Vector Store / Cache / Object Storage
 ---
 
 # 6. Fases de implementação
+
+
+## 6.0 Source map por fase
+
+| Fase | Sources obrigatórias para leitura | Motivo |
+|---|---|---|
+| Fase 0 — Bootstrap | `SRC-ATENTO` | contratos, gateway, CI e esqueleto são próprios |
+| Fase 1 — Vertical Slice | `SRC-CADSS`, `SRC-ESCONV`, `SRC-MHB`, `SRC-COUNSEL` | state/planner/generator/safety |
+| Fase 2 — Memória + Executivo | `SRC-PA`, `SRC-UKA`, `SRC-ENPMR`, `SRC-PE`, `SRC-TEA` | continuidade, belief, proactive retrieval e routing |
+| Fase 3 — RAG + Skills | `SRC-SAGE`, `SRC-PA`, `SRC-ESCONV` | retrieval/rerank/skills |
+| Fase 4 — Tool Use | `SRC-TEA`, `SRC-ATENTO` | tool selection, grounding e permissions |
+| Fase 5 — Critic + Safety | `SRC-SAGE`, `SRC-MHB`, `SRC-COUNSEL`, `SRC-PA` | critic, adversarial eval e optional best-of-N |
+| Fase 6 — AtentoEval | `SRC-PE`, `SRC-ESCONV`, `SRC-ENPMR`, `SRC-TEA`, `SRC-MHB`, `SRC-COUNSEL` | cobertura segmentada |
+| Fase 7–8 — MVP/Piloto | `SRC-ATENTO` + todos os benchmarks aplicáveis | produto, operação, human eval e release gates |
+
+> O agente deve ler primeiro a **fonte primária do módulo**, depois a fonte de benchmark. Benchmark não deve ser usado para inventar detalhes de implementação.
+
+---
+
 
 ## Fase 0 — Bootstrap
 **Duração alvo: 2–4 dias**
@@ -1193,6 +1531,8 @@ O Atento será arquiteturalmente bem-sucedido quando conseguir demonstrar, com a
 ## Próximo passo
 
 **Milestone 0 — Bootstrap do Atento**
+
+**Sources obrigatórias desta milestone:** `SRC-ATENTO`. Para os contratos de `State` e `Planner`, o agente deve também ler `SRC-CADSS`, `SRC-UKA` e `SRC-ESCONV` antes de congelar os schemas. Para `Safety`, ler `SRC-MHB` e `SRC-COUNSEL`.
 
 Criar a primeira versão executável com:
 
