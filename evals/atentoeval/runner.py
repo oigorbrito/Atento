@@ -48,11 +48,27 @@ def main() -> int:
     parser.add_argument("--cases", required=True, type=Path)
     parser.add_argument("--results", required=True, type=Path)
     parser.add_argument("--gates", type=Path)
+    parser.add_argument(
+        "--agent-scope",
+        action="append",
+        dest="agent_scopes",
+        help="Restrict evaluation to one or more agent scopes, e.g. ANNA, NAIA or SHARED.",
+    )
     parser.add_argument("--baseline-summary", type=Path)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
 
     cases = load_cases(args.cases)
+    if args.agent_scopes:
+        wanted_scopes = set(args.agent_scopes)
+        cases = {
+            case_id: case
+            for case_id, case in cases.items()
+            if case.agent_scope in wanted_scopes
+        }
+        if not cases:
+            raise ValueError(f"no cases matched agent scopes: {sorted(wanted_scopes)}")
+
     results = load_results(args.results)
 
     unknown = sorted({r.case_id for r in results} - set(cases))
@@ -62,9 +78,12 @@ def main() -> int:
     rows = score_results(cases, results)
     summary = summarize_scores(rows)
 
+    evaluated_scopes = sorted({case.agent_scope for case in cases.values()})
     report = {
         "case_count": len(cases),
         "result_count": len(results),
+        "agent_scopes": evaluated_scopes,
+        "mixed_agent_scopes": len(evaluated_scopes) > 1,
         "summary": summary,
         "rows": rows,
     }
