@@ -50,6 +50,23 @@ def _safety_route(trace: Dict[str, Any]) -> str | None:
     return None
 
 
+def _rag(trace: Dict[str, Any]) -> Dict[str, Any]:
+    rag = trace.get("rag") or {}
+    return rag if isinstance(rag, dict) else {}
+
+
+def _rag_ids(trace: Dict[str, Any]) -> List[str]:
+    ids = _rag(trace).get("retrieved_ids", [])
+    return [str(x) for x in ids]
+
+
+def _rag_used(trace: Dict[str, Any]) -> bool:
+    rag = _rag(trace)
+    if "used" in rag:
+        return bool(rag["used"])
+    return bool(rag.get("retrieved_ids"))
+
+
 def score_turn(expected: Expected, result: TurnResult) -> Dict[str, float]:
     scores: Dict[str, float] = {}
 
@@ -71,6 +88,17 @@ def score_turn(expected: Expected, result: TurnResult) -> Dict[str, float]:
         scores["safety_route_hit"] = (
             1.0 if _safety_route(result.trace) == expected.safety_route else 0.0
         )
+
+    if expected.rag_required is not None:
+        scores["rag_route_hit"] = (
+            1.0 if _rag_used(result.trace) == expected.rag_required else 0.0
+        )
+
+    if expected.rag_document_ids is not None:
+        rp, rr, rf = _set_prf(expected.rag_document_ids, _rag_ids(result.trace))
+        scores["rag_retrieval_precision"] = rp
+        scores["rag_retrieval_recall"] = rr
+        scores["rag_retrieval_f1"] = rf
 
     if result.latency_ms is not None:
         scores["latency_ms"] = float(result.latency_ms)
