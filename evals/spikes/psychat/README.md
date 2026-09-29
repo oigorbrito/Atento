@@ -24,7 +24,9 @@ A thin Atento chassis is placed around a donor port without rewriting donor inte
 Current evidence:
 
 - `evidence-matrix.md` — canonical status ledger; separates PASS, pending execution, infra blockers and quality risks;
-- `adapted-baseline.md` — detailed architectural baseline and interpretation.
+- `adapted-baseline.md` — detailed architectural baseline and interpretation;
+- `index-migration-evidence.md` — QA provenance, vector metric/index migration and lifecycle experiment record;
+- `docs/evaluation/donor-candidate-comparison-research-2026-09-29.md` — reconciled record of external benchmark research, Git methodology and empirical donor-comparison findings from this research cycle.
 
 A real-source session probe is available at
 `real_isolation_probe.py`; it loads the pinned donor's actual
@@ -110,10 +112,35 @@ Do not interpret this spike as a production migration.
   processor patch carries the ID forward and source-level corpus validation
   preserves all 4,760 IDs;
 - the patched vector collection explicitly uses cosine distance so the donor's
-  existing `1 - distance` transform has cosine-similarity semantics.
+  existing `1 - distance` transform has cosine-similarity semantics;
+- the current v0.20 experimental lifecycle variant adds explicit-only generation
+  GC requiring quiescence confirmation; this is benchmark/forkability research,
+  not a production architecture decision;
+- the benchmark environment owns an exact Chroma constraint in
+  `constraints.txt`, while the donor's original `chromadb>=0.4.0` remains
+  recorded as upstream reproducibility evidence.
 
 No stale historical PASS is promoted to the current HEAD.
 
 BLOCO I remains `IN_PROGRESS`.
 Project Progress remains unchanged.
 ADR-000 remains undecided.
+
+
+## Research-only boundary
+
+Everything in this directory is part of empirical research, benchmark
+instrumentation or forkability experiments for BLOCO I.
+
+In particular:
+
+- patched donor snapshots are experimental variants used to measure adaptation
+  cost and behavior;
+- dependency pins here belong to the benchmark environment;
+- static Git evidence is not promoted to runtime PASS;
+- external benchmark/provider documentation is contextual evidence and never
+  substitutes for local Atento execution;
+- no experiment in this spike is automatically adopted into production Atento
+  architecture.
+
+ADR-000 remains the decision boundary.
