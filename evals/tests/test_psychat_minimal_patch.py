@@ -192,7 +192,7 @@ class PsyChatMinimalPatchGeneratorTest(unittest.TestCase):
                 ["1", "2"],
             )
             self.assertNotIn("unknown", [chunk["qa_id"] for chunk in chunks])
-            self.assertIn("section.split('\\n')", patched)
+            self.assertIn("section.splitlines()", patched)
 
 
 
@@ -205,15 +205,18 @@ class PsyChatMinimalPatchGeneratorTest(unittest.TestCase):
             patched = path.read_text(encoding="utf-8")
 
             compile(patched, str(path), "exec")
-            self.assertIn(
-                'ATENTO_COLLECTION_NAME = f"{COLLECTION_NAME}__{ATENTO_INDEX_SCHEMA_VERSION}"',
-                patched,
-            )
-            self.assertIn("name=ATENTO_COLLECTION_NAME", patched)
-            self.assertIn("self.client.delete_collection(ATENTO_COLLECTION_NAME)", patched)
+            self.assertIn("import hashlib", patched)
+            self.assertIn("embedding_gateway.index_identity", patched)
+            self.assertIn("identity_hash = hashlib.sha256(", patched)
+            self.assertIn("name=self.collection_name", patched)
+            self.assertIn("self.client.delete_collection(self.collection_name)", patched)
             self.assertIn('"hnsw:space": "cosine"', patched)
             self.assertIn(
                 '"atento:index_schema": ATENTO_INDEX_SCHEMA_VERSION',
+                patched,
+            )
+            self.assertIn(
+                '"atento:embedding_identity": self.embedding_identity',
                 patched,
             )
             self.assertNotIn("self.client.delete_collection(COLLECTION_NAME)", patched)
