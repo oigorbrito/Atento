@@ -24,7 +24,11 @@ class FakeUpstreamRagSystem:
         self.no_rag_counter += 1
         self.conversation_history.append({"role": "user", "content": message})
         self.conversation_history.append({"role": "assistant", "content": "ok"})
-        return f"upstream:{message}:{self.no_rag_counter}"
+        return {
+            "success": True,
+            "response": f"upstream:{message}:{self.no_rag_counter}",
+            "sources": [],
+        }
 
 
 class AlternateRagExecutor:
