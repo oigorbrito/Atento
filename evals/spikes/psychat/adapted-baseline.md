@@ -152,7 +152,7 @@ Independent Git evidence:
 
 - baseline: `f2317be0fc27b1f4a6a39c5c89f22faf550045bf`;
 - patched: `afbd41eca44661e174e144e86620fbf611660420`;
-- ref: `evidence/psychat-rag-block-correctness`.
+- ref: `evidence/psychat-rag-block-correctness-v2`.
 
 Approximate original-line retention over all four files: **91.06%**
 (1,457 / 1,600).
@@ -394,3 +394,9 @@ The next required evidence is execution of the committed probes against the
 pinned donor, followed by actual AtentoEval RAG comparison. If runner execution
 remains unavailable, that is an objective external blocker for closing this
 spike.
+
+### QA provenance evidence correction
+
+The first preserved `data/processor.py` patch snapshot split sections with the literal sequence `\\n` rather than real line boundaries. It is superseded by `evidence/psychat-rag-block-correctness-v2` at commit `ac8b7ce2a5fe9a6540c4702f3358cddbb3a766f9`, which uses `splitlines()`.
+
+Static corpus replay over all 12 pinned knowledge blobs now compares like-for-like chunk units: upstream emits 30,255/30,255 chunks with `qa_id=unknown`; the corrected logic emits 30,255/30,255 chunks with known IDs, preserving all 4,760 unique record IDs and all four current gold IDs.
