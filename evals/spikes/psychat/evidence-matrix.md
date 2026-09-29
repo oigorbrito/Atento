@@ -39,7 +39,7 @@ Atento evaluation branch:
 | Provider boundary | Embedding provider injectable | PASS_STATIC | `VectorStore` and `RAGSystem` contain embedding-gateway seams in preserved patched Git content. |
 | Provider boundary | Final-response gateway preserves donor message construction | PASS_EMPIRICAL | Current v4 Git snapshot contains local `messages` construction plus gateway call and zero direct `requests.post` across the RAG surface. Runtime execution remains separate. |
 | Provider boundary | Execute current v0.9 patch against pinned donor final-response path | PENDING_EXECUTION | Current source snapshot is Git-verified, but the full patched donor still needs runtime execution through `_generate_response()` and provider probes. GitHub Actions remains blocked before runner allocation. |
-| Provider replacement | Swap provider without donor source edit after boundary | PENDING_EXECUTION | `provider_replacement_probe.py` asserts 0 donor source edits after boundary and tests two model + two embedding gateways. |
+| Provider replacement | Swap provider without donor source edit after boundary | PENDING_EXECUTION | `provider_replacement_probe.py` v0.5 asserts 0 donor source edits after boundary, two model + two embedding gateways, distinct persisted index identities, and fail-closed composition when vector/agent resources are bound to a different gateway than the composition root. |
 | Router authority | Atento can force RAG after selecting `knowledge.rag` | PASS_STATIC | Minimal patch adds `force_retrieval`; bridge now propagates it and fails closed for unpatched donors. |
 | Router authority | Runtime propagation through real patched donor | PENDING_EXECUTION | Unit/dynamic probes exist; Actions cannot run. |
 | Session isolation | Shared upstream runtime risks cross-session state | PENDING_EXECUTION | Real-source isolation probe exists against pinned `RAGSystem`; not yet executed by a functioning runner. |
@@ -71,7 +71,7 @@ Atento evaluation branch:
 | Multilingual retrieval | Low-cost real-evidence benchmark | PENDING_EXECUTION | `multilingual_microbenchmark.py` now uses donor-equivalent 6-utterance chunks (6 chunks for each current gold), explicit cosine similarity, top-k 6 and threshold 0.15; compares pt-BR vs zh-CN without rebuilding the full Chroma index. |
 | Multilingual retrieval | Required external dependency for microbenchmark | QUALITY_RISK | Requires a functioning embedding provider credential; workflow records `SKIPPED_NO_EMBEDDING_CREDENTIAL` instead of treating a missing secret as PASS. |
 | GitHub Actions | Minimal one-step runner smoke | INFRA_BLOCKED | Smoke run #2: both `ubuntu-latest` and `ubuntu-24.04` fail with `steps=null`; log fetch returns `BlobNotFound`. |
-| Main BLOCO I workflow | Test execution | INFRA_BLOCKED | Jobs are created then fail before checkout or any command. No functional failure may be inferred. |
+| Main BLOCO I workflow | Test execution | INFRA_BLOCKED | Latest verified run `36572236528` on current patch line created all 4 jobs, but every job completed `failure` with `steps=null` and `logs_url=null` before checkout or commands. No functional failure may be inferred. |
 | ADR-000 | Fork/full donor decision | NOT_DECIDED | Architecture evidence improved, but runtime and RAG-quality evidence remain incomplete. |
 | Project progress | Global progress | NOT_DECIDED | Remains 3/100; spike evidence alone does not advance project completion. |
 
