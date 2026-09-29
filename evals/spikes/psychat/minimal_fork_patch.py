@@ -237,9 +237,6 @@ def patch_data_processor(path: Path) -> None:
             if not section:
                 continue
 
-            if i == 0 and ('心理咨询对话' in section or '==' in section):
-                continue
-
             lines = section.split('\\n')
             section_qa_id = None
             content_lines = []
@@ -248,7 +245,16 @@ def patch_data_processor(path: Path) -> None:
                 line = line.strip()
                 if line.startswith('ID:'):
                     section_qa_id = line.replace('ID:', '').strip()
-                elif line and not line.startswith('ID:'):
+                elif not line:
+                    continue
+                elif i == 0 and (
+                    '心理咨询对话' in line
+                    or set(line) == {'='}
+                ):
+                    # The first record ID shares section 0 with the file header.
+                    # Ignore only header lines; never discard the whole section.
+                    continue
+                else:
                     content_lines.append(line)
 
             if section_qa_id is not None:
