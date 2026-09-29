@@ -9,6 +9,8 @@ from chromadb.config import Settings
 from typing import List, Dict, Any
 from config import *
 
+ATENTO_INDEX_SCHEMA_VERSION = "rag-cosine-v1"
+
 class VectorStore:
     def __init__(self, embedding_gateway):
         self.embedding_gateway = embedding_gateway
@@ -24,8 +26,8 @@ class VectorStore:
         
         # 获取或创建集合
         self.collection = self.client.get_or_create_collection(
-            name=COLLECTION_NAME,
-            metadata={"description": "MCP知识库向量存储", "hnsw:space": "cosine"}
+            name=f"{COLLECTION_NAME}__{ATENTO_INDEX_SCHEMA_VERSION}",
+            metadata={"description": "MCP知识库向量存储", "hnsw:space": "cosine", "atento:index_schema": ATENTO_INDEX_SCHEMA_VERSION}
         )
         
         print(f"向量存储初始化完成: {CHROMA_DB_PATH}")
