@@ -100,14 +100,14 @@ Preencher de 0–5:
 - **Interpretation:** PsyChat does not expose clean constructor/session/schema seams upstream. A maintainable adoption requires a fork patch or selective/block-level port rather than relying only on monkeypatching.
 
 ### Test batch 3 — Atento chassis adapter contract probe
-- **Status:** COMPLETE at contract level; real donor dynamic execution still pending.
-- **Local deterministic result:** **11/11 passed** on Python 3.13.5.
-- **Adapter-only static Chassis Fitness:** **90/100**.
-- **Important:** adapter-only CFS does not prove the composed donor has a real provider boundary; the pinned donor still contains direct provider calls.
-- **Replacement evidence:** executor swap PASS; rollback-by-route PASS; new capability registration PASS without Registry/Runtime modification.
-- **Integration defect found/fixed:** the real donor returns a response mapping, while the original fake-based bridge assumed a string.
+- **Status:** IN_PROGRESS — contract surface expanded; current HEAD still lacks runner execution.
+- **Current deterministic inventory:** **34 tests** across adapter/chassis/AtentoEval modules at the time of the latest inventory.
+- **Historical results are not current evidence:** the earlier **11/11** local result and adapter-only **90/100 CFS** predate the current suite / ownership heuristic and must not be promoted to the current HEAD.
+- **Git-measured minimal fork surface:** exactly **3 donor RAG files** in preserved Git evidence.
+- **Static patched-source evidence:** provider calls are removed from those three files and model/embedding gateway seams plus external `force_retrieval` are present.
+- **Integration defects found/fixed:** real donor mapping response shape; Router `force_retrieval` propagation; attempted-empty retrieval trace semantics; route/result identity enforcement; complete external trace-sink propagation.
 - **Evidence:** `evals/spikes/psychat/adapted-baseline.md`.
-- **Interpretation:** Atento boundaries improve replaceability around PsyChat, but upstream injection/provider seams remain unresolved.
+- **Interpretation:** Atento boundaries materially improve replaceability, but current dynamic PASS/CFS numbers require execution on the present HEAD.
 
 ### Test batch 4 — real-source isolation + composed chassis
 - **Status:** BLOCKED_BY_INFRA.
@@ -166,11 +166,22 @@ A porcentagem de código retido é informativa, não decisiva. Full donor contin
 
 ## Acceptance criteria
 
+Para qualquer bloco usado como evidência de adoção, o respectivo readiness gate
+deve primeiro indicar que o pacote de evidências está completo. Para o
+**BLOCO I — RAG / PsyChat**, a fonte executável é:
+
+`evals/spikes/psychat/block_i_readiness_gate.py`
+
+A ADR não pode usar ausência de artefato como resultado implícito, nem promover
+um PASS histórico de um HEAD anterior. Para o BLOCO I, a decisão exige
+`ready_for_adr=true`.
+
 Esta ADR só pode mudar de `Proposed` para `Accepted` quando:
 
 - o upstream selecionado tiver sido executado sem alteração ou a impossibilidade estiver documentada;
 - termos externos e estratégia de armazenamento/redistribuição tiverem sido registrados;
 - houver report AtentoEval comparando as alternativas executáveis;
+- os readiness gates dos blocos usados na decisão estiverem `ready_for_adr=true`;
 - custo de adaptação vs clean-room tiver sido estimado;
 - módulos mantidos/substituídos estiverem listados;
 - riscos de safety/privacidade/provider coupling estiverem documentados;
