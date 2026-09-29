@@ -78,13 +78,23 @@ class RAGSystem:
             print(f"构建知识库时出错: {e}")
             return False
     
-    def generate_response(self, query: str, max_tokens: int = 1000) -> Dict[str, Any]:
+    def generate_response(
+        self,
+        query: str,
+        max_tokens: int = 1000,
+        force_retrieval: bool = False,
+    ) -> Dict[str, Any]:
         """智能生成回答（含对话持续监控Agent）"""
         try:
             print(f"处理查询: {query}")
             
             # 1. 使用AGENT分析用户输入（传递vector_store以支持先检索再引导）
-            analysis = self.psychology_agent.analyze_user_input(query, self.conversation_history, self.vector_store)
+            analysis = self.psychology_agent.analyze_user_input(
+                query,
+                self.conversation_history,
+                self.vector_store,
+                force_retrieval=force_retrieval,
+            )
             print(f"AGENT分析结果: {analysis}")
             
             # 2. 对话持续监控Agent：检查是否需要强制触发RAG
