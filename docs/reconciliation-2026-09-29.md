@@ -279,3 +279,39 @@ NAIA_WINNER = NOT_SELECTED
 ANNA_WINNER = NOT_SELECTED
 APOLLO = DEFERRED
 ```
+
+
+## Validation status
+
+A GitHub Actions validation attempt was observed for reconciliation head:
+
+```text
+commit = c14b31110ff042644b98710a4785dc155fdaac2f
+workflow = Candidate evidence validation
+run_id = 36645598133
+prepare_job = 109667697556
+workflow_conclusion = failure
+prepare_steps = []
+job_logs = unavailable / BlobNotFound
+candidate_static_job = skipped
+```
+
+The prepare job terminated before GitHub allocated any executable steps or materialized logs.
+
+Classification:
+
+```text
+VALIDATION_STATUS = INFRA_BLOCKED
+STEPS_EXECUTED = NOT_OBSERVED
+CODE_TEST_FAILURE = NOT_ESTABLISHED
+TEST_PASS = NOT_ESTABLISHED
+```
+
+Per the project's evidence rules:
+
+```text
+INFRA_BLOCKED != TEST_FAILURE
+INFRA_BLOCKED != TEST_PASS
+```
+
+The reconciliation therefore remains structurally complete in the draft, but automated test execution must not be claimed as empirically successful until a workflow run actually executes its steps.
