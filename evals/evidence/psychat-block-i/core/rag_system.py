@@ -46,7 +46,7 @@ class RAGSystem:
         print("心理咨询RAG系统初始化完成")
         print(f"📊 对话持续监控Agent已启用：连续{MAX_NO_RAG_ROUNDS}轮无RAG将强制检索")
     
-    def build_knowledge_base(self, use_psychology_qa: bool = True, use_header_splitting: bool = True, clear_existing: bool = False) -> bool:
+    def build_knowledge_base(self, use_psychology_qa: bool = True, use_header_splitting: bool = True, clear_existing: bool = True) -> bool:
         """构建心理咨询知识库"""
         try:
             print("开始构建心理咨询知识库...")
