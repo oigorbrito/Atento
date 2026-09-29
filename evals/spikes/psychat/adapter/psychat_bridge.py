@@ -24,7 +24,15 @@ class PsyChatRagSystemPort:
         donor.conversation_history = history
         donor.no_rag_counter = no_rag_counter
 
-        response = donor.generate_response(message)
+        raw_result = donor.generate_response(message)
+        if isinstance(raw_result, dict):
+            response = raw_result.get("response")
+            if not isinstance(response, str) or not response.strip():
+                raise ValueError("donor response mapping must contain non-empty response")
+        elif isinstance(raw_result, str):
+            response = raw_result
+        else:
+            raise TypeError("donor generate_response must return str or mapping")
 
         next_state = {
             "conversation_history": list(getattr(donor, "conversation_history", [])),
