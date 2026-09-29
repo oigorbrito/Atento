@@ -83,6 +83,25 @@ jobs:
             --donor-root /tmp/PsyChat \
             --output evals/results/psychat_retrieval_readiness.json
 
+      - name: Run multilingual microbenchmark when embedding credential is available
+        env:
+          ALIBABA_API_KEY: ${{ secrets.ALIBABA_API_KEY }}
+        run: |
+          if [ -z "$ALIBABA_API_KEY" ]; then
+            cat > evals/results/psychat_multilingual_microbenchmark.json <<'EOF'
+          {
+            "metric_version": "psychat-multilingual-microbenchmark-v0.1",
+            "status": "SKIPPED_NO_EMBEDDING_CREDENTIAL",
+            "quality_claim": false
+          }
+          EOF
+          else
+            python evals/spikes/psychat/multilingual_microbenchmark.py \
+              --donor-root /tmp/PsyChat \
+              --manifest evals/cases/psychat_multilingual_gold_v0.jsonl \
+              --output evals/results/psychat_multilingual_microbenchmark.json
+          fi
+
       - name: Compile upstream donor Python sources
         run: |
           python -m compileall -q             /tmp/PsyChat/agent             /tmp/PsyChat/core             /tmp/PsyChat/data             /tmp/PsyChat/main.py             /tmp/PsyChat/config.py
@@ -155,6 +174,7 @@ jobs:
           cat evals/results/psychat_gold_source.json
           cat evals/results/psychat_multilingual_gold.json
           cat evals/results/psychat_retrieval_readiness.json
+          cat evals/results/psychat_multilingual_microbenchmark.json
           cat evals/results/psychat_real_isolation.json
           cat evals/results/psychat_retrieval_mechanics_upstream.json
           cat evals/results/psychat_change_surface.json
@@ -173,6 +193,7 @@ jobs:
             evals/results/psychat_gold_source.json
             evals/results/psychat_multilingual_gold.json
             evals/results/psychat_retrieval_readiness.json
+            evals/results/psychat_multilingual_microbenchmark.json
             evals/results/psychat_real_isolation.json
             evals/results/psychat_retrieval_mechanics_upstream.json
             evals/results/psychat_change_surface.json
