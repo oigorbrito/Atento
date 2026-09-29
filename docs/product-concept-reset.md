@@ -18,6 +18,131 @@ A **NAIA** — sigla para **Nova Assistente Inteligente Artificial** — é a as
 
 A implementação histórica da NAIA deve ser tratada como **referência de ideia e de produto**, não como referência obrigatória de código, arquitetura ou chassis.
 
+## 1.1 Contrato funcional dos agentes
+
+A separação do produto deve distinguir **autoridade de domínio** de **autoridade operacional**.
+
+A NAIA é a experiência principal e pode funcionar como porta de entrada do produto, mas isso **não** a torna superusuária dos demais agentes. Anna e Apollo mantêm autoridade própria sobre seus domínios e memória própria.
+
+| Agente | Papel principal | Autoridade de domínio | Autoridade operacional padrão |
+|---|---|---|---|
+| **NAIA** | assistente pessoal executiva / secretária persistente | organização da vida pessoal, tarefas, comunicação, pesquisa e coordenação operacional | calendário, e-mail, mensagens, pesquisa geral, compras, browser/computer use, apps conectados, rotinas, automações e outros efeitos externos pessoais autorizados |
+| **Anna** | assistente emocional / terapêutica | conversa terapêutica, continuidade longitudinal, estratégia/intervenções, memória terapêutica, safety e acompanhamento emocional | apenas ferramentas necessárias ao próprio domínio; ações pessoais externas gerais não são herdadas da NAIA |
+| **Apollo** | assistente de nutrição / fitness / personal trainer | treino, nutrição dentro do escopo definido, metas físicas, progresso, adaptação de plano e acompanhamento longitudinal do próprio domínio | ferramentas e integrações do domínio, como métricas/sensores quando autorizados; ações pessoais externas gerais não são herdadas da NAIA |
+
+### NAIA — responsabilidade executiva
+
+A NAIA é responsável por transformar intenção do usuário em execução operacional pessoal.
+
+Inclui, quando autorizado:
+
+- agenda, calendário, lembretes, tarefas e rotinas;
+- e-mail, mensagens e comunicação;
+- pesquisa geral, comparação de opções e apoio a compras;
+- browser/computer use e aplicativos conectados;
+- automações e trabalho persistente/background;
+- coordenação logística e efeitos externos pessoais;
+- memória pessoal geral necessária para continuidade operacional.
+
+A NAIA **não** assume por padrão:
+
+- formulação terapêutica;
+- interpretação clínica/emocional longitudinal da Anna;
+- acesso à memória privada da Anna;
+- planejamento especializado de treino/nutrição do Apollo;
+- acesso à memória privada do Apollo.
+
+### Anna — responsabilidade terapêutica/emocional
+
+A Anna é a autoridade do domínio emocional/terapêutico.
+
+Inclui:
+
+- conversa de apoio emocional/terapêutico;
+- memória longitudinal do próprio domínio;
+- perfil e continuidade entre sessões;
+- planejamento/estratégia de acompanhamento;
+- seleção de intervenções/skills do domínio;
+- incerteza, clarificação e resistência/evasão;
+- safety, limites de papel e regras de escalonamento;
+- acompanhamento multi-sessão.
+
+A Anna não deve virar assistente pessoal para executar pesquisa de preço, compras, e-mail, calendário, browser ou outras ações gerais. Quando uma necessidade terapêutica gerar uma tarefa operacional, ela pode produzir um **handoff mínimo e explícito** para a NAIA.
+
+Exemplo:
+
+```text
+Anna identifica que o usuário quer ajuda para marcar uma consulta
+        ↓
+Anna decide apenas o que pertence ao contexto terapêutico
+        ↓
+handoff explícito com o mínimo necessário
+        ↓
+NAIA executa agenda/pesquisa/contato sob sua própria policy
+```
+
+### Apollo — responsabilidade fitness/nutrição
+
+O Apollo é a autoridade do domínio de treino, nutrição e acompanhamento físico.
+
+Quando reativado, inclui:
+
+- definição e acompanhamento de metas físicas;
+- planejamento de treino e rotina de exercícios;
+- nutrição/meal planning dentro do escopo de produto aprovado;
+- progresso, aderência e adaptação longitudinal;
+- uso de métricas, sensores e wearables quando autorizado;
+- memória própria necessária para evolução do plano.
+
+Apollo não assume:
+
+- terapia ou acompanhamento emocional da Anna;
+- pesquisa/compras/comunicação geral da NAIA;
+- autoridade médica além do que um contrato futuro de produto permitir.
+
+Quando o plano do Apollo exigir logística geral — por exemplo colocar treinos no calendário, criar lembretes, pesquisar preço de equipamento ou organizar uma compra — a execução deve ser entregue explicitamente à NAIA.
+
+### Infraestrutura compartilhada não significa memória compartilhada
+
+Algumas capacidades podem ser comuns em nível de plataforma:
+
+- identidade/autenticação;
+- consentimento;
+- auditoria e tracing;
+- contratos de handoff;
+- observabilidade e avaliação;
+- abstrações de model/provider;
+- infraestrutura técnica comum quando isso não quebra isolamento.
+
+Isso não autoriza um agente a consultar memória, chat, ferramentas ou credenciais privadas de outro.
+
+A regra é:
+
+```text
+SHARED_PLATFORM
+!=
+SHARED_AGENT_AUTHORITY
+
+NAIA_IS_PRIMARY_EXPERIENCE
+!=
+NAIA_CAN_READ_EVERYTHING
+```
+
+### Regra de handoff
+
+O agente atual deve tentar resolver apenas o que pertence ao próprio domínio.
+
+Quando a intenção exigir outro domínio:
+
+1. identificar a fronteira;
+2. explicar ou sinalizar a transição quando necessário;
+3. solicitar/usar consentimento conforme a sensibilidade;
+4. transmitir somente o mínimo necessário;
+5. o agente de destino toma sua própria decisão sob sua própria policy;
+6. registrar o handoff para auditoria.
+
+Nenhum handoff transfere automaticamente histórico completo, memória privada ou tool authority.
+
 ## 2. Origem da NAIA
 
 A NAIA nasceu como uma assistente pessoal inspirada em experiências como Zapia.
