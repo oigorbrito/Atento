@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import hashlib
 import json
 import re
 import subprocess
@@ -124,8 +125,7 @@ def patch_vector_store(path: Path) -> None:
         text,
         "from config import *\n\nclass VectorStore:",
         "from config import *\n\n"
-        "ATENTO_INDEX_SCHEMA_VERSION = \"rag-cosine-v1\"\n"
-        "ATENTO_COLLECTION_NAME = f\"{COLLECTION_NAME}__{ATENTO_INDEX_SCHEMA_VERSION}\"\n\n"
+        "ATENTO_INDEX_SCHEMA_VERSION = \"rag-cosine-v1\"\n\n"
         "class VectorStore:",
         label="VectorStore index schema version",
     )
@@ -142,6 +142,16 @@ def patch_vector_store(path: Path) -> None:
         """class VectorStore:
     def __init__(self, embedding_gateway):
         self.embedding_gateway = embedding_gateway
+        embedding_identity = str(embedding_gateway.index_identity).strip()
+        if not embedding_identity:
+            raise ValueError("embedding_gateway.index_identity must be non-empty")
+        identity_hash = hashlib.sha256(
+            embedding_identity.encode("utf-8")
+        ).hexdigest()[:12]
+        self.embedding_identity = embedding_identity
+        self.collection_name = (
+            f"{COLLECTION_NAME}__{ATENTO_INDEX_SCHEMA_VERSION}__{identity_hash}"
+        )
 
         # 初始化ChromaDB客户端
 """,
@@ -150,7 +160,7 @@ def patch_vector_store(path: Path) -> None:
     text = replace_once(
         text,
         "name=COLLECTION_NAME,",
-        "name=ATENTO_COLLECTION_NAME,",
+        "name=self.collection_name,",
         label="VectorStore versioned collection name",
     )
     text = replace_once(
@@ -159,7 +169,8 @@ def patch_vector_store(path: Path) -> None:
         'metadata={'
         '"description": "MCP知识库向量存储", '
         '"hnsw:space": "cosine", '
-        '"atento:index_schema": ATENTO_INDEX_SCHEMA_VERSION'
+        '"atento:index_schema": ATENTO_INDEX_SCHEMA_VERSION, '
+        '"atento:embedding_identity": self.embedding_identity'
         '}',
         label="VectorStore cosine distance metric",
     )
@@ -176,14 +187,10 @@ def patch_vector_store(path: Path) -> None:
         "                name=COLLECTION_NAME,\n"
         "                metadata={\"description\": \"MCP知识库向量存储\"}\n"
         "            )",
-        "            self.client.delete_collection(ATENTO_COLLECTION_NAME)\n"
+        "            self.client.delete_collection(COLLECTION_NAME)\n"
         "            self.collection = self.client.create_collection(\n"
-        "                name=ATENTO_COLLECTION_NAME,\n"
-        "                metadata={\n"
-        "                    \"description\": \"MCP知识库向量存储\",\n"
-        "                    \"hnsw:space\": \"cosine\",\n"
-        "                    \"atento:index_schema\": ATENTO_INDEX_SCHEMA_VERSION,\n"
-        "                }\n"
+        "                name=COLLECTION_NAME,\n"
+        "                metadata={\"description\": \"MCP知识库向量存储\"}\n"
         "            )",
         label="VectorStore clear collection contract",
     )
@@ -501,7 +508,7 @@ def apply_patch(donor_root: Path) -> dict:
     retention = retention_metrics(donor_root)
 
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.7",
+        "metric_version": "psychat-minimal-fork-patch-v0.8",
         "pinned_commit": head_before,
         "changed_files": changed,
         "donor_files_touched_to_introduce_provider_boundary": len(PROVIDER_BOUNDARY_FILES),
@@ -511,6 +518,8 @@ def apply_patch(donor_root: Path) -> dict:
         "vector_index_schema_version": "rag-cosine-v1",
         "vector_collection_versioned": True,
         "vector_clear_preserves_index_contract": True,
+        "embedding_identity_required_by_vector_store": True,
+        "vector_collection_namespaced_by_embedding_identity": True,
         "similarity_transform": "1 - cosine_distance",
         "files_touched_to_swap_model_provider_after_boundary": 0,
         "files_touched_to_swap_embedding_provider_after_boundary": 0,
