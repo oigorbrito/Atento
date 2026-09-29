@@ -76,11 +76,16 @@ class VectorStore:
         return True
 
     def get_collection_info(self) -> Dict[str, Any]:
-        return {
-            'name': COLLECTION_NAME,
-            'document_count': self.collection.count(),
-            'path': CHROMA_DB_PATH
-        }
+        try:
+            count = self.collection.count()
+            return {
+                'name': COLLECTION_NAME,
+                'document_count': count,
+                'path': CHROMA_DB_PATH
+            }
+        except Exception as e:
+            print(f"获取集合信息时出错: {e}")
+            return {}
 
     def clear_collection(self) -> bool:
         try:
@@ -248,6 +253,8 @@ class PsyChatMinimalPatchGeneratorTest(unittest.TestCase):
             self.assertIn("self.expected_collection_metadata", patched)
             self.assertIn("def _validate_collection_contract", patched)
             self.assertIn("vector collection metadata mismatch", patched)
+            self.assertIn("except RuntimeError:", patched)
+            self.assertIn("raise", patched)
             self.assertNotIn("self.client.delete_collection(COLLECTION_NAME)", patched)
 
 
