@@ -51,14 +51,23 @@ jobs:
         run: |
           python evals/spikes/psychat/real_isolation_probe.py             --donor-root /tmp/PsyChat             --output evals/results/psychat_real_isolation.json
 
-      - name: Static Chassis Fitness audit
+      - name: Static upstream Chassis Fitness audit
         run: |
           python evals/chassis/donor_static_audit.py             --root /tmp/PsyChat             --source-id SRC-PSYCHAT             --upstream-commit 5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4             --output evals/results/psychat_static_chassis.json
+
+      - name: Static composed donor plus Atento chassis audit
+        run: |
+          rm -rf /tmp/PsyChatComposed
+          cp -R /tmp/PsyChat /tmp/PsyChatComposed
+          mkdir -p /tmp/PsyChatComposed/atento_adapter
+          cp -R evals/spikes/psychat/adapter/. /tmp/PsyChatComposed/atento_adapter/
+          python evals/chassis/donor_static_audit.py             --root /tmp/PsyChatComposed             --source-id SRC-PSYCHAT+SRC-ATENTO             --upstream-commit 5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4             --output evals/results/psychat_composed_chassis.json
 
       - name: Print reports
         run: |
           cat evals/results/psychat_real_isolation.json
           cat evals/results/psychat_static_chassis.json
+          cat evals/results/psychat_composed_chassis.json
 
       - uses: actions/upload-artifact@v4
         with:
