@@ -55,6 +55,13 @@ jobs:
           git checkout 5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4
           test "$(git rev-parse HEAD)" = "5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4"
 
+      - name: Verify PsyChat gold IDs against pinned corpus
+        run: |
+          python evals/spikes/psychat/gold_source_probe.py \
+            --donor-root /tmp/PsyChat \
+            --cases evals/cases/rag_v0.jsonl \
+            --output evals/results/psychat_gold_source.json
+
       - name: Compile upstream donor Python sources
         run: |
           python -m compileall -q             /tmp/PsyChat/agent             /tmp/PsyChat/core             /tmp/PsyChat/data             /tmp/PsyChat/main.py             /tmp/PsyChat/config.py
@@ -105,6 +112,7 @@ jobs:
 
       - name: Print reports
         run: |
+          cat evals/results/psychat_gold_source.json
           cat evals/results/psychat_real_isolation.json
           cat evals/results/psychat_change_surface.json
           cat evals/results/psychat_static_chassis.json
@@ -117,6 +125,7 @@ jobs:
         with:
           name: psychat-block-i-evidence
           path: |
+            evals/results/psychat_gold_source.json
             evals/results/psychat_real_isolation.json
             evals/results/psychat_change_surface.json
             evals/results/psychat_static_chassis.json
