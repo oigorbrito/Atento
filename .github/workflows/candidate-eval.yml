@@ -2,6 +2,15 @@ name: Candidate evaluation
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "evals/config/candidates.json"
+      - "evals/atentoeval/candidates.py"
+      - "evals/chassis/**"
+      - "evals/tests/test_candidates.py"
+      - ".github/workflows/candidate-eval.yml"
   push:
     branches:
       - main
