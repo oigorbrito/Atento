@@ -11,6 +11,7 @@ Quando a mesma informação aparece em mais de um arquivo, prevalece o documento
 | `README.md` | entrada/navegação | propósito, maturidade, links e quick orientation | progresso duplicado, arquitetura detalhada, licenças completas | navegação ou posicionamento mudar |
 | `AGENTS.md` | regras para agentes/contribuição automatizada | workflow, defensabilidade, gates, regras de progresso | arquitetura detalhada de módulo, decisões ADR específicas | regras de engenharia/governança mudarem |
 | `docs/product-concept-reset.md` | identidade atual do produto durante reconciliação | NAIA/Anna/Apollo, papéis, boundaries e regras de seleção enquanto o reset estiver aberto | medições detalhadas, benchmark spec, progresso | alinhamento conceitual mudar |
+| `docs/handoff-*.md` | snapshot de continuidade | contexto suficiente para retomar uma sessão e apontar para fontes canônicas | substituir ADR/product concept/roadmap como autoridade | handoff material for atualizado |
 | `roadmap.md` | ledger técnico + arquitetura histórica/em reconciliação + Project Points + progresso | blocos A–S, dependências, source map arquitetural, ledger 100 pontos, status global | protocolo detalhado de benchmark, licença legal detalhada, identidade de produto durante DECISION_RESET | escopo/progresso/dependências/arquitetura macro mudar |
 | `docs/adr/*.md` | decisão arquitetural específica | contexto, alternativas, evidência, decisão, consequências | status geral do projeto | decisão estrutural for proposta/aceita/substituída |
 | `docs/evaluation/harness.md` | metodologia AtentoEval | suites, schemas, judges, adapters, métricas, release comparison | progresso, escolha fork/greenfield, autorização de dataset | avaliação mudar |
@@ -73,5 +74,5 @@ Incidentes, rollback, backup/restore e operações.
 Não criar documento detalhando módulo que ainda não existe como se estivesse implementado.
 
 Para componentes futuros, usar o `roadmap.md`.  
-Para decisões ainda abertas, usar ADR com status `Proposed`.  
+Para decisões ainda abertas, usar ADR com status `Proposed`, `DECISION_RESET` ou `DEFERRED`, conforme o caso.  
 Para implementação real, criar documentação local ligada ao código.
