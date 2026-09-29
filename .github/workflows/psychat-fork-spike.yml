@@ -27,6 +27,18 @@ jobs:
       - name: Run harness tests
         run: python -m unittest discover -s evals/tests -p "test_*.py" -v
 
+      - name: Run deterministic RAG harness plumbing probe
+        run: |
+          python evals/spikes/psychat/rag_harness_probe.py \
+            --cases evals/cases/rag_v0.jsonl \
+            --output evals/results/psychat_rag_harness_plumbing.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: psychat-rag-harness-plumbing
+          path: evals/results/psychat_rag_harness_plumbing.json
+          if-no-files-found: error
+
   psychat-static:
     name: PsyChat upstream, isolation and fork patch
     runs-on: ubuntu-latest
