@@ -35,9 +35,13 @@ def route(executor: str = "psychat") -> RouteDecision:
 class StatefulDonor:
     def __init__(self):
         self.calls = 0
+        self.force_flags = []
 
     def respond(self, *, message, session_state, force_retrieval=False):
         self.calls += 1
+        self.force_flags.append(bool(force_retrieval))
+        if not force_retrieval:
+            raise AssertionError("knowledge.rag executor must force donor retrieval")
         count = int(session_state.get("turns", 0)) + 1
         return "ok", {
             "turns": count,
@@ -150,11 +154,16 @@ def trace_probe() -> dict:
     events = [str(event.get("event")) for event in result.trace]
     required = ["rag.completed", "executor.completed"]
     covered = [event for event in required if event in events]
+    if donor.force_flags != [True]:
+        raise AssertionError(
+            f"RAG executor did not enforce retrieval: {donor.force_flags}"
+        )
     return {
         "required_events": required,
         "observed_events": events,
         "covered": covered,
         "trace_coverage": len(covered) / len(required),
+        "rag_force_retrieval_contract_pass": True,
     }
 
 
