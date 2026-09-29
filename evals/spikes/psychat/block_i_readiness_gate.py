@@ -252,7 +252,15 @@ def main() -> int:
                 and equals(d, "files_touched_exact", 4)
                 and equals(d, "provider_boundary_files_touched", 3)
                 and equals(d, "static_patched_invariants.direct_requests_post_count", 0)
+                and truthy(d, "static_patched_invariants.rag_system_force_retrieval_signature")
+                and truthy(d, "static_patched_invariants.rag_system_force_retrieval_propagated")
+                and truthy(d, "static_patched_invariants.final_response_messages_constructed_locally")
                 and equals(d, "static_patched_invariants.explicit_hnsw_space", "cosine")
+                and truthy(d, "static_patched_invariants.embedding_identity_required")
+                and truthy(d, "static_patched_invariants.corpus_identity_required")
+                and truthy(d, "static_patched_invariants.collection_namespaced_by_index_identity")
+                and truthy(d, "static_patched_invariants.same_identity_rebuild_uses_upsert")
+                and equals(d, "static_patched_invariants.legacy_collection_add_remaining", False)
                 and truthy(d, "static_patched_invariants.qa_id_carry_forward_present")
                 and equals(d, "pinned_corpus_parser_evidence.upstream_unknown_qa_id_sections", 4760)
                 and equals(d, "pinned_corpus_parser_evidence.patched_unknown_qa_id_sections", 0)
@@ -371,7 +379,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.9",
+        "metric_version": "psychat-block-i-readiness-v0.10",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
