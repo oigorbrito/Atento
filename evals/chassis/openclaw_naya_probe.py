@@ -22,15 +22,32 @@ def run(
     env: dict[str, str] | None = None,
     timeout: int = 900,
 ) -> dict[str, Any]:
-    completed = subprocess.run(
-        command,
-        cwd=cwd,
-        env=env,
-        text=True,
-        capture_output=True,
-        timeout=timeout,
-        check=False,
-    )
+    try:
+        completed = subprocess.run(
+            command,
+            cwd=cwd,
+            env=env,
+            text=True,
+            capture_output=True,
+            timeout=timeout,
+            check=False,
+        )
+    except FileNotFoundError as error:
+        return {
+            "command": command,
+            "returncode": 127,
+            "stdout": "",
+            "stderr": str(error),
+            "error_kind": "command_not_found",
+        }
+    except subprocess.TimeoutExpired as error:
+        return {
+            "command": command,
+            "returncode": 124,
+            "stdout": (error.stdout or "")[-20000:] if isinstance(error.stdout, str) else "",
+            "stderr": (error.stderr or "")[-20000:] if isinstance(error.stderr, str) else "",
+            "error_kind": "timeout",
+        }
     return {
         "command": command,
         "returncode": completed.returncode,
@@ -413,10 +430,10 @@ def main() -> int:
             plugin_validate,
             effect_test,
         ]
-        executable = any(
-            isinstance(item.get("returncode"), int) for item in essential_commands
+        setup_like_failure = any(
+            item.get("error_kind") in {"command_not_found", "timeout"}
+            for item in essential_commands
         )
-        setup_like_failure = not executable
 
         blockers: list[dict[str, Any]] = [
             {
