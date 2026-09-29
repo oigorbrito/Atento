@@ -5,7 +5,6 @@ RAG系统核心模块
 """
 
 import os
-import requests
 from typing import List, Dict, Any
 from data.processor import DataProcessor
 from core.vector_store import VectorStore
@@ -14,23 +13,28 @@ from core.tts_service import TTSService
 from config import *
 
 class RAGSystem:
-    def __init__(self):
-        # 初始化组件
-        self.data_processor = DataProcessor()
-        self.vector_store = VectorStore()
-        self.psychology_agent = PsychologyAgent()
-        
-        # 初始化TTS服务
-        try:
-            self.tts_service = TTSService()
-        except Exception as e:
-            print(f"⚠️ TTS服务初始化失败: {e}")
-            self.tts_service = None
-        
-        # 初始化DeepSeek LLM配置
-        self.deepseek_api_key = DEEPSEEK_API_KEY
-        self.llm_url = f"{DEEPSEEK_BASE_URL}/chat/completions"
-        
+    def __init__(
+        self,
+        model_gateway,
+        embedding_gateway,
+        *,
+        data_processor=None,
+        vector_store=None,
+        psychology_agent=None,
+        tts_service=None,
+    ):
+        # Long-lived/stateless resources can be injected and reused by the
+        # composition root; mutable conversation state remains per runtime.
+        self.model_gateway = model_gateway
+        self.data_processor = data_processor or DataProcessor()
+        self.vector_store = vector_store or VectorStore(
+            embedding_gateway=embedding_gateway
+        )
+        self.psychology_agent = psychology_agent or PsychologyAgent(
+            model_gateway=model_gateway
+        )
+        self.tts_service = tts_service
+
         # 对话历史
         self.conversation_history = []
         
@@ -76,13 +80,23 @@ class RAGSystem:
             print(f"构建知识库时出错: {e}")
             return False
     
-    def generate_response(self, query: str, max_tokens: int = 1000) -> Dict[str, Any]:
+    def generate_response(
+        self,
+        query: str,
+        max_tokens: int = 1000,
+        force_retrieval: bool = False,
+    ) -> Dict[str, Any]:
         """智能生成回答（含对话持续监控Agent）"""
         try:
             print(f"处理查询: {query}")
             
             # 1. 使用AGENT分析用户输入（传递vector_store以支持先检索再引导）
-            analysis = self.psychology_agent.analyze_user_input(query, self.conversation_history, self.vector_store)
+            analysis = self.psychology_agent.analyze_user_input(
+                query,
+                self.conversation_history,
+                self.vector_store,
+                force_retrieval=force_retrieval,
+            )
             print(f"AGENT分析结果: {analysis}")
             
             # 2. 对话持续监控Agent：检查是否需要强制触发RAG
@@ -444,49 +458,11 @@ class RAGSystem:
     def _generate_response(self, system_prompt: str, user_query: str, include_history: bool = True) -> str:
         """使用DeepSeek LLM生成回答"""
         try:
-            headers = {
-                "Authorization": f"Bearer {self.deepseek_api_key}",
-                "Content-Type": "application/json"
-            }
-            
-            # 构建消息列表，包含对话历史
-            messages = []
-            
-            # 添加系统提示词
-            messages.append({
-                "role": "system",
-                "content": system_prompt
-            })
-            
-            # 如果需要包含历史记录且历史记录存在
-            if include_history and self.conversation_history:
-                # 只包含最近的6轮对话（12条消息），避免token过多
-                recent_history = self.conversation_history[-12:]
-                messages.extend(recent_history)
-            
-            # 添加当前用户查询
-            messages.append({
-                "role": "user", 
-                "content": user_query
-            })
-            
-            data = {
-                "model": DEEPSEEK_MODEL,
-                "messages": messages,
-                "max_tokens": 1000,  # 减少token数，鼓励简短回答
-                "temperature": 0.6,   # 降低随机性，更稳定
-                "top_p": 0.9
-            }
-            
-            response = requests.post(self.llm_url, headers=headers, json=data)
-            response.raise_for_status()
-            
-            result = response.json()
-            if 'choices' in result and len(result['choices']) > 0:
-                return result['choices'][0]['message']['content']
-            else:
-                print(f"LLM API响应格式错误: {result}")
-                return "抱歉，我无法生成有效的回答。"
+            return self.model_gateway.complete(
+                purpose="psychat.rag.response",
+                messages=messages,
+                timeout_s=30.0,
+            )
                 
         except Exception as e:
             print(f"生成回答时出错: {e}")

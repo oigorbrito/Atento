@@ -6,16 +6,13 @@
 
 import chromadb
 from chromadb.config import Settings
-import requests
 from typing import List, Dict, Any
 from config import *
 
 class VectorStore:
-    def __init__(self):
-        # 初始化阿里云百炼Embedding API配置
-        self.api_key = ALIBABA_API_KEY
-        self.embedding_url = "https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings"
-        
+    def __init__(self, embedding_gateway):
+        self.embedding_gateway = embedding_gateway
+
         # 初始化ChromaDB客户端
         self.client = chromadb.PersistentClient(
             path=CHROMA_DB_PATH,
@@ -34,32 +31,13 @@ class VectorStore:
         print(f"向量存储初始化完成: {CHROMA_DB_PATH}")
     
     def get_embedding(self, text: str) -> List[float]:
-        """使用阿里云百炼Qwen3 Embedding模型生成文本嵌入向量"""
+        """Generate embeddings through the injected gateway."""
         try:
-            headers = {
-                "Authorization": f"Bearer {self.api_key}",
-                "Content-Type": "application/json"
-            }
-            
-            data = {
-                "model": EMBEDDING_MODEL,
-                "input": text
-            }
-            
-            response = requests.post(self.embedding_url, headers=headers, json=data)
-            response.raise_for_status()
-            
-            result = response.json()
-            if 'data' in result and len(result['data']) > 0:
-                return result['data'][0]['embedding']
-            else:
-                print(f"API响应格式错误: {result}")
-                return []
-                
+            return list(self.embedding_gateway.embed(text=text))
         except Exception as e:
             print(f"生成嵌入向量时出错: {e}")
             return []
-    
+
     def add_documents(self, documents: List[Dict[str, Any]]) -> bool:
         """将文档添加到向量存储"""
         try:
