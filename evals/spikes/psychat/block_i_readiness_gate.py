@@ -95,6 +95,8 @@ def main() -> int:
                 and truthy(d, "vector_clear_preserves_index_contract")
                 and truthy(d, "embedding_identity_required_by_vector_store")
                 and truthy(d, "vector_collection_namespaced_by_embedding_identity")
+                and truthy(d, "vector_collection_namespaced_by_corpus_identity")
+                and truthy(d, "same_identity_rebuild_uses_upsert")
             ),
         ),
         (
@@ -160,6 +162,9 @@ def main() -> int:
                 and equals(d, "semantic_status", "EXPLICIT_COSINE_VERSIONED_INDEX")
                 and truthy(d, "clear_collection_contract_preserved")
                 and truthy(d, "embedding_identity")
+                and truthy(d, "corpus_identity")
+                and truthy(d, "corpus_identity_isolated")
+                and truthy(d, "same_identity_rebuild_uses_upsert")
             ),
         ),
         (
@@ -366,7 +371,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.8",
+        "metric_version": "psychat-block-i-readiness-v0.9",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
