@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+import inspect
 import json
 import sys
 import types
@@ -38,6 +39,16 @@ class StubDataProcessor:
 
 class StubTTSService:
     pass
+
+
+class StubModelGateway:
+    def complete(self, *, purpose, messages, timeout_s):
+        return "stub-response"
+
+
+class StubEmbeddingGateway:
+    def embed(self, *, text):
+        return [0.0, 1.0]
 
 
 class ScriptedVectorStore:
@@ -175,10 +186,22 @@ def load_rag_system(donor_root: Path):
 
 
 def prepare_runtime(rag_system_cls, *, vector_store, agent):
-    runtime = rag_system_cls()
-    runtime.vector_store = vector_store
-    runtime.psychology_agent = agent
-    runtime.tts_service = None
+    params = inspect.signature(rag_system_cls.__init__).parameters
+    if "model_gateway" in params:
+        runtime = rag_system_cls(
+            model_gateway=StubModelGateway(),
+            embedding_gateway=StubEmbeddingGateway(),
+            data_processor=StubDataProcessor(),
+            vector_store=vector_store,
+            psychology_agent=agent,
+            tts_service=None,
+        )
+    else:
+        runtime = rag_system_cls()
+        runtime.vector_store = vector_store
+        runtime.psychology_agent = agent
+        runtime.tts_service = None
+
     runtime._expand_context = lambda docs, top_n=2: []
     runtime._analyze_counselor_style = lambda expanded, topic: ""
     runtime._generate_response = (
@@ -267,9 +290,15 @@ def main() -> int:
     args = parser.parse_args()
 
     rag_system_cls = load_rag_system(args.donor_root)
+    constructor_params = list(
+        inspect.signature(rag_system_cls.__init__).parameters
+    )
     report = {
         "probe": "psychat_retrieval_mechanics",
         "pinned_commit": PINNED_COMMIT,
+        "runtime_shape": (
+            "patched" if "model_gateway" in constructor_params else "upstream"
+        ),
         "quality_claim": False,
         "multi_query": run_multi_query(rag_system_cls),
         "forced_rag": run_forced_rag(rag_system_cls),
