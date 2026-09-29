@@ -373,6 +373,40 @@ def main() -> int:
 
         promoted_name = second_promoted_name
 
+        gc_requires_confirmation = False
+        try:
+            store.prune_inactive_generations(keep_previous=1)
+        except RuntimeError as exc:
+            if "confirm_quiescent" not in str(exc):
+                raise
+            gc_requires_confirmation = True
+        if not gc_requires_confirmation:
+            raise AssertionError("generation GC did not require quiescence confirmation")
+
+        gc_active_before = store.collection_name
+        gc_report = store.prune_inactive_generations(
+            keep_previous=1,
+            confirm_quiescent=True,
+        )
+        if gc_report["active_collection"] != gc_active_before:
+            raise AssertionError("generation GC changed the active collection")
+        if gc_active_before not in RecordingClient.collections:
+            raise AssertionError("generation GC deleted the active collection")
+        if len(gc_report["retained_previous"]) > 1:
+            raise AssertionError("generation GC ignored keep_previous window")
+        if gc_active_before in gc_report["deleted_collections"]:
+            raise AssertionError("active generation appeared in GC delete set")
+        for deleted_name in gc_report["deleted_collections"]:
+            if deleted_name in RecordingClient.collections:
+                raise AssertionError(
+                    f"generation GC failed to delete inactive collection {deleted_name}"
+                )
+        for retained_name in gc_report["retained_previous"]:
+            if retained_name not in RecordingClient.collections:
+                raise AssertionError(
+                    f"generation GC deleted retained collection {retained_name}"
+                )
+
         healthy_gateway = store.embedding_gateway
         store.embedding_gateway = PartialFailureEmbeddingGateway()
         partial_docs = [
@@ -414,7 +448,7 @@ def main() -> int:
                 )
 
     report = {
-        "metric_version": "psychat-vector-metric-v0.15",
+        "metric_version": "psychat-vector-metric-v0.16",
         "runtime_shape": args.expect,
         "collection_name": collection_name,
         "collection_metadata": metadata,
@@ -471,6 +505,25 @@ def main() -> int:
         "incremental_writer_refreshes_active_generation": (
             args.expect != "patched"
             or stale_writer.collection_name == second_promoted_name
+        ),
+        "generation_gc_explicit_pass": (
+            args.expect != "patched"
+            or (
+                gc_requires_confirmation
+                and gc_report["active_collection"] == gc_active_before
+                and gc_active_before in RecordingClient.collections
+            )
+        ),
+        "generation_gc_requires_quiescence_confirmation": (
+            args.expect != "patched" or gc_requires_confirmation
+        ),
+        "generation_gc_never_deletes_active_collection": (
+            args.expect != "patched"
+            or gc_active_before not in gc_report["deleted_collections"]
+        ),
+        "generation_gc_retains_previous_window": (
+            args.expect != "patched"
+            or len(gc_report["retained_previous"]) <= 1
         ),
         "explicit_hnsw_space": explicit_space,
         "similarity_transform_in_donor": "1 - distance",
