@@ -277,6 +277,7 @@ def main() -> int:
             raise AssertionError("active pointer does not match promoted generation")
 
         reopened = cls(embedding_gateway=StubEmbeddingGateway())
+        stale_writer = cls(embedding_gateway=StubEmbeddingGateway())
         if reopened.collection_name != promoted_name:
             raise AssertionError(
                 "new VectorStore instance did not reopen promoted generation"
@@ -324,6 +325,31 @@ def main() -> int:
             raise AssertionError(
                 "collection info did not report refreshed active generation"
             )
+
+        stale_old_name = stale_writer.collection_name
+        incremental_doc = {
+            "content": "incremental-after-promotion",
+            "source": "incremental.txt",
+            "size": 27,
+            "type": "psychology_qa",
+            "topic": "情绪",
+            "qa_id": "incremental-1",
+        }
+        if not stale_writer.add_documents([incremental_doc]):
+            raise AssertionError("incremental write failed after external promotion")
+        if stale_writer.collection_name != second_promoted_name:
+            raise AssertionError(
+                "stale incremental writer did not refresh to active generation"
+            )
+        if RecordingClient.collections[second_promoted_name].count() != 2:
+            raise AssertionError(
+                "incremental document was not written to active generation"
+            )
+        if RecordingClient.collections[stale_old_name].count() != 1:
+            raise AssertionError(
+                "incremental writer mutated stale generation after promotion"
+            )
+
         promoted_name = second_promoted_name
 
         healthy_gateway = store.embedding_gateway
@@ -367,7 +393,7 @@ def main() -> int:
                 )
 
     report = {
-        "metric_version": "psychat-vector-metric-v0.11",
+        "metric_version": "psychat-vector-metric-v0.12",
         "runtime_shape": args.expect,
         "collection_name": collection_name,
         "collection_metadata": metadata,
@@ -415,6 +441,10 @@ def main() -> int:
         "long_lived_reader_refreshes_active_generation": (
             args.expect != "patched"
             or reopened.collection_name == second_promoted_name
+        ),
+        "incremental_writer_refreshes_active_generation": (
+            args.expect != "patched"
+            or stale_writer.collection_name == second_promoted_name
         ),
         "explicit_hnsw_space": explicit_space,
         "similarity_transform_in_donor": "1 - distance",
