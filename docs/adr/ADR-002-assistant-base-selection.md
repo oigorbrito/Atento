@@ -97,7 +97,7 @@ Do not repeat the historical HOLD for that exact issue without checking current 
 PRODUCT_MATURITY          = STRONG
 PERSISTENT_ASSISTANT_FIT  = STRONG
 GENERIC_EFFECT_DURABILITY = NOT_PROVEN
-NAYA_AUTHORITY_MODEL      = NEEDS_REINFORCEMENT
+NAIA_AUTHORITY_MODEL      = NEEDS_REINFORCEMENT
 STATUS                    = STRONG_BASE_CANDIDATE
 ```
 
@@ -105,9 +105,11 @@ No winner selected.
 
 ---
 
-### B — NaIA
+### B — historical NaIa implementation/donor
 
 Source: `SRC-NAIA`
+
+> This section refers to the historical `oigorbrito/NaIa` repository, not to the current NAIA product identity.
 
 Qualified snapshot:
 
@@ -319,7 +321,7 @@ Therefore ADR-001's strict Assistant ↔ Therapist authority boundary should use
 
 ```text
 PRODUCT_ADAPTATION                = LOW_TO_MODERATE
-NAYA_SECURITY_HARDENING           = MODERATE
+NAIA_SECURITY_HARDENING           = MODERATE
 STRICT_THERAPY_BOUNDARY           = DEPLOYMENT_TOPOLOGY_CHANGE
 UNIVERSAL_GENERIC_EFFECT_PROTOCOL = CROSS_CUTTING_IF_REQUIRED
 CRITICAL_TOOL_EFFECT_PROTOCOL     = LOCALIZED_IF_ADAPTER_CONTROLLED
@@ -335,7 +337,7 @@ Run one OpenClaw-specific pre-selection probe:
 
 - `OC-NAYA-001` — implement the minimal NAIA hardening profile using supported config/plugin seams, validate the effective policy, and record Git/change-surface including whether any OpenClaw core patch is required.
 
-The earlier candidate-local probes are reclassified:
+The earlier candidate-local probes are preserved/reclassified as historical evidence. `OC-NAYA-*` identifiers remain unchanged for traceability but are not current product naming:
 
 - former `OC-NAYA-002` (arbitrary external-effect crash ambiguity) → **Block J / external-action adapter contract**. OpenClaw already states that generic exactly-once external effects are not guaranteed; retesting an unmodified generic tool path would only reconfirm a known absence. Test the real Atento-controlled high-risk adapter when it exists.
 - former `OC-NAYA-003` (Assistant ↔ Therapist isolation) → **ADR-001 composition/deployment test**. The selected architecture requires separate runtime/Gateway authority boundaries, so the useful test is the brokered composition, not two personas in one OpenClaw Gateway.
@@ -351,7 +353,7 @@ RESTART_RECOVERY                = STRONG_EVIDENCE
 STALE_AUTHORITY_DEFENSE         = STRONG_EVIDENCE
 OUTBOUND_DELIVERY_DURABILITY    = STRONG_EVIDENCE
 POLICY_PRIMITIVES               = STRONG
-NAYA_POLICY_DEFAULT_FIT         = NEEDS_HARDENING
+NAIA_POLICY_DEFAULT_FIT         = NEEDS_HARDENING
 PER_AGENT_CORE_STATE_ISOLATION  = STRONG
 STRICT_THERAPY_BOUNDARY         = SEPARATE_RUNTIME_REQUIRED
 GENERIC_TOOL_EFFECT_DURABILITY  = NOT_PROVEN
@@ -364,7 +366,7 @@ No winner selected.
 
 ---
 
-## Current comparison
+## Historical comparison — evidence only
 
 | Property | OpenMausBot | NaIA | OpenClaw |
 |---|---|---|---|
