@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from evals.spikes.psychat.minimal_fork_patch import patch_data_processor
+from evals.spikes.psychat.minimal_fork_patch import patch_data_processor, patch_rag_system
 
 
 PROCESSOR_FIXTURE = '''from typing import List, Dict, Any
@@ -45,6 +45,69 @@ class DataProcessor:
 '''
 
 
+RAG_SYSTEM_FIXTURE = '''import os
+import requests
+from typing import List, Dict, Any
+from config import *
+
+class RAGSystem:
+    def __init__(self):
+        self.data_processor = DataProcessor()
+        self.vector_store = VectorStore()
+        self.psychology_agent = PsychologyAgent()
+        self.deepseek_api_key = DEEPSEEK_API_KEY
+        self.llm_url = f"{DEEPSEEK_BASE_URL}/chat/completions"
+
+        # 对话历史
+        self.conversation_history = []
+
+    def generate_response(self, query: str, max_tokens: int = 1000) -> Dict[str, Any]:
+        analysis = self.psychology_agent.analyze_user_input(query, self.conversation_history, self.vector_store)
+        return {"analysis": analysis}
+
+    def _generate_response(self, system_prompt: str, user_query: str, include_history: bool = True) -> str:
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.deepseek_api_key}",
+                "Content-Type": "application/json"
+            }
+
+            messages = []
+            messages.append({
+                "role": "system",
+                "content": system_prompt
+            })
+            if include_history and self.conversation_history:
+                recent_history = self.conversation_history[-12:]
+                messages.extend(recent_history)
+            messages.append({
+                "role": "user",
+                "content": user_query
+            })
+
+            data = {
+                "model": DEEPSEEK_MODEL,
+                "messages": messages,
+                "max_tokens": 1000,
+                "temperature": 0.6,
+                "top_p": 0.9
+            }
+
+            response = requests.post(self.llm_url, headers=headers, json=data)
+            response.raise_for_status()
+
+            result = response.json()
+            if 'choices' in result and len(result['choices']) > 0:
+                return result['choices'][0]['message']['content']
+            else:
+                print(f"LLM API响应格式错误: {result}")
+                return "抱歉，我无法生成有效的回答。"
+
+        except Exception as e:
+            return f"处理查询时出错: {str(e)}"
+'''
+
+
 class PsyChatMinimalPatchGeneratorTest(unittest.TestCase):
     def test_data_processor_patch_preserves_ids_and_emits_valid_python(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -80,6 +143,72 @@ class PsyChatMinimalPatchGeneratorTest(unittest.TestCase):
             )
             self.assertNotIn("unknown", [chunk["qa_id"] for chunk in chunks])
             self.assertIn("section.split('\\n')", patched)
+
+
+    def test_rag_system_patch_preserves_message_construction(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "rag_system.py"
+            path.write_text(RAG_SYSTEM_FIXTURE, encoding="utf-8")
+
+            patch_rag_system(path)
+            patched = path.read_text(encoding="utf-8")
+
+            compile(patched, str(path), "exec")
+            self.assertIn("messages = []", patched)
+            self.assertIn('"role": "system"', patched)
+            self.assertIn("recent_history = self.conversation_history[-12:]", patched)
+            self.assertIn('"role": "user"', patched)
+            self.assertNotIn("requests.post(", patched)
+
+            class Gateway:
+                def __init__(self):
+                    self.calls = []
+
+                def complete(self, **kwargs):
+                    self.calls.append(kwargs)
+                    return "ok"
+
+            config = type("Config", (), {
+                "DEEPSEEK_API_KEY": "",
+                "DEEPSEEK_BASE_URL": "",
+                "DEEPSEEK_MODEL": "stub",
+            })
+            import sys
+            import types
+
+            config_mod = types.ModuleType("config")
+            for name in ("DEEPSEEK_API_KEY", "DEEPSEEK_BASE_URL", "DEEPSEEK_MODEL"):
+                setattr(config_mod, name, getattr(config, name))
+            sys.modules["config"] = config_mod
+
+            namespace = {}
+            exec(compile(patched, str(path), "exec"), namespace)
+            gateway = Gateway()
+            rag = namespace["RAGSystem"](
+                gateway,
+                object(),
+                data_processor=object(),
+                vector_store=object(),
+                psychology_agent=object(),
+            )
+            rag.conversation_history = [
+                {"role": "user", "content": "old"},
+                {"role": "assistant", "content": "reply"},
+            ]
+
+            result = rag._generate_response("system", "current")
+
+            self.assertEqual(result, "ok")
+            self.assertEqual(len(gateway.calls), 1)
+            self.assertEqual(
+                gateway.calls[0]["messages"],
+                [
+                    {"role": "system", "content": "system"},
+                    {"role": "user", "content": "old"},
+                    {"role": "assistant", "content": "reply"},
+                    {"role": "user", "content": "current"},
+                ],
+            )
 
 
 if __name__ == "__main__":
