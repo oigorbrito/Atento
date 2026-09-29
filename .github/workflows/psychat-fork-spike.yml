@@ -198,3 +198,39 @@ jobs:
             evals/results/psychat_adapter_change_surface.json
             evals/results/psychat_adapter_dynamic_chassis.json
           if-no-files-found: error
+
+
+  block-readiness:
+    name: BLOCO I evidence readiness
+    needs:
+      - harness
+      - psychat-static
+      - adapted-static
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Download available BLOCO I evidence
+        uses: actions/download-artifact@v4
+        with:
+          pattern: psychat-*
+          path: evals/results
+          merge-multiple: true
+        continue-on-error: true
+
+      - name: Report BLOCO I readiness
+        run: |
+          python evals/spikes/psychat/block_i_readiness_gate.py \
+            --results-dir evals/results \
+            --output evals/results/psychat_block_i_readiness.json \
+            --report-only
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: psychat-block-i-readiness
+          path: evals/results/psychat_block_i_readiness.json
+          if-no-files-found: error
