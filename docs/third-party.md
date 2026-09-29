@@ -49,6 +49,33 @@ O Atento está atualmente em **modo de pesquisa/estudo**. A política interna pe
 | SRC-THERAMIND | TheraMind (Emo-gml; Anna research; distinct from SRC-THERAPYMIND; selection reset) | https://github.com/Emo-gml/TheraMind | `416d0a00ecc8c76229512197765dc95be6513de5` | README: research and educational use only | EXTERNAL_RESEARCH_CLONE | longitudinal dual-loop/adaptive-therapy mechanism donor; not a cleared product base |
 
 
+
+## Historical chassis benchmark candidates — 2026-09-29
+
+These entries preserve shared chassis/evolvability evidence from PR #11. They do not assign an agent base and do not create a NAIA shortlist.
+
+| ID | Project | Frozen revision | Canonical use |
+|---|---|---|---|
+| SRC-LETTA | Letta Code | `a75111ea610eff9b4a37baba4fbc6ee24bb73c79` | historical architecture-scaffold/evolvability evidence; **not NAIA base selection** |
+| SRC-LIBRECHAT | LibreChat | `63363a777612e0d37956cc5d233ac489f3a302c3` | executable control in historical chassis benchmark |
+| SRC-DIFY | Dify | `7b0660b45b127a44b6467533ec6a8cd949586770` | plugin/model/RAG/forkability evidence |
+| SRC-RASA | Rasa OSS | `60a3cff9c08183760355b07bd60f5223d8916d6b` | channel/state-seam evidence |
+| SRC-OPENWEBUI | Open WebUI | `8bd8b4fac5e059578ac0c74b3c18d11139f88b7d` | tools/filters/memory/storage seam evidence |
+| SRC-ANYTHINGLLM | AnythingLLM | `a355703427c67c5be17bc57c4c5d5d034e275444` | skills/MCP/RAG/memory evidence |
+
+Canonical reconciled evidence:
+- `docs/evaluation/chassis-selection-research-2026-09-29.md`
+- `docs/evaluation/chassis-selection-research-2026-09-29.yaml`
+- `docs/research/CHASSIS-LETTA-SELECTION-V1.md`
+
+Raw archive provenance remains traceable at PR #11 head `bc2d16be396e92b10ca15b98ccb2f9099058d9ae`; package hash is `d6c7ec9619fd555f45135693bb609ec5718029d6dc2906ca3a64f1d002f64681`.
+
+```text
+HISTORICAL_CHASSIS_BENCHMARK
+!=
+CURRENT_AGENT_BASE_SELECTION
+```
+
 ## Full donor record template
 
 ```yaml
