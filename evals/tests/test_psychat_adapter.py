@@ -494,6 +494,67 @@ class PsyChatAdapterTest(unittest.TestCase):
         self.assertIs(created[1].resources["vector_store"], shared_vector)
         self.assertIsNot(agents[0], agents[1])
 
+    def test_patched_factory_fails_closed_on_provider_resource_mismatch(self):
+        import sys
+        import types
+
+        rag_module = types.ModuleType("core.rag_system")
+
+        class FakePatchedRagSystem(FakeUpstreamRagSystem):
+            def __init__(self, **kwargs):
+                super().__init__()
+                self.resources = kwargs
+
+        class VectorResource:
+            def __init__(self, embedding_gateway):
+                self.embedding_gateway = embedding_gateway
+
+        class AgentResource:
+            def __init__(self, model_gateway):
+                self.model_gateway = model_gateway
+
+        core = types.ModuleType("core")
+        core.__path__ = []
+        rag_module.RAGSystem = FakePatchedRagSystem
+        previous_core = sys.modules.get("core")
+        previous_rag = sys.modules.get("core.rag_system")
+        sys.modules["core"] = core
+        sys.modules["core.rag_system"] = rag_module
+        try:
+            model_a = object()
+            model_b = object()
+            embedding_a = object()
+            embedding_b = object()
+
+            embedding_mismatch = build_patched_factory(
+                model_gateway=model_a,
+                embedding_gateway=embedding_b,
+                data_processor=object(),
+                vector_store=VectorResource(embedding_a),
+                psychology_agent_factory=lambda: AgentResource(model_a),
+            )
+            with self.assertRaisesRegex(ValueError, "embedding gateway"):
+                embedding_mismatch()
+
+            model_mismatch = build_patched_factory(
+                model_gateway=model_b,
+                embedding_gateway=embedding_a,
+                data_processor=object(),
+                vector_store=VectorResource(embedding_a),
+                psychology_agent_factory=lambda: AgentResource(model_a),
+            )
+            with self.assertRaisesRegex(ValueError, "model gateway"):
+                model_mismatch()
+        finally:
+            if previous_core is None:
+                sys.modules.pop("core", None)
+            else:
+                sys.modules["core"] = previous_core
+            if previous_rag is None:
+                sys.modules.pop("core.rag_system", None)
+            else:
+                sys.modules["core.rag_system"] = previous_rag
+
     def test_executor_can_be_swapped_by_registration(self):
         runtime, registry = self.make_runtime()
         registry.register(AlternateRagExecutor())
