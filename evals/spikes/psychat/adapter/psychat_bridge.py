@@ -81,3 +81,42 @@ def upstream_factory():
     from core.rag_system import RAGSystem
 
     return RAGSystem()
+
+
+def build_patched_factory(
+    *,
+    model_gateway: Any,
+    embedding_gateway: Any,
+    data_processor: Any,
+    vector_store: Any,
+    psychology_agent_factory: Callable[[], Any],
+    tts_service: Any = None,
+) -> Callable[[], Any]:
+    """Compose patched PsyChat with shared resources and per-session runtime.
+
+    Shared/long-lived:
+    - model gateway;
+    - embedding gateway;
+    - data processor;
+    - vector store/index;
+    - optional TTS service.
+
+    Per invocation/session runtime:
+    - RAGSystem instance;
+    - PsychologyAgent instance;
+    - mutable conversation/retrieval state restored by PsyChatRagSystemPort.
+    """
+
+    def factory():
+        from core.rag_system import RAGSystem
+
+        return RAGSystem(
+            model_gateway=model_gateway,
+            embedding_gateway=embedding_gateway,
+            data_processor=data_processor,
+            vector_store=vector_store,
+            psychology_agent=psychology_agent_factory(),
+            tts_service=tts_service,
+        )
+
+    return factory
