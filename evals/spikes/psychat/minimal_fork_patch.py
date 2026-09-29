@@ -246,6 +246,27 @@ def patch_vector_store(path: Path) -> None:
     )
     text = replace_once(
         text,
+        "    def add_documents(self, documents: List[Dict[str, Any]]) -> bool:\n",
+        "    def add_documents(\n"
+        "        self,\n"
+        "        documents: List[Dict[str, Any]],\n"
+        "        *,\n"
+        "        refresh_active: bool = True,\n"
+        "    ) -> bool:\n",
+        label="VectorStore add_documents refresh control",
+    )
+    text = replace_once(
+        text,
+        "        try:\n"
+        "            print(f\"开始添加 {len(documents)} 个文档到向量存储...\")\n",
+        "        try:\n"
+        "            if refresh_active:\n"
+        "                self._refresh_active_collection()\n"
+        "            print(f\"开始添加 {len(documents)} 个文档到向量存储...\")\n",
+        label="VectorStore incremental write active generation refresh",
+    )
+    text = replace_once(
+        text,
         """                    self.collection.add(
                         ids=batch_ids,
                         documents=batch_texts,
@@ -335,7 +356,9 @@ def patch_vector_store(path: Path) -> None:
         "            )\n"
         "            self.collection = staging\n"
         "            self.collection_name = staging_name\n"
-        "            success = self.add_documents(documents)\n"
+        "            success = self.add_documents(\n"
+        "                documents, refresh_active=False\n"
+        "            )\n"
         "            complete = success and staging.count() == len(documents)\n"
         "            if not complete:\n"
         "                self.collection = previous_collection\n"
@@ -717,7 +740,7 @@ def apply_patch(donor_root: Path) -> dict:
     retention = retention_metrics(donor_root)
 
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.17",
+        "metric_version": "psychat-minimal-fork-patch-v0.18",
         "pinned_commit": head_before,
         "changed_files": changed,
         "donor_files_touched_to_introduce_provider_boundary": len(PROVIDER_BOUNDARY_FILES),
@@ -738,6 +761,7 @@ def apply_patch(donor_root: Path) -> dict:
         "active_index_pointer_promoted_atomically": True,
         "partial_staging_index_never_promoted": True,
         "long_lived_vector_store_refreshes_active_generation": True,
+        "incremental_writes_refresh_active_generation": True,
         "persisted_collection_metadata_validated": True,
         "collection_contract_mismatch_fails_closed": True,
         "similarity_transform": "1 - cosine_distance",
