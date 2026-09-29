@@ -75,15 +75,24 @@ Do not interpret this spike as a production migration.
 
 ## Current execution status
 
-- branch is aligned with current `main` ancestry;
-- deterministic local suite: **11/11 passed** on Python 3.13.5;
-- adapter-only static CFS: **90/100**;
-- executor replacement: PASS;
-- rollback-by-route: PASS;
-- capability extension without Registry/Runtime modification: PASS;
-- real-source session isolation probe: **BLOCKED_BY_INFRA**;
-- composed donor+adapter CFS: **BLOCKED_BY_INFRA**;
-- GitHub Actions jobs continue to terminate with no executed steps.
+- branch remains aligned with current `main` ancestry;
+- current deterministic Python test inventory: **34 tests** across the BLOCO I
+  adapter/chassis/AtentoEval test modules;
+- the historical **11/11** local result predates the current suite and must not
+  be used as evidence for the present HEAD;
+- the historical adapter-only **CFS 90/100** was produced under the older
+  ownership heuristic and is not the current CFS result;
+- Git change-surface for the minimal donor patch is independently measured:
+  exactly **3 donor RAG files**;
+- executor/capability/provider replacement and dynamic chassis assertions are
+  encoded, but results that require Python execution remain pending on the
+  current HEAD;
+- real-source session isolation and composed CFS remain
+  **BLOCKED_BY_INFRA**;
+- GitHub Actions jobs continue to terminate before runner steps are created,
+  and job logs are not materialized.
+
+No stale historical PASS is promoted to the current HEAD.
 
 BLOCO I remains `IN_PROGRESS`.
 Project Progress remains unchanged.
