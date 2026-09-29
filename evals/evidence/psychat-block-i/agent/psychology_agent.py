@@ -6,16 +6,14 @@
 采用ReAct模式进行查询优化：Observation(轻检索) → Thought(分析) → Action(改写/完成)
 """
 
-import requests
 from typing import List, Dict, Any, Optional, Tuple
 from config import *
 
 class PsychologyAgent:
     MAX_REACT_STEPS = 3
 
-    def __init__(self):
-        self.api_key = DEEPSEEK_API_KEY
-        self.llm_url = f"{DEEPSEEK_BASE_URL}/chat/completions"
+    def __init__(self, model_gateway):
+        self.model_gateway = model_gateway
         print("心理咨询AGENT初始化完成")
 
     def _build_conversation_context(self, conversation_history: List[Dict] = None) -> str:
@@ -336,35 +334,13 @@ FINISH"""
             return [user_message]
 
     def _call_llm(self, prompt: str, max_tokens: int = 1000) -> str:
-        """调用LLM API"""
+        """Call the injected Atento-compatible model gateway."""
         try:
-            headers = {
-                "Authorization": f"Bearer {self.api_key}",
-                "Content-Type": "application/json"
-            }
-
-            data = {
-                "model": DEEPSEEK_MODEL,
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ],
-                "max_tokens": max_tokens,
-                "temperature": 0.3,
-                "top_p": 0.8
-            }
-
-            response = requests.post(self.llm_url, headers=headers, json=data)
-            response.raise_for_status()
-
-            result = response.json()
-            if 'choices' in result and len(result['choices']) > 0:
-                return result['choices'][0]['message']['content']
-            else:
-                return ""
-
+            return self.model_gateway.complete(
+                purpose="psychat.rag.agent",
+                messages=[{"role": "user", "content": prompt}],
+                timeout_s=30.0,
+            )
         except Exception as e:
             print(f"调用LLM时出错: {e}")
             return ""
