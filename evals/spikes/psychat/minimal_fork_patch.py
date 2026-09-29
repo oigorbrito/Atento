@@ -15,6 +15,7 @@ drifted. After applying, it records the exact changed-file set from Git.
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import re
 import subprocess
@@ -194,6 +195,16 @@ def patch_rag_system(path: Path) -> None:
     path.write_text(text, encoding="utf-8")
 
 
+def constructor_parameters(path: Path, class_name: str) -> set[str]:
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    for node in tree.body:
+        if isinstance(node, ast.ClassDef) and node.name == class_name:
+            for item in node.body:
+                if isinstance(item, ast.FunctionDef) and item.name == "__init__":
+                    return {arg.arg for arg in item.args.args}
+    return set()
+
+
 def direct_provider_bypasses(root: Path) -> dict[str, list[str]]:
     patterns = {
         "requests.post": re.compile(r"requests\.post\("),
@@ -236,11 +247,30 @@ def apply_patch(donor_root: Path) -> dict:
     if remaining:
         raise AssertionError(f"direct provider bypasses remain in patched RAG files: {bypasses}")
 
+    rag_params = constructor_parameters(donor_root / "core/rag_system.py", "RAGSystem")
+    agent_params = constructor_parameters(
+        donor_root / "agent/psychology_agent.py", "PsychologyAgent"
+    )
+    vector_params = constructor_parameters(
+        donor_root / "core/vector_store.py", "VectorStore"
+    )
+    if not {"model_gateway", "embedding_gateway"}.issubset(rag_params):
+        raise AssertionError("RAGSystem provider gateways are not injectable")
+    if "model_gateway" not in agent_params:
+        raise AssertionError("PsychologyAgent model gateway is not injectable")
+    if "embedding_gateway" not in vector_params:
+        raise AssertionError("VectorStore embedding gateway is not injectable")
+
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.1",
+        "metric_version": "psychat-minimal-fork-patch-v0.2",
         "pinned_commit": head_before,
         "changed_files": changed,
-        "files_touched_exact": len(changed),
+        "donor_files_touched_to_introduce_provider_boundary": len(changed),
+        "files_touched_to_swap_model_provider_after_boundary": 0,
+        "files_touched_to_swap_embedding_provider_after_boundary": 0,
+        "provider_swap_mechanism": "constructor injection",
+        "model_gateway_injectable": True,
+        "embedding_gateway_injectable": True,
         "direct_provider_bypass_count_in_patched_rag_surface": remaining,
         "direct_provider_bypass_evidence": bypasses,
         "scope": "BLOCO I RAG core only; donor web/TTS chassis intentionally excluded",
