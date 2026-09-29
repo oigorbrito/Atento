@@ -118,7 +118,7 @@ def patch_vector_store(path: Path) -> None:
     text = replace_once(
         text,
         "import requests\nfrom typing import List, Dict, Any\n",
-        "from typing import List, Dict, Any\n",
+        "import hashlib\nfrom typing import List, Dict, Any\n",
         label="vector requests import",
     )
     text = replace_once(
@@ -177,7 +177,7 @@ def patch_vector_store(path: Path) -> None:
     text = replace_once(
         text,
         "                'name': COLLECTION_NAME,",
-        "                'name': ATENTO_COLLECTION_NAME,",
+        "                'name': self.collection_name,",
         label="VectorStore collection info name",
     )
     text = replace_once(
@@ -187,10 +187,15 @@ def patch_vector_store(path: Path) -> None:
         "                name=COLLECTION_NAME,\n"
         "                metadata={\"description\": \"MCP知识库向量存储\"}\n"
         "            )",
-        "            self.client.delete_collection(COLLECTION_NAME)\n"
+        "            self.client.delete_collection(self.collection_name)\n"
         "            self.collection = self.client.create_collection(\n"
-        "                name=COLLECTION_NAME,\n"
-        "                metadata={\"description\": \"MCP知识库向量存储\"}\n"
+        "                name=self.collection_name,\n"
+        "                metadata={\n"
+        "                    \"description\": \"MCP知识库向量存储\",\n"
+        "                    \"hnsw:space\": \"cosine\",\n"
+        "                    \"atento:index_schema\": ATENTO_INDEX_SCHEMA_VERSION,\n"
+        "                    \"atento:embedding_identity\": self.embedding_identity,\n"
+        "                }\n"
         "            )",
         label="VectorStore clear collection contract",
     )
