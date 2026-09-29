@@ -8,6 +8,31 @@ from evals.spikes.psychat.adapter.session import InMemorySessionStore
 from evals.spikes.psychat.adapter.psychat_bridge import PsyChatRagSystemPort, build_patched_factory
 
 
+class CountingDonor:
+    def __init__(self):
+        self.calls = 0
+
+    def respond(self, *, message, session_state):
+        self.calls += 1
+        return "counted", {"turns": int(session_state.get("turns", 0)) + 1}
+
+
+class BlockingPreSafety:
+    def precheck(self, request):
+        raise PermissionError("blocked before donor")
+
+    def postcheck(self, result):
+        raise AssertionError("postcheck must not run")
+
+
+class BlockingPostSafety:
+    def precheck(self, request):
+        request.validate()
+
+    def postcheck(self, result):
+        raise PermissionError("blocked after donor")
+
+
 class FakePsyChatDonor:
     def respond(self, *, message, session_state):
         count = int(session_state.get("turns", 0)) + 1
@@ -120,6 +145,48 @@ class PsyChatAdapterTest(unittest.TestCase):
             registry=registry,
             sessions=InMemorySessionStore(),
         ), registry
+
+    def test_pre_safety_blocks_before_donor_execution(self):
+        donor = CountingDonor()
+        registry = CapabilityRegistry()
+        registry.register(PsyChatExecutorAdapter(donor))
+        sessions = InMemorySessionStore()
+        runtime = PsyChatSpikeRuntime(
+            registry=registry,
+            sessions=sessions,
+            safety=BlockingPreSafety(),
+        )
+
+        with self.assertRaisesRegex(PermissionError, "blocked before donor"):
+            runtime.execute(
+                session_id="a",
+                message="x",
+                route=route(),
+            )
+
+        self.assertEqual(donor.calls, 0)
+        self.assertEqual(dict(sessions.load("a")), {})
+
+    def test_post_safety_blocks_before_state_persistence(self):
+        donor = CountingDonor()
+        registry = CapabilityRegistry()
+        registry.register(PsyChatExecutorAdapter(donor))
+        sessions = InMemorySessionStore()
+        runtime = PsyChatSpikeRuntime(
+            registry=registry,
+            sessions=sessions,
+            safety=BlockingPostSafety(),
+        )
+
+        with self.assertRaisesRegex(PermissionError, "blocked after donor"):
+            runtime.execute(
+                session_id="a",
+                message="x",
+                route=route(),
+            )
+
+        self.assertEqual(donor.calls, 1)
+        self.assertEqual(dict(sessions.load("a")), {})
 
     def test_sessions_are_isolated_outside_donor(self):
         runtime, _ = self.make_runtime()
