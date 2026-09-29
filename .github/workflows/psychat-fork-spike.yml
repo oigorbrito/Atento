@@ -28,7 +28,7 @@ jobs:
         run: python -m unittest discover -s evals/tests -p "test_*.py" -v
 
   psychat-static:
-    name: PsyChat static chassis baseline
+    name: PsyChat static and isolation baseline
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,17 +47,25 @@ jobs:
         run: |
           python -m compileall -q             /tmp/PsyChat/agent             /tmp/PsyChat/core             /tmp/PsyChat/data             /tmp/PsyChat/main.py             /tmp/PsyChat/config.py
 
+      - name: Dynamic shared-session isolation probe
+        run: |
+          python evals/spikes/psychat/real_isolation_probe.py             --donor-root /tmp/PsyChat             --output evals/results/psychat_real_isolation.json
+
       - name: Static Chassis Fitness audit
         run: |
           python evals/chassis/donor_static_audit.py             --root /tmp/PsyChat             --source-id SRC-PSYCHAT             --upstream-commit 5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4             --output evals/results/psychat_static_chassis.json
 
-      - name: Print report
-        run: cat evals/results/psychat_static_chassis.json
+      - name: Print reports
+        run: |
+          cat evals/results/psychat_real_isolation.json
+          cat evals/results/psychat_static_chassis.json
 
       - uses: actions/upload-artifact@v4
         with:
-          name: psychat-static-chassis
-          path: evals/results/psychat_static_chassis.json
+          name: psychat-upstream-evidence
+          path: |
+            evals/results/psychat_real_isolation.json
+            evals/results/psychat_static_chassis.json
           if-no-files-found: error
 
   adapted-static:
@@ -70,10 +78,7 @@ jobs:
           python-version: "3.11"
       - name: Audit thin Atento boundary
         run: |
-          python evals/chassis/donor_static_audit.py \
-            --root evals/spikes/psychat/adapter \
-            --source-id SRC-ATENTO \
-            --output evals/results/psychat_adapted_chassis.json
+          python evals/chassis/donor_static_audit.py             --root evals/spikes/psychat/adapter             --source-id SRC-ATENTO             --output evals/results/psychat_adapted_chassis.json
       - uses: actions/upload-artifact@v4
         with:
           name: psychat-adapted-chassis
