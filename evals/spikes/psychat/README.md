@@ -85,8 +85,10 @@ Do not interpret this spike as a production migration.
   be used as evidence for the present HEAD;
 - the historical adapter-only **CFS 90/100** was produced under the older
   ownership heuristic and is not the current CFS result;
-- Git change-surface for the minimal donor patch is independently measured:
-  exactly **3 donor RAG files**;
+- Git change-surface is now split into two independently measured costs:
+  **3 donor files** for the provider/lifecycle boundary and **4 donor files**
+  for full BLOCO I RAG correctness/traceability after including
+  `data/processor.py`;
 - executor/capability/provider replacement and dynamic chassis assertions are
   encoded, but results that require Python execution remain pending on the
   current HEAD;
@@ -102,7 +104,13 @@ Do not interpret this spike as a production migration.
   rebuild with a functioning embedding provider;
 - paired `pt-BR` / `zh-CN` gold controls are now defined for PsyChat IDs
   328, 350, 1864 and 1882 so multilingual retrieval quality can be measured
-  independently from chassis quality.
+  independently from chassis quality;
+- the pinned upstream parser loses `qa_id` on all **4,760 / 4,760** dialogue
+  sections because IDs precede the `##` dialogue delimiter; the BLOCO I
+  processor patch carries the ID forward and source-level corpus validation
+  preserves all 4,760 IDs;
+- the patched vector collection explicitly uses cosine distance so the donor's
+  existing `1 - distance` transform has cosine-similarity semantics.
 
 No stale historical PASS is promoted to the current HEAD.
 
