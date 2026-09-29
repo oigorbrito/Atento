@@ -1953,7 +1953,7 @@ O Atento será arquiteturalmente bem-sucedido quando conseguir demonstrar, com a
 - nunca marcar bloco concluído antes de todos os seus Project Points;
 - regressão pode reduzir o score;
 - mudanças de peso exigem decisão explícita de governança;
-- `100/100` exige todos os blocos concluídos + release gates + critérios de saída da Fase 8.
+- `100/100` exige evidência válida para o ledger inteiro, release gates aplicáveis e encerramento explícito do `DECISION_RESET`; a arquitetura final pode exigir rebaselining posterior por decisão de governança.
 
 ---
 
