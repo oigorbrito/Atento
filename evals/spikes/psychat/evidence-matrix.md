@@ -29,8 +29,10 @@ Atento evaluation branch:
 | Upstream chassis | Static CFS | PASS_STATIC | Pinned PsyChat baseline: 10/100; only routing boundary passes static screening. |
 | Branch coherence | Spike behind main? | PASS_EMPIRICAL | Spike has repeatedly been reconciled to 0 behind main; compare must be rechecked before final ADR freeze. |
 | Fork surface | Files touched to introduce model + embedding provider boundaries | PASS_EMPIRICAL | Git compare baseline `fb5368edbe23aeedf571e1f11935ae63b6da29b9` -> patched `15249e687c8a2fdea263cc0ae57650ab698a907f`: exactly 3 files. |
-| Fork surface | Patched files | PASS_EMPIRICAL | `agent/psychology_agent.py`, `core/rag_system.py`, `core/vector_store.py`. |
-| Fork preservation | Original-line retention over 3-file patch surface | PASS_EMPIRICAL | Approx. 90.99% retained: 1,242 / 1,365 original lines not deleted/replaced. |
+| Fork surface | Provider/lifecycle boundary files | PASS_EMPIRICAL | `agent/psychology_agent.py`, `core/rag_system.py`, `core/vector_store.py`. |
+| Fork preservation | Original-line retention over 3-file provider-boundary surface | PASS_EMPIRICAL | Approx. 90.99% retained: 1,242 / 1,365 original lines not deleted/replaced. |
+| BLOCO I correctness surface | Files touched for provider/lifecycle + QA provenance correctness | PASS_EMPIRICAL | Git compare baseline `f2317be0fc27b1f4a6a39c5c89f22faf550045bf` -> patched `7c780cd74f23be5e455600e7c0bd21cae60414a1`: exactly 4 files, adding `data/processor.py`; preserved ref `evidence/psychat-rag-block-correctness`. |
+| BLOCO I correctness surface | Original-line retention over 4-file block patch | PASS_EMPIRICAL | Approx. 91.06% retained: 1,457 / 1,600 original lines not deleted/replaced. |
 | Provider boundary | Direct `requests.post` in patched RAG surface | PASS_STATIC | 0 in preserved patched ref `evidence/psychat-rag-minimal-patch`. |
 | Provider boundary | Model provider injectable | PASS_STATIC | `PsychologyAgent` and `RAGSystem` contain model-gateway seams in preserved patched Git content. |
 | Provider boundary | Embedding provider injectable | PASS_STATIC | `VectorStore` and `RAGSystem` contain embedding-gateway seams in preserved patched Git content. |
@@ -45,6 +47,9 @@ Atento evaluation branch:
 | Adapter validation | Schema validation coverage | PENDING_EXECUTION | Dynamic chassis probe requires 100% of encoded validation checks. |
 | Adapter tracing | Required trace coverage | PENDING_EXECUTION | Dynamic chassis probe requires RAG + executor trace events. |
 | Retrieval mechanics | Multi-query merge/dedup/ranking preserved after fork patch | PENDING_EXECUTION | Upstream/patched mechanics probes + preservation comparator exist. |
+| QA provenance | Upstream parser preserves corpus IDs in indexed chunks | PASS_EMPIRICAL | No. Applying the pinned parser logic to all 12 corpus blobs yields 4,760 / 4,760 dialogue sections with `qa_id=unknown`; 0 known IDs survive. |
+| QA provenance | Corrected parser preserves corpus IDs | PASS_EMPIRICAL | Corrected carry-forward logic over the same 12 pinned blobs preserves all 4,760 unique IDs, emits 0 unknown dialogue sections, and retains gold IDs 328/350/1864/1882. |
+| QA provenance | Real DataProcessor before/after runtime probe | PENDING_EXECUTION | `qa_id_provenance_probe.py` dynamically loads the actual donor processor and asserts upstream broken vs patched preserved behavior; runner unavailable. |
 | Gold provenance | PsyChat gold IDs exist in pinned corpus | PASS_EMPIRICAL | Exact IDs verified: 328 + 350 in `职场.txt`; 1864 + 1882 in `心理学知识.txt`. |
 | RAG suite composition | Deterministic AtentoEval RAG case balance | PASS_EMPIRICAL | 20 total: 13 positive, 7 negative, 4 PsyChat gold, 3 contextual, 1 multi-evidence, 1 insufficient-evidence, 1 attempted-empty, 2 explicit user-goal negative controls. |
 | Harness plumbing | Route -> Registry -> Executor -> bridge -> trace -> AtentoEval | PENDING_EXECUTION | End-to-end deterministic plumbing probe now includes the real bridge seam and forced-empty retrieval semantics. |
@@ -52,7 +57,7 @@ Atento evaluation branch:
 | Retrieval reproducibility | Persisted vector index committed | PASS_EMPIRICAL | No root `storage/` directory is committed at pinned donor commit. |
 | Retrieval reproducibility | Embedding config sufficient from Git alone | PASS_EMPIRICAL | `EMBEDDING_MODEL=text-embedding-v4`; committed `ALIBABA_API_KEY` is empty. |
 | Retrieval reproducibility | Repository alone reproduces semantic retrieval | QUALITY_RISK | No committed vector index; rebuild requires a functioning embedding provider. |
-| Multilingual retrieval | pt-BR query retrieves Chinese gold evidence | QUALITY_RISK | Not yet measured. Paired pt-BR/zh-CN gold manifest exists for IDs 328, 350, 1864, 1882. |
+| Multilingual retrieval | pt-BR query retrieves Chinese gold evidence | QUALITY_RISK | Not yet measured. Paired pt-BR/zh-CN gold manifest exists for IDs 328, 350, 1864, 1882. Alibaba Cloud documentation states `text-embedding-v4` supports 100+ languages including Chinese and Portuguese, but provider capability is not donor retrieval evidence. |
 | Multilingual retrieval | Source-language vs pt-BR retrieval gap | PENDING_EXECUTION | `multilingual_retrieval_score.py` reports hit-rate/MRR by language and zh-minus-pt gap once real retrieval results exist. |
 | Multilingual retrieval | Low-cost real-evidence benchmark | PENDING_EXECUTION | `multilingual_microbenchmark.py` embeds 4 exact pinned gold conversations plus deterministic same-corpus distractors and compares pt-BR vs zh-CN hit@k/MRR without rebuilding the full Chroma index. |
 | Multilingual retrieval | Required external dependency for microbenchmark | QUALITY_RISK | Requires a functioning embedding provider credential; workflow records `SKIPPED_NO_EMBEDDING_CREDENTIAL` instead of treating a missing secret as PASS. |
@@ -66,7 +71,8 @@ Atento evaluation branch:
 The evidence supports a narrow architectural statement:
 
 > PsyChat's RAG core can be isolated behind a small, three-file provider/lifecycle
-> fork surface while preserving most upstream code.
+> boundary, but BLOCO I correctness requires a fourth donor file because the
+> upstream QA parser loses every corpus record ID during chunking.
 
 It does **not** yet support these stronger claims:
 
