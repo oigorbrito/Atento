@@ -124,7 +124,8 @@ def patch_vector_store(path: Path) -> None:
         text,
         "from config import *\n\nclass VectorStore:",
         "from config import *\n\n"
-        "ATENTO_INDEX_SCHEMA_VERSION = \"rag-cosine-v1\"\n\n"
+        "ATENTO_INDEX_SCHEMA_VERSION = \"rag-cosine-v1\"\n"
+        "ATENTO_COLLECTION_NAME = f\"{COLLECTION_NAME}__{ATENTO_INDEX_SCHEMA_VERSION}\"\n\n"
         "class VectorStore:",
         label="VectorStore index schema version",
     )
@@ -149,7 +150,7 @@ def patch_vector_store(path: Path) -> None:
     text = replace_once(
         text,
         "name=COLLECTION_NAME,",
-        'name=f"{COLLECTION_NAME}__{ATENTO_INDEX_SCHEMA_VERSION}",',
+        "name=ATENTO_COLLECTION_NAME,",
         label="VectorStore versioned collection name",
     )
     text = replace_once(
