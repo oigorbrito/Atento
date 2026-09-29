@@ -63,385 +63,243 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 ---
 
 
-## 2.1 Registro de fontes, provenance e regras para o agente de implementação
+## 2.1 Registro de fontes, provenance e donors
 
-> **Regra operacional:** nenhum módulo, feature, benchmark, dataset ou algoritmo deve ser implementado sem um `SOURCE_ID` explícito. Quando a peça for criação própria do Atento, usar `SRC-ATENTO`. Quando a fonte for apenas benchmark, ela **não** deve ser tratada como código de produção. Quando existir código externo sem licença compatível/verificada, ele pode ser copiado ou estudado.
+> **Regra operacional:** nenhum módulo, feature, benchmark, dataset, algoritmo ou donor entra sem `SOURCE_ID`. O Atento pode adotar código externo parcialmente ou **na íntegra** quando isso for empiricamente defensável.
 
 ### Classes de origem
 
-| Classe | Significado | Regra |
+| Classe | Significado | Uso no Atento |
 |---|---|---|
-| `IMPLEMENTATION_REFERENCE` | Existe código público útil como referência | permitido reutilizar código independente se a licença permitir ; caso contrário, fazer implementação própria |
-| `ARCHITECTURE_REFERENCE` | A ideia vem de paper/documentação, não de código reutilizável | Implementação clean-room no Atento |
-| `BENCHMARK_REFERENCE` | Fonte usada para medir uma capacidade | Não inferir que o benchmark é uma implementação de produção |
-| `DATA_REFERENCE` | Dataset/taxonomia de pesquisa | Verificar uso antes de incorporar dados |
-| `ATENTO_NATIVE` | Engenharia ou integração criada no próprio projeto | Documentar em ADR e testes |
+| `IMPLEMENTATION_REFERENCE` | há código executável | pode ser donor parcial ou integral |
+| `ARCHITECTURE_REFERENCE` | há arquitetura/paper, mas não runtime reutilizável suficiente | implementar/adaptar quando necessário |
+| `BENCHMARK_REFERENCE` | mede uma capacidade | integrar ao AtentoEval sem confundir com runtime |
+| `DATA_REFERENCE` | dataset/taxonomia | usar no estudo com provenance |
+| `MODEL_REFERENCE` | checkpoint/modelo | testar via Model Gateway ou pipeline próprio |
+| `ATENTO_NATIVE` | engenharia própria | usar quando donor não for suficiente ou integração exigir camada local |
 
 ### Source Registry
 
 #### SRC-PA — PsychAgent
-- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
 - **Paper:** https://arxiv.org/abs/2604.00931
 - **Repo:** https://github.com/ECNU-ICALK/PsychAgent
-- **Commit verificado:** `469f45ef468b968b3fccd1936d7e6a0a574e4c5c`
-- **Usar como fonte para:** memória entre sessões, planejamento longitudinal, skill retrieval, pipelines multi-session, avaliação/reward, best-of-N/reward-guided rollout em fase avançada.
-- **Não assumir:** que o pipeline completo de evolução de skills está público; o próprio repositório informa que essa parte está incompleta.
-- **Licença:** o repositório verificado não possui arquivo de licença pode copiar código para o Atento clara ou usar como referência arquitetural/behavioral e implementar localmente.
+- **Commit verificado:** `469f45ef468b968b3fccd1936d7e6a0a574e4c5c`.
+- **Candidato para:** memória multi-sessão, planning longitudinal, skill retrieval, reward-guided rollout.
+- **Modo permitido:** clone/fork para estudo; full donor somente após spike e AtentoEval.
+- **Observação:** partes do pipeline descrito no paper não estão completas na release pública.
 
 #### SRC-PE — PsychEval
-- **Tipo:** `BENCHMARK_REFERENCE`
-- **Paper:** https://aclanthology.org/2026.findings-acl.1115/
-- **Usar como fonte para:** avaliação multi-sessão, continuidade longitudinal, dimensões counselor/client e avaliação específica por abordagem.
-- **Não usar como:** fonte de arquitetura de produção ou prova de segurança clínica.
+- **Tipo:** `BENCHMARK_REFERENCE`.
+- **Fonte:** https://aclanthology.org/2026.findings-acl.1115/
+- **Candidato para:** multi-session eval, continuidade, planejamento longitudinal e dimensões counselor/client.
 
 #### SRC-CADSS — CADSS / CPsDD
-- **Tipo:** `ARCHITECTURE_REFERENCE` + `DATA_REFERENCE`
-- **Paper AAAI 2026:** https://ojs.aaai.org/index.php/AAAI/article/view/38825
+- **Tipo:** `ARCHITECTURE_REFERENCE` + `DATA_REFERENCE`.
+- **Paper:** https://ojs.aaai.org/index.php/AAAI/article/view/38825
 - **Repo:** https://github.com/FakerBoom/CPsDD
-- **Commit verificado:** `f6385fa13223574852bdcff85eb6aa0bd36797dc`
-- **Usar como fonte para:** decomposição Profiler → Summarizer → Planner → Supporter; user profile estruturado; resumo de histórico/estado; strategy prediction; resposta condicionada à estratégia; caminhos de suporte.
-- **Estado do código:** o README verificado informa que o código de CADSS/PGSim ainda será liberado.
-- **Implementação Atento:** clean-room; não esperar um módulo CADSS importável.
+- **Commit verificado:** `f6385fa13223574852bdcff85eb6aa0bd36797dc`.
+- **Candidato para:** Profiler → Summarizer → Planner → Supporter.
+- **Estado atual:** código CADSS/PGSim não disponível no snapshot verificado; usar arquitetura/dados disponíveis e reavaliar se código for publicado.
 
 #### SRC-UKA — User-Aware Active Knowledge Acquisition
-- **Tipo:** `ARCHITECTURE_REFERENCE`
-- **Paper/preprint:** https://arxiv.org/abs/2605.29715
-- **Usar como fonte para se nao for possível copiar :** belief state explícito, hipóteses de necessidade, incerteza, decisão de perguntar/clarificar e resposta orientada a reduzir incerteza.
-- **Implementação Atento:** clean-room; não existe, neste roadmap, dependência de código externo UKA.
-- **Observação:** é preprint; validar localmente antes de promover qualquer política derivada.
+- **Tipo:** `ARCHITECTURE_REFERENCE`.
+- **Fonte:** https://arxiv.org/abs/2605.29715
+- **Candidato para:** belief state, hipóteses de necessidade, incerteza, clarificação ativa.
 
 #### SRC-SAGE — Self-Retrieval-Augmented Generative LLM for ESC
-- **Tipo:** `ARCHITECTURE_REFERENCE`
-- **Paper:** https://doi.org/10.1016/j.eswa.2026.131524
-- **Usar como fonte para:** strategy prediction, retrieval condicionado à estratégia, candidate reranking, combinação de sinais semânticos/cognitivos e geração condicionada a conhecimento.
-- **pode copiar literalmente na V1:** trie/ResID, cross-attention customizado ou treinamento end-to-end só entram se o benchmark do Atento justificar.
-- **Implementação Atento:** pode copiar ou adaptar o padrão "predict strategy → retrieve → rerank → generate" usando componentes simples e substituíveis.
+- **Tipo:** `ARCHITECTURE_REFERENCE`.
+- **Fonte:** https://doi.org/10.1016/j.eswa.2026.131524
+- **Candidato para:** strategy prediction, retrieval, reranking e generation.
+- **Regra:** implementação literal ou adaptação são permitidas no estudo se houver material disponível e o AtentoEval justificar.
 
 #### SRC-TEA — TEA-Bench
-- **Tipo:** `BENCHMARK_REFERENCE` + `ARCHITECTURE_REFERENCE`
-- **Paper ACL 2026:** https://aclanthology.org/2026.acl-long.2152/
-- **Usar como fonte para:** decisão de quando chamar ferramenta, escolha de ferramenta, grounding com resultado externo, métricas de tool-use e hallucination após tool use/failure.
-- **Implementação Atento:** Tool Router próprio; o benchmark define capacidades e protocolo de avaliação, não um controlador de produção a ser copiado.
+- **Tipo:** `BENCHMARK_REFERENCE` + `ARCHITECTURE_REFERENCE`.
+- **Paper:** https://aclanthology.org/2026.acl-long.2152/
+- **Repo:** https://github.com/XingYuSSS/TEA-Bench
+- **Candidato para:** tool routing, grounding, process-trace eval e failure injection.
 
 #### SRC-ENPMR — ENPMR-Bench
-- **Tipo:** `BENCHMARK_REFERENCE` + `ARCHITECTURE_REFERENCE`
-- **Paper ACL Findings 2026:** https://aclanthology.org/2026.findings-acl.2080/
-- **Usar como fonte para:** inferência de necessidade emocional antes de recuperar memória; proactive/need-aware memory retrieval; avaliação de alinhamento necessidade ↔ memória.
-- **Implementação Atento:** recuperar memória por relevância + necessidade + sensibilidade, não apenas similaridade vetorial.
+- **Tipo:** `BENCHMARK_REFERENCE` + `ARCHITECTURE_REFERENCE`.
+- **Fonte:** https://aclanthology.org/2026.findings-acl.2080/
+- **Candidato para:** emotional-need inference e proactive memory retrieval.
 
-#### SRC-ESCONV — ESConv / Emotional Support Conversation
-- **Tipo:** `DATA_REFERENCE` + `BENCHMARK_REFERENCE`
-- **Paper ACL 2021:** https://aclanthology.org/2021.acl-long.269/
+#### SRC-ESCONV — ESConv
+- **Tipo:** `DATA_REFERENCE` + `BENCHMARK_REFERENCE`.
+- **Paper:** https://aclanthology.org/2021.acl-long.269/
 - **Repo:** https://github.com/thu-coai/Emotional-Support-Conversation
-- **Usar como fonte para:** taxonomia base de estratégias de apoio e benchmark de strategy prediction/emotional support.
-- **Restrição:** o repositório declara dados/código para pesquisa acadêmica. pode incorporar dados/código ao produto sem permissão/licença compatível.
-- **Uso seguro no Atento:** adotar, copiar conceitos/taxonomia como referência; implementar prompts/schemas próprios.
+- **Candidato para:** strategy taxonomy, prediction e ESC evaluation.
 
 #### SRC-MHB — MentalHealthBench
-- **Tipo:** `BENCHMARK_REFERENCE`
+- **Tipo:** `BENCHMARK_REFERENCE`.
 - **Fonte:** https://openai.com/index/introducing-mentalhealthbench/
-- **Usar como fonte para:** rubricas de safety, busca de contexto, preservação da autonomia, orientação prática, cobertura de níveis de acuidade e diferentes perfis de usuário.
-- **Não usar como:** substituto de revisão humana/clinicamente informada do Atento.
+- **Candidato para:** safety, context seeking, user agency, actionability e acuity slices.
 
 #### SRC-COUNSEL — CounselBench
-- **Tipo:** `BENCHMARK_REFERENCE`
-- **ICLR 2026:** https://proceedings.iclr.cc/paper_files/paper/2026/hash/99946cb64d51ead9d3969db0af65ca2e-Abstract-Conference.html
+- **Tipo:** `BENCHMARK_REFERENCE`.
+- **Paper:** https://proceedings.iclr.cc/paper_files/paper/2026/hash/99946cb64d51ead9d3969db0af65ca2e-Abstract-Conference.html
 - **Repo:** https://github.com/llm-eval-mental-health/CounselBench
-- **Usar como fonte para:** avaliação humana, factual consistency, advice boundaries, adversarial stress tests e diferença entre LLM-as-judge e avaliador humano.
-- **Uso principal:** safety eval e human eval; não é arquitetura de agente.
-
+- **Candidato para:** expert evaluation, adversarial failure modes e judge calibration.
 
 #### SRC-PSYCHAT — PsyChat Agentic RAG
-- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
 - **Repo:** https://github.com/wink-wink-wink555/PsyChat
-- **Commit verificado:** `5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4`
-- **Copiar ou Usar como fonte para:** decisão RAG + classificação em uma chamada; ReAct de query rewrite; multi-query retrieval; expansão de chunk para conversa completa; análise/caching de estilo; integração FastAPI/ChromaDB como protótipo.
-- **Acoplamentos observados:** DeepSeek via HTTP direto, Alibaba embeddings/TTS, ChromaDB local, prompts e taxonomia chinesa, histórico em memória do processo, configuração global.
-- **Não assumir:** que seja uma arquitetura de produção, que tenha safety/acuity independente, memória longitudinal robusta, contratos estruturados, benchmark acadêmico comparável ou permissões de produto para o dataset usado.
-- **Uso recomendado:** candidato a **fork experimental / code donor seletivo**, não base automática do Atento.
+- **Commit verificado:** `5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4`.
+- **Candidato para:** Agentic RAG, RAG decision, query rewrite, multi-query retrieval, context expansion e FastAPI prototype.
+- **Modo permitido:** `FULL_DONOR`, fork ou selective port.
+- **Condição:** comparar upstream, donor adaptado e alternativa nativa no mesmo AtentoEval.
 
 #### SRC-THERAPYMIND — TherapyMind
-- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
 - **Repo:** https://github.com/zx070326-hash/TherapyMind
-- **Commit verificado:** `bfed3f5be61bab262bb00a0f3cc9718c4a965243`
-- texto com aviso adicional de contexto de saúde mental.
-- **copiar ou Usar como fonte para:** prompt compilation modular; separação de safety como fonte central; Observer → Analyst → Challenger → Responder; testes de grey-zone; persistência de perfil/sessão como referência.
-- **Limitação:** research prototype recente, footprint pequeno e evidência externa/benchmark ainda limitada.
-- **Uso recomendado:** clone/fork de laboratório para estudar prompt modules e testes; **não** usar como runtime base sem passar pelo AtentoEval.
+- **Commit verificado:** `bfed3f5be61bab262bb00a0f3cc9718c4a965243`.
+- **Candidato para:** modular prompt compilation, 4-role review chain, safety prompt structure, grey-zone tests e profile/session persistence.
+- **Modo permitido:** `FULL_DONOR`, fork ou selective port, desde que supere baseline relevante.
 
 #### SRC-SOULCHAT — SoulChat2.0 / PsyDT
-- **Tipo:** `IMPLEMENTATION_REFERENCE` + `MODEL_REFERENCE`
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `MODEL_REFERENCE`.
 - **Repo:** https://github.com/scutcyr/SoulChat2.0
-- **Commit verificado:** `13ec529c9e3851eacbbf09bec9029621ac40e773`
-- **copiar ou Usar como fonte para:** geração especializada, fine-tuning, personalização de estilo/técnica e benchmark do componente gerador.
-- **Não usar como:** base do Executive Controller do Atento.
-- **Uso recomendado:** avaliar checkpoint/serving como backend do `Response Generator`; fork somente se o Atento decidir manter pipeline próprio de treinamento.
+- **Commit verificado:** `13ec529c9e3851eacbbf09bec9029621ac40e773`.
+- **Candidato para:** specialized generator, fine-tuning, style/technique personalization.
+- **Modo permitido:** model adapter, donor de training pipeline ou full donor se o benchmark justificar.
 
 #### SRC-EMOLLM — EmoLLM
-- **Tipo:** `IMPLEMENTATION_REFERENCE` + `MODEL_REFERENCE`
-- **Repo canônico:** https://github.com/SmartFlowAI/EmoLLM
-- ** copiar ou Usar como fonte para:** checkpoints especializados, receitas de fine-tuning, deploy e experimentos RAG/model serving.
-- **copiar ou usar como:** base arquitetural do executivo.
-- **avaliar:** consumir modelos/receitas de forma isolada; não forkear o projeto inteiro como base do Atento salvo se a trilha de treinamento virar produto próprio.
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `MODEL_REFERENCE`.
+- **Repo:** https://github.com/SmartFlowAI/EmoLLM
+- **Candidato para:** checkpoints, fine-tuning recipes, deploy e RAG experiments.
+- **Modo permitido:** model adapter, pipeline donor ou full donor se empiricamente vantajoso.
 
 #### SRC-MINDCHAT — MindChat
-- **Tipo:** `MODEL_REFERENCE` + `IMPLEMENTATION_REFERENCE`
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `MODEL_REFERENCE`.
 - **Repo:** https://github.com/X-D-Lab/MindChat
-  
-- **copiar ou Usar como fonte para:** comparação de modelos especializados e deployment local.
-- pode  incorporar código ao Atento por padrão.
-- **pode Usar benchmark/model serving isolado ou adotar como base do Atento
+- **Commit verificado:** `8309768d156a3c0e719381705a4058fa1ec554d3`.
+- **Candidato para:** specialized model comparison e local deployment.
+- **Modo permitido:** clone/fork/model adapter/full donor para estudo; registrar os termos externos em `docs/third-party.md`.
 
 #### SRC-ATENTO — Arquitetura própria do Atento
-- **Tipo:** `ATENTO_NATIVE`
-- **Usar para:** API/session gateway, contratos JSON, Model Gateway, storage lifecycle, policy integration, privacy, RBAC, observabilidade, CI/CD, infraestrutura, composição final do Executive Controller e integrações.
-- **Regra:** toda decisão `SRC-ATENTO` relevante deve gerar ADR quando afetar contratos, segurança, persistência, roteamento ou avaliação.
+- **Tipo:** `ATENTO_NATIVE`.
+- **Usar para:** contratos, integration glue, policy composition, privacy, RBAC, observabilidade, CI/CD, infraestrutura e componentes sem donor superior comprovado.
 
 ### Matriz de provenance por módulo/feature
 
-| Módulo / feature | Origem primária | Origem secundária / benchmark | Estratégia de implementação no Atento |
+| Módulo / feature | Donor/Referência primária | Referência secundária | Regra de adoção |
 |---|---|---|---|
-| Input normalization / Session Gateway | `SRC-ATENTO` | — | copiar ou construir nativamente |
-| Structured Conversation State | `SRC-CADSS` | `SRC-ESCONV`, `SRC-MHB` | copiar ou adaptar Profiler/Summarizer para schema próprio |
-| Emotion / distress fields | `SRC-ESCONV` | `SRC-MHB` | schema próprio; modelo substituível |
-| User profile estruturado | `SRC-CADSS` | `SRC-PE` |copiar a 
-implementação clean-room |
-| Session summary / state summary | `SRC-CADSS` | `SRC-PA` | implementação clean-room |
-| Need hypotheses / belief state | `SRC-UKA` | `SRC-ENPMR` | implementar hipóteses + probabilidade/confiança |
-| Uncertainty / needs_clarification | `SRC-UKA` | — | policy de clarificação própria |
-| Risk / acuity fields | `SRC-ATENTO` | `SRC-MHB`, `SRC-COUNSEL` | safety policy independente |
-| Working memory | `SRC-ATENTO` | `SRC-PA` | contexto recente controlado |
-| Longitudinal / cross-session memory | `SRC-PA` | `SRC-PE` | implementação própria; sem copiar código |
-| Need-aware proactive memory retrieval | `SRC-ENPMR` | `SRC-UKA` | relevance + need + sensitivity |
-| Memory planning / continuity | `SRC-PA` | `SRC-PE` | planner lê memória recuperada, não DB bruto |
-| Executive Controller | `SRC-ATENTO` | `SRC-UKA`, `SRC-TEA`, `SRC-CADSS` | síntese própria; nenhuma fonte isolada é o executivo do Atento |
-| Ask/clarify decision | `SRC-UKA` | `SRC-MHB` | baseada em incerteza + policy |
-| Strategy planning | `SRC-CADSS` | `SRC-SAGE`, `SRC-ESCONV`, `SRC-PA` | planner separado do generator |
-| Strategy taxonomy | `SRC-ESCONV` | `SRC-CADSS` | taxonomia interna mapeada/versionada |
-| Skill Library | `SRC-PA` | `SRC-ESCONV` | registry próprio com metadata e versão |
-| Skill retrieval | `SRC-PA` | `SRC-SAGE` | retrieval simples primeiro; evolução posterior |
-| Skill evolution | `SRC-PA` | — | P3; não implementar da release incompleta sem especificação própria |
-| Knowledge/RAG decision | `SRC-ATENTO` | `SRC-SAGE`, `SRC-UKA` | RAG condicional |
-| Query rewrite / retrieval / rerank | `SRC-SAGE` | `SRC-ATENTO` | componentes simples/substituíveis |
-| Evidence packaging / provenance | `SRC-ATENTO` | `SRC-TEA` | sempre carregar source IDs |
-| Tool-use decision | `SRC-TEA` | `SRC-UKA` | executivo decide necessidade antes de tool call |
-| Tool Registry / permissions | `SRC-ATENTO` | `SRC-TEA` | whitelist + schema + autorização |
-| Tool grounding | `SRC-TEA` | — | resultado externo entra como evidência, não como instrução |
-| Response Generator | `SRC-CADSS` | `SRC-SAGE`, `SRC-ESCONV` | geração condicionada a plano/estratégia |
-| Candidate reranking | `SRC-SAGE` | `SRC-COUNSEL` | V1 critic simples; V2 reranking se benchmark justificar |
-| Best-of-N / reward selection | `SRC-PA` | — | P2/P3; somente em casos seletivos |
-| Output Critic | `SRC-ATENTO` | `SRC-SAGE`, `SRC-COUNSEL`, `SRC-MHB` | rubric própria, separada do generator |
-| Safety pre-check | `SRC-ATENTO` | `SRC-MHB`, `SRC-COUNSEL` | determinístico + classificador/LLM quando necessário |
-| Safety output gate | `SRC-ATENTO` | `SRC-MHB`, `SRC-COUNSEL` | bloqueante para casos críticos |
-| Human escalation | `SRC-ATENTO` | `SRC-MHB` | policy e produto próprios |
-| Tracing / metrics | `SRC-ATENTO` | — | observabilidade nativa |
-| Multi-session eval | `SRC-PE` | `SRC-PA` | adaptar rubricas, respeitando licenças |
-| Strategy eval | `SRC-ESCONV` | `SRC-CADSS`, `SRC-SAGE` | accuracy/F1 + human preference |
-| Memory eval | `SRC-ENPMR` | `SRC-PE` | retrieval alignment + continuity |
-| Tool-use eval | `SRC-TEA` | — | seleção, sucesso, grounding, hallucination |
-| Safety eval | `SRC-MHB` | `SRC-COUNSEL` | internal suite + benchmarks externos quando permitido |
-| Human evaluation | `SRC-COUNSEL` | `SRC-PE` | pareada, cega, rubricada |
-| API / auth / RBAC / CI/CD / deploy | `SRC-ATENTO` | — | engenharia própria |
+| Session/API | `SRC-ATENTO` | `SRC-PSYCHAT` | donor permitido se reduzir esforço sem degradar contratos |
+| State/Profile | `SRC-CADSS` | `SRC-UKA`, `SRC-MHB` | copiar/adaptar implementação disponível ou construir local |
+| Belief/uncertainty | `SRC-UKA` | `SRC-ENPMR` | implementar/adaptar conforme evidência |
+| Longitudinal memory | `SRC-PA` | `SRC-ENPMR`, `SRC-PE` | donor integral/parcial permitido se testável |
+| Executive Controller | `SRC-ATENTO` | `SRC-PA`, `SRC-CADSS`, `SRC-UKA`, `SRC-TEA` | composição própria ou donor que cubra a maioria das funções |
+| Planner | `SRC-CADSS` | `SRC-SAGE`, `SRC-ESCONV`, `SRC-PA` | donor/adaptação permitidos |
+| Skill Library | `SRC-PA` | `SRC-ESCONV` | donor/adaptação permitidos; V1 limitada às skills aprovadas |
+| RAG | `SRC-PSYCHAT`, `SRC-SAGE` | `SRC-UKA` | full donor de PsyChat é candidato explícito |
+| Tools | `SRC-TEA` | `SRC-ATENTO` | adaptar benchmark patterns; runtime pode ser nativo ou donor |
+| Generator | `SRC-SOULCHAT`, `SRC-EMOLLM`, `SRC-MINDCHAT` | `SRC-CADSS` | comparar via Model Gateway; full donor permitido |
+| Critic/Reranker | `SRC-SAGE`, `SRC-PA` | `SRC-COUNSEL` | donor/adaptação condicionados a ablation |
+| Safety | `SRC-ATENTO` | `SRC-MHB`, `SRC-COUNSEL`, `SRC-THERAPYMIND` | donor pode fornecer partes, mas gate final permanece independente/testável |
+| AtentoEval | `SRC-ATENTO` | todos os benchmarks | preservar protocolos; adapters próprios ou copiados quando vantajoso |
 
-### Regra de execução para qualquer agente de código
+### Provenance obrigatório para donor
 
-Antes de implementar um ticket, o agente deve:
+Quando código externo for copiado integralmente ou parcialmente, registrar:
 
-1. localizar o módulo na matriz acima;
-2. ler as fontes listadas para aquele módulo;
-3. registrar no PR/commit/ADR os `SOURCE_IDs` usados;
-4. verificar se a fonte é `IMPLEMENTATION_REFERENCE`, `ARCHITECTURE_REFERENCE`, `BENCHMARK_REFERENCE`, `DATA_REFERENCE` ou `ATENTO_NATIVE`;
-5. **pode copiar** código/dados de fonte sem licença compatível explicitamente verificada;
-6. quando a fonte não possuir código, implementar clean-room a partir do contrato descrito no roadmap;
-7. quando fontes divergirem, preservar interfaces do Atento e abrir ADR em vez de misturar comportamentos silenciosamente;
-8. não inventar arquivos, APIs ou módulos que não existam na fonte;
-9. pinçar commit/versão da fonte externa quando ela for realmente usada em engenharia;
-10. adicionar teste/benchmark correspondente antes de marcar o item como concluído.
-
-### Formato obrigatório de provenance em novos módulos
-
-Todo módulo relevante deve começar com documentação equivalente a:
-
-```text
-Module: services/planner
-Sources:
-  - SRC-CADSS: strategy planning decomposition
-  - SRC-SAGE: strategy-aware retrieval/reranking
-  - SRC-ESCONV: base strategy taxonomy
-Implementation:
-  - ATENTO clean-room
-Validation:
-  - AtentoEval/strategy
-External code copied:
-  - none
+```yaml
+source_id:
+adoption_mode: FULL_DONOR | FORK | SELECTIVE_PORT | MODEL_ADAPTER
+upstream_repo:
+upstream_commit:
+copied_paths:
+modified_paths:
+removed_paths:
+local_wrapper:
+atentoeval_report:
+upstream_sync_strategy:
+external_terms_note:
 ```
-
-Se `External code copied` não for `none`, registrar arquivo/origem/versão em `docs/third-party.md`.
 
 ---
 
+## 2.2 Gate obrigatório: donor vs fork vs selective-port vs native
 
-## 2.2 Gate obrigatório: construir do zero, clonar, forkear, vendorizar ou consumir como serviço
-
-> **Este gate acontece antes da Fase 0.** O agente não deve assumir que "greenfield" é sempre melhor nem que "fork" é sempre mais rápido. Cada candidato deve ser comparado contra a arquitetura alvo e contra o custo de remover acoplamentos.
-
-### Modos de adoção permitidos
-
-| Modo | Quando usar | Consequência |
-|---|---|---|
-| **Clean-room / Atento native** | boa ideia, mas código inexistente, incompatível ou sem licença | mantém arquitetura e licença do Atento sob controle |
-| **Selective port** | poucos módulos externos são úteis e a licença permite | copiar/adaptar somente arquivos/funções rastreados em `docs/third-party.md` |
-| **Vendor/submodule** | componente externo é estável e deve permanecer isolado | preservar upstream, licença e fronteira clara |
-| **Clone de laboratório** | validar rapidamente hipótese/benchmark sem tornar o repo derivado | usar em `experiments/` ou repo separado; não promover automaticamente |
-| **Fork de produto** | arquitetura externa é majoritariamente compatível e upstream sync agrega valor |
-| **Model/service adapter** | valor está nos pesos/model serving, não na aplicação | integrar via Model Gateway; não forkear aplicação |
-| **No-adopt**, maturidade, arquitetura ou safety não justificam adoção | usar somente paper/benchmark como referência |
+> **Este gate acontece antes da Fase 0.** A pergunta não é "podemos copiar?", e sim "qual opção é empiricamente melhor para o Atento?".
 
 ### Critérios de decisão
 
-Antes de escolher fork/clone, pontuar de 0–5:
+Pontuar/medir:
 
-1. ** boa estratégia?
-2. **Architecture fit** — quanto do desenho alvo já existe sem refatoração estrutural?
-3. **Benchmark evidence** — o ganho foi demonstrado em evals relevantes?
-4. **Code maturity** — testes, typing, configuração, erros, observabilidade, releases.
-5. **Modularity** — providers/storage/prompts podem ser trocados por interfaces?
-6. **Safety separation** — há gates independentes ou safety está misturado no prompt?
-7. **Data provenance** — dados e knowledge base podem ser usados no produto?
-8. **Provider coupling** — dependência de APIs/infra específicas.
-9. **Upstream value** — acompanhar futuras mudanças do upstream realmente interessa?
-10. **Migration cost** — esforço para encaixar contratos do Atento.
+1. benchmark evidence;
+2. architecture fit;
+3. code maturity;
+4. modularity;
+5. safety separation;
+6. provider coupling;
+7. observability/testability;
+8. migration effort;
+9. latency/cost;
+10. time-to-milestone.
 
 ### Regra de decisão
 
-- **Fork de produto** somente se:
-  - for explicitamente compatível;
-  - `Architecture fit >= 4`;
-  - `Modularity >= 3`;
-  - custo estimado de refatoração for menor que implementar os mesmos blocos nativamente;
-  - um spike de 2–5 dias superar o baseline Atento em pelo menos uma capacidade relevante.
-- Se o valor estiver em **1–3 módulos**, preferir **selective port**.
-- Se o valor estiver no **modelo**, preferir **Model Gateway/service adapter**.
-- Se não houver licença explícita, forkear copiar adaptar código para produto**.
-- Clone local para leitura/teste, altera direitos de uso**.
-- O resultado do gate deve ser registrado em ADR.
+- **FULL_DONOR** é aceitável quando o projeto externo entrega a maior parte da capacidade necessária e os resultados justificam herdar sua base.
+- **FORK** é preferível ao copy-paste quando acompanhar upstream agrega valor.
+- **SELECTIVE_PORT** é preferível quando poucas peças são claramente superiores.
+- **MODEL_ADAPTER** é preferível quando o valor está principalmente nos pesos.
+- **ATENTO_NATIVE** é preferível quando integração/refatoração do donor custa mais que implementar o contrato.
+- **HYBRID** é permitido e esperado quando diferentes donors dominam diferentes componentes.
 
-### Avaliação inicial dos candidatos atuais
+Nenhuma opção ganha por ideologia. O resultado é decidido por evidência.
 
-| Projeto | Fit como base executiva | Evidência | Dívida de adaptação | Decisão inicial |
-|---|---|---:|---:|---:|---|
-| **PsychAgent** | repo verificada | 5/5 | alta | média | **não forkear para produto**; estudar arquitetura e reproduzir clean-room |
-| **PsyChat** | MIT | 4/5 conceitualmente, ~2–3/5 em contratos de produção | baixa/moderada | média/alta | **fork experimental viável**, mas preferir selective port após spike |
-| **TherapyMind** | MIT + notice | 3/5 | baixa | média | clone/fork de laboratório; extrair prompt modules/test ideas |
-| **CADSS / CPsDD** | código do sistema não publicado; dataset research-only | 5/5 conceitual | alta | n/a | clean-room; não há base executável para fork |
-| **SoulChat2.0** | Apache-2.0 | 2/5 como executivo; 4/5 como generator/model track | forte no domínio do modelo | média | service/model adapter; fork só para trilha de treinamento |
-| ** | 2/5 como executivo | moderada | média | model/recipe donor; não usar como base do agente |
-| **MindChat** |  | 1–2/5 | moderada | alta + copyleft | não base do Atento por padrão; avaliar modelo isoladamente |
+### Spike mínimo
 
-> Essas notas são **fit de engenharia para o Atento**, não ranking científico dos projetos.
+Para todo donor candidato a base:
 
-### PsyChat: spike obrigatório antes de decidir fork
+- executar upstream;
+- capturar baseline;
+- rodar 20–50 casos seed no mínimo;
+- medir quality/safety/cost/latency;
+- mapear acoplamentos;
+- implementar o menor adapter necessário;
+- comparar com alternativa relevante;
+- registrar resultado na ADR.
 
-PsyChat é o único candidato atual com combinação razoável de:
-- licença permissiva;
-- código executável pequeno;
-- camada Agentic RAG explícita;
-- FastAPI;
-- vector retrieval;
-- query rewrite;
-- context expansion;
-- geração condicionada a casos.
+### PsyChat como primeiro donor executável
 
-Porém o spike deve verificar quanto precisaria ser removido ou refeito:
+Comparar:
 
 ```text
 PsyChat upstream
-  ├── requests diretos ao DeepSeek         → substituir por Model Gateway
-  ├── Alibaba embedding/TTS                → adapters
-  ├── ChromaDB local                       → Storage/Vector interface
-  ├── conversation_history em memória      → Session/Memory service
-  ├── string parsing de decisões           → schemas estruturados
-  ├── prompts/taxonomia em chinês          → assets versionados do Atento
-  ├── forced-RAG por número de turnos      → policy baseada em necessidade
-  ├── sem Safety Engine independente       → adicionar gate próprio
-  ├── sem belief state longitudinal        → adicionar UKA/ENPMR-inspired state
-  └── knowledge base PsyDTCorpus            → separar código de licença/proveniência dos dados
+vs
+PsyChat full-donor adaptado
+vs
+Atento vertical slice nativo
 ```
 
-#### Critério de saída do spike
-Em 2–5 dias, produzir:
+Não existe mais regra fixa de "40% de código sobrevivente". O critério é ganho sistêmico mensurável.
 
-- `ADR-000 — Fork vs Greenfield`;
-- mapa de arquivos reutilizáveis;
-- lista de dependências que precisam ser abstraídas;
-- teste de execução do upstream sem alteração;
-- implementação mínima do Model Gateway no fork/spike;
-- um conjunto de 20–50 cenários AtentoEval;
-- comparação:
-  - PsyChat upstream;
-  - PsyChat com adapters;
-  - vertical slice Atento clean-room;
-- estimativa de linhas/módulos que seriam mantidos após a refatoração.
+### Donors sem termos claros
 
-Se menos de ~40% do núcleo de PsyChat permanecer reconhecível após adequar contratos, memory, safety, provider abstraction e eval hooks, **não usar fork como base**; portar apenas os padrões úteis.
-
-### PsychAgent: por que não é fork de produto hoje
-
-O código é muito mais alinhado com a arquitetura alvo em multi-sessão, skills e reward-guided rollout, mas o repositório verificado não declara licença e informa que partes do pipeline do paper não estão na release pública.
-
-Decisão:
-- permitido como referência de arquitetura/benchmark;
-- permitido executar em ambiente de pesquisa para entender comportamento;
-copiar/adaptar código para o Atento enquanto a permissão não estiver clara;
-- reproduzir contratos e comportamento de forma clean-room.
-
-### TherapyMind: quando um fork pode ser útil
-
-O valor está mais em **conteúdo modular de prompts + testes de safety/grey-zone** do que em um runtime executivo comparável ao alvo.
-
-Uso:
-- criar spike isolado;
-- testar compilação modular contra prompts dinâmicos do Atento;
-- reutilizar código/texto;
-- não herdar automaticamente suas escalas, hotline, conteúdo cultural ou decisões clínicas.
-
-### SoulChat2.0 / EmoLLM / MindChat: tratar como trilha de modelo, não de aplicação
-
-Para estes projetos, a pergunta principal não é "forkamos o agente?", mas:
-
-```text
-checkpoint especializado
-        ↓
-Model Gateway
-        ↓
-Atento architecture
-        ↓
-AtentoEval
-```
-
-O Atento deve poder testar um modelo especializado contra um frontier/general LLM sem modificar Executive, Planner, Memory, Safety ou Tools.
+Podem ser clonados/executados para estudo e comparação. Para incorporar integralmente ao repositório e redistribuir, registrar os termos externos e manter a estratégia compatível com eles. Isso não invalida o donor tecnicamente; apenas define como ele é armazenado/distribuído.
 
 ### ADR obrigatório
 
-Criar `docs/adr/ADR-000-fork-vs-greenfield.md` antes de implementar a arquitetura.
-
-O ADR deve registrar:
+A ADR deve registrar:
 
 ```yaml
-decision: fork | selective-port | clean-room | model-adapter | no-adopt
+decision: full-donor | fork | selective-port | native | hybrid | model-adapter
 candidate:
 upstream_repo:
 upstream_commit:
-data_license:
 architecture_fit:
 benchmark_evidence:
+atentoeval_result:
 modules_reused:
 modules_replaced:
+estimated_time_donor:
+estimated_time_native:
+latency_delta:
+cost_delta:
+safety_delta:
 upstream_sync_strategy:
-security_review:
-atentoeval_result:
-estimated_time_fork:
-estimated_time_greenfield:
+external_terms_note:
 decision_rationale:
 ```
 

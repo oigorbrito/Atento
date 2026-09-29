@@ -14,30 +14,36 @@ A fonte canônica de progresso continua sendo `roadmap.md`; a fonte canônica de
 
 ## Context
 
-O Atento pode ser implementado como arquitetura própria, selective port de módulos externos, fork de um projeto existente ou combinação dessas estratégias. Esta ADR deve ser concluída antes do bootstrap da base de produção.
+O Atento pode ser implementado como arquitetura própria, selective port, **full donor**, fork de um projeto existente, model adapter ou combinação dessas estratégias. O projeto autoriza adoção integral de donors quando a evidência mostrar vantagem. Esta ADR deve ser concluída antes do bootstrap da base de produção.
 
 ## Candidates
 
 ### PsyChat
 - Repo: https://github.com/wink-wink-wink555/PsyChat
 - Commit avaliado: `5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4`
-- License: MIT
-- Current status: candidate for spike/selective port
+- Terms: MIT
+- Current status: candidate for full donor / fork / selective port
 
 ### PsychAgent
 - Repo: https://github.com/ECNU-ICALK/PsychAgent
 - Commit avaliado: `469f45ef468b968b3fccd1936d7e6a0a574e4c5c`
-- License: nenhuma licença de repo verificada
-- Current status: architecture/reference only
+- Terms: nenhuma licença de repo verificada na revisão
+- Current status: external research clone / architecture donor candidate
 
 ### TherapyMind
 - Repo: https://github.com/zx070326-hash/TherapyMind
 - Commit avaliado: `bfed3f5be61bab262bb00a0f3cc9718c4a965243`
-- License: MIT + contextual notice
-- Current status: lab spike candidate
+- Terms: MIT + contextual notice
+- Current status: full donor / lab spike candidate
 
 ### SoulChat2.0 / EmoLLM / MindChat
 Tratar primariamente como trilha de modelos/checkpoints, não como base do Executive Runtime.
+
+## Full donor rule
+
+Adoção integral não é penalizada por princípio. O donor pode ser copiado/forkeado na íntegra para o estudo quando isso melhorar a solução de forma mensurável. A ADR deve comparar o donor integral com alternativas razoáveis usando o mesmo AtentoEval.
+
+A autorização interna do projeto não substitui os termos externos de redistribuição; isso é registrado separadamente em `docs/third-party.md`.
 
 ## Evaluation matrix
 
@@ -45,7 +51,7 @@ Preencher de 0–5:
 
 | Criterion | PsyChat | TherapyMind | Greenfield Atento |
 |---|---:|---:|---:|
-| License fit | | | 5 |
+| External terms / redistribution note | | | n/a |
 | Architecture fit | | | 5 |
 | Benchmark evidence | | | |
 | Code maturity | | | |
@@ -98,14 +104,14 @@ estimated_fork_to_mvp_days:
 estimated_greenfield_to_mvp_days:
 ```
 
-If less than ~40% of the upstream core remains recognizably useful after provider abstraction, structured contracts, memory, safety and observability, prefer selective port or greenfield.
+A porcentagem de código retido é informativa, não decisiva. Full donor continua válido se o ganho sistêmico em tempo, qualidade, safety, custo e manutenção for melhor.
 
 ## Acceptance criteria
 
 Esta ADR só pode mudar de `Proposed` para `Accepted` quando:
 
 - o upstream selecionado tiver sido executado sem alteração ou a impossibilidade estiver documentada;
-- licença do código e dos dados relevantes tiver sido verificada;
+- termos externos e estratégia de armazenamento/redistribuição tiverem sido registrados;
 - houver report AtentoEval comparando as alternativas executáveis;
 - custo de adaptação vs clean-room tiver sido estimado;
 - módulos mantidos/substituídos estiverem listados;
@@ -115,14 +121,14 @@ Esta ADR só pode mudar de `Proposed` para `Accepted` quando:
 ## Decision
 
 ```yaml
-decision: TBD # fork | selective-port | clean-room | hybrid
+decision: TBD # full-donor | fork | selective-port | native | hybrid | model-adapter
 primary_reason:
 upstream_sync_strategy:
 modules_reused:
 modules_reimplemented:
 model_strategy:
-license_review:
-data_review:
+external_terms_note:
+data_provenance:
 ```
 
 ## Consequences

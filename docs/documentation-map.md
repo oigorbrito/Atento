@@ -14,7 +14,7 @@ Quando a mesma informação aparece em mais de um arquivo, prevalece o documento
 | `docs/adr/*.md` | decisão arquitetural específica | contexto, alternativas, evidência, decisão, consequências | status geral do projeto | decisão estrutural for proposta/aceita/substituída |
 | `docs/evaluation/harness.md` | metodologia AtentoEval | suites, schemas, judges, adapters, métricas, release comparison | progresso, escolha fork/greenfield, autorização de dataset | avaliação mudar |
 | `evals/README.md` | operação do harness | comandos, formatos, setup, troubleshooting | metodologia normativa ou thresholds duplicados | CLI/layout do harness mudar |
-| `docs/third-party.md` | provenance/licença externa | repo, commit, licença, dados, status de adoção, attribution | decisão arquitetural final, progresso | fonte externa for considerada/atualizada/usada |
+| `docs/third-party.md` | provenance/termos externos | repo, commit, termos conhecidos, dados, modo de adoção, attribution | decisão arquitetural final, progresso | fonte externa for considerada/atualizada/usada |
 | documentação local de módulo | contrato técnico local | interface, invariants, failure modes, exemplos | regras globais duplicadas | módulo mudar |
 
 ## Avaliação atual dos Markdown existentes
@@ -32,7 +32,7 @@ Não deve ser tratada como decisão antes do spike. A mudança para `Accepted` e
 Possui responsabilidade clara: metodologia de avaliação. Não deve carregar status geral do projeto.
 
 ### docs/third-party.md — defensável
-Deve ser mais conservador que o roadmap em licença/provenance. Fonte sem licença confirmada permanece reference-only.
+Registra facts de provenance/termos e o modo de adoção. Fonte sem termos claros pode ser usada como clone externo de pesquisa, mas não deve ser redistribuída silenciosamente dentro do repo.
 
 ### evals/README.md — defensável
 Deve continuar curto e operacional.

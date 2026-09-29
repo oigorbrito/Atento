@@ -167,17 +167,17 @@ Module: services/planner
 
 Sources:
   - SRC-CADSS: planner/strategy decomposition
-  - SRC-SAGE: strategy-aware retrieval
+  - SRC-SAGE: strategy-aware retrieval/reranking
   - SRC-ESCONV: strategy taxonomy
 
-Implementation:
-  - ATENTO clean-room
+Adoption mode:
+  - ATENTO_NATIVE | SELECTIVE_PORT | FULL_DONOR | MODEL_ADAPTER
 
 Validation:
   - AtentoEval/strategy
 
-External code copied:
-  - none
+External code:
+  - source repo + commit + path(s), quando houver
 ```
 
 ---
@@ -188,52 +188,84 @@ O agente deve distinguir:
 
 | Tipo | Pode fazer |
 |---|---|
-| `IMPLEMENTATION_REFERENCE` | estudar código; copiar/adaptar apenas com licença compatível |
-| `ARCHITECTURE_REFERENCE` | reproduzir comportamento clean-room |
-| `BENCHMARK_REFERENCE` | usar metodologia/protocolo de avaliação |
-| `DATA_REFERENCE` | usar dados somente após revisão de licença/uso |
-| `MODEL_REFERENCE` | avaliar modelo/checkpoint isoladamente |
+| `IMPLEMENTATION_REFERENCE` | estudar, executar, adaptar ou adotar integralmente como donor quando empiricamente justificável |
+| `ARCHITECTURE_REFERENCE` | reproduzir a arquitetura; se surgir implementação pública, reavaliar como donor |
+| `BENCHMARK_REFERENCE` | usar metodologia/protocolo de avaliação; não presumir runtime de produção |
+| `DATA_REFERENCE` | usar conforme finalidade do estudo e termos aplicáveis; registrar provenance |
+| `MODEL_REFERENCE` | avaliar checkpoint/model serving isoladamente ou incorporá-lo via Model Gateway |
 | `ATENTO_NATIVE` | implementação própria com ADR quando necessário |
 
 **Benchmark não é implementação.**  
-**Paper não é licença de código.**  
-**Código público não significa uso comercial permitido.**  
-**Dataset aberto não significa redistribuição irrestrita.**
+**Paper não prova maturidade de código.**  
+**Código público pode ser um donor integral, mas provenance e termos externos continuam registrados.**
 
 ---
 
-# 6. Regra de fork / clone / selective port
+# 6. Regra de fork / clone / selective port / full donor
 
-Antes de usar projeto externo como base:
+O projeto está em modo de **pesquisa e estudo**. Não existe preferência automática por reimplementar do zero.
 
-1. executar o gate da seção 2.2 de `roadmap.md`;
-2. verificar licença;
-3. verificar licença/provenance dos dados;
-4. pinçar commit;
-5. executar upstream sem alterações;
-6. medir baseline;
-7. mapear arquitetura externa → contratos Atento;
-8. estimar quanto código sobreviverá à adaptação;
-9. registrar decisão em `ADR-000-fork-vs-greenfield.md`.
+É permitido adotar **código integral de um donor** quando isso for empiricamente defensável.
 
-Não fazer fork de produto apenas porque:
+### Modos de adoção
 
-- "já funciona";
-- "parece parecido";
-- "economiza código";
-- "é open source";
-- "tem benchmark alto".
+- **FULL_DONOR** — copiar/forkear o donor inteiro e personalizar;
+- **FORK** — manter relação explícita com upstream e possibilidade de sync;
+- **SELECTIVE_PORT** — trazer apenas módulos/arquivos relevantes;
+- **MODEL_ADAPTER** — usar pesos/serving sem herdar a aplicação;
+- **ATENTO_NATIVE** — construir localmente;
+- **HYBRID** — combinar donor + componentes nativos.
 
-### Preferência
+### Regra empírica
 
-- valor em poucos módulos → **selective port**;
-- valor nos pesos/modelo → **Model Gateway adapter**;
-- código sem licença → **clean-room**;
-- arquitetura muito incompatível → **clean-room**;
-- upstream realmente compatível e útil → **fork**, somente após ADR.
+Antes de escolher o modo, medir:
+
+1. qualidade no AtentoEval;
+2. safety e privacy;
+3. latência;
+4. custo;
+5. cobertura funcional;
+6. dívida de adaptação;
+7. quantidade de código que precisará ser substituída;
+8. tempo estimado até o próximo milestone;
+9. observabilidade e testabilidade;
+10. capacidade de rollback/substituição.
+
+### Donor integral é permitido
+
+Copiar/adotar integralmente é aceitável quando:
+
+- o donor supera ou iguala o baseline relevante;
+- não introduz regressão bloqueante;
+- reduz materialmente tempo/complexidade **ou** traz capacidade difícil de reproduzir;
+- o código consegue ser encapsulado atrás dos contratos do Atento;
+- provenance é preservado;
+- o resultado é reproduzível no AtentoEval.
+
+Não existe regra de "se só 40% sobreviver, obrigatoriamente não usar". Esse número pode ser registrado como dado, mas a decisão é **empírica e sistêmica**.
+
+### Termos externos
+
+A autorização do projeto para reutilização **não substitui direitos/termos de terceiros**.
+
+Para pesquisa interna, o agente pode clonar e executar donors para estudo. Para copiar código integral **para dentro deste repositório** ou redistribuí-lo, preservar notices e respeitar os termos aplicáveis da fonte. Se os termos não estiverem claros, manter o donor como clone/referência externa no spike e registrar o bloqueio de redistribuição em `docs/third-party.md`.
+
+Isso é um requisito de provenance/redistribuição, não uma preferência arquitetural contra donors.
+
+### Gate
+
+Antes de promover qualquer donor para a base do Atento:
+
+1. pinçar commit/versão;
+2. executar upstream;
+3. rodar AtentoEval;
+4. mapear contratos;
+5. identificar código mantido, adaptado e substituído;
+6. registrar riscos;
+7. atualizar `docs/third-party.md`;
+8. decidir em ADR.
 
 ---
-
 # 7. Arquitetura alvo é modular, não multi-agent por obrigação
 
 Não transformar uma função em "agente" sem necessidade.
@@ -717,44 +749,46 @@ Se trocar modelo exige reescrever Executive/Memory/Planner, existe acoplamento i
 
 ---
 
-# 26. Dependência externa: pin + licença + provenance
+# 26. Dependência externa e donor: pin + provenance
 
-Ao adicionar dependência externa:
+Ao adicionar dependência ou donor externo:
 
-- pin de versão quando possível;
-- registrar licença;
-- registrar função;
-- registrar risco;
-- registrar substituto;
-- atualizar `docs/third-party.md`.
+- pin de versão/commit;
+- registrar origem e função;
+- registrar notices/termos externos;
+- registrar risco e substituto;
+- atualizar `docs/third-party.md`;
+- registrar modo de adoção: `FULL_DONOR`, `FORK`, `SELECTIVE_PORT`, `MODEL_ADAPTER` ou `REFERENCE_ONLY`.
 
-Código copiado/adaptado precisa registrar:
+Para donor integral, registrar adicionalmente:
 
-- repo;
-- commit;
-- arquivo upstream;
-- arquivo Atento;
-- licença;
-- modificações;
-- attribution.
+- upstream tree/commit;
+- arquivos removidos;
+- arquivos modificados;
+- patches próprios;
+- estratégia de sync;
+- testes/evals de aceitação;
+- rollback.
+
+O critério técnico é **evidência**, não preferência por código próprio.
 
 ---
 
-# 27. Dados de pesquisa não entram por conveniência
+# 27. Dados e artefatos de pesquisa
 
-Antes de usar dataset:
+Datasets, prompts, checkpoints e corpora podem ser usados no estudo quando forem necessários para reproduzir ou comparar resultados.
 
-- licença;
-- finalidade permitida;
-- commercial use;
-- redistribution;
-- sensitive data;
-- consent/provenance;
-- derived artifact policy.
+Registrar:
 
-Se não estiver claro, não incorporar.
+- fonte;
+- versão;
+- finalidade;
+- termos conhecidos;
+- sensitive-data considerations;
+- se o artefato foi copiado, referenciado externamente ou apenas usado durante o experimento;
+- resultados derivados.
 
-É permitido criar caso sintético equivalente para teste interno sem copiar conteúdo protegido.
+Não confundir autorização interna do Atento com autorização para redistribuir conteúdo de terceiros. Se redistribuição não estiver clara, manter o artefato fora do repositório e referenciá-lo por path/hash/version.
 
 ---
 
