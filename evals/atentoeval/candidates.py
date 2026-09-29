@@ -16,6 +16,31 @@ class CandidateVariant(str, Enum):
     MODEL_ADAPTER = "MODEL_ADAPTER"
 
 
+class AgentScope(str, Enum):
+    NAIA = "NAIA"
+    ANNA = "ANNA"
+    APOLLO = "APOLLO"
+    SHARED = "SHARED"
+    UNSPECIFIED = "UNSPECIFIED"
+
+
+class CandidateClass(str, Enum):
+    PERSISTENT_ASSISTANT_BASE_CANDIDATE = "PERSISTENT_ASSISTANT_BASE_CANDIDATE"
+    THERAPEUTIC_BASE_CANDIDATE = "THERAPEUTIC_BASE_CANDIDATE"
+    MECHANISM_DONOR = "MECHANISM_DONOR"
+    MODEL_OR_CHECKPOINT = "MODEL_OR_CHECKPOINT"
+    BENCHMARK_OR_EVAL_SOURCE = "BENCHMARK_OR_EVAL_SOURCE"
+    NATIVE_CONTROL = "NATIVE_CONTROL"
+    UNCLASSIFIED_PENDING_AUDIT = "UNCLASSIFIED_PENDING_AUDIT"
+
+
+class SelectionStatus(str, Enum):
+    NOT_SELECTED = "NOT_SELECTED"
+    SELECTED = "SELECTED"
+    DEFERRED = "DEFERRED"
+    NOT_APPLICABLE = "NOT_APPLICABLE"
+
+
 class EvidenceStatus(str, Enum):
     PASS_EMPIRICAL = "PASS_EMPIRICAL"
     PASS_STATIC = "PASS_STATIC"
@@ -33,6 +58,9 @@ class CandidateSpec:
     source_id: str
     variant: CandidateVariant
     adapter_id: str
+    agent_scope: AgentScope = AgentScope.UNSPECIFIED
+    candidate_class: CandidateClass = CandidateClass.UNCLASSIFIED_PENDING_AUDIT
+    selection_status: SelectionStatus = SelectionStatus.NOT_SELECTED
     repository: str | None = None
     upstream_sha: str | None = None
     ci_enabled: bool = False
@@ -47,6 +75,13 @@ class CandidateSpec:
             source_id=str(raw["source_id"]),
             variant=CandidateVariant(raw["variant"]),
             adapter_id=str(raw["adapter_id"]),
+            agent_scope=AgentScope(raw.get("agent_scope", AgentScope.UNSPECIFIED.value)),
+            candidate_class=CandidateClass(
+                raw.get("candidate_class", CandidateClass.UNCLASSIFIED_PENDING_AUDIT.value)
+            ),
+            selection_status=SelectionStatus(
+                raw.get("selection_status", SelectionStatus.NOT_SELECTED.value)
+            ),
             repository=raw.get("repository"),
             upstream_sha=raw.get("upstream_sha"),
             ci_enabled=bool(raw.get("ci_enabled", False)),
@@ -92,6 +127,9 @@ class CandidateResult:
     atento_sha: str
     repository: str | None = None
     upstream_sha: str | None = None
+    agent_scope: str = AgentScope.UNSPECIFIED.value
+    candidate_class: str = CandidateClass.UNCLASSIFIED_PENDING_AUDIT.value
+    selection_status: str = SelectionStatus.NOT_SELECTED.value
     case_set_hash: str | None = None
     policy_hash: str | None = None
     chassis: dict[str, Any] = field(default_factory=dict)
@@ -105,6 +143,9 @@ class CandidateResult:
     def validate(self) -> None:
         CandidateVariant(self.variant)
         EvidenceStatus(self.evidence_status)
+        AgentScope(self.agent_scope)
+        CandidateClass(self.candidate_class)
+        SelectionStatus(self.selection_status)
         if not self.candidate_id or not self.block or not self.source_id:
             raise ValueError("candidate identity fields are required")
         if not self.evaluation_kind:
@@ -143,6 +184,9 @@ def github_matrix(path: Path) -> dict[str, list[dict[str, Any]]]:
                 "block": candidate.block,
                 "source_id": candidate.source_id,
                 "variant": candidate.variant.value,
+                "agent_scope": candidate.agent_scope.value,
+                "candidate_class": candidate.candidate_class.value,
+                "selection_status": candidate.selection_status.value,
                 "repository": candidate.repository,
                 "upstream_sha": candidate.upstream_sha,
                 "ci_profile": candidate.ci_profile,
@@ -176,6 +220,9 @@ def write_static_result(
         atento_sha=atento_sha,
         repository=candidate.repository,
         upstream_sha=candidate.upstream_sha,
+        agent_scope=candidate.agent_scope.value,
+        candidate_class=candidate.candidate_class.value,
+        selection_status=candidate.selection_status.value,
         chassis=audit_data,
     )
     result.validate()
