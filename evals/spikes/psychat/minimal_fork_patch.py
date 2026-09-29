@@ -262,6 +262,26 @@ def patch_vector_store(path: Path) -> None:
     )
     text = replace_once(
         text,
+        "        try:\n"
+        "            # 生成查询的嵌入向量\n",
+        "        try:\n"
+        "            self._refresh_active_collection()\n"
+        "            # 生成查询的嵌入向量\n",
+        label="VectorStore search active generation refresh",
+    )
+    text = replace_once(
+        text,
+        "        try:\n"
+        "            metadata = self._validate_collection_contract()\n"
+        "            count = self.collection.count()\n",
+        "        try:\n"
+        "            self._refresh_active_collection()\n"
+        "            metadata = self._validate_collection_contract()\n"
+        "            count = self.collection.count()\n",
+        label="VectorStore info active generation refresh",
+    )
+    text = replace_once(
+        text,
         "    def get_embedding(self, text: str) -> List[float]:\n",
         "    def _read_active_collection_name(self) -> str:\n"
         "        if not self.pointer_path.exists():\n"
@@ -285,6 +305,21 @@ def patch_vector_store(path: Path) -> None:
         "        }\n"
         "        temp.write_text(json.dumps(payload, sort_keys=True), encoding=\"utf-8\")\n"
         "        os.replace(temp, self.pointer_path)\n\n"
+        "    def _refresh_active_collection(self) -> None:\n"
+        "        active_name = self._read_active_collection_name()\n"
+        "        if active_name == self.collection_name:\n"
+        "            return\n"
+        "        collection = self.client.get_collection(name=active_name)\n"
+        "        previous_collection = self.collection\n"
+        "        previous_name = self.collection_name\n"
+        "        self.collection = collection\n"
+        "        self.collection_name = active_name\n"
+        "        try:\n"
+        "            self._validate_collection_contract()\n"
+        "        except Exception:\n"
+        "            self.collection = previous_collection\n"
+        "            self.collection_name = previous_name\n"
+        "            raise\n\n"
         "    def rebuild_documents(self, documents: List[Dict[str, Any]]) -> bool:\n"
         "        generation = uuid.uuid4().hex[:12]\n"
         "        staging_name = f\"{self.logical_collection_name}__gen-{generation}\"\n"
@@ -682,7 +717,7 @@ def apply_patch(donor_root: Path) -> dict:
     retention = retention_metrics(donor_root)
 
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.16",
+        "metric_version": "psychat-minimal-fork-patch-v0.17",
         "pinned_commit": head_before,
         "changed_files": changed,
         "donor_files_touched_to_introduce_provider_boundary": len(PROVIDER_BOUNDARY_FILES),
@@ -702,6 +737,7 @@ def apply_patch(donor_root: Path) -> dict:
         "knowledge_base_rebuild_uses_staging_generation": True,
         "active_index_pointer_promoted_atomically": True,
         "partial_staging_index_never_promoted": True,
+        "long_lived_vector_store_refreshes_active_generation": True,
         "persisted_collection_metadata_validated": True,
         "collection_contract_mismatch_fails_closed": True,
         "similarity_transform": "1 - cosine_distance",
