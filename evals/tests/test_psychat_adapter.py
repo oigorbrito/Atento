@@ -102,6 +102,16 @@ class FakeFailedUpstreamRagSystem(FakeUpstreamRagSystem):
         return {"success": False, "response": "failed", "reason": "donor error"}
 
 
+class FakePatchedUpstreamRagSystem(FakeUpstreamRagSystem):
+    def __init__(self):
+        super().__init__()
+        self.force_flags = []
+
+    def generate_response(self, message, force_retrieval=False):
+        self.force_flags.append(bool(force_retrieval))
+        return super().generate_response(message)
+
+
 class AlternateRagExecutor:
     capability = "knowledge.rag"
     executor_id = "alternate"
@@ -326,6 +336,47 @@ class PsyChatAdapterTest(unittest.TestCase):
         port = PsyChatRagSystemPort(FakeFailedUpstreamRagSystem)
         with self.assertRaisesRegex(RuntimeError, "donor error"):
             port.respond(message="hello", session_state={})
+
+    def test_bridge_propagates_external_rag_authority_to_patched_donor(self):
+        created = []
+
+        def factory():
+            donor = FakePatchedUpstreamRagSystem()
+            created.append(donor)
+            return donor
+
+        registry = CapabilityRegistry()
+        registry.register(PsyChatExecutorAdapter(PsyChatRagSystemPort(factory)))
+        runtime = PsyChatSpikeRuntime(
+            registry=registry,
+            sessions=InMemorySessionStore(),
+        )
+
+        result = runtime.execute(
+            session_id="rag-route",
+            message="knowledge question",
+            route=route(),
+        )
+
+        self.assertEqual(result.response, "upstream:knowledge question:1")
+        self.assertEqual(created[0].force_flags, [True])
+
+    def test_bridge_fails_closed_if_rag_route_targets_unpatched_donor(self):
+        registry = CapabilityRegistry()
+        registry.register(
+            PsyChatExecutorAdapter(PsyChatRagSystemPort(FakeUpstreamRagSystem))
+        )
+        runtime = PsyChatSpikeRuntime(
+            registry=registry,
+            sessions=InMemorySessionStore(),
+        )
+
+        with self.assertRaisesRegex(RuntimeError, "does not expose external force_retrieval"):
+            runtime.execute(
+                session_id="unpatched",
+                message="knowledge question",
+                route=route(),
+            )
 
     def test_bridge_factory_prevents_state_reuse_between_calls(self):
         port = PsyChatRagSystemPort(FakeUpstreamRagSystem)
