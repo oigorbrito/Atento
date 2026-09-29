@@ -4,6 +4,10 @@ Atento é um projeto de engenharia para um sistema conversacional de apoio emoci
 
 > **Maturidade atual:** pesquisa/arquitetura + scaffold inicial de avaliação. Não tratar o repositório atual como sistema clínico ou produto de produção.
 
+## Alinhamento conceitual em reconstrução
+
+O projeto está reconciliando sua definição de produto em três partes. A **Parte 1 — Assistente Persistente** e a origem da decisão OpenMausBot/Nayá estão registradas em [docs/product-concept-reset.md](docs/product-concept-reset.md). Até as três partes serem fechadas, não interpretar a decomposição histórica do repositório como definição final do produto.
+
 ## Onde começar
 
 - **Regras para agentes/contribuidores:** [AGENTS.md](AGENTS.md)
