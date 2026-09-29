@@ -1,0 +1,92 @@
+{
+  "version": "0.1.0",
+  "policy": {
+    "pin_external_candidates": true,
+    "variants": [
+      "UPSTREAM",
+      "WRAPPED",
+      "FORKED",
+      "NATIVE",
+      "MODEL_ADAPTER"
+    ],
+    "ci_profiles": [
+      "python_static_chassis"
+    ],
+    "decision_requires_same_block_contract": true,
+    "decision_requires_same_case_set_when_behavioral": true
+  },
+  "candidates": [
+    {
+      "candidate_id": "psychat_upstream",
+      "block": "I",
+      "source_id": "SRC-PSYCHAT",
+      "repository": "wink-wink-wink555/PsyChat",
+      "upstream_sha": "5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4",
+      "variant": "UPSTREAM",
+      "adapter_id": "psychat_upstream",
+      "ci_enabled": true,
+      "ci_profile": "python_static_chassis",
+      "external_terms_note": "MIT; preserve upstream notice. Canonical provenance remains in docs/third-party.md."
+    },
+    {
+      "candidate_id": "psychat_wrapped",
+      "block": "I",
+      "source_id": "SRC-PSYCHAT",
+      "repository": "wink-wink-wink555/PsyChat",
+      "upstream_sha": "5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4",
+      "variant": "WRAPPED",
+      "adapter_id": "psychat_atento",
+      "ci_enabled": false,
+      "ci_profile": null,
+      "external_terms_note": "Experimental Atento wrapper; enable only when the adapter is present on the evaluated ref."
+    },
+    {
+      "candidate_id": "psychat_forked",
+      "block": "I",
+      "source_id": "SRC-PSYCHAT",
+      "repository": "wink-wink-wink555/PsyChat",
+      "upstream_sha": "5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4",
+      "variant": "FORKED",
+      "adapter_id": "psychat_fork",
+      "ci_enabled": false,
+      "ci_profile": null,
+      "external_terms_note": "Fork variant must record the exact patched ref separately before execution."
+    },
+    {
+      "candidate_id": "therapymind_upstream",
+      "block": "F",
+      "source_id": "SRC-THERAPYMIND",
+      "repository": "zx070326-hash/TherapyMind",
+      "upstream_sha": "bfed3f5be61bab262bb00a0f3cc9718c4a965243",
+      "variant": "UPSTREAM",
+      "adapter_id": "therapymind_upstream",
+      "ci_enabled": false,
+      "ci_profile": null,
+      "external_terms_note": "MIT + contextual mental-health notice; see docs/third-party.md."
+    },
+    {
+      "candidate_id": "psychagent_upstream",
+      "block": "E",
+      "source_id": "SRC-PA",
+      "repository": "ECNU-ICALK/PsychAgent",
+      "upstream_sha": "469f45ef468b968b3fccd1936d7e6a0a574e4c5c",
+      "variant": "UPSTREAM",
+      "adapter_id": "psychagent_upstream",
+      "ci_enabled": false,
+      "ci_profile": null,
+      "external_terms_note": "Repository license was not detected in the reviewed revision; research clone only until terms are cleared."
+    },
+    {
+      "candidate_id": "atento_native_rag",
+      "block": "I",
+      "source_id": "SRC-ATENTO",
+      "repository": null,
+      "upstream_sha": null,
+      "variant": "NATIVE",
+      "adapter_id": "atento_native_rag",
+      "ci_enabled": false,
+      "ci_profile": null,
+      "external_terms_note": "Atento-native control; no external upstream pin."
+    }
+  ]
+}

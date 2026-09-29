@@ -67,3 +67,50 @@ Formato esperado para cada linha de `results.jsonl`:
 - CounselBench.
 
 Não coloque datasets externos aqui sem revisar licença e provenance.
+
+
+## Candidate registry
+
+Candidatos de donor/fork/native ficam em `evals/config/candidates.json`.
+
+A identidade reproduzível de candidato inclui:
+
+```text
+candidate_id
+block
+SOURCE_ID
+variant
+repository + full upstream SHA (quando externo)
+adapter_id
+```
+
+Validar o registry:
+
+```bash
+python -m evals.atentoeval.candidates validate-registry \
+  --registry evals/config/candidates.json
+```
+
+Gerar a matrix usada pela CI:
+
+```bash
+python -m evals.atentoeval.candidates github-matrix \
+  --registry evals/config/candidates.json
+```
+
+O workflow genérico é `.github/workflows/candidate-eval.yml`. Ele executa somente entradas com `ci_enabled=true` e perfil suportado. Adicionar um donor ao registry **não** significa promovê-lo nem adotá-lo.
+
+Cada job gera um candidate-result tipado. O status de evidência distingue explicitamente:
+
+- `PASS_EMPIRICAL`;
+- `PASS_STATIC`;
+- `PENDING_EXECUTION`;
+- `INFRA_BLOCKED`;
+- `QUALITY_RISK`;
+- `ARCH_RISK`;
+- `NOT_DECIDED`.
+
+`PASS_STATIC` nunca deve ser convertido em runtime PASS por interpretação.
+
+A metodologia multi-candidato está registrada em
+`docs/evaluation/donor-candidate-comparison-research-2026-09-29.md`.
