@@ -122,6 +122,14 @@ def patch_vector_store(path: Path) -> None:
     )
     text = replace_once(
         text,
+        "from config import *\n\nclass VectorStore:",
+        "from config import *\n\n"
+        "ATENTO_INDEX_SCHEMA_VERSION = \"rag-cosine-v1\"\n\n"
+        "class VectorStore:",
+        label="VectorStore index schema version",
+    )
+    text = replace_once(
+        text,
         """class VectorStore:
     def __init__(self):
         # 初始化阿里云百炼Embedding API配置
@@ -140,10 +148,17 @@ def patch_vector_store(path: Path) -> None:
     )
     text = replace_once(
         text,
+        "name=COLLECTION_NAME,",
+        'name=f"{COLLECTION_NAME}__{ATENTO_INDEX_SCHEMA_VERSION}",',
+        label="VectorStore versioned collection name",
+    )
+    text = replace_once(
+        text,
         'metadata={"description": "MCP知识库向量存储"}',
         'metadata={'
         '"description": "MCP知识库向量存储", '
-        '"hnsw:space": "cosine"'
+        '"hnsw:space": "cosine", '
+        '"atento:index_schema": ATENTO_INDEX_SCHEMA_VERSION'
         '}',
         label="VectorStore cosine distance metric",
     )
@@ -436,6 +451,8 @@ def apply_patch(donor_root: Path) -> dict:
         "donor_files_touched_for_bloco_i_rag_correctness": len(changed),
         "qa_id_provenance_patch_required": True,
         "vector_distance_metric": "cosine",
+        "vector_index_schema_version": "rag-cosine-v1",
+        "vector_collection_versioned": True,
         "similarity_transform": "1 - cosine_distance",
         "files_touched_to_swap_model_provider_after_boundary": 0,
         "files_touched_to_swap_embedding_provider_after_boundary": 0,
