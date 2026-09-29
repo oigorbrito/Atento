@@ -48,6 +48,27 @@ class RagCaseSetTest(unittest.TestCase):
                 msg=f"{case.id}: retrieval fixture references unknown document",
             )
 
+    def test_rag_attempted_matches_route_expectation(self):
+        cases = load_cases(RAG_CASES)
+
+        for case in cases.values():
+            step = case.steps[0]
+            self.assertIn(
+                "rag_attempted",
+                step.fixtures,
+                msg=f"{case.id}: rag_attempted fixture missing",
+            )
+            self.assertEqual(
+                bool(step.fixtures["rag_attempted"]),
+                step.expected.rag_required,
+                msg=f"{case.id}: attempted retrieval and expected RAG route diverged",
+            )
+
+        insufficient = cases["rag.insufficient-evidence.001"].steps[0]
+        self.assertTrue(insufficient.fixtures["rag_attempted"])
+        self.assertEqual(insufficient.fixtures["retrieval_fixture"], [])
+        self.assertEqual(insufficient.expected.rag_document_ids, [])
+
     def test_psychat_gold_cases_pin_source_commit(self):
         cases = load_cases(RAG_CASES)
         gold = [case for case in cases.values() if "psychat_gold" in case.tags]
