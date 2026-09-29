@@ -241,7 +241,7 @@ A regra de engenharia é preservar capacidade funcional comprovada e comparar o 
 - **Candidato para:** base da Assistente pessoal: Gateway, multi-channel, restart recovery, approvals e durable outbound delivery.
 - **Termos:** MIT.
 - **Estado de evidência:** qualificação estática concluída e preservada. **Estado de seleção atual:** shortlist reset / não selecionado.
-- **Execução:** o antigo delta OpenClaw/Nayá fica inativo até OpenClaw ser reclassificado na nova enumeração comparável da NAIA. Não repetir evidência upstream já válida.
+- **Execução:** o antigo delta OpenClaw/NAIA (IDs históricos `OC-NAYA-*`) fica inativo até OpenClaw ser reclassificado na nova enumeração comparável da NAIA. Não repetir evidência upstream já válida.
 
 #### SRC-NAIA — repositório histórico NaIa (donor)
 - **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
