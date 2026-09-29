@@ -207,9 +207,14 @@ class PsyChatMinimalPatchGeneratorTest(unittest.TestCase):
             compile(patched, str(path), "exec")
             self.assertIn("import hashlib", patched)
             self.assertIn("embedding_gateway.index_identity", patched)
+            self.assertIn("ATENTO_DEFAULT_CORPUS_IDENTITY", patched)
+            self.assertIn("corpus_identity=ATENTO_DEFAULT_CORPUS_IDENTITY", patched)
+            self.assertIn('index_identity = f"{embedding_identity}|{corpus_identity}"', patched)
             self.assertIn("identity_hash = hashlib.sha256(", patched)
             self.assertIn("name=self.collection_name", patched)
             self.assertIn("self.client.delete_collection(self.collection_name)", patched)
+            self.assertIn("self.collection.upsert(", patched)
+            self.assertNotIn("self.collection.add(", patched)
             self.assertIn('"hnsw:space": "cosine"', patched)
             self.assertIn(
                 '"atento:index_schema": ATENTO_INDEX_SCHEMA_VERSION',
@@ -217,6 +222,10 @@ class PsyChatMinimalPatchGeneratorTest(unittest.TestCase):
             )
             self.assertIn(
                 '"atento:embedding_identity": self.embedding_identity',
+                patched,
+            )
+            self.assertIn(
+                '"atento:corpus_identity": self.corpus_identity',
                 patched,
             )
             self.assertNotIn("self.client.delete_collection(COLLECTION_NAME)", patched)
