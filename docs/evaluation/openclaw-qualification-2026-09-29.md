@@ -352,6 +352,76 @@ This is the empirical invasiveness measurement required by ADR-002.
 
 ---
 
+
+## Local-delta execution update — 2026-09-29
+
+The generic OC-NAYA-001..005 workflow was prepared in the candidate-evaluation harness on PR #17.
+
+GitHub Actions execution remains unavailable/observable as of this update: after enabling the candidate workflow for pull requests on `main`, the GitHub connector returned no workflow run for the rebased PR head. This is classified as infrastructure evidence, not candidate failure.
+
+```text
+OPENCLAW_NAYA_ACTIONS_EXECUTION = INFRA_BLOCKED
+HARNESS_NOT_RUN != CANDIDATE_FAIL
+```
+
+### Controlled external-effect fault probe
+
+The qualification-only adapter subprobe from OC-NAYA-002 was executable without the OpenClaw dependency graph and was run directly.
+
+Exact PR blobs executed:
+
+- `effect-protocol.mjs` Git blob: `5189ad624db51a7b9334ded71d1a24cfc0d834bf`
+- `effect-protocol.test.mjs` Git blob: `7dbc97fd4629c2496ebe9a04aac1bbb2ab40efe5`
+
+Local runtime used for this isolated algorithm probe:
+
+- Node.js `v22.16.0`
+
+Observed fault sequence:
+
+```text
+persist intent
+→ provider effect succeeds
+→ simulated crash before local terminal commit
+→ reconstruct adapter
+→ authoritative provider readback
+→ persist reconciled completion
+→ replay same operation id
+```
+
+Observed result:
+
+```json
+{
+  "ok": true,
+  "crash_point": "provider_effect_succeeded_before_local_terminal_commit",
+  "recovered_without_duplicate": true,
+  "provider_calls_after_reconcile": 1,
+  "second_operation_completed": true
+}
+```
+
+Interpretation:
+
+```text
+OC-NAYA-002.CONTROLLED_ADAPTER_FAULT_PROBE = PASS_EMPIRICAL
+CONTROLLED_ADAPTER_DONOR_CORE_EDITS        = 0 (design target; full plugin validation pending)
+GENERIC_TOOL_EFFECT_DURABILITY             = ARCH_RISK / NOT_PROVEN
+```
+
+This result proves only the adapter-level reconciliation algorithm. It does **not** prove that the pinned OpenClaw runtime accepts/loads the plugin, because `openclaw plugins validate` and the pinned upstream runtime tests still require an executable dependency environment.
+
+Therefore the remaining status is:
+
+- `OC-NAYA-001`: pending pinned-runtime execution;
+- `OC-NAYA-002`: generic path remains `ARCH_RISK`; controlled adapter algorithm subprobe passed;
+- `OC-NAYA-003`: pending pinned-runtime execution;
+- `OC-NAYA-004`: pending pinned-runtime execution;
+- `OC-NAYA-005`: donor-core touchpoint claim pending OpenClaw plugin validation/runtime execution.
+
+No Project Point is earned by this qualification update.
+
+
 ## Qualification disposition
 
 At the inspected pin:
