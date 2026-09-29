@@ -101,6 +101,22 @@ class PsyChatRagSystemPort:
             force_retrieval=force_retrieval,
         )
 
+        vector_store = getattr(donor, "vector_store", None)
+        get_collection_info = getattr(vector_store, "get_collection_info", None)
+        if callable(get_collection_info):
+            index_info = get_collection_info()
+            if isinstance(index_info, Mapping):
+                turn_metadata["index"] = {
+                    key: index_info[key]
+                    for key in (
+                        "name",
+                        "index_schema",
+                        "embedding_identity",
+                        "corpus_identity",
+                    )
+                    if key in index_info
+                }
+
         next_state = {
             "conversation_history": list(
                 getattr(donor, "conversation_history", [])
