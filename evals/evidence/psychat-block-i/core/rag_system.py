@@ -51,10 +51,8 @@ class RAGSystem:
         try:
             print("开始构建心理咨询知识库...")
             
-            # 清空现有数据（如果需要）
-            if clear_existing:
-                self.vector_store.clear_collection()
-            
+            # Replacement rebuilds are staged and promoted atomically by VectorStore.
+
             # 处理文档
             documents = self.data_processor.process_documents(use_psychology_qa, use_header_splitting)
             
@@ -63,7 +61,11 @@ class RAGSystem:
                 return False
             
             # 添加到向量存储
-            success = self.vector_store.add_documents(documents)
+            success = (
+                self.vector_store.rebuild_documents(documents)
+                if clear_existing
+                else self.vector_store.add_documents(documents)
+            )
             
             if success:
                 # 显示知识库信息
