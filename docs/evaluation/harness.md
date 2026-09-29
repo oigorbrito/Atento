@@ -85,6 +85,56 @@ AtentoEval não deve:
 - incorporar datasets research-only ao produto;
 - permitir que ganho de qualidade compense regressão crítica de safety.
 
+### 3.1 Reuso de evidência antes de executar
+
+O AtentoEval não deve confundir rigor com repetição.
+
+Antes de criar ou rodar um teste local para um donor/candidato:
+
+1. fixar `repo + SHA`;
+2. localizar a implementação/contrato que sustenta a propriedade;
+3. localizar testes upstream diretamente relevantes e identificar o nível de prova:
+   - unit;
+   - integration;
+   - fault/recovery;
+   - end-to-end;
+   - benchmark;
+4. verificar resultados de CI/execução quando estiverem disponíveis;
+5. classificar a transferência:
+   - `UPSTREAM_PROVEN` — evidência aplicável sem mudança material do boundary;
+   - `TRANSFERABLE_WITH_CONSTRAINTS` — reutilizável apenas sob configuração/topologia equivalente;
+   - `ATENTO_DELTA` — adapter, policy, topology ou código local muda a propriedade;
+   - `UNPROVEN` — evidência insuficiente;
+6. executar localmente somente `ATENTO_DELTA` e invariantes bloqueantes `UNPROVEN`.
+
+Regras:
+
+- documentação do donor sem código/teste correspondente é evidência descritiva, não runtime pass;
+- ausência de status de CI observável não deve ser convertida em pass nem failure;
+- um teste upstream não transfere se o Atento contornar/substituir o mecanismo testado;
+- benchmark externo só responde o eixo que mede;
+- qualidade de tool use não prova durability/authority/isolation;
+- fault/recovery de mensagem não prova exactly-once de write arbitrário;
+- isolation de core state não prova isolation de stores globais de plugins;
+- não existe contagem fixa de casos para toda qualificação: tamanho de amostra deriva da hipótese;
+- change-surface deve ser medido sobre uma adaptação real, não estimado por um patch hipotético.
+
+A ordem preferida para candidatos externos é:
+
+```text
+audit/reconcile upstream evidence
+        ↓
+identify Atento delta
+        ↓
+implement smallest adapter/profile
+        ↓
+test only changed/unknown invariants
+        ↓
+measure Git change-surface
+        ↓
+compare candidates
+```
+
 ---
 
 ## 4. Unidade canônica: EvalCase
