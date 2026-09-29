@@ -1,99 +1,136 @@
 {
-  "version": "0.3.0",
+  "version": "0.4.0",
   "comparison_policy": {
     "one_primary_architecture_change_per_ablation": true,
     "same_case_set_required": true,
     "same_tool_fixtures_required": true,
     "record_model_revision": true,
     "record_prompt_hash": true,
-    "candidate_registry": "evals/config/candidates.json"
+    "candidate_registry": "evals/config/candidates.json",
+    "decision_authority": false,
+    "selection_state": "DECISION_RESET",
+    "candidate_universe_complete": false,
+    "mixed_agent_selection_comparison_forbidden": true
   },
   "systems": [
     {
       "id": "baseline_single_pass",
       "kind": "atento_baseline",
       "enabled": true,
-      "description": "Conversation history -> LLM -> response; no explicit planner/memory/tool controller."
+      "description": "Conversation history -> LLM -> response; no explicit planner/memory/tool controller.",
+      "agent_scope": "UNSPECIFIED_CONTROL",
+      "selection_status": "NOT_APPLICABLE"
     },
     {
       "id": "baseline_strong_prompt",
       "kind": "atento_baseline",
       "enabled": true,
-      "description": "Single-pass model with best available system prompt; no external executive architecture."
+      "description": "Single-pass model with best available system prompt; no external executive architecture.",
+      "agent_scope": "UNSPECIFIED_CONTROL",
+      "selection_status": "NOT_APPLICABLE"
     },
     {
       "id": "atento_no_memory",
       "kind": "ablation",
-      "enabled": true,
+      "enabled": false,
       "disable": [
         "longitudinal_memory"
-      ]
+      ],
+      "agent_scope": "ANNA_HISTORICAL",
+      "selection_status": "INACTIVE_DURING_DECISION_RESET",
+      "description": "Historical roadmap architecture variant; preserved but inactive until the Anna/runtime architecture is reselected."
     },
     {
       "id": "atento_no_planner",
       "kind": "ablation",
-      "enabled": true,
+      "enabled": false,
       "disable": [
         "planner"
-      ]
+      ],
+      "agent_scope": "ANNA_HISTORICAL",
+      "selection_status": "INACTIVE_DURING_DECISION_RESET",
+      "description": "Historical roadmap architecture variant; preserved but inactive until the Anna/runtime architecture is reselected."
     },
     {
       "id": "atento_no_critic",
       "kind": "ablation",
-      "enabled": true,
+      "enabled": false,
       "disable": [
         "critic"
-      ]
+      ],
+      "agent_scope": "ANNA_HISTORICAL",
+      "selection_status": "INACTIVE_DURING_DECISION_RESET",
+      "description": "Historical roadmap architecture variant; preserved but inactive until the Anna/runtime architecture is reselected."
     },
     {
       "id": "atento_full",
       "kind": "candidate",
-      "enabled": true,
-      "description": "Full architecture defined by roadmap."
+      "enabled": false,
+      "description": "Full architecture defined by roadmap. Historical roadmap architecture variant; preserved but inactive until the Anna/runtime architecture is reselected.",
+      "agent_scope": "ANNA_HISTORICAL",
+      "selection_status": "INACTIVE_DURING_DECISION_RESET"
     },
     {
       "id": "psychat_upstream",
       "kind": "fork_spike",
       "enabled": false,
       "source_id": "SRC-PSYCHAT",
-      "description": "Run upstream unchanged during ADR-000 spike.",
-      "candidate_ref": "psychat_upstream"
+      "description": "Run upstream unchanged during ADR-000 spike. Evidence entry only; not a current shortlist or execution priority.",
+      "candidate_ref": "psychat_upstream",
+      "agent_scope": "ANNA",
+      "selection_status": "NOT_SELECTED",
+      "candidate_class": "UNCLASSIFIED_PENDING_AUDIT"
     },
     {
       "id": "psychat_adapted",
       "kind": "fork_spike",
       "enabled": false,
       "source_id": "SRC-PSYCHAT",
-      "description": "PsyChat with Atento Model Gateway, structured contracts, external session state and independent safety.",
-      "candidate_ref": "psychat_wrapped"
+      "description": "PsyChat with Atento Model Gateway, structured contracts, external session state and independent safety. Evidence entry only; not a current shortlist or execution priority.",
+      "candidate_ref": "psychat_wrapped",
+      "agent_scope": "ANNA",
+      "selection_status": "NOT_SELECTED",
+      "candidate_class": "UNCLASSIFIED_PENDING_AUDIT"
     },
     {
       "id": "psychagent_reference",
       "kind": "reference_only",
       "enabled": false,
       "source_id": "SRC-PA",
-      "description": "Research reference; do not copy into product while repository license is unclear."
+      "description": "Research reference; do not copy into product while repository license is unclear. Evidence entry only; not a current shortlist or execution priority.",
+      "agent_scope": "ANNA",
+      "selection_status": "NOT_SELECTED",
+      "candidate_class": "UNCLASSIFIED_PENDING_AUDIT"
     },
     {
       "id": "specialized_generator_soulchat",
       "kind": "model_adapter",
       "enabled": false,
       "source_id": "SRC-SOULCHAT",
-      "description": "Evaluate as Response Generator backend through Model Gateway, not as executive architecture."
+      "description": "Evaluate as Response Generator backend through Model Gateway, not as executive architecture.",
+      "agent_scope": "ANNA",
+      "selection_status": "NOT_APPLICABLE",
+      "candidate_class": "MODEL_OR_CHECKPOINT"
     },
     {
       "id": "specialized_generator_emollm",
       "kind": "model_adapter",
       "enabled": false,
       "source_id": "SRC-EMOLLM",
-      "description": "Evaluate as Response Generator backend through Model Gateway."
+      "description": "Evaluate as Response Generator backend through Model Gateway.",
+      "agent_scope": "ANNA",
+      "selection_status": "NOT_APPLICABLE",
+      "candidate_class": "MODEL_OR_CHECKPOINT"
     },
     {
       "id": "specialized_generator_mindchat",
       "kind": "model_adapter",
       "enabled": false,
       "source_id": "SRC-MINDCHAT",
-      "description": "Model comparison only after checkpoint/license review."
+      "description": "Model comparison only after checkpoint/license review.",
+      "agent_scope": "ANNA",
+      "selection_status": "NOT_APPLICABLE",
+      "candidate_class": "MODEL_OR_CHECKPOINT"
     }
   ]
 }
