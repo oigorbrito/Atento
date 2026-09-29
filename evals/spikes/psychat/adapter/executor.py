@@ -68,9 +68,10 @@ class PsyChatExecutorAdapter:
             if doc_id is not None
         ]
 
-        attempted = bool(
-            turn_metadata.get("rag_attempted", bool(retrieval_docs))
-        )
+        # This executor is only selected for knowledge.rag and always invokes
+        # the donor with force_retrieval=True. A successful execution therefore
+        # means retrieval was attempted, even when zero documents were found.
+        attempted = True
         used_rag = bool(
             turn_metadata.get("used_rag", bool(retrieval_docs))
         )
