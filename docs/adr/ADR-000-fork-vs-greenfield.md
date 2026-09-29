@@ -100,11 +100,20 @@ Preencher de 0–5:
 - **Interpretation:** PsyChat does not expose clean constructor/session/schema seams upstream. A maintainable adoption requires a fork patch or selective/block-level port rather than relying only on monkeypatching.
 
 ### Test batch 3 — Atento chassis adapter contract probe
-- **Status:** COMPLETE at contract level; real donor runtime still pending.
-- **Local test result:** **6/6 passed** on Python 3.13.5.
-- **Provisional adapted Chassis Fitness:** **90/100**, conservatively keeping `provider_boundary` unresolved until direct donor provider paths are structurally removed/disabled.
+- **Status:** COMPLETE at contract level; real donor dynamic execution still pending.
+- **Local deterministic result:** **11/11 passed** on Python 3.13.5.
+- **Adapter-only static Chassis Fitness:** **90/100**.
+- **Important:** adapter-only CFS does not prove the composed donor has a real provider boundary; the pinned donor still contains direct provider calls.
+- **Replacement evidence:** executor swap PASS; rollback-by-route PASS; new capability registration PASS without Registry/Runtime modification.
+- **Integration defect found/fixed:** the real donor returns a response mapping, while the original fake-based bridge assumed a string.
 - **Evidence:** `evals/spikes/psychat/adapted-baseline.md`.
-- **Interpretation:** Atento boundaries can encapsulate the donor API surface, but upstream lacks native injection seams.
+- **Interpretation:** Atento boundaries improve replaceability around PsyChat, but upstream injection/provider seams remain unresolved.
+
+### Test batch 4 — real-source isolation + composed chassis
+- **Status:** BLOCKED_BY_INFRA.
+- **Probe:** `evals/spikes/psychat/real_isolation_probe.py`.
+- **Composed audit:** donor source + Atento adapter are audited together so donor provider bypasses cannot be hidden by adapter-only scoring.
+- **CI condition:** jobs are created but no workflow steps start; therefore no functional result is recorded yet.
 
 ## Mandatory spike results
 
