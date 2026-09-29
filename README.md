@@ -1,8 +1,8 @@
 # Atento
 
-Atento é um projeto de engenharia para um sistema conversacional de apoio emocional com arquitetura explícita de estado, memória, decisão executiva, planejamento, grounding, ferramentas, safety e avaliação.
+Atento é o repositório canônico de um produto com três agentes especializados: **NAIA** (assistente pessoal persistente), **Anna** (assistente emocional/terapêutica) e **Apollo** (nutrição/fitness, atualmente adiado).
 
-> **Maturidade atual:** pesquisa/arquitetura + scaffold inicial de avaliação. Não tratar o repositório atual como sistema clínico ou produto de produção.
+> **Maturidade atual:** reconciliação de produto + pesquisa/arquitetura + scaffold inicial de avaliação. Nenhum chassis está selecionado para NAIA ou Anna; Apollo está adiado.
 
 ## Alinhamento conceitual em reconstrução
 
@@ -49,4 +49,4 @@ Antes de novos spikes orientados por candidato, o projeto deve **reenumerar e re
 
 ## Aviso de escopo
 
-O Atento não deve ser apresentado como substituto de profissional de saúde mental, diagnóstico médico, tratamento ou serviço de emergência. Safety conversacional e segurança de aplicação são requisitos separados e precisam de validação própria.
+A **Anna** não deve ser apresentada como substituta de profissional de saúde mental, diagnóstico médico, tratamento ou serviço de emergência. O **Apollo** também não deve assumir escopo médico sem requisitos e validação específicos. Safety conversacional, segurança de aplicação e boundaries entre agentes são requisitos separados.
