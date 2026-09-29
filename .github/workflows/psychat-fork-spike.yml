@@ -59,3 +59,23 @@ jobs:
           name: psychat-static-chassis
           path: evals/results/psychat_static_chassis.json
           if-no-files-found: error
+
+  adapted-static:
+    name: Adapted chassis static audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Audit thin Atento boundary
+        run: |
+          python evals/chassis/donor_static_audit.py \
+            --root evals/spikes/psychat/adapter \
+            --source-id SRC-ATENTO \
+            --output evals/results/psychat_adapted_chassis.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: psychat-adapted-chassis
+          path: evals/results/psychat_adapted_chassis.json
+          if-no-files-found: error

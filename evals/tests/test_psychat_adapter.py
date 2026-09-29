@@ -36,6 +36,14 @@ def route(executor="psychat"):
     )
 
 
+class RecordingTraceSink:
+    def __init__(self):
+        self.events = []
+
+    def emit(self, event):
+        self.events.append(dict(event))
+
+
 class PsyChatAdapterTest(unittest.TestCase):
     def make_runtime(self):
         registry = CapabilityRegistry()
@@ -75,10 +83,18 @@ class PsyChatAdapterTest(unittest.TestCase):
             runtime.execute(session_id="a", message="x", route=bad)
 
     def test_trace_records_executor_choice(self):
-        runtime, _ = self.make_runtime()
+        sink = RecordingTraceSink()
+        registry = CapabilityRegistry()
+        registry.register(PsyChatExecutorAdapter(FakePsyChatDonor()))
+        runtime = PsyChatSpikeRuntime(
+            registry=registry,
+            sessions=InMemorySessionStore(),
+            trace_sink=sink,
+        )
         result = runtime.execute(session_id="a", message="x", route=route())
         self.assertEqual(result.trace[-1]["event"], "executor.completed")
         self.assertEqual(result.trace[-1]["executor"], "psychat")
+        self.assertEqual(sink.events[-1]["executor"], "psychat")
 
 
 if __name__ == "__main__":

@@ -119,6 +119,12 @@ def audit(root: Path, source_id: str, upstream_commit: str | None = None) -> dic
         if name in {"analyze_user_input", "judge_rag_and_classify", "route", "dispatch"}
         or "route" in name
     }
+    # A typed route decision is also valid evidence when execution lives in
+    # another module. This captures contract-first runtimes without requiring
+    # a monolithic route() function.
+    routing_files.update(
+        path for path, name in classes if name in {"routedecision", "router", "routerprotocol"}
+    )
     execution_files = {
         path
         for path, name in functions
@@ -165,6 +171,8 @@ def audit(root: Path, source_id: str, upstream_commit: str | None = None) -> dic
         or "structlog" in combined
         or "trace_id" in combined
         or "span_id" in combined
+        or "tracesink" in combined
+        or '"event":' in combined
         or "logging." in combined
         or "logger." in combined
     )
