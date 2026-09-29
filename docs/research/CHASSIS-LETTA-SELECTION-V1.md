@@ -13,12 +13,18 @@ A rodada de benchmark arquitetural realizada em 2026-09-29 avaliou candidatos de
 - parity e decisão M8–M11;
 - comparação executável Letta × LibreChat;
 - relatório de full-checkout/CI do SHA congelado;
-- scaffold F0–F5 e modelo de branch/change-control.
+- scaffold F0–F5 e modelo de branch/change-control;
+- benchmark empírico consolidado e matriz estruturada;
+- archive técnico bruto para auditoria.
 
 ## Arquivos publicados
 
 - `docs/evidence/CHASSIS-LETTA-SELECTION-2026-09-29.md` — handoff retrospectivo legível;
-- `docs/adr/ADR-001-executive-chassis-letta-code.md` — ADR proposta para integrar a decisão ao fluxo canônico do repositório.
+- `docs/evidence/CHASSIS-LETTA-SELECTION-2026-09-29.yaml` — handoff estruturado;
+- `docs/research/chassis-selection-v1/EMPIRICAL-BENCHMARK-2026-09-29.md` — material empírico, testes, métricas, probes e resultados;
+- `docs/research/chassis-selection-v1/EMPIRICAL-BENCHMARK-2026-09-29.yaml` — matriz estruturada para agentes;
+- `docs/research/chassis-selection-v1/archive/` — evidência técnica bruta preservada;
+- `docs/adr/ADR-001-executive-chassis-letta-code.md` — ADR proposta.
 
 ## Regra de leitura
 
