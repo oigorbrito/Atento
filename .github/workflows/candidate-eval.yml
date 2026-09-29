@@ -31,7 +31,8 @@ jobs:
     name: Validate registry and build matrix
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
+      static_matrix: ${{ steps.static_matrix.outputs.matrix }}
+      openclaw_matrix: ${{ steps.openclaw_matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -41,11 +42,17 @@ jobs:
         run: python -m evals.atentoeval.candidates validate-registry --registry evals/config/candidates.json
       - name: Run candidate schema tests
         run: python -m unittest evals.tests.test_candidates -v
-      - id: matrix
-        name: Build candidate matrix
+      - id: static_matrix
+        name: Build static candidate matrix
         shell: bash
         run: |
-          matrix="$(python -m evals.atentoeval.candidates github-matrix --registry evals/config/candidates.json)"
+          matrix="$(python -m evals.atentoeval.candidates github-matrix --registry evals/config/candidates.json --profile python_static_chassis)"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+      - id: openclaw_matrix
+        name: Build OpenClaw Nayá matrix
+        shell: bash
+        run: |
+          matrix="$(python -m evals.atentoeval.candidates github-matrix --registry evals/config/candidates.json --profile openclaw_naya_local_delta)"
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
 
   candidate-static:
@@ -54,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.prepare.outputs.static_matrix) }}
     steps:
       - name: Checkout Atento
         uses: actions/checkout@v4
@@ -106,3 +113,122 @@ jobs:
             atento/evals/results/${{ matrix.candidate_id }}_static_chassis.json
             atento/evals/results/${{ matrix.candidate_id }}_candidate_result.json
           if-no-files-found: error
+
+
+  candidate-openclaw-naya:
+    name: OpenClaw Nayá deltas / ${{ matrix.candidate_id }}
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.prepare.outputs.openclaw_matrix) }}
+    steps:
+      - name: Checkout Atento
+        uses: actions/checkout@v4
+        with:
+          path: atento
+
+      - name: Checkout pinned donor
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.repository }}
+          ref: ${{ matrix.upstream_sha }}
+          path: donor
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24.21.0"
+
+      - name: Verify donor pin
+        shell: bash
+        run: |
+          actual="$(git -C donor rev-parse HEAD)"
+          test "$actual" = "${{ matrix.upstream_sha }}"
+
+      - name: Install pinned OpenClaw dependencies
+        shell: bash
+        working-directory: donor
+        run: |
+          corepack enable
+          corepack prepare pnpm@12.5.1 --activate
+          pnpm install --frozen-lockfile
+
+      - name: Execute Nayá material local deltas
+        shell: bash
+        run: |
+          python atento/evals/chassis/openclaw_naya_probe.py \
+            --donor-root donor \
+            --atento-root atento \
+            --candidate-id "${{ matrix.candidate_id }}" \
+            --upstream-sha "${{ matrix.upstream_sha }}" \
+            --atento-sha "$GITHUB_SHA" \
+            --output "atento/evals/results/${{ matrix.candidate_id }}_openclaw_naya_probe.json"
+
+      - name: Build typed empirical candidate result
+        shell: bash
+        run: |
+          cd atento
+          python -m evals.atentoeval.candidates empirical-result \
+            --registry evals/config/candidates.json \
+            --candidate-id "${{ matrix.candidate_id }}" \
+            --probe "evals/results/${{ matrix.candidate_id }}_openclaw_naya_probe.json" \
+            --atento-sha "$GITHUB_SHA" \
+            --output "evals/results/${{ matrix.candidate_id }}_candidate_result.json"
+
+      - name: Summarize qualification
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          path = Path("atento/evals/results/${{ matrix.candidate_id }}_openclaw_naya_probe.json")
+          data = json.loads(path.read_text(encoding="utf-8"))
+          lines = [
+              "## OpenClaw Nayá local deltas",
+              "",
+              f"Overall evidence: **{data['evidence_status']}**",
+              "",
+              "| Case | Status |",
+              "|---|---|",
+          ]
+          for case_id, case in data["cases"].items():
+              lines.append(f"| {case_id} | {case['status']} |")
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
+              handle.write("\n".join(lines) + "\n")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: candidate-${{ matrix.candidate_id }}-naya-deltas
+          path: |
+            atento/evals/results/${{ matrix.candidate_id }}_openclaw_naya_probe.json
+            atento/evals/results/${{ matrix.candidate_id }}_candidate_result.json
+          if-no-files-found: error
+
+      - name: Enforce claimed Nayá invariants
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("atento/evals/results/${{ matrix.candidate_id }}_openclaw_naya_probe.json")
+          data = json.loads(path.read_text(encoding="utf-8"))
+          expected_arch_risk = {"OC-NAYA-002"}
+          unexpected = [
+              case_id
+              for case_id, case in data["cases"].items()
+              if case_id not in expected_arch_risk and case["status"] != "PASS_EMPIRICAL"
+          ]
+          if unexpected:
+              raise SystemExit(
+                  "unexpected Nayá invariant failures: " + ", ".join(unexpected)
+              )
+          PY
