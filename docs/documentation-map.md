@@ -13,6 +13,7 @@ Quando a mesma informação aparece em mais de um arquivo, prevalece o documento
 | `roadmap.md` | escopo + arquitetura macro + Project Points + progresso | blocos A–S, dependências, source map arquitetural, ledger 100 pontos, status global | protocolo detalhado de benchmark, licença legal detalhada | escopo/progresso/dependências/arquitetura macro mudar |
 | `docs/adr/*.md` | decisão arquitetural específica | contexto, alternativas, evidência, decisão, consequências | status geral do projeto | decisão estrutural for proposta/aceita/substituída |
 | `docs/evaluation/harness.md` | metodologia AtentoEval | suites, schemas, judges, adapters, métricas, release comparison | progresso, escolha fork/greenfield, autorização de dataset | avaliação mudar |
+| `docs/evaluation/*qualification*.md` / `*research*.md` | registro de evidência datada | pins, fatos observados, probes, blockers, síntese de pesquisa e gaps não provados | metodologia normativa, decisão ADR, progresso global | nova evidência material ou requalificação |
 | `evals/README.md` | operação do harness | comandos, formatos, setup, troubleshooting | metodologia normativa ou thresholds duplicados | CLI/layout do harness mudar |
 | `docs/third-party.md` | provenance/termos externos | repo, commit, termos conhecidos, dados, modo de adoção, attribution | decisão arquitetural final, progresso | fonte externa for considerada/atualizada/usada |
 | documentação local de módulo | contrato técnico local | interface, invariants, failure modes, exemplos | regras globais duplicadas | módulo mudar |
@@ -31,11 +32,31 @@ Não deve ser tratada como decisão antes do spike. A mudança para `Accepted` e
 ### docs/evaluation/harness.md — defensável
 Possui responsabilidade clara: metodologia de avaliação. Não deve carregar status geral do projeto.
 
+### docs/evaluation/*qualification*.md / *research*.md — evidência, não decisão
+Registros datados podem consolidar inspeções, benchmarks usados como referência, provas Git, execução de probes e bloqueios. Devem declarar pins e limitações. Não substituem o harness, ADR, third-party registry ou roadmap.
+
 ### docs/third-party.md — defensável
 Registra facts de provenance/termos e o modo de adoção. Fonte sem termos claros pode ser usada como clone externo de pesquisa, mas não deve ser redistribuída silenciosamente dentro do repo.
 
 ### evals/README.md — defensável
 Deve continuar curto e operacional.
+
+
+### Chassis benchmark de 2026-09-29 — reconciliado
+
+A evidência canônica da rodada de chassis está em:
+
+- `docs/evaluation/chassis-selection-research-2026-09-29.md`;
+- `docs/evaluation/chassis-selection-research-2026-09-29.yaml` como suplemento estruturado.
+
+O material em `docs/research/chassis-selection-v1/archive/` é **arquivo histórico bruto**, não fonte de decisão nem metodologia normativa.
+
+O rótulo histórico `EXECUTABLE_CHASSIS_SELECTED` significa “selecionado dentro daquela rodada de benchmark para scaffold arquitetural”. Ele **não** substitui:
+
+- ADR-000 — fork vs greenfield, ainda aberta;
+- ADR-001 — composição Assistente × Terapeuta, ainda proposta;
+- ADR-002 — sistema-base da Assistente, ainda `NOT_SELECTED`.
+
 
 ## Documentos que devem existir
 

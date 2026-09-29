@@ -32,6 +32,29 @@ Elas também se aplicam a spikes, forks, clones e experimentos que possam poster
 
 ---
 
+## 1.1 Repositório canônico e fronteira com donors
+
+O repositório canônico do projeto é:
+
+`https://github.com/oigorbrito/Atento`
+
+Repos listados em `docs/third-party.md` — incluindo NaIA, OpenMausBot, OpenClaw, PsychAgent, PsyChat e outros — são **donors, referências, clones de pesquisa ou candidatos externos**.
+
+Regras:
+
+- ADRs, roadmap, progresso, source registry e pareceres do projeto devem ser registrados no **Atento**;
+- não criar documentação canônica do Atento dentro de um donor;
+- uma alteração experimental feita no repositório de um donor não muda o estado do Atento por si só;
+- se um experimento ocorrer em donor/fork, registrar no Atento o commit/PR externo, resultado, limitações e decisão correspondente;
+- chat, branch externa ou PR de donor não substituem o registro canônico no Atento.
+
+```text
+ATENTO = PROJECT SOURCE OF TRUTH
+DONOR REPO = EXTERNAL IMPLEMENTATION / EXPERIMENT SOURCE
+```
+
+---
+
 ## 2. Hierarquia de documentos do projeto
 
 Antes de implementar, consultar nesta ordem:
@@ -50,6 +73,42 @@ Se houver conflito entre documentos, **não escolher silenciosamente**. Abrir ou
 
 ---
 
+
+## 2.0 Preflight de evidência e não-repetição
+
+Antes de iniciar nova pesquisa, benchmark ou implementação de arquitetura:
+
+1. consultar `roadmap.md`, ADRs, `docs/third-party.md` e resultados/evidências já existentes;
+2. verificar se a propriedade já foi demonstrada externamente por paper, benchmark reproduzível ou testes upstream;
+3. registrar o protocolo, população/tarefa, versão/commit, métrica e limitações da evidência externa;
+4. identificar o **delta material do Atento** (por exemplo idioma, modelo, runtime, memória, safety, side effects, privacidade ou licença);
+5. criar teste local somente quando esse delta puder mudar a decisão de engenharia.
+6. para bibliotecas/frameworks, usar documentação oficial e Context7 quando isso acelerar a verificação de API/versão; para claims acadêmicos/terapêuticos, preferir paper, proceedings, benchmark repo e artefatos primários.
+
+Regra operacional:
+
+```text
+EXTERNAL_EVIDENCE
+        ↓
+TRANSFER / RELEVANCE CHECK
+        ↓
+REUSE PROVEN MECHANISM
+        ↓
+TEST ONLY MATERIAL LOCAL DELTAS
+        ↓
+LOCAL ACCEPTANCE
+```
+
+Não repetir benchmark apenas para produzir outro número local. Não tratar resultado externo como prova local quando população, protocolo ou runtime diferirem materialmente.
+
+```text
+BENCHMARK_SIGNAL != LOCAL_PROOF
+EXTERNAL_SUCCESS != LOCAL_COMPATIBILITY
+IMPLEMENTED != QUALIFIED
+QUALIFIED != PROMOTED
+```
+
+---
 
 ## 2.1 Roadmap e progresso global do projeto
 

@@ -48,6 +48,8 @@ O harness incorpora **modelos de avaliação**, não copia automaticamente datas
 | tool-enhanced support | TEA-Bench | tool decision, process trace, grounding e hallucination |
 | broad mental-health behavior | MentalHealthBench | weighted behavioral rubrics, acuity, context seeking, autonomy e actionability |
 | expert/adversarial | CounselBench | expert rubric, failure modes, human-vs-LLM-judge disagreement |
+| patient-style robustness | PATIENT-Ψ | segmentar desempenho por estilos de comunicação, especialmente reserved/evasive |
+| multi-turn safety | MHSafeEval | harm category × counselor role × severity; adversarial interaction-level safety |
 | Atento architecture | Atento internal | schemas, belief calibration, leakage, privacy, latency, cost, policy regression |
 
 ### Regra de licenciamento
@@ -284,7 +286,7 @@ Mede:
 
 ### 7.8 Safety / Acuity
 
-Inspirada em MentalHealthBench e CounselBench.
+Inspirada em MentalHealthBench, CounselBench e MHSafeEval.
 
 Estratificar por:
 - non-acute;
@@ -314,10 +316,10 @@ Métricas:
 
 ### 7.9 Worst-case / adversarial
 
-Inspirada em CounselBench e literatura de worst-case ESC.
+Inspirada em CounselBench, PATIENT-Ψ, MHSafeEval e literatura de worst-case ESC.
 
 Cobrir:
-- evasivo;
+- evasivo/reservado — reportar como slice separado quando o protocolo suportar;
 - resistente;
 - hostil;
 - contraditório;

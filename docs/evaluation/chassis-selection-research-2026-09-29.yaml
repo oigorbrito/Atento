@@ -1,0 +1,99 @@
+schema_version: 1
+kind: chassis_selection_research
+date: 2026-09-29
+authority: dated_evidence_record
+canonical_interpretation:
+  historical_label: EXECUTABLE_CHASSIS_SELECTED
+  historical_candidate: letta-ai/letta-code
+  repository_meaning: BENCHMARK_SELECTED_FOR_ARCHITECTURE_SCAFFOLD_ONLY
+  does_not_mean: NAYA_ASSISTANT_BASE_SELECTED
+canonical_decisions:
+  ADR-000:
+    topic: fork_vs_greenfield
+    status: open
+  ADR-001:
+    topic: assistant_therapist_product_composition
+    status: proposed
+  ADR-002:
+    topic: assistant_base_selection
+    winner: NOT_SELECTED
+protocol: v1.1-frozen
+candidates:
+  SRC-DIFY:
+    repo: langgenius/dify
+    sha: 7b0660b45b127a44b6467533ec6a8cd949586770
+  SRC-RASA:
+    repo: RasaHQ/rasa
+    sha: 60a3cff9c08183760355b07bd60f5223d8916d6b
+  SRC-LIBRECHAT:
+    repo: LibreChat-AI/LibreChat
+    sha: 63363a777612e0d37956cc5d233ac489f3a302c3
+    role: executable_control
+  SRC-OPENWEBUI:
+    repo: open-webui/open-webui
+    sha: 8bd8b4fac5e059578ac0c74b3c18d11139f88b7d
+  SRC-LETTA:
+    repo: letta-ai/letta-code
+    sha: a75111ea610eff9b4a37baba4fbc6ee24bb73c79
+    historical_benchmark_result: selected_for_architecture_scaffold
+  SRC-ANYTHINGLLM:
+    repo: Mintplex-Labs/anything-llm
+    sha: a355703427c67c5be17bc57c4c5d5d034e275444
+rejected:
+  SRC-FLOWISE:
+    reason: upstream_archived_eol_at_intake
+scenarios:
+  - S01_TOOL_EXTENSION
+  - S02_MODEL_PROVIDER
+  - S03A_INBOUND_PRIMARY_CHANNEL
+  - S03B_OUTBOUND_HITL_CHANNEL
+  - S03C_EVENT_TRIGGER
+  - S04A_FILE_BLOB_STORAGE
+  - S04B_DOMAIN_PERSISTENCE
+  - S04C_CONVERSATION_MEMORY
+  - S04D_RESUME_LOCK_STATE
+  - S05_ASSISTANT_CONTEXT_POLICY_ISOLATION
+  - S06A_VECTOR_BACKEND
+  - S06B_RETRIEVAL_STRATEGY
+  - S06C_INGESTION_DATASOURCE
+  - S06D_FULL_RAG_PIPELINE
+  - S07_FAILURE_ISOLATION
+  - S08_CROSS_CUTTING_POLICY
+  - S09_UPSTREAM_FORK
+  - S10_REVERSIBILITY
+letta_executable_evidence:
+  isolated_prototype:
+    host_core_imports: 0
+    host_core_files_changed: 0
+    policy_isolation: PASS
+    rag_outage_bounded: PASS
+    reversibility: PASS
+  cumulative_mutations: 7
+  final_regression: PASS
+  exact_sha_ci:
+    frozen_lock_install: PASS
+    lint_typecheck: PASS
+    build: PASS
+    update_chain_smoke: PASS
+    unit_api_matrix: PASS
+    external_provider_flake:
+      provider: google_ai
+      model: gemini-3.6-flash
+      classification: provider_availability
+librechat_control:
+  cumulative_mutations: 8
+  host_core_files_changed: 0
+  whatsapp_adapter: PASS
+  memory_isolation: PASS
+  policy_isolation: PASS
+  rag_outage_bounded: PASS
+not_proven:
+  - final_assistant_base_winner
+  - therapeutic_quality
+  - clinical_safety
+  - full_atentoeval_comparison
+  - throughput
+  - latency
+  - inference_cost
+  - production_load_scalability
+archive: docs/research/chassis-selection-v1/archive/

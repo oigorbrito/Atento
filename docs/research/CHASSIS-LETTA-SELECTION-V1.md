@@ -1,31 +1,33 @@
-# Chassis Selection V1 — Letta Code
+# Chassis Selection V1 — historical archive index
 
-## Document contract
+## Status
 
-Este documento é um **índice de pesquisa/evidência**. Ele não substitui `roadmap.md`, `docs/evaluation/harness.md` nem uma ADR aceita.
+Este diretório preserva o **arquivo bruto** da rodada de chassis de 2026-09-29.
 
-A rodada de benchmark arquitetural realizada em 2026-09-29 avaliou candidatos de chassis separando **arquitetura/forkabilidade** de **cobertura de features**. O pacote de evidência concluiu `letta-ai/letta-code` como `EXECUTABLE_CHASSIS_SELECTED` no SHA congelado `a75111ea610eff9b4a37baba4fbc6ee24bb73c79`, mantendo LibreChat como controle/fallback.
+Fonte canônica de evidência reconciliada:
 
-## O que está preservado nesta branch
+- `docs/evaluation/chassis-selection-research-2026-09-29.md`;
+- `docs/evaluation/chassis-selection-research-2026-09-29.yaml`.
 
-- handoff retrospectivo do trabalho concluído;
-- protocolo V1 e freeze V1.1;
-- parity e decisão M8–M11;
-- comparação executável Letta × LibreChat;
-- relatório de full-checkout/CI do SHA congelado;
-- scaffold F0–F5 e modelo de branch/change-control;
-- benchmark empírico consolidado e matriz estruturada;
-- archive técnico bruto para auditoria.
+Provenance externo:
 
-## Arquivos publicados
+- `docs/third-party.md`.
 
-- `docs/evidence/CHASSIS-LETTA-SELECTION-2026-09-29.md` — handoff retrospectivo legível;
-- `docs/evidence/CHASSIS-LETTA-SELECTION-2026-09-29.yaml` — handoff estruturado;
-- `docs/research/chassis-selection-v1/EMPIRICAL-BENCHMARK-2026-09-29.md` — material empírico, testes, métricas, probes e resultados;
-- `docs/research/chassis-selection-v1/EMPIRICAL-BENCHMARK-2026-09-29.yaml` — matriz estruturada para agentes;
-- `docs/research/chassis-selection-v1/archive/` — evidência técnica bruta preservada;
-- `docs/adr/ADR-001-executive-chassis-letta-code.md` — ADR proposta.
+Decisões:
 
-## Regra de leitura
+- `docs/adr/ADR-000-fork-vs-greenfield.md`;
+- `docs/adr/ADR-001-naya-product-composition.md`;
+- `docs/adr/ADR-002-assistant-base-selection.md`.
 
-O material desta branch registra evidência já produzida. Não deve ser interpretado como autorização automática para sobrescrever a arquitetura canônica de `main`. A promoção para arquitetura oficial do repositório deve acontecer pelo fluxo de ADR/revisão do Atento.
+## Importante
+
+O rótulo histórico `EXECUTABLE_CHASSIS_SELECTED` para Letta é preservado no archive, mas **não é uma ADR aceita** e não equivale a winner da ADR-002.
+
+O archive existe para:
+
+- auditoria;
+- reprodução;
+- consulta de evidence packs/probes;
+- preservação de scripts e scaffold experimental.
+
+Não usar o archive como fonte de progresso ou decisão quando houver documento canônico correspondente.

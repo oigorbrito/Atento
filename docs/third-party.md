@@ -38,6 +38,29 @@ O Atento está atualmente em **modo de pesquisa/estudo**. A política interna pe
 | SRC-SOULCHAT | SoulChat2.0 | https://github.com/scutcyr/SoulChat2.0 | `13ec529c9e3851eacbbf09bec9029621ac40e773` | Apache-2.0 no repo; verificar corpus/checkpoint individual | FULL_DONOR_CANDIDATE | generator/training pipeline |
 | SRC-EMOLLM | EmoLLM | https://github.com/SmartFlowAI/EmoLLM | pin antes de usar | MIT no repo; verificar dataset/checkpoint individual | FULL_DONOR_CANDIDATE | model/training/deploy/RAG donor |
 | SRC-MINDCHAT | MindChat | https://github.com/X-D-Lab/MindChat | `8309768d156a3c0e719381705a4058fa1ec554d3` | GPL-3.0 no repo; verificar checkpoint individual | FULL_DONOR_CANDIDATE | model/local deployment donor |
+| SRC-OPENMAUS | OpenMausBot | https://github.com/milind-soni/OpenMausBot | `947bef311bf5c3f55d3590849abf0eb329408519` (qualification snapshot; upstream had advanced to `7cd31c2a7f780757dd6933ec175d11e06103fd0f` during the 2026-09-29 audit) | Apache-2.0 outside `enterprise/`; `enterprise/` has separate source-available production terms | EXTERNAL_RESEARCH_CLONE | personal-assistant base candidate: persistence, routines, computer/apps, provider/model switching |
+| SRC-OPENCLAW | OpenClaw | https://github.com/openclaw/openclaw | `e9571d77e76bd6d35996273d9e8398ad539b26e1` (qualification repin on 2026-09-29; qualification started at `df97da27f07f6655d5678bdbf1f6f9e460678013`) | MIT | EXTERNAL_RESEARCH_CLONE | personal-assistant base candidate: Gateway, restart recovery, persisted approvals, durable outbound delivery; static qualification recorded in `docs/evaluation/openclaw-qualification-2026-09-29.md` |
+| SRC-NAIA | NaIA | https://github.com/oigorbrito/NaIa | `23e4ca55abfaf399844047792018a22415ed3738` | root license not detected in reviewed revision | EXTERNAL_RESEARCH_CLONE | policy/approval/evidence/memory-authority donor and assistant-base comparison |
+| SRC-AGENTMENTAL | AgentMental | https://github.com/MindIntLab-HFUT/AgentMental | `0e2fc8ff27552845ae743e3373351120a96e216b` | MIT | EXTERNAL_RESEARCH_CLONE | adaptive information-gap detection, targeted follow-up, uncertainty reduction |
+| SRC-PATIENTPSI | PATIENT-Ψ | https://github.com/ruiyiw/patient-psi | `de72a768e5366d3e94f7d8c711c563fb4a5b4d26` | MIT | EXTERNAL_RESEARCH_CLONE | patient-style simulation/evaluation, including reserved/evasive behavior |
+| SRC-MHSAFE | MHSafeEval | https://github.com/suhyun565/MHSafeEval | `9889223844464cfa777a7b8066fd14418f287b85` | no root license detected in reviewed revision; verify paper/assets terms before integration | EXTERNAL_RESEARCH_CLONE | adversarial multi-turn mental-health safety evaluation |
+| SRC-THERAMIND | TheraMind (Emo-gml; distinct from SRC-THERAPYMIND) | https://github.com/Emo-gml/TheraMind | `416d0a00ecc8c76229512197765dc95be6513de5` | README: research and educational use only | EXTERNAL_RESEARCH_CLONE | longitudinal dual-loop/adaptive-therapy mechanism donor; not a cleared product base |
+
+
+## Chassis benchmark candidates — 2026-09-29
+
+Os registros abaixo correspondem à rodada histórica de **chassis/evolvability**. Eles não substituem a ADR-002 de seleção do sistema-base da Assistente. Evidência consolidada: `docs/evaluation/chassis-selection-research-2026-09-29.md`.
+
+| ID | Projeto | Repo / fonte | Commit / versão | Termos conhecidos no snapshot | Status | Uso no Atento |
+|---|---|---|---|---|---|---|
+| SRC-LETTA | Letta Code | https://github.com/letta-ai/letta-code | `a75111ea610eff9b4a37baba4fbc6ee24bb73c79` | Apache-2.0 | EXTERNAL_RESEARCH_CLONE | candidato de chassis; escolhido **dentro do benchmark histórico** para scaffold executável, sem fechar ADR-002 |
+| SRC-LIBRECHAT | LibreChat | https://github.com/LibreChat-AI/LibreChat | `63363a777612e0d37956cc5d233ac489f3a302c3` | MIT | EXTERNAL_RESEARCH_CLONE | controle/fallback do benchmark de chassis |
+| SRC-DIFY | Dify | https://github.com/langgenius/dify | `7b0660b45b127a44b6467533ec6a8cd949586770` | Apache-2.0 modificado; condições adicionais para multi-tenant e branding/frontend | EXTERNAL_RESEARCH_CLONE | comparação de plugin/model/RAG/forkability |
+| SRC-RASA | Rasa OSS | https://github.com/RasaHQ/rasa | `60a3cff9c08183760355b07bd60f5223d8916d6b` | Apache-2.0; upstream avaliado declarava maintenance mode | EXTERNAL_RESEARCH_CLONE | contraprova de channel/state seams e chassis conversacional clássico |
+| SRC-OPENWEBUI | Open WebUI | https://github.com/open-webui/open-webui | `8bd8b4fac5e059578ac0c74b3c18d11139f88b7d` | Open WebUI License; restrição de alteração/remoção de branding acima das exceções descritas na licença | EXTERNAL_RESEARCH_CLONE | comparação de tools/filters, memory, storage e vector seams |
+| SRC-ANYTHINGLLM | AnythingLLM | https://github.com/Mintplex-Labs/anything-llm | `a355703427c67c5be17bc57c4c5d5d034e275444` | MIT | EXTERNAL_RESEARCH_CLONE | comparação de skills/MCP/RAG/memory e selectors centrais |
+| SRC-FLOWISE | Flowise | https://github.com/FlowiseAI/Flowise | intake sem baseline comparável | não requalificado porque o candidato foi descartado no intake; verificar termos antes de qualquer reutilização | REJECTED | upstream arquivado/EOL no intake; sem score de arquitetura |
+
 
 ## Full donor record template
 
