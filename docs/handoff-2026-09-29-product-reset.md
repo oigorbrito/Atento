@@ -4,7 +4,9 @@ Date: 2026-09-29
 
 ## Purpose
 
-This handoff captures the restored product intent before the repository-wide reconciliation.
+This handoff captures the restored product intent used for the repository-wide reconciliation.
+
+> **Reconciliation completed in draft PR #19.** Repository-wide audit record: `docs/reconciliation-2026-09-29.md`.
 
 It is intentionally self-contained. A future session should be able to resume from this file without relying on chat history.
 
@@ -216,9 +218,9 @@ PRESERVE_MEASUREMENTS = TRUE
 PRESERVE_DECISIONS_FROM_CONFUSED_RECONCILIATION = FALSE
 ```
 
-## Repository-wide reconciliation task
+## Repository-wide reconciliation task — completed in draft
 
-The next operation is to audit the entire remote and reconcile every normative/current document, config and workflow against this product model.
+The draft reconciliation audited the entire remote and reconciled normative/current documents, configs, workflows and evaluation scope against this product model.
 
 Rules:
 
@@ -235,7 +237,7 @@ Rules:
 
 ## Immediate next step after reconciliation
 
-After the remote is internally consistent:
+After merge/acceptance of the reconciled state:
 
 1. re-enumerate mature persistent-agent chassis for NAIA;
 2. re-enumerate mature complete therapeutic-agent chassis for Anna;
