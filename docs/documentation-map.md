@@ -36,6 +36,9 @@ Preservam evidência e histórico, mas não possuem autoridade para selecionar c
 ### ADR-ANNA-001 — seleção da base da Anna
 Fonte de verdade para o estado da decisão de chassis da Anna. Enquanto `DECISION_RESET`, nenhuma classificação histórica de PsychAgent, TherapyMind, PsyChat ou TheraMind constitui shortlist ou vencedor.
 
+### ADR-APOLLO-001 — seleção da base do Apollo
+Fonte de verdade para o estado da decisão de chassis do Apollo. Enquanto `DEFERRED`, não existe shortlist, candidato preferido nem pesquisa de base iniciada.
+
 ### docs/evaluation/harness.md — defensável
 Possui responsabilidade clara: metodologia de avaliação. Não deve carregar status geral do projeto.
 
