@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "notes": "Only non-negotiable safety/privacy gates are enabled before baseline calibration. Quality/cost/latency thresholds must be calibrated from real runs.",
   "gates": [
     {
@@ -36,30 +36,38 @@
     {
       "id": "strategy_no_regression",
       "metric": "overall.strategy_hit",
-      "min_delta": 0.0,
+      "min_delta": 0,
       "enabled": false,
       "calibration_required": true
     },
     {
       "id": "memory_no_regression",
       "metric": "overall.memory_f1",
-      "min_delta": 0.0,
+      "min_delta": 0,
       "enabled": false,
       "calibration_required": true
     },
     {
       "id": "tools_no_regression",
       "metric": "overall.tool_f1",
-      "min_delta": 0.0,
+      "min_delta": 0,
       "enabled": false,
       "calibration_required": true
     },
     {
       "id": "behavior_no_regression",
       "metric": "overall.weighted_behavior_score",
-      "min_delta": 0.0,
+      "min_delta": 0,
       "enabled": false,
       "calibration_required": true
+    },
+    {
+      "id": "chassis_fitness_minimum",
+      "metric": "chassis.chassis_fitness_score",
+      "min": 0,
+      "enabled": false,
+      "calibration_required": true,
+      "notes": "Threshold must be calibrated after PsyChat/native/adapted baseline. Raw chassis violations remain visible even when gate is disabled."
     }
   ]
 }

@@ -341,6 +341,69 @@ Mede:
 - secrets no output;
 - provenance perdido.
 
+
+### 7.11 Chassis / Evolvability
+
+Esta suite mede **capacidade de evolução da arquitetura**, não quantidade de features.
+
+O objetivo é responder:
+
+> Uma nova capability, donor ou provider consegue ser adicionada/trocada sem reescrever o sistema?
+
+O score resumido é o **Chassis Fitness Score (CFS)**, de 0–100, calculado apenas dentro desta suite. Ele **não** é somado a scores de ESConv, PsychEval, MentalHealthBench ou outros benchmarks.
+
+#### Fitness functions
+
+A versão inicial contém 10 checks binários, 10 pontos cada:
+
+1. **routing_boundary** — decisão de roteamento separada da execução;
+2. **executor_abstraction** — existe interface/adapter para executor/donor;
+3. **capability_registry** — capacidades podem ser registradas sem editar um switch central;
+4. **structured_contracts** — decisões/resultados têm schema estruturado;
+5. **output_validation** — há validação/normalização de saída antes de propagar resultado;
+6. **provider_boundary** — módulos de domínio não chamam provider diretamente;
+7. **state_externalization** — sessão/memória não ficam acopladas ao controlador do processo;
+8. **observability_hooks** — decisões relevantes emitem trace/eventos;
+9. **resilience_boundary** — timeout/retry/fallback são explícitos e testáveis;
+10. **independent_safety_boundary** — safety não depende exclusivamente do mesmo fluxo gerativo.
+
+```text
+CFS = checks_passados / 10 * 100
+```
+
+Esse score é deliberadamente simples e auditável. Cada check precisa produzir evidência. O score estático é um **screening inicial**; a decisão de fork exige também testes dinâmicos.
+
+#### Métricas complementares
+
+Registrar sempre que possível:
+
+- `direct_provider_bypass_count`;
+- `central_switch_branch_count`;
+- `mutable_session_state_count`;
+- `schema_validation_coverage`;
+- `trace_coverage`;
+- `files_touched_to_add_capability`;
+- `files_touched_to_swap_executor`;
+- `files_touched_to_swap_provider`;
+- `rollback_test_pass`;
+- `donor_replacement_test_pass`.
+
+#### Interpretação
+
+CFS baixo não significa que o donor é ruim em qualidade conversacional. Significa que **o chassis upstream exige mais adaptação** para suportar evolução de médio/longo prazo.
+
+Para fork/full-donor, o report deve mostrar:
+
+```text
+quality / safety / cost / latency
+                 +
+          Chassis Fitness
+                 +
+        adaptation effort
+```
+
+Uma feature não compensa chassis frágil; um chassis excelente também não compensa baixa qualidade/safety.
+
 ---
 
 ## 8. Tipos de métricas
@@ -581,6 +644,8 @@ O report deve medir:
 - RAG;
 - latency;
 - cost;
+- chassis fitness;
+- adaptation touchpoints;
 - amount of upstream code retained.
 
 Isso alimenta `ADR-000-fork-vs-greenfield.md`.

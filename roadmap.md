@@ -1454,10 +1454,10 @@ Postgres / Vector Store / Cache / Object Storage
 ## Fase -1 — Fork/Clone Spike & ADR-000
 
 - [ ] executar o gate da seção 2.2;
-- [ ] testar PsyChat upstream em ambiente isolado;
+- [ ] testar PsyChat upstream em ambiente isolado, incluindo Chassis Fitness;
 - [ ] mapear PsyChat → contratos Atento;
 - [ ] verificar licenças/datasets dos candidatos;
-- [ ] comparar selective-port vs greenfield;
+- [ ] comparar full-donor/fork/selective-port/native usando qualidade + safety + custo/latência + Chassis Fitness;
 - [ ] escrever `ADR-000-fork-vs-greenfield.md`;
 - [ ] congelar decisão antes do bootstrap.
 
@@ -1748,6 +1748,7 @@ Se retirar um módulo não piorar nenhum indicador relevante, sua permanência d
 | Custo | custo médio por turno |
 | Robustez | worst-case score |
 | Longitudinal | multi-session consistency |
+| Evolução do chassi | chassis fitness score + touchpoints para adicionar/trocar capability/executor/provider |
 
 ---
 
