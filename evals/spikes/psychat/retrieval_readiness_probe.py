@@ -31,11 +31,30 @@ def main() -> int:
     model_match = re.search(r'^EMBEDDING_MODEL\s*=\s*["\']([^"\']+)["\']', config_text, re.M)
     key_match = re.search(r'^ALIBABA_API_KEY\s*=\s*["\']([^"\']*)["\']', config_text, re.M)
 
+    requirements_path = root / "requirements.txt"
+    requirements = (
+        requirements_path.read_text(encoding="utf-8", errors="ignore").splitlines()
+        if requirements_path.exists()
+        else []
+    )
+    chroma_requirement = next(
+        (
+            line.strip()
+            for line in requirements
+            if line.strip().lower().startswith("chromadb")
+        ),
+        None,
+    )
+    chroma_exact_pinned = bool(
+        chroma_requirement
+        and re.match(r"^chromadb==[^=<>!~]+$", chroma_requirement, re.I)
+    )
+
     committed_index_present = bool(index_paths)
     embedding_key_committed_nonempty = bool(key_match and key_match.group(1).strip())
 
     report = {
-        "metric_version": "psychat-retrieval-readiness-v0.1",
+        "metric_version": "psychat-retrieval-readiness-v0.2",
         "pinned_commit": PINNED_COMMIT,
         "knowledge_corpus_present": bool(knowledge_files),
         "knowledge_file_count": len(knowledge_files),
@@ -43,6 +62,9 @@ def main() -> int:
         "vector_index_paths": index_paths,
         "embedding_model": model_match.group(1) if model_match else None,
         "embedding_key_committed_nonempty": embedding_key_committed_nonempty,
+        "chroma_requirement": chroma_requirement,
+        "chroma_exact_version_pinned": chroma_exact_pinned,
+        "integration_environment_must_pin_chroma": not chroma_exact_pinned,
         "index_build_required": not committed_index_present,
         "external_embedding_provider_required_for_rebuild": not committed_index_present,
         "repository_alone_reproduces_semantic_retrieval": (
@@ -51,7 +73,9 @@ def main() -> int:
         "interpretation": (
             "The corpus can be source-verified from Git. If no persisted vector "
             "index is committed, semantic retrieval quality requires rebuilding "
-            "the index with a configured embedding provider before benchmarking."
+            "the index with a configured embedding provider before benchmarking. "
+            "The donor also leaves Chroma as a lower-bound dependency, so the "
+            "Atento integration environment must own an exact compatible version."
         ),
     }
 
