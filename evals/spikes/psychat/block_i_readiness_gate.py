@@ -98,6 +98,7 @@ def main() -> int:
                 and truthy(d, "vector_collection_namespaced_by_corpus_identity")
                 and truthy(d, "same_identity_rebuild_uses_upsert")
                 and truthy(d, "collection_info_exposes_index_identity")
+                and truthy(d, "persisted_collection_metadata_validated")
             ),
         ),
         (
@@ -168,6 +169,7 @@ def main() -> int:
                 and truthy(d, "corpus_identity_isolated")
                 and truthy(d, "same_identity_rebuild_uses_upsert")
                 and truthy(d, "collection_info_exposes_index_identity")
+                and truthy(d, "persisted_collection_metadata_validation_pass")
             ),
         ),
         (
@@ -384,7 +386,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.13",
+        "metric_version": "psychat-block-i-readiness-v0.14",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
