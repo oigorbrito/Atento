@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Dynamic replacement probe for the patched PsyChat RAG donor.
+"""Dynamic replacement/lifecycle probe for the patched PsyChat RAG donor.
 
 Run after minimal_fork_patch.py. It loads the real patched donor modules with
-deterministic stubs for unrelated dependencies and proves that model/embedding
-providers can be replaced by composition only, without editing donor files.
+stubs for unrelated dependencies and proves that:
+- model and embedding providers can be replaced by composition only;
+- the same long-lived vector resource can be reused by distinct RAG runtimes;
+- mutable conversation state remains isolated per runtime.
 """
 from __future__ import annotations
 
@@ -26,6 +28,11 @@ class StubPersistentClient:
 
     def get_or_create_collection(self, *args, **kwargs):
         return StubCollection()
+
+
+class StubSettings:
+    def __init__(self, *args, **kwargs):
+        pass
 
 
 class StubDataProcessor:
@@ -62,8 +69,13 @@ def install_stubs(donor_root: Path) -> None:
     sys.path.insert(0, str(donor_root))
 
     chromadb = types.ModuleType("chromadb")
+    chromadb.__path__ = []
     chromadb.PersistentClient = StubPersistentClient
     sys.modules["chromadb"] = chromadb
+
+    chromadb_config = types.ModuleType("chromadb.config")
+    chromadb_config.Settings = StubSettings
+    sys.modules["chromadb.config"] = chromadb_config
 
     data_pkg = types.ModuleType("data")
     data_pkg.__path__ = []
@@ -75,6 +87,10 @@ def install_stubs(donor_root: Path) -> None:
     tts = types.ModuleType("core.tts_service")
     tts.TTSService = StubTTSService
     sys.modules["core.tts_service"] = tts
+
+
+def contains_content(history, value: str) -> bool:
+    return any(item.get("content") == value for item in history)
 
 
 def run(donor_root: Path) -> dict:
@@ -103,9 +119,6 @@ def run(donor_root: Path) -> dict:
     if agent_b._call_llm("two") != "B:psychat.rag.agent":
         raise AssertionError("model gateway B was not used by PsychologyAgent")
 
-    # Avoid constructing unrelated donor resources; this test is specifically
-    # the composition seam. Both RAG runtimes use the same donor class while
-    # receiving different providers.
     rag_a = rag_module.RAGSystem(
         model_gateway=model_a,
         embedding_gateway=embedding_a,
@@ -130,13 +143,50 @@ def run(donor_root: Path) -> dict:
     if response_b != "B:psychat.rag.response":
         raise AssertionError("RAGSystem did not use model gateway B")
 
+    # Lifecycle probe: reuse the long-lived vector resource while keeping
+    # conversation state on separate per-session RAGSystem instances.
+    session_a = rag_module.RAGSystem(
+        model_gateway=model_a,
+        embedding_gateway=embedding_a,
+        data_processor=StubDataProcessor(),
+        vector_store=vector_a,
+        psychology_agent=agent_module.PsychologyAgent(model_gateway=model_a),
+        tts_service=None,
+    )
+    session_b = rag_module.RAGSystem(
+        model_gateway=model_a,
+        embedding_gateway=embedding_a,
+        data_processor=StubDataProcessor(),
+        vector_store=vector_a,
+        psychology_agent=agent_module.PsychologyAgent(model_gateway=model_a),
+        tts_service=None,
+    )
+
+    if session_a.vector_store is not vector_a or session_b.vector_store is not vector_a:
+        raise AssertionError("shared long-lived vector resource was not reused")
+    if session_a is session_b:
+        raise AssertionError("session runtimes must remain distinct")
+
+    result_a = session_a.generate_response("session-a-marker")
+    result_b = session_b.generate_response("session-b-marker")
+    if not result_a.get("success") or not result_b.get("success"):
+        raise AssertionError("patched session runtimes did not execute")
+
+    if not contains_content(session_a.conversation_history, "session-a-marker"):
+        raise AssertionError("session A did not retain its own state")
+    if contains_content(session_b.conversation_history, "session-a-marker"):
+        raise AssertionError("session A state leaked into session B")
+
     return {
-        "metric_version": "psychat-provider-replacement-v0.1",
+        "metric_version": "psychat-provider-replacement-v0.2",
         "model_provider_swap_pass": True,
         "embedding_provider_swap_pass": True,
         "rag_model_gateway_swap_pass": True,
         "donor_source_edit_required_for_swap": False,
         "files_touched_to_swap_provider_after_boundary": 0,
+        "shared_vector_resource_reused": True,
+        "distinct_session_runtimes": True,
+        "session_state_isolated": True,
         "model_a_call_count": len(model_a.calls),
         "model_b_call_count": len(model_b.calls),
         "embedding_a_call_count": len(embedding_a.calls),
