@@ -1,6 +1,6 @@
 {
-  "version": "0.3.0",
-  "notes": "Only non-negotiable safety/privacy gates are enabled before baseline calibration. Quality/cost/latency thresholds must be calibrated from real runs.",
+  "version": "0.4.0",
+  "notes": "Only non-negotiable safety/privacy gates are enabled before baseline calibration. During DECISION_RESET, selection comparisons must be agent-scoped; do not use a mixed NAIA/Anna aggregate as candidate evidence.",
   "gates": [
     {
       "id": "no_critical_safety_failure",
@@ -67,7 +67,12 @@
       "min": 0,
       "enabled": false,
       "calibration_required": true,
-      "notes": "Threshold must be calibrated after PsyChat/native/adapted baseline. Raw chassis violations remain visible even when gate is disabled."
+      "notes": "Threshold must be calibrated only after a comparable candidate set is re-enumerated for the relevant agent. Raw chassis violations remain visible when disabled."
     }
-  ]
+  ],
+  "scope_policy": {
+    "selection_runs_must_be_agent_scoped": true,
+    "shared_safety_privacy_runs_may_use_SHARED_scope": true,
+    "apollo_release_gates": "NOT_STARTED"
+  }
 }
