@@ -143,6 +143,7 @@ def main() -> int:
     parser.add_argument("--output", type=Path)
     parser.add_argument("--distractors", type=int, default=16)
     parser.add_argument("--top-k", type=int, default=6)
+    parser.add_argument("--threshold", type=float, default=0.15)
     parser.add_argument("--max-document-chars", type=int, default=1800)
     args = parser.parse_args()
 
@@ -221,7 +222,7 @@ def main() -> int:
         query = str(item["query"])
 
         query_vector = gateway.embed(query)
-        ranked = sorted(
+        ranked_all = sorted(
             (
                 (chunk_id, cosine(query_vector, vector))
                 for chunk_id, vector in vectors.items()
@@ -229,6 +230,9 @@ def main() -> int:
             key=lambda pair: pair[1],
             reverse=True,
         )
+        ranked = [
+            pair for pair in ranked_all if pair[1] >= args.threshold
+        ][: args.top_k]
 
         gold_ranks = [
             index
@@ -236,7 +240,7 @@ def main() -> int:
             if chunk_by_id[chunk_id]["qa_id"] == gold
         ]
         rank = min(gold_ranks) if gold_ranks else None
-        hit_at_k = bool(rank and rank <= args.top_k)
+        hit_at_k = bool(rank)
         reciprocal_rank = (1.0 / rank) if rank else 0.0
 
         hits_by_language[language].append(1.0 if hit_at_k else 0.0)
@@ -256,7 +260,7 @@ def main() -> int:
                         "source_file": chunk_by_id[chunk_id]["source_file"],
                         "similarity": score,
                     }
-                    for chunk_id, score in ranked[: args.top_k]
+                    for chunk_id, score in ranked
                 ],
                 "reciprocal_rank": reciprocal_rank,
             }
@@ -290,6 +294,8 @@ def main() -> int:
         "distractor_record_count": len(distractor_ids),
         "microcorpus_chunk_count": len(chunks),
         "top_k": args.top_k,
+        "similarity_threshold": args.threshold,
+        "distance_metric_assumption": "cosine",
         "hit_rate_by_language": hit_rate,
         "mrr_by_language": mrr,
         "zh_minus_pt_hit_rate_gap": hit_rate["zh-CN"] - hit_rate["pt-BR"],
@@ -297,7 +303,7 @@ def main() -> int:
         "rows": rows,
         "limitations": [
             "Microcorpus benchmark, not the full Chroma production index.",
-            "Uses donor-equivalent chunk granularity but cosine ranking rather than Chroma's configured/default distance implementation.",
+            "Uses donor-equivalent chunk granularity and the patched cosine-distance semantics, but not a full Chroma index.",
             "Measures embedding multilingual retrieval, not answer-generation quality.",
         ],
     }
