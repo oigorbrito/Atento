@@ -111,6 +111,14 @@ class RAGSystem:
         # 对话历史
         self.conversation_history = []
 
+    def build_knowledge_base(self, use_psychology_qa: bool = True, use_header_splitting: bool = True, clear_existing: bool = False) -> bool:
+        if clear_existing:
+            self.vector_store.clear_collection()
+        documents = self.data_processor.process_documents(use_psychology_qa, use_header_splitting)
+        if not documents:
+            return False
+        return self.vector_store.add_documents(documents)
+
     def generate_response(self, query: str, max_tokens: int = 1000) -> Dict[str, Any]:
         analysis = self.psychology_agent.analyze_user_input(query, self.conversation_history, self.vector_store)
         return {"analysis": analysis}
@@ -257,6 +265,12 @@ class PsyChatMinimalPatchGeneratorTest(unittest.TestCase):
             self.assertIn("recent_history = self.conversation_history[-12:]", patched)
             self.assertIn('"role": "user"', patched)
             self.assertNotIn("requests.post(", patched)
+            self.assertIn("clear_existing: bool = True", patched)
+            self.assertIn(
+                "if clear_existing and not self.vector_store.clear_collection():",
+                patched,
+            )
+            self.assertIn("知识库清空失败，终止重建", patched)
 
             class Gateway:
                 def __init__(self):
