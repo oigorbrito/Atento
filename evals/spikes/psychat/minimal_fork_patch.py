@@ -138,6 +138,15 @@ def patch_vector_store(path: Path) -> None:
 """,
         label="VectorStore constructor",
     )
+    text = replace_once(
+        text,
+        'metadata={"description": "MCP知识库向量存储"}',
+        'metadata={'
+        '"description": "MCP知识库向量存储", '
+        '"hnsw:space": "cosine"'
+        '}',
+        label="VectorStore cosine distance metric",
+    )
     text = replace_regex_once(
         text,
         r"""    def get_embedding\(self, text: str\) -> List\[float\]:\n.*?\n    def add_documents""",
@@ -426,6 +435,8 @@ def apply_patch(donor_root: Path) -> dict:
         "donor_files_touched_to_introduce_provider_boundary": len(PROVIDER_BOUNDARY_FILES),
         "donor_files_touched_for_bloco_i_rag_correctness": len(changed),
         "qa_id_provenance_patch_required": True,
+        "vector_distance_metric": "cosine",
+        "similarity_transform": "1 - cosine_distance",
         "files_touched_to_swap_model_provider_after_boundary": 0,
         "files_touched_to_swap_embedding_provider_after_boundary": 0,
         "provider_swap_mechanism": "constructor injection",
