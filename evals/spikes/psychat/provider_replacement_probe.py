@@ -104,8 +104,9 @@ class RecordingRetrievalStore:
 
 
 class RecordingEmbeddingGateway:
-    def __init__(self, vector):
+    def __init__(self, vector, identity):
         self.vector = list(vector)
+        self.index_identity = str(identity)
         self.calls = []
 
     def embed(self, *, text):
@@ -147,8 +148,8 @@ def run(donor_root: Path) -> dict:
     agent_module = importlib.import_module("agent.psychology_agent")
     rag_module = importlib.import_module("core.rag_system")
 
-    embedding_a = RecordingEmbeddingGateway([1.0, 2.0])
-    embedding_b = RecordingEmbeddingGateway([9.0, 8.0])
+    embedding_a = RecordingEmbeddingGateway([1.0, 2.0], "provider-a:model-a:v1")
+    embedding_b = RecordingEmbeddingGateway([9.0, 8.0], "provider-b:model-b:v1")
     vector_a = vector_module.VectorStore(embedding_gateway=embedding_a)
     vector_b = vector_module.VectorStore(embedding_gateway=embedding_b)
 
@@ -156,6 +157,14 @@ def run(donor_root: Path) -> dict:
         raise AssertionError("embedding gateway A was not used")
     if vector_b.get_embedding("beta") != [9.0, 8.0]:
         raise AssertionError("embedding gateway B was not used")
+    if vector_a.collection_name == vector_b.collection_name:
+        raise AssertionError(
+            "different embedding identities must not reuse the same persisted collection"
+        )
+    if vector_a.embedding_identity != embedding_a.index_identity:
+        raise AssertionError("vector A lost embedding identity")
+    if vector_b.embedding_identity != embedding_b.index_identity:
+        raise AssertionError("vector B lost embedding identity")
 
     model_a = RecordingModelGateway("A")
     model_b = RecordingModelGateway("B")
@@ -254,9 +263,12 @@ def run(donor_root: Path) -> dict:
         raise AssertionError("session A state leaked into session B")
 
     return {
-        "metric_version": "psychat-provider-replacement-v0.3",
+        "metric_version": "psychat-provider-replacement-v0.4",
         "model_provider_swap_pass": True,
         "embedding_provider_swap_pass": True,
+        "embedding_index_identity_isolated": True,
+        "embedding_a_collection_name": vector_a.collection_name,
+        "embedding_b_collection_name": vector_b.collection_name,
         "rag_model_gateway_swap_pass": True,
         "external_rag_route_enforcement_pass": True,
         "external_rag_route_vector_calls": len(route_store.calls),
