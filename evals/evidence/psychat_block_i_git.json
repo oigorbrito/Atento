@@ -32,7 +32,7 @@
     "raw_unique_qa_ids": 4760,
     "upstream_dialogue_sections": 4760,
     "upstream_unknown_qa_id_sections": 4760,
-    "upstream_unknown_ratio": 1.0,
+    "upstream_unknown_ratio": 1,
     "patched_dialogue_sections": 4760,
     "patched_unknown_qa_id_sections": 0,
     "patched_missing_raw_ids": 0,
@@ -55,5 +55,8 @@
   "limitations": [
     "Git/content evidence proves exact patch surface and source/corpus invariants, not Python runtime execution.",
     "Dynamic DataProcessor, Chroma metadata, provider replacement, isolation and AtentoEval quality remain separate execution requirements."
-  ]
+  ],
+  "preserving_ref_head": "a6c5c38c5a020ecaaba281c4b1f11c0e6fbe0428",
+  "upstream_license_notice_present_in_preserving_ref": true,
+  "surface_measurement_note": "files_touched_exact compares baseline_commit to patched_commit; the preserving ref has a later license-notice-only descendant and must not be used as the head for change-surface counting."
 }
