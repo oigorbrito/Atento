@@ -60,6 +60,7 @@ Antes de iniciar nova pesquisa, benchmark ou implementação de arquitetura:
 3. registrar o protocolo, população/tarefa, versão/commit, métrica e limitações da evidência externa;
 4. identificar o **delta material do Atento** (por exemplo idioma, modelo, runtime, memória, safety, side effects, privacidade ou licença);
 5. criar teste local somente quando esse delta puder mudar a decisão de engenharia.
+6. para bibliotecas/frameworks, usar documentação oficial e Context7 quando isso acelerar a verificação de API/versão; para claims acadêmicos/terapêuticos, preferir paper, proceedings, benchmark repo e artefatos primários.
 
 Regra operacional:
 
