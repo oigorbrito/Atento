@@ -16,6 +16,9 @@ class CandidateVariant(str, Enum):
     MODEL_ADAPTER = "MODEL_ADAPTER"
 
 
+SUPPORTED_CI_PROFILES = {"python_static_chassis", "openclaw_naya_local_delta"}
+
+
 class EvidenceStatus(str, Enum):
     PASS_EMPIRICAL = "PASS_EMPIRICAL"
     PASS_STATIC = "PASS_STATIC"
@@ -128,15 +131,22 @@ def load_registry(path: Path) -> list[CandidateSpec]:
     return candidates
 
 
-def github_matrix(path: Path) -> dict[str, list[dict[str, Any]]]:
+def github_matrix(
+    path: Path, profile: str | None = None
+) -> dict[str, list[dict[str, Any]]]:
+    if profile is not None and profile not in SUPPORTED_CI_PROFILES:
+        raise ValueError(f"unsupported ci_profile filter: {profile!r}")
+
     include: list[dict[str, Any]] = []
     for candidate in load_registry(path):
         if not candidate.ci_enabled:
             continue
-        if candidate.ci_profile != "python_static_chassis":
+        if candidate.ci_profile not in SUPPORTED_CI_PROFILES:
             raise ValueError(
                 f"{candidate.candidate_id}: unsupported ci_profile {candidate.ci_profile!r}"
             )
+        if profile is not None and candidate.ci_profile != profile:
+            continue
         include.append(
             {
                 "candidate_id": candidate.candidate_id,
@@ -149,8 +159,55 @@ def github_matrix(path: Path) -> dict[str, list[dict[str, Any]]]:
             }
         )
     if not include:
-        raise ValueError("candidate registry has no CI-enabled candidates")
+        suffix = f" for profile {profile!r}" if profile else ""
+        raise ValueError(f"candidate registry has no CI-enabled candidates{suffix}")
     return {"include": include}
+
+
+def write_empirical_result(
+    *,
+    registry: Path,
+    candidate_id: str,
+    probe: Path,
+    atento_sha: str,
+    output: Path,
+) -> CandidateResult:
+    by_id = {candidate.candidate_id: candidate for candidate in load_registry(registry)}
+    if candidate_id not in by_id:
+        raise ValueError(f"unknown candidate_id: {candidate_id}")
+    candidate = by_id[candidate_id]
+    probe_data = json.loads(probe.read_text(encoding="utf-8"))
+    evidence_status = str(probe_data["evidence_status"])
+    EvidenceStatus(evidence_status)
+    evaluation_kind = str(
+        probe_data.get("evaluation_kind", "candidate_empirical_probe")
+    )
+    result = CandidateResult(
+        candidate_id=candidate.candidate_id,
+        block=candidate.block,
+        source_id=candidate.source_id,
+        variant=candidate.variant.value,
+        evidence_status=evidence_status,
+        evaluation_kind=evaluation_kind,
+        atento_sha=atento_sha,
+        repository=candidate.repository,
+        upstream_sha=candidate.upstream_sha,
+        chassis=dict(probe_data.get("chassis", {})),
+        benchmark={
+            "protocol": probe_data.get("protocol"),
+            "cases": probe_data.get("cases", {}),
+        },
+        safety=dict(probe_data.get("safety", {})),
+        git_surface=dict(probe_data.get("git_surface", {})),
+        blockers=list(probe_data.get("blockers", [])),
+    )
+    result.validate()
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(
+        json.dumps(result.to_dict(), ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    return result
 
 
 def write_static_result(
@@ -196,6 +253,14 @@ def main() -> int:
 
     matrix = sub.add_parser("github-matrix")
     matrix.add_argument("--registry", type=Path, required=True)
+    matrix.add_argument("--profile", choices=sorted(SUPPORTED_CI_PROFILES))
+
+    empirical = sub.add_parser("empirical-result")
+    empirical.add_argument("--registry", type=Path, required=True)
+    empirical.add_argument("--candidate-id", required=True)
+    empirical.add_argument("--probe", type=Path, required=True)
+    empirical.add_argument("--atento-sha", required=True)
+    empirical.add_argument("--output", type=Path, required=True)
 
     static = sub.add_parser("static-result")
     static.add_argument("--registry", type=Path, required=True)
@@ -212,7 +277,23 @@ def main() -> int:
         return 0
 
     if args.command == "github-matrix":
-        print(json.dumps(github_matrix(args.registry), separators=(",", ":")))
+        print(
+            json.dumps(
+                github_matrix(args.registry, profile=args.profile),
+                separators=(",", ":"),
+            )
+        )
+        return 0
+
+    if args.command == "empirical-result":
+        result = write_empirical_result(
+            registry=args.registry,
+            candidate_id=args.candidate_id,
+            probe=args.probe,
+            atento_sha=args.atento_sha,
+            output=args.output,
+        )
+        print(json.dumps(result.to_dict(), ensure_ascii=False, separators=(",", ":")))
         return 0
 
     if args.command == "static-result":
