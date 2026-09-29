@@ -176,6 +176,58 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 - **Candidato para:** specialized model comparison e local deployment.
 - **Modo permitido:** clone/fork/model adapter/full donor para estudo; registrar os termos externos em `docs/third-party.md`.
 
+#### SRC-AGENTMENTAL — AgentMental
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
+- **Repo:** https://github.com/MindIntLab-HFUT/AgentMental
+- **Commit verificado:** `0e2fc8ff27552845ae743e3373351120a96e216b`.
+- **Candidato para:** information-gap detection, clarificação ativa, follow-up direcionado e atualização de evidência.
+- **Regra:** usar como mecanismo de elicitação/assessment; não converter automaticamente em diagnóstico clínico.
+
+#### SRC-PATIENTPSI — PATIENT-Ψ
+- **Tipo:** `BENCHMARK_REFERENCE` + `DATA_REFERENCE` + `IMPLEMENTATION_REFERENCE`.
+- **Repo:** https://github.com/ruiyiw/patient-psi
+- **Commit verificado:** `de72a768e5366d3e94f7d8c711c563fb4a5b4d26`.
+- **Candidato para:** simulação de estilos de paciente e avaliação segmentada, incluindo perfil reservado/evasivo.
+
+#### SRC-MHSAFE — MHSafeEval
+- **Tipo:** `BENCHMARK_REFERENCE` + `IMPLEMENTATION_REFERENCE`.
+- **Repo:** https://github.com/suhyun565/MHSafeEval
+- **Commit verificado:** `9889223844464cfa777a7b8066fd14418f287b85`.
+- **Candidato para:** safety adversarial multi-turn, taxonomy role-aware e severity-aware.
+- **Termos:** licença de repo não detectada na revisão; verificar antes de incorporar assets.
+
+#### SRC-THERAMIND — TheraMind (Emo-gml)
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
+- **Repo:** https://github.com/Emo-gml/TheraMind
+- **Commit verificado:** `416d0a00ecc8c76229512197765dc95be6513de5`.
+- **Candidato para:** dual-loop turn/session, avaliação de reação/resistência e adaptação de terapia.
+- **Termos:** research and educational use only; não tratar como base de produto liberada.
+- **Importante:** projeto distinto de `SRC-THERAPYMIND`.
+
+#### SRC-OPENMAUS — OpenMausBot
+- **Tipo:** `IMPLEMENTATION_REFERENCE`.
+- **Repo:** https://github.com/milind-soni/OpenMausBot
+- **Snapshot qualificado:** `947bef311bf5c3f55d3590849abf0eb329408519`.
+- **Candidato para:** base da Assistente pessoal persistente: bots, rotinas, mensagens, computer/browser, apps e model/provider switching.
+- **Termos:** core Apache-2.0; `enterprise/` possui licença separada source-available para produção.
+- **Estado:** candidato forte, não selecionado; ver ADR específica.
+
+#### SRC-OPENCLAW — OpenClaw
+- **Tipo:** `IMPLEMENTATION_REFERENCE`.
+- **Repo:** https://github.com/openclaw/openclaw
+- **Snapshot de início da qualificação:** `df97da27f07f6655d5678bdbf1f6f9e460678013`.
+- **Candidato para:** base da Assistente pessoal: Gateway, multi-channel, restart recovery, approvals e durable outbound delivery.
+- **Termos:** MIT.
+- **Estado:** qualificação em andamento; upstream avançou durante a auditoria, portanto repin obrigatório antes da continuação.
+
+#### SRC-NAIA — NaIA
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
+- **Repo:** https://github.com/oigorbrito/NaIa
+- **Commit qualificado:** `23e4ca55abfaf399844047792018a22415ed3738`.
+- **Candidato para:** policy/approval/evidence, semantic operation identity, sensitive-memory authority e fault/durability research.
+- **Estado:** donor arquitetural forte; maior custo de integração como base completa da Assistente no snapshot avaliado.
+- **Termos:** licença de raiz não detectada na revisão.
+
 #### SRC-ATENTO — Arquitetura própria do Atento
 - **Tipo:** `ATENTO_NATIVE`.
 - **Usar para:** contratos, integration glue, policy composition, privacy, RBAC, observabilidade, CI/CD, infraestrutura e componentes sem donor superior comprovado.
@@ -186,7 +238,7 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 |---|---|---|---|
 | Session/API | `SRC-ATENTO` | `SRC-PSYCHAT` | donor permitido se reduzir esforço sem degradar contratos |
 | State/Profile | `SRC-CADSS` | `SRC-UKA`, `SRC-MHB` | copiar/adaptar implementação disponível ou construir local |
-| Belief/uncertainty | `SRC-UKA` | `SRC-ENPMR` | implementar/adaptar conforme evidência |
+| Belief/uncertainty | `SRC-UKA` | `SRC-ENPMR`, `SRC-AGENTMENTAL` | implementar/adaptar conforme evidência |
 | Longitudinal memory | `SRC-PA` | `SRC-ENPMR`, `SRC-PE` | donor integral/parcial permitido se testável |
 | Executive Controller | `SRC-ATENTO` | `SRC-PA`, `SRC-CADSS`, `SRC-UKA`, `SRC-TEA` | composição própria ou donor que cubra a maioria das funções |
 | Planner | `SRC-CADSS` | `SRC-SAGE`, `SRC-ESCONV`, `SRC-PA` | donor/adaptação permitidos |
@@ -195,8 +247,8 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 | Tools | `SRC-TEA` | `SRC-ATENTO` | adaptar benchmark patterns; runtime pode ser nativo ou donor |
 | Generator | `SRC-SOULCHAT`, `SRC-EMOLLM`, `SRC-MINDCHAT` | `SRC-CADSS` | comparar via Model Gateway; full donor permitido |
 | Critic/Reranker | `SRC-SAGE`, `SRC-PA` | `SRC-COUNSEL` | donor/adaptação condicionados a ablation |
-| Safety | `SRC-ATENTO` | `SRC-MHB`, `SRC-COUNSEL`, `SRC-THERAPYMIND` | donor pode fornecer partes, mas gate final permanece independente/testável |
-| AtentoEval | `SRC-ATENTO` | todos os benchmarks | preservar protocolos; adapters próprios ou copiados quando vantajoso |
+| Safety | `SRC-ATENTO` | `SRC-MHB`, `SRC-COUNSEL`, `SRC-MHSAFE`, `SRC-THERAPYMIND` | donor pode fornecer partes, mas gate final permanece independente/testável |
+| AtentoEval | `SRC-ATENTO` | todos os benchmarks, incluindo `SRC-PATIENTPSI` e `SRC-MHSAFE` | preservar protocolos; adapters próprios ou copiados quando vantajoso |
 
 ### Provenance obrigatório para donor
 
