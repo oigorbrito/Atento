@@ -182,6 +182,8 @@ def main() -> int:
                 and truthy(d, "collection_contract_mismatch_fails_closed")
                 and truthy(d, "atomic_generation_promotion_pass")
                 and truthy(d, "partial_staging_never_promoted")
+                and truthy(d, "promoted_generation_survives_restart")
+                and truthy(d, "corrupt_pointer_fails_closed")
             ),
         ),
         (
@@ -408,7 +410,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.20",
+        "metric_version": "psychat-block-i-readiness-v0.21",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
