@@ -217,8 +217,21 @@ def main() -> int:
                 f"recreated collection lost corpus identity: {recreated!r}"
             )
 
+        info = store.get_collection_info()
+        expected_info = {
+            "name": collection_name,
+            "index_schema": "rag-cosine-v1",
+            "embedding_identity": StubEmbeddingGateway.index_identity,
+            "corpus_identity": corpus_identity,
+        }
+        for key, expected in expected_info.items():
+            if info.get(key) != expected:
+                raise AssertionError(
+                    f"collection info missing observable {key}: {info!r}"
+                )
+
     report = {
-        "metric_version": "psychat-vector-metric-v0.5",
+        "metric_version": "psychat-vector-metric-v0.6",
         "runtime_shape": args.expect,
         "collection_name": collection_name,
         "collection_metadata": metadata,
@@ -232,6 +245,18 @@ def main() -> int:
         "same_identity_rebuild_uses_upsert": (
             args.expect != "patched"
             or len(initial_collection.upsert_calls) == 2
+        ),
+        "collection_info_exposes_index_identity": (
+            args.expect != "patched"
+            or all(
+                store.get_collection_info().get(key)
+                for key in (
+                    "name",
+                    "index_schema",
+                    "embedding_identity",
+                    "corpus_identity",
+                )
+            )
         ),
         "explicit_hnsw_space": explicit_space,
         "similarity_transform_in_donor": "1 - distance",
