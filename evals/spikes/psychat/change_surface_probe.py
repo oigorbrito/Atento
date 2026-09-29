@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """Git-backed change-surface lower bounds for the PsyChat donor spike.
 
-Exact files_touched metrics require a concrete implementation patch and should
-then be measured with git diff --name-only. Before that patch exists, this probe
-records reproducible lower bounds from hardwired source references in the pinned
-donor. It deliberately labels those values as lower bounds rather than final
-migration cost.
+This probe records the pristine upstream lower bounds before any fork patch is
+applied. Exact adapted metrics are measured by the companion
+minimal_fork_patch.py, provider_replacement_probe.py and
+adapter_change_surface_probe.py probes.
 """
 from __future__ import annotations
 
@@ -104,9 +103,8 @@ def run_probe(donor_root: Path) -> dict:
             "files_touched_to_swap_provider_lower_bound": len(provider_files),
             "files_touched_to_swap_provider_evidence": provider_files,
             "provider_swap_status": (
-                "UNRESOLVED: ModelGateway protocol exists in the adapter, but the "
-                "real donor still owns direct provider paths until a fork patch "
-                "injects the gateway."
+                "SEE_COMPANION_PROBES: this report intentionally measures the "
+                "pristine upstream before the minimal fork patch is applied."
             ),
             "evidence_tests": [
                 "test_executor_can_be_swapped_by_registration",
@@ -114,11 +112,11 @@ def run_probe(donor_root: Path) -> dict:
                 "test_new_capability_registers_without_chassis_change",
             ],
         },
-        "next_exact_measurement": (
-            "After the minimal fork patch exists, measure each scenario with "
-            "git diff --name-only <baseline>...<scenario> and replace lower bounds "
-            "with exact counts."
-        ),
+        "exact_measurement_sources": [
+            "minimal_fork_patch.py",
+            "provider_replacement_probe.py",
+            "adapter_change_surface_probe.py",
+        ],
     }
 
 
