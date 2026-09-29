@@ -38,6 +38,38 @@ O produto agora possui três agentes conceitualmente distintos. Esta ADR histór
 
 O requisito atual é que esses domínios não sejam fundidos em um agente onisciente com acesso irrestrito a tools, memória ou chats dos demais.
 
+## Functional authority matrix
+
+The product-level role contract is:
+
+| Domain / capability | NAIA | Anna | Apollo |
+|---|---|---|---|
+| general personal assistant / secretary | **OWNER** | out of scope | out of scope |
+| calendar, messages, email, shopping, general research | **OWNER / EXECUTOR** | handoff to NAIA | handoff to NAIA |
+| browser/computer/apps and general personal side effects | **OWNER / EXECUTOR** | no inherited authority | no inherited authority |
+| therapeutic/emotional conversation | out of scope except routing/handoff | **OWNER** | out of scope |
+| therapeutic longitudinal memory / strategy / interventions | no default access | **OWNER** | no default access |
+| therapeutic safety/escalation policy | no default ownership | **OWNER** | no default ownership |
+| fitness/training/nutrition planning | out of scope except routing/handoff | out of scope | **OWNER** |
+| fitness progress / adherence / wearable-domain state | no default access | no default access | **OWNER** |
+| general logistics produced by another domain | **EXECUTOR after explicit handoff** | REQUESTER | REQUESTER |
+
+Interpretation:
+
+```text
+DOMAIN_OWNER
+!=
+GENERAL_SIDE_EFFECT_EXECUTOR
+
+NAIA = general personal operational executor
+ANNA = therapeutic/emotional domain authority
+APOLLO = fitness/nutrition domain authority
+```
+
+NAIA may be the primary user-facing entry point, but primary entry point does not grant cross-agent memory or tool authority.
+
+Anna and Apollo may use tools that are intrinsic to their own domain under their own future policy. They do not inherit NAIA's general personal-action toolset.
+
 ## Historical candidate topology — not selected
 
 ```text
