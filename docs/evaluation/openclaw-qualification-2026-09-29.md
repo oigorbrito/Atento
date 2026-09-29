@@ -1,8 +1,10 @@
 # OpenClaw qualification — 2026-09-29
 
+> **HISTORICAL EVIDENCE / DECISION RESET:** todos os pins, achados e limitações deste documento são preservados. Qualquer linguagem de “finalist”, “next decision step” ou prioridade de `OC-NAYA-*` está **inativa** até OpenClaw ser reenquadrado na nova enumeração comparável da **NAIA**. Os IDs `OC-NAYA-*` são identificadores históricos e não definem a nomenclatura atual do produto.
+
 ## Contract
 
-Este registro preserva a qualificação do OpenClaw como candidato a base da Nayá Assistente.
+Este registro preserva a qualificação técnica histórica do OpenClaw como possível chassis de assistente persistente. Ele não concede shortlist ou prioridade atual para a NAIA.
 
 Não é uma decisão de seleção. O repositório canônico continua sendo o Atento.
 
@@ -299,9 +301,9 @@ Some upstream evidence transfers only when Nayá preserves the relevant boundary
 
 ### OC-NAYA-001 — minimal Nayá hardening/profile probe
 
-This is the **only OpenClaw-specific local probe required before finalist comparison**.
+This was the **historical pre-selection probe** proposed before the decision reset. It is now inactive unless OpenClaw re-enters the comparable NAIA candidate set.
 
-Implement the smallest Nayá profile using supported OpenClaw seams and prove:
+If OpenClaw is reselected for audit, implement the smallest NAIA profile using supported OpenClaw seams and prove:
 
 - the authored configuration is valid;
 - effective exec/tool policy is fail-closed for the intended Assistant deployment;
@@ -317,7 +319,7 @@ Record as part of the same probe:
 - config/plugin-only touchpoints;
 - whether the candidate remains upstream-trackable.
 
-Do **not** rewrite OpenClaw's stale-approval/restart test suite. Reuse the upstream tests for the mechanism and test only the Nayá profile that composes them.
+Do **not** rewrite OpenClaw's stale-approval/restart test suite. If this probe is reactivated, reuse upstream evidence for unchanged mechanisms and test only material NAIA deltas.
 
 ### Reclassified work
 
@@ -348,10 +350,10 @@ PER_AGENT_CORE_STATE_ISOLATION  = STRONG
 STRICT_THERAPY_BOUNDARY         = SEPARATE_RUNTIME_REQUIRED
 GENERIC_TOOL_EFFECT_DURABILITY  = NOT_PROVEN
 LICENSE                         = MIT
-STATUS                          = STRONG_CANDIDATE / STATIC_QUALIFICATION_COMPLETE
-LOCAL_PRESELECTION_DELTA        = OC-NAYA-001_PENDING
+STATUS                          = EVIDENCE_PRESERVED / SELECTION_RESET
+LOCAL_PRESELECTION_DELTA        = INACTIVE_UNLESS_RESELECTED
 ```
 
 No base winner is selected by this record.
 
-The next decision step is to execute OC-NAYA-001 only, then compare OpenClaw, OpenMausBot and NaIA using the same ADR-002 decision protocol. The reclassified tests run later in the blocks that actually introduce those adaptations.
+**Current decision state:** no OpenClaw-specific execution step is required. First re-enumerate comparable persistent-assistant chassis for NAIA. Reuse this qualification if OpenClaw remains relevant; execute `OC-NAYA-001` only if a material unresolved delta still matters after that comparison.
