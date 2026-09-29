@@ -75,6 +75,13 @@ class PsyChatRagSystemPort:
             donor.last_retrieval_docs = list(
                 session_state.get("last_retrieval_docs", [])
             )
+        if hasattr(donor, "_style_cache"):
+            style_cache = session_state.get("_style_cache", {})
+            donor._style_cache = (
+                dict(style_cache)
+                if isinstance(style_cache, Mapping)
+                else {"topic": None, "analysis": ""}
+            )
 
         if force_retrieval:
             params = inspect.signature(donor.generate_response).parameters
@@ -103,6 +110,8 @@ class PsyChatRagSystemPort:
         }
         if hasattr(donor, "last_retrieval_docs"):
             next_state["last_retrieval_docs"] = list(donor.last_retrieval_docs)
+        if hasattr(donor, "_style_cache"):
+            next_state["_style_cache"] = dict(donor._style_cache)
 
         return response, next_state
 
