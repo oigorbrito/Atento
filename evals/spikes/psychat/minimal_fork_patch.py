@@ -118,7 +118,7 @@ def patch_vector_store(path: Path) -> None:
     text = replace_once(
         text,
         "import requests\nfrom typing import List, Dict, Any\n",
-        "import hashlib\nfrom typing import List, Dict, Any\n",
+        "import hashlib\nimport json\nimport os\nimport uuid\nfrom pathlib import Path\nfrom typing import List, Dict, Any\n",
         label="vector requests import",
     )
     text = replace_once(
@@ -159,9 +159,14 @@ def patch_vector_store(path: Path) -> None:
         ).hexdigest()[:12]
         self.embedding_identity = embedding_identity
         self.corpus_identity = corpus_identity
-        self.collection_name = (
+        self.logical_collection_name = (
             f"{COLLECTION_NAME}__{ATENTO_INDEX_SCHEMA_VERSION}__{identity_hash}"
         )
+        self.pointer_path = (
+            Path(CHROMA_DB_PATH)
+            / f".atento-active-{identity_hash}.json"
+        )
+        self.collection_name = self._read_active_collection_name()
         self.expected_collection_metadata = {
             "description": "MCP知识库向量存储",
             "hnsw:space": "cosine",
@@ -180,10 +185,15 @@ def patch_vector_store(path: Path) -> None:
         "            name=COLLECTION_NAME,\n"
         "            metadata={\"description\": \"MCP知识库向量存储\"}\n"
         "        )",
-        "        self.collection = self.client.get_or_create_collection(\n"
-        "            name=self.collection_name,\n"
-        "            metadata=self.expected_collection_metadata,\n"
-        "        )\n"
+        "        if self.pointer_path.exists():\n"
+        "            self.collection = self.client.get_collection(\n"
+        "                name=self.collection_name,\n"
+        "            )\n"
+        "        else:\n"
+        "            self.collection = self.client.get_or_create_collection(\n"
+        "                name=self.collection_name,\n"
+        "                metadata=self.expected_collection_metadata,\n"
+        "            )\n"
         "        self._validate_collection_contract()",
         label="VectorStore versioned cosine collection contract",
     )
@@ -249,6 +259,71 @@ def patch_vector_store(path: Path) -> None:
                         metadatas=batch_metadatas
                     )""",
         label="VectorStore idempotent document upsert",
+    )
+    text = replace_once(
+        text,
+        "    def get_embedding(self, text: str) -> List[float]:\n",
+        "    def _read_active_collection_name(self) -> str:\n"
+        "        if not self.pointer_path.exists():\n"
+        "            return self.logical_collection_name\n"
+        "        try:\n"
+        "            payload = json.loads(self.pointer_path.read_text(encoding=\"utf-8\"))\n"
+        "        except Exception as exc:\n"
+        "            raise RuntimeError(f\"invalid vector index pointer: {exc}\") from exc\n"
+        "        active = str(payload.get(\"active_collection\", \"\")).strip()\n"
+        "        if not active.startswith(self.logical_collection_name + \"__gen-\"):\n"
+        "            raise RuntimeError(f\"invalid active vector collection: {active!r}\")\n"
+        "        return active\n\n"
+        "    def _write_active_collection_name(self, name: str) -> None:\n"
+        "        self.pointer_path.parent.mkdir(parents=True, exist_ok=True)\n"
+        "        temp = self.pointer_path.with_suffix(\n"
+        "            self.pointer_path.suffix + f\".{uuid.uuid4().hex}.tmp\"\n"
+        "        )\n"
+        "        payload = {\n"
+        "            \"logical_collection\": self.logical_collection_name,\n"
+        "            \"active_collection\": name,\n"
+        "        }\n"
+        "        temp.write_text(json.dumps(payload, sort_keys=True), encoding=\"utf-8\")\n"
+        "        os.replace(temp, self.pointer_path)\n\n"
+        "    def rebuild_documents(self, documents: List[Dict[str, Any]]) -> bool:\n"
+        "        generation = uuid.uuid4().hex[:12]\n"
+        "        staging_name = f\"{self.logical_collection_name}__gen-{generation}\"\n"
+        "        staging_metadata = dict(self.expected_collection_metadata)\n"
+        "        staging_metadata[\"atento:generation\"] = generation\n"
+        "        previous_collection = self.collection\n"
+        "        previous_name = self.collection_name\n"
+        "        staging = None\n"
+        "        try:\n"
+        "            staging = self.client.create_collection(\n"
+        "                name=staging_name,\n"
+        "                metadata=staging_metadata,\n"
+        "            )\n"
+        "            self.collection = staging\n"
+        "            self.collection_name = staging_name\n"
+        "            success = self.add_documents(documents)\n"
+        "            complete = success and staging.count() == len(documents)\n"
+        "            self.collection = previous_collection\n"
+        "            self.collection_name = previous_name\n"
+        "            if not complete:\n"
+        "                self.client.delete_collection(staging_name)\n"
+        "                return False\n"
+        "            self._write_active_collection_name(staging_name)\n"
+        "            self.collection = staging\n"
+        "            self.collection_name = staging_name\n"
+        "            self._validate_collection_contract()\n"
+        "            return True\n"
+        "        except Exception as exc:\n"
+        "            self.collection = previous_collection\n"
+        "            self.collection_name = previous_name\n"
+        "            if staging is not None:\n"
+        "                try:\n"
+        "                    self.client.delete_collection(staging_name)\n"
+        "                except Exception:\n"
+        "                    pass\n"
+        "            print(f\"原子重建向量索引失败: {exc}\")\n"
+        "            return False\n\n"
+        "    def get_embedding(self, text: str) -> List[float]:\n",
+        label="VectorStore atomic generation lifecycle",
     )
     text = replace_once(
         text,
@@ -333,10 +408,18 @@ def patch_rag_system(path: Path) -> None:
         text,
         "            if clear_existing:\n"
         "                self.vector_store.clear_collection()\n",
-        "            if clear_existing and not self.vector_store.clear_collection():\n"
-        "                print(\"知识库清空失败，终止重建\")\n"
-        "                return False\n",
-        label="RAGSystem rebuild clear fail closed",
+        "",
+        label="RAGSystem remove destructive pre-clear",
+    )
+    text = replace_once(
+        text,
+        "            success = self.vector_store.add_documents(documents)\n",
+        "            success = (\n"
+        "                self.vector_store.rebuild_documents(documents)\n"
+        "                if clear_existing\n"
+        "                else self.vector_store.add_documents(documents)\n"
+        "            )\n",
+        label="RAGSystem atomic rebuild path",
     )
     text = replace_once(
         text,
@@ -597,7 +680,7 @@ def apply_patch(donor_root: Path) -> dict:
     retention = retention_metrics(donor_root)
 
     return {
-        "metric_version": "psychat-minimal-fork-patch-v0.14",
+        "metric_version": "psychat-minimal-fork-patch-v0.15",
         "pinned_commit": head_before,
         "changed_files": changed,
         "donor_files_touched_to_introduce_provider_boundary": len(PROVIDER_BOUNDARY_FILES),
@@ -614,6 +697,9 @@ def apply_patch(donor_root: Path) -> dict:
         "collection_info_exposes_index_identity": True,
         "knowledge_base_rebuild_defaults_to_replace": True,
         "knowledge_base_rebuild_clear_fails_closed": True,
+        "knowledge_base_rebuild_uses_staging_generation": True,
+        "active_index_pointer_promoted_atomically": True,
+        "partial_staging_index_never_promoted": True,
         "persisted_collection_metadata_validated": True,
         "collection_contract_mismatch_fails_closed": True,
         "similarity_transform": "1 - cosine_distance",
