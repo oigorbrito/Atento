@@ -167,6 +167,33 @@ STATUS                    = ARCHITECTURAL_DONOR / BASE_CANDIDATE_WITH_HIGHER_BUI
 
 The upstream NaIA PR #186 contains a harness-repair experiment. It is not the canonical project evidence record; Atento remains canonical.
 
+#### Historical NaIA durability-harness revalidation
+
+A 2026-09-29 rerun of the NaIA chassis harness recorded:
+
+- 392 tests executed;
+- 348 passed;
+- 44 failed.
+
+The failures were classified as **HARNESS/fixture/provenance failures**, not evidence that Temporal, DBOS or Restate had failed the candidate protocol.
+
+Concrete harness defects identified/repaired in donor PR #186:
+
+- Temporal cleanup returned `liveObservedWorkerPids` from the wrong variable name;
+- DBOS had the same cleanup mapping defect;
+- the formal single-run fixture omitted A003/A004 already present in the frozen protocol.
+
+Remaining red-state causes included missing adapter lockfile/provenance prerequisites and additional harness qualification issues.
+
+Therefore:
+
+```text
+DURABLE_RUNTIME_WINNER = NOT_SELECTED
+HARNESS_RED != CANDIDATE_FAIL
+```
+
+Atento should reuse those fault contracts as regression/qualification evidence, not restart broad durable-runtime testing unless a material candidate delta requires it.
+
 ---
 
 ### C — OpenClaw
