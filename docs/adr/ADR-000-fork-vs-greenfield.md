@@ -1,4 +1,4 @@
-# ADR-000 — Fork vs Greenfield
+# ADR-000 — Fork vs Greenfield (historical strategy research)
 
 > **DECISION RESET — 2026-09-29:** a evidência abaixo é preservada, mas nenhuma seleção, ordem de execução, shortlist ou gate derivado desta ADR possui autoridade decisória enquanto a reconciliação conceitual de NAIA/Anna/Apollo estiver aberta. Não apagar medições já produzidas; revalidar apenas as conclusões.
 
@@ -51,9 +51,9 @@ O Atento pode ser implementado como arquitetura própria, selective port, **full
 ### SoulChat2.0 / EmoLLM / MindChat
 Tratar primariamente como trilha de modelos/checkpoints, não como base do Executive Runtime.
 
-## Block-migration rule
+## Historical block-migration rule — inactive
 
-A decisão desta ADR deve mapear a estratégia escolhida para **blocos A–S completos**. Não definir migração por semanas, prompts ou frações artificiais.
+A formulação anterior exigia mapear adoção para blocos A–S completos. Essa regra é preservada como histórico e **não é obrigatória durante o DECISION_RESET**. A arquitetura real de migração deve ser derivada do chassis/agente selecionado e depois mapeada ao ledger técnico sem perder evidência.
 
 Exemplo:
 
@@ -68,11 +68,11 @@ BLOCO E — Memory
   donor: PsychAgent
 ```
 
-Project Points são usados para medir a evidência produzida durante a migração do bloco, não para fracionar a migração.
+Project Points continuam preservando evidência produzida. Eles não transformam os blocos históricos em arquitetura obrigatória dos três agentes.
 
 ## Full donor rule
 
-Adoção integral não é penalizada por princípio. O donor pode ser copiado/forkeado na íntegra para o estudo quando isso melhorar a solução de forma mensurável. A ADR deve comparar o donor integral com alternativas razoáveis usando o mesmo AtentoEval.
+Adoção integral não é penalizada por princípio. Um donor pode ser estudado como full donor/fork quando isso melhorar a solução de forma mensurável. A decisão concreta deve ocorrer na ADR específica do agente, após comparar candidatos equivalentes e medir custo total de adaptação.
 
 A autorização interna do projeto não substitui os termos externos de redistribuição; isso é registrado separadamente em `docs/third-party.md`.
 
