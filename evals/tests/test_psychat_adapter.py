@@ -256,7 +256,7 @@ class PsyChatAdapterTest(unittest.TestCase):
         self.assertEqual(state["no_rag_counter"], 5)
         self.assertEqual(len(state["conversation_history"]), 2)
 
-    def test_bridge_can_enforce_atento_rag_route_on_patched_donor(self):
+    def test_executor_enforces_atento_rag_route_on_patched_donor(self):
         created = []
 
         def factory():
@@ -264,18 +264,47 @@ class PsyChatAdapterTest(unittest.TestCase):
             created.append(donor)
             return donor
 
-        port = PsyChatRagSystemPort(
-            factory,
-            force_retrieval=True,
+        registry = CapabilityRegistry()
+        registry.register(
+            PsyChatExecutorAdapter(
+                PsyChatRagSystemPort(factory)
+            )
         )
-        response, _ = port.respond(
+        runtime = PsyChatSpikeRuntime(
+            registry=registry,
+            sessions=InMemorySessionStore(),
+        )
+        result = runtime.execute(
+            session_id="a",
             message="must retrieve",
-            session_state={},
+            route=route(),
         )
 
-        self.assertEqual(response, "upstream:must retrieve:1")
+        self.assertEqual(result.response, "upstream:must retrieve:1")
         self.assertEqual(len(created), 1)
         self.assertEqual(created[0].force_flags, [True])
+
+    def test_unpatched_donor_fails_closed_when_rag_route_must_be_honored(self):
+        registry = CapabilityRegistry()
+        registry.register(
+            PsyChatExecutorAdapter(
+                PsyChatRagSystemPort(FakeUpstreamRagSystem)
+            )
+        )
+        runtime = PsyChatSpikeRuntime(
+            registry=registry,
+            sessions=InMemorySessionStore(),
+        )
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "minimal BLOCO I fork patch is required",
+        ):
+            runtime.execute(
+                session_id="a",
+                message="must retrieve",
+                route=route(),
+            )
 
     def test_bridge_restores_retrieval_state(self):
         port = PsyChatRagSystemPort(FakeRetrievalStateRagSystem)
