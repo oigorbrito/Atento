@@ -211,6 +211,17 @@ def main() -> int:
         tuple[str, Path, Callable[[dict[str, Any]], bool]]
     ] = [
         (
+            "donor_license_known",
+            evidence_root / "psychat_license.json",
+            lambda d: (
+                equals(d, "pinned_donor_commit", PINNED_COMMIT)
+                and equals(d, "license", "MIT")
+                and truthy(d, "fork_modification_permission_present")
+                and truthy(d, "distribution_permission_present")
+                and truthy(d, "notice_retention_required")
+            ),
+        ),
+        (
             "minimal_fork_git_surface",
             evidence_root / "psychat_minimal_fork_git.json",
             lambda d: (
@@ -349,7 +360,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.4",
+        "metric_version": "psychat-block-i-readiness-v0.5",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
