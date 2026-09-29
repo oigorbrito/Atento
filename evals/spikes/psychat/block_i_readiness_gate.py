@@ -108,6 +108,10 @@ def main() -> int:
                 and truthy(d, "partial_staging_index_never_promoted")
                 and truthy(d, "long_lived_vector_store_refreshes_active_generation")
                 and truthy(d, "incremental_writes_refresh_active_generation")
+                and truthy(d, "generation_gc_is_explicit_only")
+                and truthy(d, "generation_gc_requires_quiescence_confirmation")
+                and truthy(d, "generation_gc_never_deletes_active_collection")
+                and truthy(d, "generation_gc_retains_previous_window")
             ),
         ),
         (
@@ -190,6 +194,10 @@ def main() -> int:
                 and truthy(d, "corrupt_pointer_fails_closed")
                 and truthy(d, "long_lived_reader_refreshes_active_generation")
                 and truthy(d, "incremental_writer_refreshes_active_generation")
+                and truthy(d, "generation_gc_explicit_pass")
+                and truthy(d, "generation_gc_requires_quiescence_confirmation")
+                and truthy(d, "generation_gc_never_deletes_active_collection")
+                and truthy(d, "generation_gc_retains_previous_window")
             ),
         ),
         (
@@ -217,6 +225,18 @@ def main() -> int:
                 and at_least(d, "bridge_case_count", 1)
                 and at_least(d, "forced_empty_retrieval_case_count", 1)
                 and equals(d, "quality_claim", False)
+            ),
+        ),
+        (
+            "retrieval_readiness",
+            "psychat_retrieval_readiness.json",
+            lambda d: (
+                truthy(d, "knowledge_corpus_present")
+                and equals(d, "knowledge_file_count", 12)
+                and equals(d, "committed_vector_index_present", False)
+                and equals(d, "chroma_exact_version_pinned", False)
+                and truthy(d, "integration_chroma_exact_version_pinned")
+                and equals(d, "integration_environment_must_pin_chroma", False)
             ),
         ),
         (
@@ -301,6 +321,10 @@ def main() -> int:
                 and truthy(d, "static_patched_invariants.clear_collection_uses_atomic_empty_generation")
                 and truthy(d, "static_patched_invariants.long_lived_vector_store_refreshes_active_generation")
                 and truthy(d, "static_patched_invariants.incremental_writes_refresh_active_generation")
+                and truthy(d, "static_patched_invariants.generation_gc_is_explicit_only")
+                and truthy(d, "static_patched_invariants.generation_gc_requires_quiescence_confirmation")
+                and truthy(d, "static_patched_invariants.generation_gc_never_deletes_active_collection")
+                and truthy(d, "static_patched_invariants.generation_gc_retains_previous_window")
                 and truthy(d, "static_patched_invariants.rag_destructive_preclear_removed")
                 and truthy(d, "static_patched_invariants.qa_id_carry_forward_present")
                 and equals(d, "pinned_corpus_parser_evidence.upstream_unknown_qa_id_sections", 4760)
@@ -420,7 +444,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.25",
+        "metric_version": "psychat-block-i-readiness-v0.26",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
