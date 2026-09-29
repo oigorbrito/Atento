@@ -1,0 +1,20 @@
+name: Actions infra smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "spike/**"
+    paths:
+      - ".github/workflows/actions-infra-smoke.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Runner smoke
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo
+        run: echo "actions-runner-ok"
