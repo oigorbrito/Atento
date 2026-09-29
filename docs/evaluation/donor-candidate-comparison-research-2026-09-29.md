@@ -1,5 +1,7 @@
 # Donor candidate comparison research — 2026-09-29
 
+> **HISTORICAL EVIDENCE / METHODOLOGY:** este registro é preservado, mas sua formulação original era block-centric e anterior ao reset NAIA/Anna/Apollo. Use as medições e métodos; não trate candidatos, blocos ou ordem de experimentos daqui como shortlist ou arquitetura atual.
+
 ## Contract
 
 Este registro preserva a pesquisa metodológica e a evidência empírica produzidas durante a avaliação de donors/candidatos do Atento.
@@ -16,7 +18,9 @@ Responsabilidades:
 Fontes canônicas relacionadas:
 
 - metodologia AtentoEval: `docs/evaluation/harness.md`;
-- decisão fork/donor/native: `docs/adr/ADR-000-fork-vs-greenfield.md`;
+- identidade/agent scope atual: `docs/product-concept-reset.md`;
+- estratégia histórica fork/donor/native: `docs/adr/ADR-000-fork-vs-greenfield.md`;
+- seleção da Anna: `docs/adr/ADR-ANNA-001-therapeutic-base-selection.md`;
 - provenance/licenças: `docs/third-party.md`;
 - progresso global: `roadmap.md`.
 
@@ -36,7 +40,7 @@ A pergunta de engenharia não é:
 
 A pergunta é:
 
-> qual candidato consegue cumprir a responsabilidade de um bloco do Atento com qualidade, safety e custo aceitáveis, preservando um chassi que permita trocar provider, executor, donor ou capability com change-surface pequeno e mensurável?
+> para **componentes**, qual candidato cumpre o mesmo contrato com qualidade, safety e custo aceitáveis e change-surface mensurável? Para **chassis completos**, qual sistema funcional chega ao agente alvo (NAIA ou Anna) com menor custo total de adaptação?
 
 Isso exige avaliar duas dimensões diferentes:
 
@@ -117,7 +121,10 @@ Manifest mínimo:
 
 ```yaml
 candidate_id:
-block:
+agent_scope:
+candidate_class:
+selection_status:
+block: # optional/historical evidence axis; not final product architecture
 source_id:
 repository:
 upstream_sha:
@@ -161,7 +168,7 @@ Não é obrigatório executar todas as variantes se uma delas já for tecnicamen
 
 ### 4.3 Same-contract rule
 
-Para comparar candidatos do mesmo bloco, todos devem expor o mesmo contrato Atento.
+Para comparar **componentes** do mesmo bloco/contrato, todos devem expor o mesmo contrato. Para comparar **chassis completos**, todos devem pertencer ao mesmo `agent_scope` e à mesma classe de candidato; não comparar um RAG donor com um agente terapêutico completo como se fossem equivalentes.
 
 Exemplo conceitual para BLOCO I:
 
@@ -551,7 +558,8 @@ Ainda não existe evidência suficiente para afirmar:
 Portanto:
 
 ```text
-ADR-000 = NOT_DECIDED
+ADR-000 = HISTORICAL_DECISION_RESET
+ANNA_BASE = NOT_SELECTED
 Project Progress = unchanged by this research record
 ```
 
@@ -618,7 +626,7 @@ Se cada donor novo exigir reescrever o harness central, o próprio mecanismo de 
 
 Esta pesquisa suporta as seguintes regras metodológicas, sem selecionar candidato:
 
-1. comparar candidatos por BLOCO e contrato comum;
+1. comparar component donors por contrato comum; comparar chassis completos por agente + classe equivalente;
 2. pinçar `repo + SHA`;
 3. manter benchmark axes separados;
 4. executar local deltas que o benchmark externo não cobre;
@@ -629,6 +637,6 @@ Esta pesquisa suporta as seguintes regras metodológicas, sem selecionar candida
 9. persistir result manifests/artifacts;
 10. não tratar `INFRA_BLOCKED` como resultado do candidato;
 11. não vendorizar/mergear todos os donors no repo antes da decisão;
-12. manter ADR-000 aberta até runtime + quality + safety + architecture evidence serem suficientes.
+12. manter a ADR específica do agente aberta até runtime + quality + safety + architecture + adaptation-cost evidence serem suficientes.
 
 Nenhuma dessas regras altera o score global do projeto por si só.
