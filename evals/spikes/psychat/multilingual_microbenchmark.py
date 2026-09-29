@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
-"""Small real-evidence multilingual retrieval benchmark for pinned PsyChat.
+"""Chunk-faithful multilingual retrieval microbenchmark for pinned PsyChat.
 
-This benchmark intentionally does NOT rebuild the full PsyChat Chroma index.
-Instead it extracts the four pinned gold conversations from the donor corpus,
-adds deterministic same-corpus distractors, embeds the resulting microcorpus,
-and compares pt-BR vs zh-CN retrieval for the exact same gold IDs.
+The benchmark uses real pinned PsyChat conversations and reproduces the donor's
+2–3 turn (up to 6 utterance) chunk granularity. It compares pt-BR vs zh-CN
+queries against the exact same gold QA IDs.
 
-It measures feature quality of the embedding/retrieval path. It is not a
-Chassis Fitness metric.
+It does not rebuild the full Chroma index and is not a Chassis Fitness metric.
 
 Required environment:
 - ALIBABA_API_KEY
@@ -54,7 +52,33 @@ def parse_records(path: Path) -> dict[str, str]:
     }
 
 
-def stable_distractors(ids: Iterable[str], *, exclude: set[str], limit: int) -> list[str]:
+def split_dialogue_like_psychat(content: str) -> list[str]:
+    """Mirror DataProcessor._split_dialogue_by_turns() at 6 utterances."""
+    lines = [line.strip() for line in content.splitlines() if line.strip()]
+    chunks: list[str] = []
+    current: list[str] = []
+    turn_count = 0
+
+    for line in lines:
+        current.append(line)
+        if line.startswith("用户:") or line.startswith("助手:"):
+            turn_count += 1
+            if turn_count >= 6:
+                chunks.append("\n".join(current))
+                current = []
+                turn_count = 0
+
+    if current:
+        chunks.append("\n".join(current))
+    return chunks
+
+
+def stable_distractors(
+    ids: Iterable[str],
+    *,
+    exclude: set[str],
+    limit: int,
+) -> list[str]:
     candidates = [doc_id for doc_id in ids if doc_id not in exclude]
     candidates.sort(
         key=lambda doc_id: hashlib.sha256(doc_id.encode("utf-8")).hexdigest()
@@ -118,7 +142,7 @@ def main() -> int:
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--distractors", type=int, default=16)
-    parser.add_argument("--top-k", type=int, default=5)
+    parser.add_argument("--top-k", type=int, default=6)
     parser.add_argument("--max-document-chars", type=int, default=1800)
     args = parser.parse_args()
 
@@ -131,15 +155,12 @@ def main() -> int:
     expected_ids = {str(row["expected_id"]) for row in manifest}
     source_files = sorted({str(row["source_file"]) for row in manifest})
 
-    source_records: dict[str, dict[str, str]] = {}
     all_records: dict[str, str] = {}
     source_of: dict[str, str] = {}
     for source in source_files:
-        records = parse_records(args.donor_root / source)
-        source_records[source] = records
-        for doc_id, content in records.items():
+        for doc_id, record in parse_records(args.donor_root / source).items():
             if doc_id not in all_records:
-                all_records[doc_id] = content
+                all_records[doc_id] = record
                 source_of[doc_id] = source
 
     missing = sorted(expected_ids - set(all_records))
@@ -151,7 +172,28 @@ def main() -> int:
         exclude=expected_ids,
         limit=args.distractors,
     )
-    corpus_ids = sorted(expected_ids) + distractor_ids
+    selected_record_ids = sorted(expected_ids) + distractor_ids
+
+    chunks: list[dict] = []
+    for doc_id in selected_record_ids:
+        for index, chunk_text in enumerate(
+            split_dialogue_like_psychat(all_records[doc_id])
+        ):
+            chunks.append(
+                {
+                    "chunk_id": f"{doc_id}:{index}",
+                    "qa_id": doc_id,
+                    "source_file": source_of[doc_id],
+                    "content": chunk_text[: args.max_document_chars],
+                }
+            )
+
+    gold_chunk_counts = {
+        doc_id: sum(chunk["qa_id"] == doc_id for chunk in chunks)
+        for doc_id in sorted(expected_ids)
+    }
+    if any(count == 0 for count in gold_chunk_counts.values()):
+        raise AssertionError(f"gold record produced no chunks: {gold_chunk_counts}")
 
     api_key = os.environ.get("ALIBABA_API_KEY", "")
     model = os.environ.get("PSYCHAT_EMBEDDING_MODEL", DEFAULT_MODEL)
@@ -162,10 +204,11 @@ def main() -> int:
         url=url,
     )
 
-    document_vectors = {}
-    for doc_id in corpus_ids:
-        text = all_records[doc_id][: args.max_document_chars]
-        document_vectors[doc_id] = gateway.embed(text)
+    vectors = {
+        chunk["chunk_id"]: gateway.embed(chunk["content"])
+        for chunk in chunks
+    }
+    chunk_by_id = {chunk["chunk_id"]: chunk for chunk in chunks}
 
     rows = []
     hits_by_language: dict[str, list[float]] = defaultdict(list)
@@ -180,14 +223,19 @@ def main() -> int:
         query_vector = gateway.embed(query)
         ranked = sorted(
             (
-                (doc_id, cosine(query_vector, vector))
-                for doc_id, vector in document_vectors.items()
+                (chunk_id, cosine(query_vector, vector))
+                for chunk_id, vector in vectors.items()
             ),
             key=lambda pair: pair[1],
             reverse=True,
         )
-        ranked_ids = [doc_id for doc_id, _ in ranked]
-        rank = ranked_ids.index(gold) + 1 if gold in ranked_ids else None
+
+        gold_ranks = [
+            index
+            for index, (chunk_id, _score) in enumerate(ranked, start=1)
+            if chunk_by_id[chunk_id]["qa_id"] == gold
+        ]
+        rank = min(gold_ranks) if gold_ranks else None
         hit_at_k = bool(rank and rank <= args.top_k)
         reciprocal_rank = (1.0 / rank) if rank else 0.0
 
@@ -198,12 +246,17 @@ def main() -> int:
                 "pair_id": pair_id,
                 "query_language": language,
                 "expected_id": gold,
-                "source_file": source_of[gold],
-                "rank": rank,
+                "gold_chunk_count": gold_chunk_counts[gold],
+                "best_gold_chunk_rank": rank,
                 "hit_at_k": hit_at_k,
                 "top_k": [
-                    {"id": doc_id, "similarity": score}
-                    for doc_id, score in ranked[: args.top_k]
+                    {
+                        "chunk_id": chunk_id,
+                        "qa_id": chunk_by_id[chunk_id]["qa_id"],
+                        "source_file": chunk_by_id[chunk_id]["source_file"],
+                        "similarity": score,
+                    }
+                    for chunk_id, score in ranked[: args.top_k]
                 ],
                 "reciprocal_rank": reciprocal_rank,
             }
@@ -224,17 +277,18 @@ def main() -> int:
         raise AssertionError(f"expected pt-BR + zh-CN results, got {hit_rate}")
 
     report = {
-        "metric_version": "psychat-multilingual-microbenchmark-v0.1",
+        "metric_version": "psychat-multilingual-microbenchmark-v0.2",
         "quality_claim": True,
         "scope": (
-            "four real pinned PsyChat gold conversations plus deterministic "
-            "same-corpus distractors; not the full Chroma production index"
+            "real pinned PsyChat records split at donor-equivalent 6-utterance "
+            "chunk granularity plus deterministic same-corpus distractor records"
         ),
         "embedding_model": model,
         "embedding_url": url,
-        "gold_document_count": len(expected_ids),
-        "distractor_count": len(distractor_ids),
-        "microcorpus_document_count": len(corpus_ids),
+        "gold_record_count": len(expected_ids),
+        "gold_chunk_counts": gold_chunk_counts,
+        "distractor_record_count": len(distractor_ids),
+        "microcorpus_chunk_count": len(chunks),
         "top_k": args.top_k,
         "hit_rate_by_language": hit_rate,
         "mrr_by_language": mrr,
@@ -242,9 +296,9 @@ def main() -> int:
         "zh_minus_pt_mrr_gap": mrr["zh-CN"] - mrr["pt-BR"],
         "rows": rows,
         "limitations": [
-            "Microcorpus benchmark, not full-corpus Chroma retrieval.",
-            "Measures embedding semantic separation and multilingual transfer on four pinned golds.",
-            "Does not measure PsyChat answer-generation quality.",
+            "Microcorpus benchmark, not the full Chroma production index.",
+            "Uses donor-equivalent chunk granularity but cosine ranking rather than Chroma's configured/default distance implementation.",
+            "Measures embedding multilingual retrieval, not answer-generation quality.",
         ],
     }
 
