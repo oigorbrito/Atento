@@ -45,6 +45,7 @@ class EvalCase:
     id: str
     suite: str
     source_id: str
+    agent_scope: str = "UNSPECIFIED"
     language: str = "pt-BR"
     profile: Dict[str, Any] = field(default_factory=dict)
     context: List[Dict[str, Any]] = field(default_factory=list)
@@ -59,6 +60,7 @@ class EvalCase:
             id=data["id"],
             suite=data["suite"],
             source_id=data.get("source_id", "SRC-ATENTO"),
+            agent_scope=str(data.get("agent_scope", "UNSPECIFIED")),
             language=data.get("language", "pt-BR"),
             profile=dict(data.get("profile", {})),
             context=list(data.get("context", [])),
