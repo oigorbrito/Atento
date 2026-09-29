@@ -31,6 +31,18 @@ class FakeUpstreamRagSystem:
         }
 
 
+class FakeRetrievalStateRagSystem(FakeUpstreamRagSystem):
+    def generate_response(self, message):
+        result = super().generate_response(message)
+        self.last_retrieval_docs.append({"content": message})
+        return result
+
+
+class FakeFailedUpstreamRagSystem(FakeUpstreamRagSystem):
+    def generate_response(self, message):
+        return {"success": False, "response": "failed", "reason": "donor error"}
+
+
 class AlternateRagExecutor:
     capability = "knowledge.rag"
     executor_id = "alternate"
@@ -100,6 +112,27 @@ class PsyChatAdapterTest(unittest.TestCase):
         self.assertEqual(response, "upstream:hello:5")
         self.assertEqual(state["no_rag_counter"], 5)
         self.assertEqual(len(state["conversation_history"]), 2)
+
+    def test_bridge_restores_retrieval_state(self):
+        port = PsyChatRagSystemPort(FakeRetrievalStateRagSystem)
+        response, state = port.respond(
+            message="hello",
+            session_state={
+                "conversation_history": [],
+                "no_rag_counter": 4,
+                "last_retrieval_docs": [{"content": "prior"}],
+            },
+        )
+        self.assertEqual(response, "upstream:hello:5")
+        self.assertEqual(
+            state["last_retrieval_docs"],
+            [{"content": "prior"}, {"content": "hello"}],
+        )
+
+    def test_bridge_fails_closed_on_donor_failure_mapping(self):
+        port = PsyChatRagSystemPort(FakeFailedUpstreamRagSystem)
+        with self.assertRaisesRegex(RuntimeError, "donor error"):
+            port.respond(message="hello", session_state={})
 
     def test_bridge_factory_prevents_state_reuse_between_calls(self):
         port = PsyChatRagSystemPort(FakeUpstreamRagSystem)
