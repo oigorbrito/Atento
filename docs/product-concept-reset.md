@@ -2,59 +2,57 @@
 
 > Status: alinhamento provisório, 2026-09-29.
 >
-> Este documento registra o norte conceitual enquanto as três partes do Atento ainda estão sendo reconstruídas com o usuário. Ele não apaga evidência técnica existente e não seleciona uma implementação-base.
+> Este documento registra o norte conceitual enquanto o Atento é reconciliado com a intenção original do usuário. Ele não apaga evidência técnica existente, não seleciona uma implementação-base e não substitui ainda roadmap/ADRs.
 
-## 1. Origem da ideia
+## 1. Repositório e produto
 
-A Nayá foi a ideia inicial de uma assistente pessoal no estilo de experiências como Zapia.
+O repositório canônico deste trabalho é:
 
-A Nayá deve ser tratada aqui como **referência de ideia e de produto**, não como referência obrigatória de projeto, código ou arquitetura.
+```text
+oigorbrito/Atento
+```
 
-O projeto Atento não deve inferir que precisa preservar a implementação histórica da Nayá só porque ela veio primeiro.
+Dentro dele, o produto/ecossistema é organizado em três agentes com responsabilidades diferentes.
 
-## 2. Mudança de direção: agente persistente
+A **NAIA** — sigla para **Nova Assistente Inteligente Artificial** — é a assistente pessoal principal e a experiência central do produto.
 
-Durante a evolução da ideia surgiu a categoria de **agente/assistente persistente**.
+A implementação histórica da NAIA deve ser tratada como **referência de ideia e de produto**, não como referência obrigatória de código, arquitetura ou chassis.
 
-O Grok Bot foi citado como referência conceitual dessa categoria. Nas pesquisas apareceu o **OpenMausBot** como uma implementação pública conceitualmente próxima e com uma superfície de produto significativamente mais madura que a implementação inicial da Nayá.
+## 2. Origem da NAIA
+
+A NAIA nasceu como uma assistente pessoal inspirada em experiências como Zapia.
+
+Depois surgiu a categoria de **agente/assistente persistente**. O Grok Bot foi citado como referência conceitual dessa categoria.
+
+Durante a pesquisa apareceu o **OpenMausBot** como uma implementação pública conceitualmente próxima e com uma superfície de produto mais madura que a implementação inicial da NAIA.
 
 Isso levou à inversão estratégica:
 
 ```text
 não:
-OpenMausBot dentro da Nayá
+OpenMausBot dentro da implementação histórica da NAIA
 
 avaliar:
 chassis persistente maduro
         +
-diferenciais/ideias da Nayá
+diferenciais/ideias da NAIA
         +
 features úteis de outros donors
 ```
 
 O objetivo é evitar reconstruir do zero capacidades que uma base madura já tenha resolvido melhor.
 
-## 3. Papel atual do OpenMausBot
+## 3. Parte 1 — NAIA: assistente pessoal persistente
 
-O OpenMausBot é o **primeiro anchor candidate conhecido** para a Parte 1 do Atento.
-
-Ele não está automaticamente selecionado.
-
-A evidência já coletada sobre o OpenMausBot deve ser preservada, mas a decisão de base precisa ser refeita dentro de uma comparação mais ampla e homogênea com outros projetos da mesma categoria.
-
-Maturidade aparente, volume de desenvolvimento e atividade do projeto são sinais úteis para descoberta, mas não substituem auditoria de arquitetura, execução, testes e benchmarks.
-
-## 4. Parte 1 do Atento — Assistente Persistente
-
-O Atento possui três partes principais. **Somente a Parte 1 está definida neste documento.** As Partes 2 e 3 serão registradas depois do alinhamento com o usuário.
-
-A Parte 1 é uma **assistente pessoal persistente**.
-
-O alvo de produto é aproximar, na medida tecnicamente e financeiramente possível, o conjunto relevante de capacidades das referências de produto citadas pelo usuário — incluindo Grok Bot, Zapia e projetos "primos" descobertos durante a pesquisa — sem limitar a arquitetura a um único donor.
+A NAIA deve cobrir, na medida técnica e financeiramente possível, o conjunto relevante de capacidades das referências de produto citadas pelo usuário — incluindo Grok Bot, Zapia e projetos comparáveis descobertos durante a pesquisa.
 
 "100% das funcionalidades" deve ser interpretado como **meta de cobertura funcional/paridade de capacidade a ser inventariada e medida**, não como afirmação de que essa paridade já existe.
 
-A comparação de chassis deve considerar pelo menos:
+O OpenMausBot é o **primeiro anchor candidate conhecido** para essa parte.
+
+Ele não está automaticamente selecionado.
+
+A comparação de chassis da NAIA deve considerar pelo menos:
 
 - persistência real de estado, contexto, tarefas e rotinas;
 - continuidade após restart/interrupção;
@@ -64,7 +62,7 @@ A comparação de chassis deve considerar pelo menos:
 - integrações e ferramentas;
 - memória pessoal;
 - troca/roteamento de modelos e providers;
-- arquitetura e boundaries;
+- arquitetura e ownership boundaries;
 - modularidade e acoplamento;
 - extensibilidade e facilidade de incorporar novas features;
 - superfície de adaptação/fork;
@@ -73,31 +71,172 @@ A comparação de chassis deve considerar pelo menos:
 - custo operacional;
 - capacidade de evolução no curto, médio e longo prazo.
 
-## 5. Pesquisa de candidatos
+A próxima pesquisa da NAIA não deve assumir que a lista atual de candidatos está completa.
 
-A próxima pesquisa da Parte 1 não deve começar assumindo que a lista atual de candidatos está completa.
+Projetos já presentes no repositório, incluindo OpenClaw, só permanecem como finalistas se sua inclusão puder ser justificada pelo mesmo protocolo aplicado aos demais.
 
-O processo correto é:
+## 4. Parte 2 — Anna: assistente emocional/terapêutica
+
+A **Anna** é um segundo agente distinto da NAIA.
+
+Seu domínio é apoio emocional/terapêutico.
+
+A Anna não deve ser tratada como "modo terapêutico" da NAIA nem como uma persona compartilhando a mesma autoridade.
+
+Sua implementação-base ainda não foi selecionada.
+
+A estratégia é enumerar projetos terapêuticos maduros, privilegiando candidatos com:
+
+- execução funcional observável;
+- benchmarks ou avaliações publicadas;
+- arquitetura suficientemente completa para operar como agente;
+- memória/continuidade quando relevante;
+- safety e role-boundary verificáveis;
+- possibilidade de adaptação com change-surface pequeno;
+- evidência de evolução/manutenção;
+- capacidade de transferência para pt-BR e para o produto Atento.
+
+A pesquisa deve separar:
+
+```text
+THERAPEUTIC_BASE_CANDIDATE
+vs
+MECHANISM_DONOR
+vs
+MODEL/CHECKPOINT
+vs
+BENCHMARK/EVALUATION_SOURCE
+```
+
+Não promover automaticamente um projeto de RAG, modelo ou mecanismo isolado a chassis terapêutico completo.
+
+## 5. Parte 3 — Apollo: nutrição e personal trainer
+
+O **Apollo** será um terceiro agente especializado em nutrição, treino e acompanhamento físico.
+
+Ele permanece **em espera** neste momento.
+
+Nenhuma seleção de chassis, donor ou arquitetura específica para Apollo deve bloquear a qualificação da NAIA ou da Anna.
+
+## 6. Isolamento entre agentes
+
+NAIA, Anna e Apollo são **bounded contexts distintos**.
+
+Por padrão:
+
+- um agente não lê o histórico de chat do outro;
+- um agente não consulta a memória privada do outro;
+- um agente não herda automaticamente as ferramentas do outro;
+- um agente não executa ações pertencentes ao domínio do outro;
+- um agente não usa outro agente como fallback silencioso;
+- qualquer handoff deve ser explícito, mínimo e auditável;
+- dados sensíveis só atravessam a fronteira quando o contrato permitir e, quando necessário, com consentimento do usuário.
+
+Exemplo de boundary:
+
+```text
+usuário conversa com Anna
+        ↓
+pede preço de iPhone
+        ↓
+Anna NÃO consulta preço
+Anna NÃO vira assistente pessoal
+Anna permanece no domínio emocional/terapêutico
+e pode, quando apropriado, orientar o usuário a levar
+a demanda operacional para a NAIA
+```
+
+O mesmo princípio vale nas outras direções.
+
+## 7. Estratégia de adoção: "carro andando" antes de greenfield
+
+O projeto não possui preferência ideológica por greenfield.
+
+A hipótese a testar é que, muitas vezes, é mais eficiente partir de um sistema funcional e corrigir seus defeitos do que reconstruir todas as capacidades sobre um chassis teoricamente mais elegante.
+
+Analogia de engenharia:
+
+```text
+carro funcional com amortecedor defeituoso
+pode exigir menos trabalho total
+que desmontar o carro inteiro
+para migrar tudo para outro chassis
+```
+
+Isso não significa aceitar dívida arquitetural sem medição.
+
+A comparação deve medir empiricamente:
+
+- quantidade de capacidade funcional já preservada;
+- defeitos reais que precisam ser corrigidos;
+- donor files/linhas realmente modificados;
+- número e profundidade dos boundaries que precisam ser introduzidos;
+- custo para trocar provider/executor/storage;
+- regressões criadas pela adaptação;
+- esforço de manutenção/sync com upstream;
+- custo estimado de reproduzir as mesmas capacidades em greenfield.
+
+Portanto:
+
+```text
+CLEANER_ARCHITECTURE
+!=
+LOWER_TOTAL_MIGRATION_COST
+
+KNOWN_LOCAL_DEFECT
+!=
+BAD_BASE_AUTOMATICALLY
+```
+
+O alvo é encontrar o **menor conjunto de mudanças necessário para transformar uma base já funcional no agente alvo**.
+
+Variantes válidas para comparação incluem:
+
+```text
+UPSTREAM
+WRAPPED
+FORKED
+SELECTIVE_PORT
+NATIVE
+MODEL_ADAPTER
+HYBRID
+```
+
+## 8. Protocolo de pesquisa e evidência
+
+O processo correto para cada agente é:
 
 ```text
 definir a categoria
 → enumerar projetos maduros comparáveis
 → localizar benchmarks/evidência existente
 → auditar arquitetura e implementação
-→ comparar sob os mesmos critérios
-→ medir apenas deltas relevantes ao Atento
+→ executar somente o que a evidência externa não prova
+→ comparar sob contratos equivalentes
+→ medir change-surface real
 → selecionar ou rejeitar o chassis
 ```
 
-Projetos já presentes no repositório, incluindo OpenClaw, só permanecem como finalistas se sua inclusão puder ser justificada por esse protocolo. Evidência técnica já coletada não deve ser descartada, mas também não deve transformar um candidato em privilegiado por inércia histórica.
+A evidência upstream deve ser reaproveitada quando realmente transferível.
 
-## 6. Licença durante descoberta
+Não repetir benchmarks ou testes apenas para produzir um segundo número sobre o mesmo invariante.
+
+Testes locais devem priorizar:
+
+- deltas introduzidos pelo Atento;
+- transferências de idioma/domínio;
+- boundaries de autoridade;
+- integração real;
+- gaps não provados;
+- regressões causadas pela adaptação.
+
+## 9. Licença durante descoberta
 
 Licença **não é critério eliminatório da pesquisa técnica inicial**.
 
 Um projeto pode ser estudado e comparado mesmo que seus termos inviabilizem posteriormente determinado modo de distribuição ou incorporação.
 
-Ainda assim, provenance e termos legais continuam obrigatórios. A decisão de copiar, portar, fazer fork, redistribuir ou publicar código precisa respeitar os termos aplicáveis ao artefato concreto.
+Ainda assim, provenance e termos legais continuam obrigatórios para qualquer adoção concreta.
 
 Portanto:
 
@@ -107,21 +246,68 @@ TECHNICAL_CANDIDATE
 LEGAL_ADOPTION_CLEARED
 ```
 
-## 7. Relação com a documentação existente
+## 10. Reconciliação provisória da trilha terapêutica existente
+
+O remoto atual já contém vários projetos relacionados à Anna, mas eles não estão todos na mesma categoria.
+
+### Candidatos atuais que exigem comparação como possível base/fork
+
+- **PsychAgent** — forte candidato/referência de engine terapêutica; possui evidência multi-session, planejamento, skills e mecanismos terapêuticos, mas ainda tem gaps de produto/safety/transferência.
+- **TherapyMind** (`zx070326-hash/TherapyMind`) — candidato explícito a full donor/fork/lab spike.
+- **PsyChat** — atualmente registrado como full donor/fork/selective-port candidate, mas grande parte da evidência existente está concentrada em RAG/chassis; precisa ser reavaliado quanto a ser realmente um chassis terapêutico completo e não apenas donor de componentes.
+
+### Donor suplementar, não equivalente a chassis completo no estado atual
+
+- **TheraMind** (`Emo-gml/TheraMind`) — donor de mecanismo/arquitetura longitudinal e adaptação terapêutica; projeto distinto de TherapyMind.
+
+### Modelos/checkpoints, não chassis por padrão
+
+- SoulChat2.0 / PsyDT;
+- EmoLLM;
+- MindChat.
+
+### Benchmarks/referências de avaliação e mecanismos auxiliares
+
+- PsychEval;
+- MentalHealthBench;
+- CounselBench;
+- PATIENT-Ψ;
+- MHSafeEval;
+- ENPMR-Bench;
+- ESConv;
+- AgentMental;
+- User-Aware Active Knowledge Acquisition.
+
+Essa classificação é **provisória** e deve ser confirmada durante a reconciliação do remoto. Nenhum vencedor foi selecionado.
+
+## 11. Relação com a documentação existente
 
 Este registro não apaga ADRs, avaliações ou pesquisas anteriores.
 
-Até que as três partes do Atento estejam conceitualmente reconciliadas:
+Até a reconciliação terminar:
 
-- a documentação anterior deve ser tratada como evidência e histórico;
-- decomposições antigas do produto não devem ser assumidas como definitivas apenas porque já foram documentadas;
-- a seleção da base da Parte 1 deve voltar à pergunta original: **qual chassis de assistente persistente é a melhor fundação para absorver os diferenciais da Nayá e as melhores capacidades dos projetos comparáveis?**
-- nenhuma base está selecionada.
+- documentação anterior é evidência/histórico, não necessariamente definição final;
+- decomposições antigas não devem ser mantidas apenas por inércia;
+- OpenClaw/OpenMausBot/outros candidatos da NAIA precisam de origem e critérios comparáveis;
+- candidatos terapêuticos precisam ser separados de donors, modelos e benchmarks;
+- nenhuma base está selecionada para NAIA ou Anna;
+- Apollo permanece adiado.
 
 ```text
-PART_1 = PERSISTENT_PERSONAL_ASSISTANT
+REPOSITORY = ATENTO
+
+AGENT_1 = NAIA
+ROLE_1 = PERSISTENT_PERSONAL_ASSISTANT
 OPENMAUSBOT = INITIAL_ANCHOR_CANDIDATE
-BASE_WINNER = NOT_SELECTED
-PART_2 = PENDING_ALIGNMENT
-PART_3 = PENDING_ALIGNMENT
+NAIA_BASE_WINNER = NOT_SELECTED
+
+AGENT_2 = ANNA
+ROLE_2 = EMOTIONAL_THERAPEUTIC_ASSISTANT
+ANNA_BASE_WINNER = NOT_SELECTED
+
+AGENT_3 = APOLLO
+ROLE_3 = NUTRITION_FITNESS_ASSISTANT
+APOLLO_STATUS = DEFERRED
+
+CROSS_AGENT_DEFAULT = ISOLATED
 ```
