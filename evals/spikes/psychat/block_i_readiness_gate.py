@@ -323,8 +323,15 @@ def main() -> int:
         quality_ok = (
             truthy(quality, "quality_evidence_complete")
             and truthy(quality, "cross_language_gold_evaluated")
+            and truthy(quality, "behavioral_gold_evaluated")
             and equals(quality, "pinned_commit", PINNED_COMMIT)
             and at_least(quality, "gold_case_count", 4)
+            and at_least(quality, "multilingual_retrieval.gold_pair_count", 4)
+            and equals(
+                quality,
+                "retrieval_query_languages",
+                ["pt-BR", "zh-CN"],
+            )
         )
         quality_row = {
             "id": "rag_quality_evidence",
@@ -342,7 +349,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.3",
+        "metric_version": "psychat-block-i-readiness-v0.4",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
