@@ -130,7 +130,9 @@ class VectorStore:
             )
             self.collection = staging
             self.collection_name = staging_name
-            success = self.add_documents(documents)
+            success = self.add_documents(
+                documents, refresh_active=False
+            )
             complete = success and staging.count() == len(documents)
             if not complete:
                 self.collection = previous_collection
@@ -176,9 +178,16 @@ class VectorStore:
             print(f"生成嵌入向量时出错: {e}")
             return []
 
-    def add_documents(self, documents: List[Dict[str, Any]]) -> bool:
+    def add_documents(
+        self,
+        documents: List[Dict[str, Any]],
+        *,
+        refresh_active: bool = True,
+    ) -> bool:
         """将文档添加到向量存储"""
         try:
+            if refresh_active:
+                self._refresh_active_collection()
             print(f"开始添加 {len(documents)} 个文档到向量存储...")
             
             # 准备数据
