@@ -106,6 +106,7 @@ def main() -> int:
                 and truthy(d, "active_index_pointer_promoted_atomically")
                 and truthy(d, "partial_staging_index_never_promoted")
                 and truthy(d, "long_lived_vector_store_refreshes_active_generation")
+                and truthy(d, "incremental_writes_refresh_active_generation")
             ),
         ),
         (
@@ -186,6 +187,7 @@ def main() -> int:
                 and truthy(d, "promoted_generation_survives_restart")
                 and truthy(d, "corrupt_pointer_fails_closed")
                 and truthy(d, "long_lived_reader_refreshes_active_generation")
+                and truthy(d, "incremental_writer_refreshes_active_generation")
             ),
         ),
         (
@@ -412,7 +414,7 @@ def main() -> int:
 
     ready = not blockers
     report = {
-        "metric_version": "psychat-block-i-readiness-v0.22",
+        "metric_version": "psychat-block-i-readiness-v0.23",
         "block": "BLOCO I — RAG",
         "decision_scope": "evidence readiness only; does not choose fork vs greenfield",
         "ready_for_adr": ready,
