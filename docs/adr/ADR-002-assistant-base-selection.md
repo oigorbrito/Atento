@@ -325,17 +325,20 @@ CRITICAL_TOOL_EFFECT_PROTOCOL     = LOCALIZED_IF_ADAPTER_CONTROLLED
 
 The candidate exposes enough config/plugin seams that the ordinary Nayá product and policy adaptation does not currently imply a deep fork.
 
-#### Local tests that still matter
+#### Remaining pre-selection delta
 
-Do not repeat upstream persistence/restart/channel benchmarks.
+Do not repeat upstream persistence/restart/channel/approval-lifecycle tests when the Nayá adaptation does not replace those mechanisms.
 
-Run only:
+Run one OpenClaw-specific pre-selection probe:
 
-- `OC-NAYA-001` — fail-closed authority profile;
-- `OC-NAYA-002` — arbitrary external-action crash ambiguity;
-- `OC-NAYA-003` — Assistant ↔ Therapist isolation;
-- `OC-NAYA-004` — plugin/global-store negative isolation;
-- `OC-NAYA-005` — integration touchpoint count.
+- `OC-NAYA-001` — implement the minimal Nayá hardening profile using supported config/plugin seams, validate the effective policy, and record Git/change-surface including whether any OpenClaw core patch is required.
+
+The earlier candidate-local probes are reclassified:
+
+- former `OC-NAYA-002` (arbitrary external-effect crash ambiguity) → **Block J / external-action adapter contract**. OpenClaw already states that generic exactly-once external effects are not guaranteed; retesting an unmodified generic tool path would only reconfirm a known absence. Test the real Atento-controlled high-risk adapter when it exists.
+- former `OC-NAYA-003` (Assistant ↔ Therapist isolation) → **ADR-001 composition/deployment test**. The selected architecture requires separate runtime/Gateway authority boundaries, so the useful test is the brokered composition, not two personas in one OpenClaw Gateway.
+- former `OC-NAYA-004` (plugin/global-store isolation) → **per-plugin/per-memory integration test** when a concrete shared-store plugin is selected.
+- former `OC-NAYA-005` (touchpoint count) → folded into `OC-NAYA-001`; change-surface is a measurement of the implemented adapter/profile, not an independent runtime test.
 
 #### Current disposition
 
@@ -376,18 +379,20 @@ No winner selected.
 | Adaptation surface | product-rich; authority reinforcement required | higher product integration/build cost | low/moderate product adaptation; moderate hardening; generic effect protocol structural if universal |
 | Final selection | no | no | no |
 
-## Local-test rule
+## Evidence-reuse and local-test rule
 
-Do not run generic benchmarks already answered by upstream evidence.
+Do not trust documentation claims blindly, and do not rerun upstream suites mechanically.
 
-Retain local tests only for material Atento/Nayá deltas:
+For each material property:
 
-- required authority policy;
-- crash ambiguity for arbitrary external actions;
-- sensitive-memory isolation;
-- Assistant ↔ Therapist isolation;
-- Portuguese/user-facing behavior when relevant;
-- integration invasiveness.
+1. audit implementation + directly relevant upstream tests at the pinned SHA;
+2. verify CI/run evidence when available; absence of observable CI is recorded as a limitation, not converted into pass/fail;
+3. decide whether the upstream evidence transfers unchanged to the Atento deployment;
+4. create a local test only when the Atento adapter/configuration/topology materially changes the property or the property remains unproven.
+
+Behavioral benchmarks are used only for behavioral questions. Authority, durability, isolation and adaptation cost are primarily contract/fault/runtime/Git questions.
+
+For the OpenClaw base decision, the only remaining pre-selection local delta is `OC-NAYA-001`.
 
 ## Decision
 
@@ -397,7 +402,7 @@ winner: NOT_SELECTED
 openmausbot: strong-base-candidate
 naia: architectural-donor-and-higher-build-cost-base-candidate
 openclaw: strong-candidate-static-qualification-complete
-next_required_block: execute-openclaw-material-local-deltas-then-compare-finalists
+next_required_block: execute-openclaw-minimal-hardening-delta-then-compare-finalists
 ```
 
 ## Acceptance criteria
@@ -410,7 +415,8 @@ Before this ADR can be accepted:
 - [x] memory/privacy boundaries analyzed
 - [x] current security assumptions reviewed
 - [x] license/provenance constraints confirmed
-- [ ] OC-NAYA-001 through OC-NAYA-005 executed against the pinned candidate
-- [ ] empirical change surface / invasiveness recorded from OC-NAYA-005
-- [ ] same decision protocol applied to all finalists after local deltas
+- [ ] OC-NAYA-001 minimal hardening/profile probe executed against the pinned candidate
+- [ ] empirical change surface / invasiveness recorded as part of OC-NAYA-001
+- [x] non-selection tests reclassified to their owning blocks instead of duplicated during base selection
+- [ ] same decision protocol applied to all finalists after the material local delta
 - [ ] final base decision recorded

@@ -216,9 +216,11 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 - **Tipo:** `IMPLEMENTATION_REFERENCE`.
 - **Repo:** https://github.com/openclaw/openclaw
 - **Snapshot de início da qualificação:** `df97da27f07f6655d5678bdbf1f6f9e460678013`.
+- **Pin da qualificação estática:** `e9571d77e76bd6d35996273d9e8398ad539b26e1`.
 - **Candidato para:** base da Assistente pessoal: Gateway, multi-channel, restart recovery, approvals e durable outbound delivery.
 - **Termos:** MIT.
-- **Estado:** qualificação em andamento; upstream avançou durante a auditoria, portanto repin obrigatório antes da continuação.
+- **Estado:** candidato forte; qualificação estática concluída; `ASSISTANT_BASE_WINNER = NOT_SELECTED`.
+- **Próximo delta:** provar apenas o perfil mínimo Nayá de autoridade/isolamento configurável e medir a surface de adaptação. Não repetir restart, approval persistence ou outbound durability já cobertos por evidência upstream no pin.
 
 #### SRC-NAIA — NaIA
 - **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
@@ -300,20 +302,39 @@ Pontuar/medir:
 
 Nenhuma opção ganha por ideologia. O resultado é decidido por evidência.
 
-### Spike mínimo
+### Regra de confiança em evidência externa
 
-Para todo donor candidato a base:
+Documentação do próprio donor não é prova suficiente por si só. Antes de reutilizar uma afirmação externa:
 
-- executar upstream;
-- capturar baseline;
-- rodar 20–50 casos seed no mínimo;
-- medir quality/safety/cost/latency;
-- mapear acoplamentos;
-- implementar o menor adapter necessário;
-- comparar com alternativa relevante;
-- registrar resultado na ADR.
+- localizar a implementação ou contrato relevante;
+- localizar testes que realmente exercitem o invariante quando existirem;
+- distinguir teste de unidade, integração, fault/recovery e benchmark;
+- verificar se o pin inspecionado contém a evidência;
+- não inferir CI verde quando o status/run não puder ser verificado;
+- registrar as limitações de transferência para a configuração do Atento.
 
-### PsyChat como primeiro donor executável
+Benchmarks e resultados publicados podem reduzir trabalho local, mas só no eixo que medem. Um benchmark de qualidade de tool use não prova exactly-once, isolamento de memória ou authority boundaries.
+
+### Protocolo mínimo de qualificação
+
+Para todo donor candidato a base, a execução local começa **depois** da reconciliação de evidência.
+
+1. fixar `repo + SHA`;
+2. auditar código, testes upstream, invariantes, histórico/release evidence e resultados de CI/benchmarks disponíveis;
+3. classificar cada requisito como:
+   - `UPSTREAM_PROVEN` — há evidência executável/empírica diretamente aplicável;
+   - `TRANSFERABLE_WITH_CONSTRAINTS` — a evidência é válida, mas depende de configuração/topologia equivalente;
+   - `ATENTO_DELTA` — a adaptação local muda a propriedade e precisa de prova própria;
+   - `UNPROVEN` — não há evidência suficiente;
+4. **não repetir** localmente um teste upstream quando o mesmo invariante, no mesmo tipo de boundary, já está coberto e o Atento não o alterou;
+5. implementar primeiro o menor adapter/profile necessário;
+6. testar localmente apenas os `ATENTO_DELTA` e invariantes bloqueantes que ficaram sem prova;
+7. medir change-surface por Git somente depois de existir adaptação real;
+8. usar benchmark comportamental apenas quando a decisão é comportamental. Durability, authority, isolation e invasiveness devem ser avaliados principalmente por contratos, fault tests, runtime probes e Git.
+
+Não existe mais um número fixo de 20–50 casos para toda qualificação. O tamanho da amostra depende da hipótese e do eixo medido. Repetir suites sem ganho informacional é considerado custo de avaliação, não rigor.
+
+### PsyChat — spike histórico de donor executável
 
 Comparar:
 
