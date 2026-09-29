@@ -256,6 +256,8 @@ class PsyChatMinimalPatchGeneratorTest(unittest.TestCase):
             self.assertIn("except RuntimeError:", patched)
             self.assertIn("raise", patched)
             self.assertIn("def _read_active_collection_name", patched)
+            self.assertIn("invalid vector index pointer", patched)
+            self.assertIn("invalid active vector collection", patched)
             self.assertIn("def _write_active_collection_name", patched)
             self.assertIn("def rebuild_documents", patched)
             self.assertIn("os.replace(temp, self.pointer_path)", patched)
