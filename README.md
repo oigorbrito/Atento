@@ -16,6 +16,7 @@ O projeto está reconciliando sua definição em três agentes: **NAIA** (assist
 - **Composição dos agentes / isolamento (reaberta):** [docs/adr/ADR-001-naya-product-composition.md](docs/adr/ADR-001-naya-product-composition.md)
 - **Seleção da base da NAIA (decision reset):** [docs/adr/ADR-002-assistant-base-selection.md](docs/adr/ADR-002-assistant-base-selection.md)
 - **Seleção da base da Anna (decision reset):** [docs/adr/ADR-ANNA-001-therapeutic-base-selection.md](docs/adr/ADR-ANNA-001-therapeutic-base-selection.md)
+- **Seleção da base do Apollo (deferred):** [docs/adr/ADR-APOLLO-001-fitness-nutrition-base-selection.md](docs/adr/ADR-APOLLO-001-fitness-nutrition-base-selection.md)
 - **Evaluation harness:** [docs/evaluation/harness.md](docs/evaluation/harness.md)
 - **Provenance e licenças externas:** [docs/third-party.md](docs/third-party.md)
 - **Mapa de autoridade da documentação:** [docs/documentation-map.md](docs/documentation-map.md)
