@@ -85,6 +85,20 @@ Estados de evidência:
 
 `CONFIRMED | NOT_FOUND | UNCERTAIN | CONTRADICTORY | REQUIRES_PROBE | NOT_APPLICABLE`
 
+
+### Relação com o Chassis Fitness Score atual
+
+O `docs/evaluation/harness.md` define hoje um **Chassis Fitness Score (CFS) de 0–100** como instrumento de screening/qualificação do AtentoEval.
+
+A rodada histórica de 2026-09-29 **não deve receber um CFS retroativo fabricado**. Naquele protocolo, o score global foi deliberadamente evitado quando pesos e medições não estavam suficientemente defensáveis. Portanto:
+
+- o CFS atual pode ser usado em avaliações novas executadas sob o harness atual;
+- os resultados históricos desta rodada devem permanecer nos estados/evidências originalmente observados;
+- não converter `CONFIRMED/NOT_FOUND/REQUIRES_PROBE`, probes M7 ou classes de mudança M8 em pontos 0–100 depois do fato;
+- qualquer comparação entre esta rodada e um CFS futuro deve preservar a diferença de protocolo e população de candidatos.
+
+Isso evita falsa precisão e mantém a rastreabilidade metodológica.
+
 ## 5. Cenários benchmarkados
 
 - S01 — tool/action extension;

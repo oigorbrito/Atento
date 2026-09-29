@@ -176,6 +176,19 @@ Esse registro documenta:
 
 O documento **não seleciona um vencedor** e não altera o status `Proposed` desta ADR.
 
+
+## Related chassis/evolvability evidence
+
+Há uma rodada separada de benchmark de **chassis/evolvability** registrada em:
+
+- `docs/evaluation/chassis-selection-research-2026-09-29.md`
+
+Essa evidência avaliou Dify, Rasa, LibreChat, Open WebUI, Letta Code e AnythingLLM sob critérios de locality of change, modularidade, canais, memória, policy, failure isolation, reversibilidade e forkability.
+
+O resultado histórico `letta-ai/letta-code = EXECUTABLE_CHASSIS_SELECTED` deve ser lido apenas como **seleção interna daquela rodada para scaffold arquitetural**. Ele não aceita esta ADR, não decide automaticamente fork vs greenfield e não substitui os spikes/AtentoEval exigidos aqui.
+
+Os contratos e probes dessa rodada podem ser reutilizados como evidência complementar quando forem materialmente comparáveis.
+
 ## Mandatory spike results
 
 ### Upstream execution

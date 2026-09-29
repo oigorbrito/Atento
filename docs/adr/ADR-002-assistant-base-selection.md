@@ -10,6 +10,23 @@ Frameworks de orquestração, durable runtimes e componentes isolados não entra
 - **Date:** 2026-09-29
 - **Decision:** NOT_SELECTED
 
+
+## Related chassis/evolvability evidence
+
+A rodada datada abaixo é evidência complementar para esta decisão:
+
+- `docs/evaluation/chassis-selection-research-2026-09-29.md`
+
+Ela comparou **chassis/evolvability** de Dify, Rasa, LibreChat, Open WebUI, Letta Code e AnythingLLM. Não executou o mesmo protocolo final desta ADR sobre OpenMausBot, NaIA e OpenClaw como sistemas-base completos/persistentes.
+
+Por isso:
+
+- `EXECUTABLE_CHASSIS_SELECTED` para Letta é preservado como resultado histórico do benchmark de chassis;
+- isso **não altera** `winner: NOT_SELECTED`;
+- Letta não entra retroativamente como vencedor desta ADR;
+- OpenMausBot, NaIA e OpenClaw não são descartados por não terem participado daquela rodada;
+- contracts/probes de locality, reversibilidade, failure isolation e forkability podem ser reutilizados aqui quando comparáveis.
+
 ## Decision question
 
 > Qual sistema funcionando chega à Assistente alvo com menor mudança estrutural, preservando a maior quantidade de capacidade já provada?
