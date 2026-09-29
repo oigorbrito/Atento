@@ -12,8 +12,14 @@ class PsyChatRagSystemPort:
     ownership must be redesigned without reintroducing cross-session state.
     """
 
-    def __init__(self, rag_system_factory: Callable[[], Any]) -> None:
+    def __init__(
+        self,
+        rag_system_factory: Callable[[], Any],
+        *,
+        force_retrieval: bool = False,
+    ) -> None:
         self._factory = rag_system_factory
+        self._force_retrieval = force_retrieval
 
     @staticmethod
     def _normalize_result(raw_result: Any) -> tuple[str, dict]:
@@ -60,7 +66,13 @@ class PsyChatRagSystemPort:
                 session_state.get("last_retrieval_docs", [])
             )
 
-        raw_result = donor.generate_response(message)
+        if self._force_retrieval:
+            raw_result = donor.generate_response(
+                message,
+                force_retrieval=True,
+            )
+        else:
+            raw_result = donor.generate_response(message)
         response, turn_metadata = self._normalize_result(raw_result)
 
         next_state = {
