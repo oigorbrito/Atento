@@ -188,8 +188,24 @@ Target metrics:
 - `files_touched_to_add_capability = 1`;
 - existing adapter chassis files touched: **0**.
 
-These target values are encoded as executable assertions, not yet promoted to
-passed results while CI remains unavailable.
+These change-surface values now also have independent GitHub Git Data evidence,
+preserved under dedicated refs:
+
+- registered executor swap:
+  - evidence commit `bdb21f9a7581ac5c5aac78b4b94ccef0aac186e0`;
+  - ref `evidence/adapter-swap-zero`;
+  - compare vs adapter baseline HEAD: **0 changed files**;
+- introduce alternate RAG executor:
+  - evidence commit `a309475e8578c888f36e16bbd95dbb22a15cf52a`;
+  - ref `evidence/adapter-new-executor`;
+  - compare: **1 added extension file**, **0 existing chassis files modified**;
+- add lookup capability:
+  - evidence commit `afdae6b10d28515cb466ba97fd49969c94de6e78`;
+  - ref `evidence/adapter-new-capability`;
+  - compare: **1 added extension file**, **0 existing chassis files modified**.
+
+The runtime behavior of Registry selection/rollback remains a separate dynamic
+assertion; Git evidence proves the source change-surface only.
 
 ## AtentoEval RAG surface
 
@@ -262,14 +278,43 @@ Latest observed Actions behavior remains:
 - job logs do not exist (log fetch returns `BlobNotFound`);
 - no checkout, Python process, donor clone or test command runs.
 
+A separate minimal smoke workflow reproduces the same failure with no project
+logic:
+
+- run `36560066468`: one `ubuntu-latest` job, one `echo`, `steps=null`;
+- run `36560175098`: matrix with `ubuntu-latest` and `ubuntu-24.04`;
+  both jobs fail before steps and have no logs.
+
+This isolates the blocker from PsyChat/AtentoEval workflow complexity and from a
+single Ubuntu runner label.
+
 Classification:
 
-> **INFRA FAILURE**
+> **INFRA FAILURE — hosted runner provisioning/account/repository layer**
 
-This is neither a PsyChat functional failure nor a passing test.
+The exact administrative cause (for example account/billing/policy/service-side
+provisioning) is not exposed by the available repository API. This is neither a
+PsyChat functional failure nor a passing test.
 
 The local execution environment also cannot resolve `github.com`, so it cannot
 clone the pinned donor as an alternate execution path.
+
+## Block readiness gate
+
+`block_i_readiness_gate.py` now separates:
+
+- versioned Git evidence (change-surface/content invariants);
+- dynamic runtime evidence;
+- CFS reports;
+- deterministic RAG plumbing;
+- real semantic/cross-language RAG quality.
+
+It reports `ready_for_adr=true` only when the complete evidence package exists.
+It does **not** choose fork vs greenfield.
+
+The normalized real-quality artifact expected by this gate is produced by
+`rag_quality_report.py`, which requires actual AtentoEval TurnResults for all
+pinned PsyChat gold cases and does not impose an arbitrary quality threshold.
 
 ## Current evidence boundary
 
