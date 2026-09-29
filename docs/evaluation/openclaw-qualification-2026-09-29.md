@@ -364,6 +364,81 @@ OPENCLAW_NAYA_ACTIONS_EXECUTION = INFRA_BLOCKED
 HARNESS_NOT_RUN != CANDIDATE_FAIL
 ```
 
+### Candidate-harness exact-blob validation
+
+The Atento candidate registry/result layer was also executed locally from the exact PR blobs.
+
+Exact PR blobs:
+
+- `evals/atentoeval/candidates.py`: `1f1165c8108ea439b996e93097cb932646119412`
+- `evals/tests/test_candidates.py`: `31b7aaed79ed8e0a1adebbb4442b0881f78312d3`
+- `evals/config/candidates.json`: `13ae82ee07ba73482cc5655214126af153921011`
+
+Local runtime:
+
+- Python `3.13.5`
+
+Observed result:
+
+```text
+6 tests
+6 pass
+0 fail
+```
+
+The passing assertions cover:
+
+- the pinned OpenClaw candidate identity/profile;
+- profile-filtered CI matrices;
+- rejection of unpinned external candidates;
+- preservation of `PASS_STATIC` as static-only evidence;
+- preservation of `ARCH_RISK` in empirical candidate result serialization;
+- rejection of invented/unknown evidence statuses.
+
+Therefore:
+
+```text
+ATENTO_CANDIDATE_RESULT_HARNESS = PASS_EMPIRICAL
+OPENCLAW_PIN_REGISTRY           = PASS_EMPIRICAL
+OPENCLAW_RUNTIME_QUALIFICATION  = STILL_INFRA_BLOCKED
+```
+
+The Python runtime differs from the workflow target (`3.11`), so this validates the Atento harness logic and exact source blobs, not the unavailable GitHub Actions environment.
+
+### Hardening-profile static compatibility at the exact OpenClaw pin
+
+The Nayá Assistant/Therapist qualification profiles were checked against source/schema surfaces from the exact OpenClaw pin.
+
+Pinned source evidence:
+
+- `src/config/zod-schema.agent-runtime.ts` blob `47202897caf5ddb6d97135d2c7669cd65a29957e`:
+  - exec hosts include `auto`;
+  - exec modes include `deny` and `ask`;
+  - session visibility includes `self` and `agent`;
+  - `tools.agentToAgent.enabled` is a boolean policy control;
+  - the minimal tool profile is supported.
+- `src/config/zod-schema.root-shape.ts` blob `c31d13100384a9841f88695df56c245bf5d92157`:
+  - `plugins.allow` is an explicit plugin-id allowlist.
+- `src/config/zod-schema.gateway.ts` blob `c895a08d2a4360683a90204f384b1a9d5bd5774b`:
+  - `gateway.terminal.enabled` is a supported boolean opt-out.
+- `docs/gateway/sandboxing/modes-scope-and-backend.md` blob `82465e42b1cf1feabd3bca375ef24834a5b17859`:
+  - sandbox mode `all` is supported;
+  - sandbox scopes `agent` and `session` are supported;
+  - required sandbox backend failure is documented as fail-closed.
+- `docs/gateway/security/trust-model.md` blob `4ad4c27f14160afa9fdd3be27e06a873fe3596c5`:
+  - one Gateway is one trust boundary;
+  - strict/adversarial separation requires separate Gateways;
+  - default cross-agent/session reach is broader than Nayá's target and must be narrowed.
+
+This establishes:
+
+```text
+NAYA_HARDENING_PROFILE_SCHEMA_COMPATIBILITY = PASS_STATIC
+NAYA_HARDENING_PROFILE_EFFECTIVE_RUNTIME     = PENDING / INFRA_BLOCKED
+```
+
+Static schema compatibility is not promoted to runtime proof.
+
 ### Controlled external-effect fault probe
 
 The qualification-only adapter subprobe from OC-NAYA-002 was executable without the OpenClaw dependency graph and was run directly.
@@ -439,9 +514,9 @@ STRICT_THERAPY_BOUNDARY         = SEPARATE_RUNTIME_REQUIRED
 GENERIC_TOOL_EFFECT_DURABILITY  = NOT_PROVEN
 LICENSE                         = MIT
 STATUS                          = STRONG_CANDIDATE / STATIC_QUALIFICATION_COMPLETE
-LOCAL_DELTA_TESTS               = PENDING
+LOCAL_DELTA_TESTS               = PARTIAL; PINNED_RUNTIME_EXECUTION_INFRA_BLOCKED
 ```
 
 No base winner is selected by this record.
 
-The next decision step is to execute only OC-NAYA-001 through OC-NAYA-005, then compare OpenClaw, OpenMausBot and NaIA using the same ADR-002 decision protocol.
+The next decision step is to execute the remaining pinned-runtime portions of OC-NAYA-001/003/004/005 when infrastructure permits. A provisional OpenClaw/OpenMausBot/NaIA comparison may proceed now, but the Assistant base remains NOT_SELECTED until the same decision protocol is closed with the remaining material evidence.
