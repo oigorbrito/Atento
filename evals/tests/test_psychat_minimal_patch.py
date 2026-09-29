@@ -160,12 +160,19 @@ class RAGSystem:
         self.conversation_history = []
 
     def build_knowledge_base(self, use_psychology_qa: bool = True, use_header_splitting: bool = True, clear_existing: bool = False) -> bool:
-        if clear_existing:
-            self.vector_store.clear_collection()
-        documents = self.data_processor.process_documents(use_psychology_qa, use_header_splitting)
-        if not documents:
+        try:
+            if clear_existing:
+                self.vector_store.clear_collection()
+            documents = self.data_processor.process_documents(use_psychology_qa, use_header_splitting)
+            if not documents:
+                return False
+            success = self.vector_store.add_documents(documents)
+            if success:
+                info = self.vector_store.get_collection_info()
+                return bool(info)
             return False
-        return self.vector_store.add_documents(documents)
+        except Exception:
+            return False
 
     def generate_response(self, query: str, max_tokens: int = 1000) -> Dict[str, Any]:
         analysis = self.psychology_agent.analyze_user_input(query, self.conversation_history, self.vector_store)
