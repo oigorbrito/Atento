@@ -51,6 +51,10 @@ jobs:
         run: |
           python evals/spikes/psychat/real_isolation_probe.py             --donor-root /tmp/PsyChat             --output evals/results/psychat_real_isolation.json
 
+      - name: Git-backed change-surface lower bounds
+        run: |
+          python evals/spikes/psychat/change_surface_probe.py             --donor-root /tmp/PsyChat             --output evals/results/psychat_change_surface.json
+
       - name: Static upstream Chassis Fitness audit
         run: |
           python evals/chassis/donor_static_audit.py             --root /tmp/PsyChat             --source-id SRC-PSYCHAT             --upstream-commit 5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4             --output evals/results/psychat_static_chassis.json
@@ -66,6 +70,7 @@ jobs:
       - name: Print reports
         run: |
           cat evals/results/psychat_real_isolation.json
+          cat evals/results/psychat_change_surface.json
           cat evals/results/psychat_static_chassis.json
           cat evals/results/psychat_composed_chassis.json
 
@@ -74,6 +79,7 @@ jobs:
           name: psychat-upstream-evidence
           path: |
             evals/results/psychat_real_isolation.json
+            evals/results/psychat_change_surface.json
             evals/results/psychat_static_chassis.json
             evals/results/psychat_composed_chassis.json
           if-no-files-found: error
