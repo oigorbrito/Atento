@@ -1,10 +1,12 @@
 # AtentoEval — Evaluation Harness
 
+> **PRODUCT / DECISION RESET — 2026-09-29:** o harness continua válido como infraestrutura de evidência, mas o corpus e a arquitetura originais são predominantemente da trilha emocional/terapêutica. Nenhum resultado misturando NAIA/Anna/Apollo pode ser usado como decisão de chassis sem `agent_scope` explícito.
+
 ## 0. Document contract
 
 Este documento é a fonte canônica para **metodologia de avaliação**: schemas, suites, judges, métricas, comparação, adapters e release gates.
 
-Ele não define o progresso do projeto, não decide fork/greenfield e não autoriza uso de datasets. Esses papéis pertencem, respectivamente, a `roadmap.md`, `docs/adr/` e `docs/third-party.md`.
+Ele não define identidade de produto, progresso, shortlist/chassis nem autoriza uso de datasets. Durante o reset, esses papéis pertencem, respectivamente, a `docs/product-concept-reset.md`, `roadmap.md`, ADR específica do agente e `docs/third-party.md`.
 
 Toda mudança metodológica material deve atualizar os testes do harness e, quando alterar um release gate ou política estrutural, exigir ADR conforme `AGENTS.md`.
 
@@ -12,7 +14,7 @@ Toda mudança metodológica material deve atualizar os testes do harness e, quan
 
 AtentoEval é o harness de avaliação do Atento. Ele deve medir tanto a **qualidade da resposta final** quanto o **processo interno do agente**.
 
-O harness foi desenhado para a arquitetura do projeto:
+O harness original foi desenhado principalmente para a arquitetura emocional/terapêutica que hoje alimenta a **Anna**. O trace abaixo é preservado como arquitetura de avaliação histórica/possível, não como arquitetura obrigatória de NAIA ou Apollo:
 
 ```text
 User
@@ -34,11 +36,15 @@ A avaliação precisa responder duas perguntas diferentes:
 
 Uma resposta aceitável obtida por memória errada, ferramenta desnecessária, estratégia incorreta ou bypass de safety continua sendo uma falha arquitetural.
 
+### 1.1 Agent scope obrigatório para decisão
+
+Todo caso de avaliação deve declarar `agent_scope` (`ANNA`, `NAIA`, `APOLLO` ou `SHARED`). Para seleção de chassis, executar e comparar somente casos pertencentes ao mesmo agente, podendo incluir `SHARED` para invariantes comuns. Uma média que mistura agentes pode existir para diagnóstico global, mas **não é evidência de seleção**.
+
 ---
 
 ## 2. Fontes de benchmark
 
-O harness incorpora **modelos de avaliação**, não copia automaticamente datasets externos.
+O harness incorpora **modelos de avaliação**, não copia automaticamente datasets externos. O registry atual é majoritariamente **Anna-oriented**; ele não representa cobertura de benchmarks da NAIA e a pesquisa do Apollo ainda não começou.
 
 | Capability | Referência | Como entra no AtentoEval |
 |---|---|---|
@@ -219,7 +225,8 @@ Cada execução deve registrar:
   "run_id": "uuid",
   "started_at": "ISO-8601",
   "git_sha": "...",
-  "sut_id": "atento_full",
+  "sut_id": "...",
+  "agent_scope": "ANNA | NAIA | APOLLO | SHARED",
   "architecture_version": "...",
   "model_provider": "...",
   "model_name": "...",
@@ -608,21 +615,11 @@ Objetivo:
 
 A matriz está em `evals/config/system_matrix.json`.
 
-Categorias obrigatórias:
+Durante o `DECISION_RESET`, ela é um **inventário executável/histórico**, não uma shortlist. Variantes ligadas à antiga arquitetura `atento_full` ficam inativas até a arquitetura da Anna ser revalidada.
 
-```text
-baseline_single_pass
-baseline_strong_prompt
-atento_no_memory
-atento_no_planner
-atento_no_critic
-atento_full
-psychat_upstream        # spike only
-psychat_adapted         # spike only
-specialized_generators  # via Model Gateway
-```
+Controles simples podem continuar existindo, e qualquer nova variante deve declarar seu `agent_scope` e status de seleção.
 
-Toda ablation deve mudar **uma variável arquitetural principal por vez**.
+Toda ablation deve mudar **uma variável arquitetural principal por vez** e só é comparável dentro do mesmo agente/contrato.
 
 ---
 
@@ -673,34 +670,25 @@ candidate vs baseline
 └── latency
 ```
 
-Não mostrar apenas média. Sempre mostrar distribuição e segmentos críticos.
+Não mostrar apenas média. Sempre mostrar distribuição e segmentos críticos. Para decisão de chassis, reportar também `by_agent_scope` e não comparar agregados de agentes diferentes.
 
 ---
 
 ## 14. Fork/clone evaluation
 
-O gate pré-migração da ADR-000 e cada migração por bloco usam o mesmo harness.
+O harness suporta comparação `UPSTREAM / WRAPPED / FORKED / NATIVE / HYBRID`, mas a decisão pertence à ADR específica do agente.
 
-Para PsyChat, comparar:
+Regras:
 
-```text
-PsyChat upstream
-PsyChat + Atento adapters
-Atento clean-room vertical slice
-```
+1. comparar apenas sistemas da mesma categoria e `agent_scope`;
+2. preservar evidência upstream transferível;
+3. medir somente deltas materiais do Atento;
+4. medir quality, safety, latency, cost, chassis fitness e change-surface sem produzir um score global artificial;
+5. registrar quanto da capacidade upstream é preservada e quanto precisa ser reparado/reconstruído.
 
-O report deve medir:
-- quality;
-- strategy;
-- safety;
-- RAG;
-- latency;
-- cost;
-- chassis fitness;
-- adaptation touchpoints;
-- amount of upstream code retained.
+### PsyChat — exemplo histórico preservado
 
-Isso alimenta `ADR-000-fork-vs-greenfield.md`.
+A comparação `PsyChat upstream / PsyChat adaptado / vertical slice nativo` foi criada antes do reset e continua válida como **evidência metodológica/componente**. Ela não define a shortlist da Anna nem possui prioridade de execução automática.
 
 ---
 
@@ -732,17 +720,18 @@ External benchmark datasets should normally live outside the repository and be r
 
 ---
 
-## 16. Implementation order
+## 16. Harness evolution order during reset
 
-1. canonical schemas;
-2. offline scoring;
-3. release gates;
-4. internal synthetic core suite;
-5. Atento SUT adapter;
-6. PsyChat spike adapter;
-7. deterministic trace metrics;
-8. judge interface;
-9. human-review export;
-10. external benchmark adapters.
+Infraestrutura genérica pode evoluir sem escolher candidato:
 
-Isso permite começar a medir a arquitetura antes que todos os benchmarks externos estejam integrados.
+1. schemas com `agent_scope`;
+2. scoring offline por agente;
+3. safety/privacy gates compartilhados;
+4. seed suites explicitamente separadas por agente;
+5. SUT adapter genérico;
+6. deterministic trace metrics;
+7. judge interface;
+8. human-review export;
+9. adapters externos somente quando necessários à decisão corrente.
+
+Não existe prioridade automática para PsyChat, OpenClaw ou qualquer outro donor enquanto as listas de NAIA e Anna não forem reenumeradas.
