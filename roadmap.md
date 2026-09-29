@@ -126,6 +126,52 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 - **Usar como fonte para:** avaliação humana, factual consistency, advice boundaries, adversarial stress tests e diferença entre LLM-as-judge e avaliador humano.
 - **Uso principal:** safety eval e human eval; não é arquitetura de agente.
 
+
+#### SRC-PSYCHAT — PsyChat Agentic RAG
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`
+- **Repo:** https://github.com/wink-wink-wink555/PsyChat
+- **Commit verificado:** `5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4`
+- **Licença:** MIT.
+- **Usar como fonte para:** decisão RAG + classificação em uma chamada; ReAct de query rewrite; multi-query retrieval; expansão de chunk para conversa completa; análise/caching de estilo; integração FastAPI/ChromaDB como protótipo.
+- **Acoplamentos observados:** DeepSeek via HTTP direto, Alibaba embeddings/TTS, ChromaDB local, prompts e taxonomia chinesa, histórico em memória do processo, configuração global.
+- **Não assumir:** que seja uma arquitetura de produção, que tenha safety/acuity independente, memória longitudinal robusta, contratos estruturados, benchmark acadêmico comparável ou permissões de produto para o dataset usado.
+- **Uso recomendado:** candidato a **fork experimental / code donor seletivo**, não base automática do Atento.
+
+#### SRC-THERAPYMIND — TherapyMind
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`
+- **Repo:** https://github.com/zx070326-hash/TherapyMind
+- **Commit verificado:** `bfed3f5be61bab262bb00a0f3cc9718c4a965243`
+- **Licença:** texto MIT no arquivo `LICENSE`, com aviso adicional de contexto de saúde mental.
+- **Usar como fonte para:** prompt compilation modular; separação de safety como fonte central; Observer → Analyst → Challenger → Responder; testes de grey-zone; persistência de perfil/sessão como referência.
+- **Limitação:** research prototype recente, footprint pequeno e evidência externa/benchmark ainda limitada.
+- **Uso recomendado:** clone/fork de laboratório para estudar prompt modules e testes; **não** usar como runtime base sem passar pelo AtentoEval.
+
+#### SRC-SOULCHAT — SoulChat2.0 / PsyDT
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `MODEL_REFERENCE`
+- **Repo:** https://github.com/scutcyr/SoulChat2.0
+- **Commit verificado:** `13ec529c9e3851eacbbf09bec9029621ac40e773`
+- **Licença do repo:** Apache-2.0.
+- **Usar como fonte para:** geração especializada, fine-tuning, personalização de estilo/técnica e benchmark do componente gerador.
+- **Não usar como:** base do Executive Controller do Atento.
+- **Uso recomendado:** avaliar checkpoint/serving como backend do `Response Generator`; fork somente se o Atento decidir manter pipeline próprio de treinamento.
+
+#### SRC-EMOLLM — EmoLLM
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `MODEL_REFERENCE`
+- **Repo canônico:** https://github.com/SmartFlowAI/EmoLLM
+- **Licença:** MIT.
+- **Usar como fonte para:** checkpoints especializados, receitas de fine-tuning, deploy e experimentos RAG/model serving.
+- **Não usar como:** base arquitetural do executivo.
+- **Uso recomendado:** consumir modelos/receitas de forma isolada; não forkear o projeto inteiro como base do Atento salvo se a trilha de treinamento virar produto próprio.
+
+#### SRC-MINDCHAT — MindChat
+- **Tipo:** `MODEL_REFERENCE` + `IMPLEMENTATION_REFERENCE`
+- **Repo:** https://github.com/X-D-Lab/MindChat
+- **Commit verificado:** `8309768d156a3c0e719381705a4058fa1ec554d3`
+- **Licença do repo:** GPL-3.0.
+- **Usar como fonte para:** comparação de modelos especializados e deployment local.
+- **Restrição:** uma derivação/fork distribuído sob GPL exige análise explícita das obrigações copyleft do produto. Não incorporar código ao Atento por padrão.
+- **Uso recomendado:** benchmark/model serving isolado quando a licença do checkpoint permitir; **não** adotar como base do repo Atento sem decisão jurídica/arquitetural explícita.
+
 #### SRC-ATENTO — Arquitetura própria do Atento
 - **Tipo:** `ATENTO_NATIVE`
 - **Usar para:** API/session gateway, contratos JSON, Model Gateway, storage lifecycle, policy integration, privacy, RBAC, observabilidade, CI/CD, infraestrutura, composição final do Executive Controller e integrações.
@@ -210,6 +256,175 @@ External code copied:
 ```
 
 Se `External code copied` não for `none`, registrar arquivo/origem/licença/versão em `docs/third-party.md`.
+
+---
+
+
+## 2.2 Gate obrigatório: construir do zero, clonar, forkear, vendorizar ou consumir como serviço
+
+> **Este gate acontece antes da Fase 0.** O agente não deve assumir que "greenfield" é sempre melhor nem que "fork" é sempre mais rápido. Cada candidato deve ser comparado contra a arquitetura alvo e contra o custo de remover acoplamentos.
+
+### Modos de adoção permitidos
+
+| Modo | Quando usar | Consequência |
+|---|---|---|
+| **Clean-room / Atento native** | boa ideia, mas código inexistente, incompatível ou sem licença | mantém arquitetura e licença do Atento sob controle |
+| **Selective port** | poucos módulos externos são úteis e a licença permite | copiar/adaptar somente arquivos/funções rastreados em `docs/third-party.md` |
+| **Vendor/submodule** | componente externo é estável e deve permanecer isolado | preservar upstream, licença e fronteira clara |
+| **Clone de laboratório** | validar rapidamente hipótese/benchmark sem tornar o repo derivado | usar em `experiments/` ou repo separado; não promover automaticamente |
+| **Fork de produto** | arquitetura externa é majoritariamente compatível e upstream sync agrega valor | Atento passa a carregar história, licença e dívida técnica do upstream |
+| **Model/service adapter** | valor está nos pesos/model serving, não na aplicação | integrar via Model Gateway; não forkear aplicação |
+| **No-adopt** | licença, maturidade, arquitetura ou safety não justificam adoção | usar somente paper/benchmark como referência |
+
+### Critérios de decisão
+
+Antes de escolher fork/clone, pontuar de 0–5:
+
+1. **License fit** — permite o uso pretendido e a estratégia de distribuição?
+2. **Architecture fit** — quanto do desenho alvo já existe sem refatoração estrutural?
+3. **Benchmark evidence** — o ganho foi demonstrado em evals relevantes?
+4. **Code maturity** — testes, typing, configuração, erros, observabilidade, releases.
+5. **Modularity** — providers/storage/prompts podem ser trocados por interfaces?
+6. **Safety separation** — há gates independentes ou safety está misturado no prompt?
+7. **Data provenance** — dados e knowledge base podem ser usados no produto?
+8. **Provider coupling** — dependência de APIs/infra específicas.
+9. **Upstream value** — acompanhar futuras mudanças do upstream realmente interessa?
+10. **Migration cost** — esforço para encaixar contratos do Atento.
+
+### Regra de decisão
+
+- **Fork de produto** somente se:
+  - licença for explicitamente compatível;
+  - `Architecture fit >= 4`;
+  - `Modularity >= 3`;
+  - não houver bloqueio de dados;
+  - custo estimado de refatoração for menor que implementar os mesmos blocos nativamente;
+  - um spike de 2–5 dias superar o baseline Atento em pelo menos uma capacidade relevante.
+- Se o valor estiver em **1–3 módulos**, preferir **selective port**.
+- Se o valor estiver no **modelo**, preferir **Model Gateway/service adapter**.
+- Se não houver licença explícita, **não forkear nem adaptar código para produto**.
+- Clone local para leitura/teste **não altera direitos de uso**.
+- O resultado do gate deve ser registrado em ADR.
+
+### Avaliação inicial dos candidatos atuais
+
+| Projeto | Licença | Fit como base executiva | Evidência | Dívida de adaptação | Decisão inicial |
+|---|---|---:|---:|---:|---|
+| **PsychAgent** | nenhuma licença de repo verificada | 5/5 | alta | média | **não forkear para produto**; estudar arquitetura e reproduzir clean-room |
+| **PsyChat** | MIT | 4/5 conceitualmente, ~2–3/5 em contratos de produção | baixa/moderada | média/alta | **fork experimental viável**, mas preferir selective port após spike |
+| **TherapyMind** | MIT + notice | 3/5 | baixa | média | clone/fork de laboratório; extrair prompt modules/test ideas |
+| **CADSS / CPsDD** | código do sistema não publicado; dataset research-only | 5/5 conceitual | alta | n/a | clean-room; não há base executável para fork |
+| **SoulChat2.0** | Apache-2.0 | 2/5 como executivo; 4/5 como generator/model track | forte no domínio do modelo | média | service/model adapter; fork só para trilha de treinamento |
+| **EmoLLM** | MIT | 2/5 como executivo | moderada | média | model/recipe donor; não usar como base do agente |
+| **MindChat** | GPL-3.0 | 1–2/5 | moderada | alta + copyleft | não base do Atento por padrão; avaliar modelo isoladamente |
+
+> Essas notas são **fit de engenharia para o Atento**, não ranking científico dos projetos.
+
+### PsyChat: spike obrigatório antes de decidir fork
+
+PsyChat é o único candidato atual com combinação razoável de:
+- licença permissiva;
+- código executável pequeno;
+- camada Agentic RAG explícita;
+- FastAPI;
+- vector retrieval;
+- query rewrite;
+- context expansion;
+- geração condicionada a casos.
+
+Porém o spike deve verificar quanto precisaria ser removido ou refeito:
+
+```text
+PsyChat upstream
+  ├── requests diretos ao DeepSeek         → substituir por Model Gateway
+  ├── Alibaba embedding/TTS                → adapters
+  ├── ChromaDB local                       → Storage/Vector interface
+  ├── conversation_history em memória      → Session/Memory service
+  ├── string parsing de decisões           → schemas estruturados
+  ├── prompts/taxonomia em chinês          → assets versionados do Atento
+  ├── forced-RAG por número de turnos      → policy baseada em necessidade
+  ├── sem Safety Engine independente       → adicionar gate próprio
+  ├── sem belief state longitudinal        → adicionar UKA/ENPMR-inspired state
+  └── knowledge base PsyDTCorpus            → separar código de licença/proveniência dos dados
+```
+
+#### Critério de saída do spike
+Em 2–5 dias, produzir:
+
+- `ADR-000 — Fork vs Greenfield`;
+- mapa de arquivos reutilizáveis;
+- lista de dependências que precisam ser abstraídas;
+- teste de execução do upstream sem alteração;
+- implementação mínima do Model Gateway no fork/spike;
+- um conjunto de 20–50 cenários AtentoEval;
+- comparação:
+  - PsyChat upstream;
+  - PsyChat com adapters;
+  - vertical slice Atento clean-room;
+- estimativa de linhas/módulos que seriam mantidos após a refatoração.
+
+Se menos de ~40% do núcleo de PsyChat permanecer reconhecível após adequar contratos, memory, safety, provider abstraction e eval hooks, **não usar fork como base**; portar apenas os padrões úteis.
+
+### PsychAgent: por que não é fork de produto hoje
+
+O código é muito mais alinhado com a arquitetura alvo em multi-sessão, skills e reward-guided rollout, mas o repositório verificado não declara licença e informa que partes do pipeline do paper não estão na release pública.
+
+Decisão:
+- permitido como referência de arquitetura/benchmark;
+- permitido executar em ambiente de pesquisa para entender comportamento;
+- não copiar/adaptar código para o Atento enquanto a permissão não estiver clara;
+- reproduzir contratos e comportamento de forma clean-room.
+
+### TherapyMind: quando um fork pode ser útil
+
+O valor está mais em **conteúdo modular de prompts + testes de safety/grey-zone** do que em um runtime executivo comparável ao alvo.
+
+Uso:
+- criar spike isolado;
+- testar compilação modular contra prompts dinâmicos do Atento;
+- reutilizar código/texto somente conforme a licença e com attribution;
+- não herdar automaticamente suas escalas, hotline, conteúdo cultural ou decisões clínicas.
+
+### SoulChat2.0 / EmoLLM / MindChat: tratar como trilha de modelo, não de aplicação
+
+Para estes projetos, a pergunta principal não é "forkamos o agente?", mas:
+
+```text
+checkpoint especializado
+        ↓
+Model Gateway
+        ↓
+Atento architecture
+        ↓
+AtentoEval
+```
+
+O Atento deve poder testar um modelo especializado contra um frontier/general LLM sem modificar Executive, Planner, Memory, Safety ou Tools.
+
+### ADR obrigatório
+
+Criar `docs/adr/ADR-000-fork-vs-greenfield.md` antes de implementar a arquitetura.
+
+O ADR deve registrar:
+
+```yaml
+decision: fork | selective-port | clean-room | model-adapter | no-adopt
+candidate:
+upstream_repo:
+upstream_commit:
+license:
+data_license:
+architecture_fit:
+benchmark_evidence:
+modules_reused:
+modules_replaced:
+upstream_sync_strategy:
+security_review:
+atentoeval_result:
+estimated_time_fork:
+estimated_time_greenfield:
+decision_rationale:
+```
 
 ---
 
@@ -1089,6 +1304,22 @@ Postgres / Vector Store / Cache / Object Storage
 ---
 
 
+## Fase -1 — Fork/Clone Spike & ADR-000
+**Duração alvo: 2–5 dias**
+
+- [ ] executar o gate da seção 2.2;
+- [ ] testar PsyChat upstream em ambiente isolado;
+- [ ] mapear PsyChat → contratos Atento;
+- [ ] verificar licenças/datasets dos candidatos;
+- [ ] comparar selective-port vs greenfield;
+- [ ] escrever `ADR-000-fork-vs-greenfield.md`;
+- [ ] congelar decisão antes do bootstrap.
+
+### Gate
+Nenhum código externo vira base do Atento sem ADR-000 aprovado.
+
+---
+
 ## Fase 0 — Bootstrap
 **Duração alvo: 2–4 dias**
 
@@ -1256,6 +1487,7 @@ Evidência para decidir se o sistema está pronto para expansão.
 
 | Semana | Marco |
 |---|---|
+| 0 | Fork/clone spike + ADR-000 |
 | 1 | Fundação + vertical slice |
 | 2 | State + Planner + Safety |
 | 3 | Memória + Executive Controller |
