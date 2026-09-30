@@ -455,7 +455,7 @@ STATIC_RESIDUAL_DISPOSITION = COMPLETE_V1
 
 GENERIC_LOCAL_BENCHMARK = NOT_JUSTIFIED
 GENERIC_VENDOR_DEFAULT_RETEST = NOT_JUSTIFIED
-LOCAL_RESIDUAL_PROBE_EXECUTION = NOT_STARTED
+LOCAL_RESIDUAL_PROBE_EXECUTION = STARTED_BOUNDED
 CURRENT_PIN_QUALIFIED = 0
 NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
@@ -473,11 +473,15 @@ This document intentionally does not decide which candidate should be composed f
 
 ## 7. Post-ledger composition freezes
 
-### Engram — frozen, runtime probe not executed
+### Engram — frozen, adapter boundary executed; integration still open
 
 The first residual composition frozen after this ledger is recorded in:
 
 `docs/evaluation/naia-engram-hardened-composition-freeze-2026-09-30.md`
+
+Execution evidence is recorded in:
+
+`docs/evaluation/naia-engram-browser-authority-probe-2026-09-30.md`
 
 The reason for freezing this composition is bounded to a decision-relevant residual already present in the ledger: the target profile requires browser/web action, while the exact Engram pin marks browser click/type as side-effecting but outside the destination-aware egress classification.
 
@@ -485,8 +489,10 @@ State:
 
 ```text
 ENGRAM_HARDENED_COMPOSITION = FROZEN_V1
-ENGRAM_BROWSER_EFFECT_AUTHORITY = UNPROVEN
-RESIDUAL_BROWSER_AUTHORITY_PROBE = READY_NOT_EXECUTED
+ENGRAM_BROWSER_ADAPTER_BOUNDARY = PASS_EMPIRICAL
+ENGRAM_BROWSER_EFFECT_AUTHORITY = STILL_OPEN
+ENGRAM_CANDIDATE_RUNTIME_EXECUTION = INFRA_BLOCKED
+RESIDUAL_BROWSER_AUTHORITY_PROBE = PARTIAL_EXECUTION
 RP-LIFE-01_FOR_FIRST_BROWSER_AUTHORITY_BLOCK = NOT_EXECUTED
 CURRENT_PIN_QUALIFIED = NO
 NAIA_SHORTLIST = NOT_SELECTED
