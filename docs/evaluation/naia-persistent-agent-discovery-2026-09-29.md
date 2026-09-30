@@ -397,11 +397,19 @@ The old discovery pool remains relevant and should no longer be treated as merel
 `oezercet/SelfAgent`
 observed head `c86b0b1fbc0e177e67b59b8d26cc2ce9c18406d1`
 
-README-level product surface includes persistent SQLite/semantic memory, task tracking, Playwright browser, scheduler, email, terminal, system actions, provider switching and a web chat product.
+Exact-pin admission confirms a persistent personal-assistant product with SQLite/semantic memory, Playwright browser, email/terminal/system tools and scheduling.
+
+Material admission constraints:
+
+- consequential tools mark `requires_confirmation`, but the central agent/registry execution path does not enforce that metadata;
+- the scheduler persists JSON definitions but startup does not call its `_load()` path or re-arm persisted jobs;
+- scheduled commands execute raw shell outside the ordinary tool registry/terminal blocklist;
+- the current product is single-agent, so strict NAIA/Anna isolation requires separate runtime/store/config domains.
 
 ```text
-COMPARABLE_CANDIDATE = PROVISIONAL_YES
-ADMISSION_AUDIT = REQUIRED
+COMPARABLE_CANDIDATE = YES
+ADMISSION_AUDIT = COMPLETE
+CURRENT_PIN_QUALIFIED = NO
 ```
 
 ### GoClaw
@@ -409,11 +417,18 @@ ADMISSION_AUDIT = REQUIRED
 `sausheong/goclaw`
 observed head `c24c50ba2d16daff6aa2809b6c1a6f592977ae54`
 
-README-level product surface includes multi-agent runtime, persistent memory/session state, heartbeat, cron, Telegram/WhatsApp/CLI, per-agent tool policy and multiple providers.
+Exact-pin admission confirms a persistent multi-agent assistant runtime with messaging channels, cron/heartbeat, browser, per-agent workspaces/sessions and tool policy.
+
+Material admission constraints:
+
+- the default shell execution policy is `full`;
+- per-agent workspaces and sessions are real, but BM25 memory and Cortex are instance-global and injected into all runtimes without an agent namespace;
+- `ask_agent` can address any configured agent when the tool is available; one-level recursion prevention is not a role authorization boundary.
 
 ```text
-COMPARABLE_CANDIDATE = PROVISIONAL_YES
-ADMISSION_AUDIT = REQUIRED
+COMPARABLE_CANDIDATE = YES
+ADMISSION_AUDIT = COMPLETE
+CURRENT_PIN_QUALIFIED = NO
 ```
 
 ### Nebo
@@ -421,11 +436,20 @@ ADMISSION_AUDIT = REQUIRED
 `NeboLoop/nebo-go`
 observed head `d566d27ec7c5ab36f3b95fdfda371bb45994dfd7`
 
-README-level product surface includes a desktop personal AI companion, persistent memory, browser automation, file/shell access, scheduling and an app platform.
+Exact-pin admission confirms a persistent desktop personal-assistant product with memory, browser/desktop, scheduling, subagents, channels and an app platform.
+
+Material admission constraints:
+
+- hard host safeguards are implemented and directly tested in source;
+- the current source enables shell denies for comm/app/skill origins even though one exact-pin security-doc paragraph is stale and says the deny list is disabled;
+- default interactive policy is allowlist/on-miss;
+- system-origin work (reminders/heartbeat/recovery) auto-approves ordinary approval requests;
+- the product is one persistent companion context, so strict NAIA/Anna isolation requires separate runtime/data authority domains.
 
 ```text
-COMPARABLE_CANDIDATE = PROVISIONAL_YES
-ADMISSION_AUDIT = REQUIRED
+COMPARABLE_CANDIDATE = YES
+ADMISSION_AUDIT = COMPLETE
+CURRENT_PIN_QUALIFIED = NO
 ```
 
 ## 4. Secondary discovery pool
@@ -453,7 +477,7 @@ The previous seven-candidate set is not complete.
 PREVIOUS_ENUMERATED_SET_COMPLETE = NO
 CANDIDATE_UNIVERSE_COMPLETE = false
 
-NEW_COMPARABLE_OR_PROVISIONAL:
+NEW_COMPARABLE:
   - Rakazo
   - Gobii
   - Octop
@@ -466,6 +490,9 @@ NEW_COMPARABLE_OR_PROVISIONAL:
   - SelfAgent
   - GoClaw
   - Nebo
+
+PROVISIONAL_ADMISSION_BLOCK = COMPLETE
+SECONDARY_DISCOVERY_POOL_SCREENING = REQUIRED
 
 REFERENCE_PRODUCTS:
   - Grok Bot
