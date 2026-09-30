@@ -378,6 +378,36 @@ CURRENT_PIN_HOSTED_EXECUTION = NOT_OBSERVED
 LOCAL_BENCHMARK_JUSTIFIED = NO
 ```
 
+## Transfer audit: Suna / Letta Code / PersonalJarvis
+
+A deeper transferability pass is recorded in:
+
+`docs/evaluation/naia-transfer-audit-suna-letta-jarvis-2026-09-29.md`
+
+Key residuals found without local execution:
+
+```text
+Suna:
+  v2 per-agent grants = deny-by-default
+  connector policy default = allow_all
+  project memory = shared project brain
+  scheduler dedups fires, not arbitrary work/effects
+
+Letta Code:
+  default permission mode = unrestricted
+  in-process cross-agent file guard = strong
+  spawned shell cross-agent sandbox = opt-in
+  shared memory / cross-agent discovery are intentional product features
+
+PersonalJarvis:
+  scheduled preauthorization = trace-bound + grant-bound
+  society memory = agent namespace
+  shell = local path containment, not container isolation
+  strict per-society-agent credential isolation = not established
+```
+
+No generic local probe is justified yet.
+
 ## 10. Cross-candidate conclusion
 
 The expanded universe contains significantly more reusable upstream evidence than the original discovery pool implied.
