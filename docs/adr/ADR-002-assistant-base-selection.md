@@ -47,13 +47,26 @@ Transfer audit for Rakazo / Gobii:
 
 `docs/evaluation/naia-external-evidence-preflight-2026-09-29.md`
 
-The initial seven-candidate set is no longer treated as a closed universe. Grok Bot and Meta Muse are retained as product-shape references, and newly surfaced technical candidates include Rakazo, Gobii, Octop, PersonalJarvis, Letta Code, Kortix/Suna, Rome, Agent Zero and OpenGrokBot, plus the prior SelfAgent/GoClaw/Nebo discovery pool.
+The registered discovery pools have now been bounded and frozen as the V1 decision snapshot. The secondary admission and transfer records are:
 
-For technical discovery, license is not an exclusion/ranking criterion. No local NCP/benchmark starts until the expanded candidate has an exact pin and its relevant upstream tests/evals/run evidence are reconciled.
+- `docs/evaluation/naia-secondary-pool-admission-screen-2026-09-30.md`
+- `docs/evaluation/naia-transfer-audit-automate-agentos-openagentd-2026-09-30.md`
+- `docs/evaluation/naia-transfer-audit-hubos-rustfox-2026-09-30.md`
+- `docs/evaluation/naia-transfer-audit-engram-holt-2026-09-30.md`
+
+The full residual-only execution map is:
+
+`docs/evaluation/naia-residual-only-probe-ledger-2026-09-30.md`
+
+Grok Bot and Meta Muse remain reference products rather than comparable base candidates. Open Intern remains deferred at its exact screened pin because required NAIA product surfaces were explicitly not shipped there.
+
+For technical discovery, license remains separate from technical evidence and no candidate receives qualification, shortlist or selection from static/transfer evidence alone.
 
 ```text
-CANDIDATE_UNIVERSE_COMPLETE = false
-LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
+FROZEN_CANDIDATE_UNIVERSE_V1 = COMPLETE
+EXPANDED_EXTERNAL_EVIDENCE_GATE = COMPLETE_V1
+RESIDUAL_ONLY_PROBE_LEDGER = COMPLETE_V1
+LOCAL_RESIDUAL_PROBE_EXECUTION = NOT_STARTED
 NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
 ```
@@ -133,7 +146,7 @@ This does not create shortlist status.
 
 docs/evaluation/naia-common-probe-profile-2026-09-29.md
 
-The common NCP profile is retained for the later local-delta phase, but the expanded persistent-agent discovery means local probes are not the current next step. First reconcile the new candidates' exact pins, upstream tests/evals and available execution artifacts. Only an `ATENTO_DELTA` or blocking `UNPROVEN` invariant justifies NCP-01..04 execution. This ADR remains NOT_SELECTED.
+The common NCP profile is retained as a template, but broad discovery and upstream-evidence reconciliation are complete for the frozen V1 snapshot. `docs/evaluation/naia-residual-only-probe-ledger-2026-09-30.md` now maps each candidate to only the unresolved microprobe families that could change decision evidence. Only a named `ATENTO_DELTA` or blocking `UNPROVEN` invariant may trigger local execution. This ADR remains NOT_SELECTED.
 
 ## Historical candidates — evidence preserved, shortlist reset
 
