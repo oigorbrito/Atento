@@ -47,6 +47,37 @@ class CandidateRegistryTest(unittest.TestCase):
         ids = [item["candidate_id"] for item in matrix["include"]]
         self.assertEqual(ids, ["psychat_upstream"])
 
+
+    def test_registry_rejects_selected_candidate_during_decision_reset(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "candidates.json"
+            path.write_text(
+                json.dumps(
+                    {
+                        "policy": {
+                            "decision_authority": False,
+                            "selection_state": "DECISION_RESET",
+                            "candidate_universe_complete": False,
+                        },
+                        "candidates": [
+                            {
+                                "candidate_id": "selected-too-early",
+                                "block": "I",
+                                "source_id": "SRC-X",
+                                "variant": "UPSTREAM",
+                                "adapter_id": "selected-too-early",
+                                "repository": "owner/repo",
+                                "upstream_sha": "a" * 40,
+                                "selection_status": "SELECTED",
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "decision_authority is false"):
+                load_registry(path)
+
     def test_external_candidate_without_pin_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "candidates.json"
