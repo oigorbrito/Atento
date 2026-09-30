@@ -982,3 +982,61 @@ NAIA_BASE = NOT_SELECTED
 ```
 
 The same infrastructure precondition applies to the rest of the 12-candidate frontier in this executor. Do not convert the shared infrastructure failure into per-candidate negative evidence.
+
+
+## Gate-2 execution infrastructure + broker contract — 2026-09-30
+
+Two separate common conditions now govern the first empirical Gate-2 PASS.
+
+### Executor condition
+
+Observed local and hosted execution infrastructure is currently unavailable:
+
+```text
+LOCAL github.com DNS = BLOCKED
+LOCAL exact candidate checkout = ABSENT
+
+GitHub Actions AI Butler run:
+  run_id = 36789543149
+  job_id = 110138936806
+  runner_id = 0
+  steps = []
+  candidate code executed = NO
+```
+
+Therefore:
+
+```text
+EXECUTION_INFRA = BLOCKED_ENVIRONMENT
+EXECUTION_INFRA != CANDIDATE_FAIL
+```
+
+### Explicit broker condition
+
+Canonical broker contract:
+
+`docs/evaluation/naia-gate2-handoff-broker-contract-v1-2026-09-30.md`
+
+Reference harness implementation:
+
+- `evals/atentoeval/handoff_broker.py`
+- `evals/tests/test_handoff_broker.py`
+
+Evidence validator:
+
+- `evals/atentoeval/composition.py`
+- `evals/config/naia_gate2_composition_v1.json`
+- `evals/tests/test_composition.py`
+
+The validator explicitly forbids converting a synthetic broker echo into `ISO-6 PASS`.
+
+```text
+BROKER_CONTRACT_FROZEN = YES
+BROKER_RUNTIME_INTEGRATION_PROVEN = NO
+
+GATE2_EMPIRICAL_PASS = 0
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+A future Gate-2 candidate PASS requires both candidate-specific composition evidence and a real runtime broker path conforming to the frozen contract.
