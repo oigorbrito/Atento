@@ -54,6 +54,12 @@ PERSISTENCE != DURABLE_EXECUTION
 FEATURE_RICH != GOOD_CHASSIS
 ```
 
+## Current QwenPaw contract evidence
+
+`docs/evaluation/qwenpaw-contract-audit-2026-09-29.md`
+
+QwenPaw is a comparable persistent-assistant product with strong memory/governance/computer-use primitives. The current pin still requires an Atento hardening probe because sandbox fallback and scheduled-task defaults can broaden authority relative to NAIA's fail-closed contract. This does not create shortlist status.
+
 ## Historical candidates — evidence preserved, shortlist reset
 
 ### A — OpenMausBot
