@@ -709,3 +709,28 @@ AUTHORITY_ISOLATION_EMPIRICAL_PASS = 0
 NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
 ```
+
+
+## Gate-2 empirical execution frontier — 2026-09-30
+
+Canonical record:
+
+`docs/evaluation/naia-gate2-empirical-execution-frontier-2026-09-30.md`
+
+Evidence reuse has reduced AI Butler to one Atento-specific Gate-2 residual:
+
+```text
+NEXT_EMPIRICAL_COMPOSITION_TARGET = AI_BUTLER
+AI_BUTLER_GATE2 = ONE_RESIDUAL_COMPOSITION_TEST_REMAINING
+```
+
+This execution ordering is not a shortlist, winner, or base selection. It is justified only by exact-pin executed authority evidence plus the smallest remaining composition delta.
+
+Current environment limitation:
+
+```text
+LOCAL_CLONE_NETWORK = BLOCKED_DNS
+AI_BUTLER_COMPOSITION_EXECUTION = READY_BUT_NOT_RUN
+```
+
+Do not convert the executor/network limitation into candidate evidence.
