@@ -22,15 +22,23 @@ AgentOS     use-agent-os/agent-os  226c906291fc68f3c4517623446bdaec1b48a82d
 OpenAgentd  TBNRFPS01/OpenAgent    b2acf236f4e9e6b503281f2364e9915a60158376
 ~~~
 
-At admission, all three exact pins had no observable GitHub workflow runs or combined statuses through the available connector.
+At admission, the available connector did not expose hosted execution for these pins.
 
-Therefore:
+**Superseded in part 2026-09-30:** direct GitHub Actions lookup by exact `head_sha` found successful AgentOS CI on its frozen pin.
 
 ~~~text
-CODE_PASS = NOT_CLAIMED
-CODE_FAIL = NOT_CLAIMED
-HOSTED_EXECUTION = NOT_OBSERVED
+AutoMate HOSTED_EXECUTION = NOT_OBSERVED
+OpenAgentd HOSTED_EXECUTION = NOT_OBSERVED
+
+AgentOS:
+  CI = SUCCESS
+  Linux backend = 16774 passed, 50 skipped
+  Windows backend = 16701 passed, 123 skipped
+  frontend = 2382 passed
+  Web UI Browser Smoke = SUCCESS
 ~~~
+
+See `docs/evaluation/agentos-gate2-transferable-authority-closure-2026-09-30.md` for the Gate-2 clauses transferable from that executed evidence.
 
 ---
 
