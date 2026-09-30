@@ -418,12 +418,32 @@ docs/evaluation/naia-transfer-audit-hubos-rustfox-2026-09-30.md
 
 Those two now have bounded Atento residuals; no generic local NCP is justified.
 
-Remaining secondary transfer group:
+The final grouped transfer audit is complete for:
 
 ~~~text
 Engram
 Holt
 ~~~
+
+Record:
+
+`docs/evaluation/naia-transfer-audit-engram-holt-2026-09-30.md`
+
+Those two now have bounded Atento residuals. No generic local NCP is justified for either candidate.
+
+All seven candidates admitted from the secondary pool now have exact-pin bounded transfer audits:
+
+~~~text
+AutoMate
+AgentOS
+OpenAgentd
+HubOS
+RustFox
+Engram
+Holt
+~~~
+
+The external-evidence gate for the frozen V1 candidate universe is therefore complete. This does not qualify any candidate; it only closes the broad upstream evidence-reconciliation phase.
 
 Open Intern is not sent into the same transfer-audit block at its current pin because required NAIA product surfaces are explicitly not shipped there yet.
 
@@ -437,14 +457,16 @@ The frozen V1 snapshot is:
 REGISTERED_DISCOVERY_POOL_SCREENING = COMPLETE_V1
 FROZEN_CANDIDATE_UNIVERSE_V1 = COMPLETE
 CANDIDATE_UNIVERSE_COMPLETE = true_for_frozen_v1_snapshot
-SECONDARY_TRANSFER_AUDITS = IN_PROGRESS_5_OF_7
+SECONDARY_TRANSFER_AUDITS = COMPLETE_7_OF_7
+EXPANDED_EXTERNAL_EVIDENCE_GATE = COMPLETE_V1
 LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
+RESIDUAL_ONLY_PROBE_DERIVATION = NEXT
 NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
 ~~~
 
 This freeze prevents discovery churn; it is not a permanent claim that no new candidate can ever appear.
 
-Local NCP remains blocked for the newly admitted seven until the external-evidence gate is satisfied candidate by candidate.
+Broad local NCP remains unjustified now that the external-evidence gate is complete. Any local execution must be derived from an explicit unresolved Atento delta and reuse all materially equivalent evidence already recorded.
 
-The next work is therefore **the final grouped secondary transfer audit for Engram / Holt**, not local benchmarking.
+The next work is therefore **cross-candidate residual normalization and the smallest residual-only probe derivation**, not generic local benchmarking.
