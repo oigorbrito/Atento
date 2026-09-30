@@ -166,6 +166,30 @@ def load_registry(path: Path) -> list[CandidateSpec]:
     ids = [candidate.candidate_id for candidate in candidates]
     if len(ids) != len(set(ids)):
         raise ValueError("duplicate candidate_id in registry")
+
+    policy = raw.get("policy", {})
+    selected = [
+        candidate.candidate_id
+        for candidate in candidates
+        if candidate.selection_status is SelectionStatus.SELECTED
+    ]
+    if selected:
+        if not bool(policy.get("decision_authority", False)):
+            raise ValueError(
+                "registry cannot select candidates while decision_authority is false: "
+                f"{selected}"
+            )
+        if policy.get("selection_state") == "DECISION_RESET":
+            raise ValueError(
+                "registry cannot select candidates during DECISION_RESET: "
+                f"{selected}"
+            )
+        if not bool(policy.get("candidate_universe_complete", False)):
+            raise ValueError(
+                "registry cannot select candidates before candidate universe is complete: "
+                f"{selected}"
+            )
+
     return candidates
 
 
