@@ -44,15 +44,24 @@ OpenGrokBot:
   combined_statuses = []
 ~~~
 
-Therefore:
+Subsequent exact-pin workflow enumeration found hosted execution for Octop that the earlier PR-only lookup missed. See:
+
+`docs/evaluation/octop-exhaustive-verification-2026-09-30.md`
+
+Observed Octop status:
 
 ~~~text
-CODE_PASS = NOT_CLAIMED
-CODE_FAIL = NOT_CLAIMED
-HOSTED_EXECUTION = NOT_OBSERVED
+release non-live suite = 3951 passed / 17 skipped
+CodeQL = PASS
+desktop package/runtime smoke = PASS across macOS/Linux/Windows targets
+Docker/release packaging = PASS
 ~~~
 
-The source/test contracts below are reusable evidence, not a current-pin runtime qualification.
+The same passing suite makes the cross-user workspace denial, security-default tests and Bridge path-policy tests run-backed at this pin. The stock Bridge policy also exposes agent-scoped mutation authority, including tool-setting/plugin-tool changes and browser handoff, so it is not equivalent to the Atento broker-only contract.
+
+For Agent Zero, Rome and OpenGrokBot, this document's original hosted-execution statements remain governed by their later candidate-specific verification records where present.
+
+The source/test contracts below remain reusable at their exact proven scope.
 
 ---
 
