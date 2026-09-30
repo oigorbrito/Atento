@@ -184,23 +184,27 @@ These are source/test-contract findings, not independently executed runtime evid
 
 ## 6. Exact-head CI visibility
 
+**Superseded 2026-09-30:** a direct GitHub Actions query by `head_sha` found hosted runs that the earlier PR-oriented connector lookup missed.
+
 For:
 
 `ca8f24d05fc49a224adab0c9426077fd8d93801d`
 
-the available GitHub connector reports:
+observed push runs include:
 
 ```text
-workflow_runs = []
-combined_statuses = []
+CI              = SUCCESS  run 36650380651
+CodeQL          = SUCCESS  run 36650379796
+Workflow Sanity = SUCCESS  run 36650379848
 ```
 
-Therefore:
+The CI job selection for this push was narrow; the relevant QA smoke lane was skipped. Therefore this corrects repository-health evidence but does not convert the NAIA hardening profile or two-role composition into runtime proof.
 
 ```text
-CURRENT_PIN_HOSTED_TEST_EXECUTION = NOT_OBSERVED
-CODE_PASS = NOT_CLAIMED
-CODE_FAIL = NOT_CLAIMED
+CURRENT_PIN_HOSTED_CI = PASS
+ATENTO_COMPOSITION_EXECUTION = NOT_RUN
+A2A_QA_SCENARIO_SOURCE = PRESENT
+A2A_QA_SCENARIO_EXACT_PIN_EXECUTION = NOT_ESTABLISHED
 ```
 
 ## 7. Transfer result
