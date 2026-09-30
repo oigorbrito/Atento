@@ -245,3 +245,16 @@ BASE = NOT_SELECTED
 ```
 
 Do not treat the frontier as a product ranking. It is only the set whose exact-pin executed evidence already closes enough authority clauses to make an Atento-specific composition the next non-redundant test.
+
+
+## Transferable-evidence frontier V2
+
+```text
+FRONTIER = [AI Butler, AgentOS, Octop, Rome, Engram]
+NEXT_EMPIRICAL_TARGET = AI Butler
+BROAD_UPSTREAM_RETEST_FOR_FRONTIER = FORBIDDEN_AS_REDUNDANT
+SHORTLIST = NOT_SELECTED
+BASE = NOT_SELECTED
+```
+
+Rome and Engram now have exact-pin CI-backed Gate-2 authority clauses. Octop already had exhaustive exact-pin execution. Only Atento-specific hardened composition deltas remain useful for these five.
