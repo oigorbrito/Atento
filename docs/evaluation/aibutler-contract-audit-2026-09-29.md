@@ -224,18 +224,25 @@ ATENTO_PROVIDER_RUNTIME_PROOF = NOT_OBSERVED
 
 ## 10. Hosted execution visibility
 
+**Superseded 2026-09-30:** direct GitHub Actions lookup by exact `head_sha` found successful hosted execution.
+
 For exact pin:
 
 `c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c`
 
-the available GitHub connector reports:
-
 ```text
-workflow_runs = []
-combined_statuses = []
+CI run 28973914814 = SUCCESS
+Security run 28973914736 = SUCCESS
+Test (race detector) = SUCCESS
+Integration & Security = SUCCESS
+Linux Desktop Tier 4 live = SUCCESS
+Linux Accessibility Tier 3 live = SUCCESS
+Windows amd64 build = SUCCESS
 ```
 
-Therefore no current-pin CI pass/fail is claimed.
+The exact-pin test job executed `go test ./... -race -count=1 -timeout=10m`.
+
+See `docs/evaluation/aibutler-gate2-transferable-authority-closure-2026-09-30.md` for the authority/isolation clauses that are directly transferable from those executed tests.
 
 ## 11. Current disposition
 
