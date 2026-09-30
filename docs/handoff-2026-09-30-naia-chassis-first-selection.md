@@ -344,3 +344,40 @@ OpenGrokBot:
 ```
 
 Do not convert any of these blocks into structural elimination without the corresponding bounded repair test.
+
+
+## Gate-2 frontier V5
+
+```text
+FRONTIER_COUNT = 12
+FRONTIER = [
+  AI Butler,
+  AgentOS,
+  Octop,
+  Rome,
+  Engram,
+  Suna,
+  Letta Code,
+  RustFox,
+  Rakazo,
+  OpenMausBot,
+  NanoClaw,
+  QwenPaw
+]
+
+REMAINING_NON_FRONTIER = 13
+NEXT_EMPIRICAL_TARGET = AI Butler
+SHORTLIST = NOT_SELECTED
+BASE = NOT_SELECTED
+```
+
+Do not rerun broad upstream suites for frontier candidates.
+
+New exact-pin evidence:
+- OpenMausBot: cross-platform authority/approval/routine tests passed.
+- NanoClaw: 3033 primary tests + approval/permission/restart/security contracts passed.
+- QwenPaw: contract/integration matrix passed with one scoped Python 3.13 PTY runtime failure set.
+
+Canonical residual disposition for the remaining non-frontier candidates:
+
+`docs/evaluation/naia-gate2-non-frontier-hosted-evidence-disposition-2026-09-30.md`
