@@ -72,19 +72,48 @@ HISTORICAL_NAIA_IMPLEMENTATION = MECHANISM/ARCHITECTURE_DONOR
 DIRECT_PRODUCT_BASE_COMPARABILITY = REQUIRES_REAUDIT
 ```
 
-### Discovery pool not yet admitted
+### Persistent-agent discovery expansion
 
-The following surfaced as potentially relevant but are not yet placed in the comparable set because maturity/product completeness has not been audited under the same contract:
+The initial seven-candidate set was not exhaustive.
 
-- `oezercet/SelfAgent`
-- `sausheong/goclaw`
-- `NeboLoop/nebo-go`
+Detailed discovery record:
 
-Their existence keeps:
+`docs/evaluation/naia-persistent-agent-discovery-2026-09-29.md`
+
+External-evidence preflight:
+
+`docs/evaluation/naia-external-evidence-preflight-2026-09-29.md`
+
+Current product-shape references include **Grok Bot** and **Meta Muse**: persistent named agents, long-lived computer/browser state, proactive/scheduled work and explicit human-control boundaries. They are references, not source candidates.
+
+New high-relevance technical candidates requiring same-protocol admission/completeness audit:
+
+| Source | Observed pin | Discovery class | Why it remains in the universe |
+|---|---|---|---|
+| Rakazo — `elie222/rakazo` | `f4583525d632fcd8643fd6e24c7f51e3e04cb990` | `PERSISTENT_ASSISTANT_BASE_CANDIDATE` | direct Grok-Bot-class product: persistent bots, routines, private/team computers, browser/terminal/desktop, delegation and approvals |
+| Gobii — `gobii-ai/gobii-platform` | `c9929bf8ea59b4695b99dcab59aa6c97a09c5bdb` | `PERSISTENT_AGENT_BASE_CANDIDATE` | durable always-on employees, event queues, schedules, browser, channels, approvals and a first-class eval suite |
+| Octop — `TencentCloud/Octop` | `e473dd3c4a4741618ffde1a42a3492341a189e8e` | `PERSISTENT_ASSISTANT_BASE_CANDIDATE` | self-hosted multi-user/multi-agent assistant with cron, browser, remote desktop, memory, channels and approvals |
+| PersonalJarvis — `PersonalJarvis/PersonalJarvis` | `1be33c457739ca7e161ee6fbaf298ec10d4dad3b` | `PERSISTENT_ASSISTANT_BASE_CANDIDATE` | routines, persistent state, browser, native computer-use, recovery and explicit OS-contract evidence |
+| Letta Code — `letta-ai/letta-code` | `21daa38a8cdd74f2d03b634c8312253080bacfc1` | `PERSISTENT_AGENT_RUNTIME_CANDIDATE` | long-lived identity/memory, proactive crons, channels, approvals, remote computers and cross-agent calls |
+| Kortix/Suna — `kortix-ai/suna` | `270c4a57c8ae5ffb85eff6d5b9700c5713612f28` | `PERSISTENT_AGENT_PLATFORM_CANDIDATE` | agents + triggers + secrets + connectors + sandbox/session runtime with exact-SHA release gates |
+| Rome — `rome-os/rome` | `ef523c4659149e2711744deb04ec42c3be339907` | `PERSISTENT_AGENT_BASE_CANDIDATE` | direct Grok Bot/Muse-class alternative with persistent agents, routines, memory, actions/apps and approvals |
+| Agent Zero — `agent0ai/agent-zero` | `e3051fb584b1a36be2b0a0c90606f1c2c2d356ec` | `PRODUCT_RUNTIME_BOUNDARY_CANDIDATE` | full computer/browser, persistent memory, scheduler and project-scoped runtime; framework-vs-product boundary must be audited |
+| OpenGrokBot — `wolfqing/OpenGrokBot` | `43ba51fc0487b7adbb23861a1062a113390833d9` | `PERSISTENT_ASSISTANT_BASE_CANDIDATE` | isolated computer per bot, persistent sessions, routines, approvals and allowlisted handoffs |
+| SelfAgent — `oezercet/SelfAgent` | `c86b0b1fbc0e177e67b59b8d26cc2ce9c18406d1` | `PROVISIONAL_BASE_CANDIDATE` | persistent memory/tasks, browser, scheduler, email/system tools and product UI |
+| GoClaw — `sausheong/goclaw` | `c24c50ba2d16daff6aa2809b6c1a6f592977ae54` | `PROVISIONAL_BASE_CANDIDATE` | persistent memory/session state, heartbeat, cron, channels, policy and multi-agent runtime |
+| Nebo — `NeboLoop/nebo-go` | `d566d27ec7c5ab36f3b95fdfda371bb45994dfd7` | `PROVISIONAL_BASE_CANDIDATE` | desktop companion, persistent memory, browser/shell and scheduling |
+
+Secondary discovery remains open for systems including AutoMate, Agent OS, OpenAgent, Open Intern, HubOS, Engram, Holt and RustFox.
+
+For this technical discovery phase:
 
 ```text
-candidate_universe_complete = false
+LICENSE_FILTER_FOR_TECHNICAL_DISCOVERY = DISABLED
+CANDIDATE_UNIVERSE_COMPLETE = false
+LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
 ```
+
+Do not start a local benchmark merely because the previous seven-candidate static block was complete. First reconcile upstream tests/evals and determine the material Atento delta for the expanded set.
 
 ---
 
