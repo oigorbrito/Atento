@@ -37,7 +37,23 @@ later same-pin nightly web E2E = 155 passed
 
 The single browser failure is retained as mixed/flaky same-pin evidence; it is not erased by the later green run.
 
-Gobii execution is tracked separately and should not inherit Rakazo's result.
+Gobii now also has direct exact-pin hosted execution evidence. See:
+
+`docs/evaluation/gobii-exhaustive-verification-2026-09-30.md`
+
+Observed Gobii status:
+
+```text
+python shards = 8 PASS / 2 FAIL
+python tests executed = 6917
+frontend = 385 passed
+sandbox server = 51 tests / PASS
+timeline PostgreSQL = 1 test / PASS
+email BCC header privacy contract = FAIL
+native email reverse-migration test = FAIL
+```
+
+The BCC failure is a directly asserted privacy-boundary regression, not an evaluator-environment blocker. Therefore the frozen Gobii pin has `UPSTREAM_EXACT_PIN_GENERAL_HEALTH = FAIL`. Its agent-scoping, credential-request, peer-message and revocation evidence remains reusable at the mechanisms actually exercised, but Atento composition should not proceed on this exact pin as though the baseline were green. A repaired commit requires explicit re-pin and regression requalification.
 
 ---
 
