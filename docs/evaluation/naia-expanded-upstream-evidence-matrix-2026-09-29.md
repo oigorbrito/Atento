@@ -660,6 +660,10 @@ For each candidate:
 5. run the smallest local check only for those residuals
 ```
 
+Residual-only probe derivation is now frozen in:
+
+`docs/evaluation/naia-residual-only-probe-ledger-2026-09-30.md`
+
 Immediate state:
 
 ```text
@@ -670,8 +674,8 @@ FROZEN_CANDIDATE_UNIVERSE_V1 = COMPLETE
 CANDIDATE_UNIVERSE_COMPLETE = true_for_frozen_v1_snapshot
 SECONDARY_TRANSFER_AUDITS = COMPLETE_7_OF_7
 EXPANDED_EXTERNAL_EVIDENCE_GATE = COMPLETE_V1
-LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
-RESIDUAL_ONLY_PROBE_DERIVATION = NEXT
+RESIDUAL_ONLY_PROBE_DERIVATION = COMPLETE_V1
+LOCAL_RESIDUAL_PROBE_EXECUTION = NOT_STARTED
 NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
 ```
