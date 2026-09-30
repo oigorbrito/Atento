@@ -301,3 +301,46 @@ OpenGrokBot = exact-pin CI failure, attribution pending
 ```
 
 Do not convert un-attributed CI failures into candidate elimination.
+
+
+## Gate-2 frontier V4 / CI attribution
+
+```text
+FRONTIER = [
+  AI Butler,
+  AgentOS,
+  Octop,
+  Rome,
+  Engram,
+  Suna,
+  Letta Code,
+  RustFox,
+  Rakazo
+]
+
+FRONTIER_COUNT = 9
+NEXT_EMPIRICAL_TARGET = AI Butler
+NEW_TECHNICAL_ELIMINATIONS = 0
+SHORTLIST = NOT_SELECTED
+BASE = NOT_SELECTED
+```
+
+Attribution blocks outside the frontier:
+
+```text
+Gobii:
+  Bcc privacy contract fails at frozen pin
+  + migration-test inconsistency
+  not eliminated, not frontier-ready
+
+PersonalJarvis:
+  Society/MCP authority policy table incomplete for newly exposed routes
+  localized repair, not eliminated
+
+OpenGrokBot:
+  CI failure itself is unrelated turn batching
+  but mandatory consequential browser-effect gate remains absent
+  not frontier-ready
+```
+
+Do not convert any of these blocks into structural elimination without the corresponding bounded repair test.
