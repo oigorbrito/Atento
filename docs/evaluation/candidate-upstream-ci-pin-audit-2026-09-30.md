@@ -19,7 +19,7 @@ This audit does **not** qualify any pin, rank candidates, award an isolation sco
 
 | Candidate | Frozen pin | Observed upstream CI/workflow result at pin | Interpretation |
 |---|---|---|---|
-| OpenClaw | `ca8f24d05fc49a224adab0c9426077fd8d93801d` | CI, CodeQL, workflow sanity, dispatch succeeded; cache-warm skipped. [Runs](https://github.com/openclaw/openclaw/actions) | Green observed workflows; no isolation proof. |
+| OpenClaw | `ca8f24d05fc49a224adab0c9426077fd8d93801d` | Only `security-fast` ran successfully; preflight, core checks, and UI/E2E jobs were skipped at this push. [Run](https://github.com/openclaw/openclaw/actions/runs/36650380651) | Security/diff checks only; this pin has no functional-test execution evidence from the observed push run. |
 | OpenMausBot | `6005b1bf5883a7ffa639c07e729321f89b9532e1` | Corrected SHA: PR-trigger query returned none. Push result not verified due to initial wrong-SHA query. A Vercel status on the candidate had been observed separately. | **Unverified** in this battery; do not infer no tests or pass. |
 | QwenPaw | `777441721aa72db8e380d90e4d0481b05cbfd4cc` | Frontend, pre-commit, CodeQL, E2E smoke, formatting succeeded; Tests workflow remains waiting at Maintainer Approval. [Waiting run](https://github.com/agentscope-ai/QwenPaw/actions/runs/36559841525) | Partial green; core Tests run is pending approval, not a failure. |
 | AI Butler | `c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c` | CI and Security succeeded. | Green observed workflows; no isolation proof. |
@@ -56,3 +56,46 @@ This audit does **not** qualify any pin, rank candidates, award an isolation sco
 - No candidate is promoted or removed based on this status pass.
 - `RP-EFFECT-01 = PENDING`; no uncertain-outcome external effect was exercised.
 - Rows with no observed runs remain **unknown coverage**, not test failures.
+
+
+## Focused test-coverage pass
+
+A second pass inspected completed job summaries and logs for tests relevant to authority, boundaries, memory ownership, browser/sandbox use, and recovery. This was a log-level evidence review of the same frozen pins, not a new local execution. Test names below indicate what those upstream suites assert; they do not prove Atento's three-role topology.
+
+| Candidate | Test execution / directly relevant assertions observed | What remains unproved for Atento |
+|---|---|---|
+| OpenClaw | The push run executed `security-fast`; core checks, test shards, and UI/E2E jobs were skipped. | No functional tests from this observed pin run to transfer. |
+| OpenMausBot | Pin-specific push result remains unverified after correcting the SHA; corrected PR query returned no run. | No test evidence attributed in this pass. |
+| QwenPaw | E2E smoke, frontend, and pre-commit jobs passed; main Tests workflow is waiting on maintainer approval, with no test job executed. | Main functional suite and NAIA/Anna-style negative isolation proof. |
+| AI Butler | Race-enabled Go tests passed, including `internal/permissions`, `internal/plugin/sandbox`, and `internal/shell/sandbox`; integration and security jobs passed. Package coverage reported 94.7% permissions, 90.9% plugin sandbox, and 35.3% shell sandbox. | Package coverage is not evidence that separate roles cannot cross-read memory, credentials, tools, or channels. No explicit three-role isolation assertion was identified in these logs. |
+| NanoClaw | Host/container suites passed. Logs include per-provider continuation state selecting the correct slot, memory scaffolding that avoids importing legacy workspace memory, and failure-closed behavior for malformed memory-hook input. | These are narrow provider/workspace-memory boundaries, not cross-role credential/tool/channel isolation. |
+| TrustClaw | No push or PR workflow run observed at the pin. | No run-backed test coverage to transfer. |
+| Open Assistant | The observed workflow only created a release. | No test execution evidence from that run. |
+| Rakazo | Unit tests (including integration and Postgres journeys) passed; 154 browser E2E cases passed and one failed: delayed focus card remained visible after sending should have cancelled it. | The observed suite does not close the selected profile's cross-role boundaries. |
+| Gobii | Sandbox-server and most backend shards passed. Two shards failed on an SMTP BCC assertion and an absent migration module. | No evidence that per-agent memory/secret primitives compose into independent NAIA/Anna authority domains. |
+| Octop | CodeQL analysis passed. | Static security analysis only; no functional boundary assertion in this run. |
+| PersonalJarvis | Linux test shard reported 5,003 passed, 51 failed (50 baseline-known, one new); static gates for silent exceptions, async routes, and public docs failed. Several realtime-provider tests returned 404. | Functional suites remain mixed; target-profile authority and cross-role isolation are open. |
+| Letta Code | No push or PR workflow run observed at the pin. | No run-backed test coverage to transfer. |
+| Kortix/Suna | Core/browser/package suites passed (logs report 709/709 and 502/502 in separate test invocations). Logs cover session-cache ownership across sandboxes, collision handling for duplicate session IDs, and project-secret strategy/audit behavior. | Session ownership and secret lifecycle tests do not establish separate role memory/tool/channel authority. |
+| Rome | Integration suite: 31 passed, 3 skipped. Tests explicitly cover approval exception → journal persistence → replay → action execution, and strict-mode behavior on replay divergence. | Useful approval/recovery evidence; it does not establish role separation or background authority parity. |
+| Agent Zero | Image build/publish workflow succeeded; no functional test job ran in the inspected run. | No run-backed test coverage to transfer from that run. |
+| OpenGrokBot | 319/320 tests passed. A bot turn-queue test failed; a separate test in the same suite passed that a bot may stop its own routine but not a teammate's. | Narrow ownership assertion is useful; one concurrency/lifecycle failure remains, and broad memory/credential/channel separation is not established. |
+| SelfAgent | No push or PR workflow run observed at the pin. | No run-backed test coverage to transfer. |
+| GoClaw | No push or PR workflow run observed at the pin. | No run-backed test coverage to transfer. |
+| Nebo | Build/deploy job failed; job summary exposed no test steps. | Functional test coverage unknown. |
+| AutoMate | No push or PR workflow run observed at the pin. | No run-backed test coverage to transfer. |
+| AgentOS | Python and UI suites passed (logs report 16,774 Python tests and 2,382 UI tests). UI tests cover approval prompts/pages and memory views; a task-runtime cleanup-under-load test passed. | These runs demonstrate product/UI behavior and cleanup, not technical cross-role denial at runtime. |
+| OpenAgentd | No push or PR workflow run observed at the pin. | No run-backed test coverage to transfer. |
+| Open Intern (deferred) | No push or PR workflow run observed at the pin. | Deferred; no run-backed test coverage. |
+| HubOS | Pre-commit checks passed; no functional test step appeared in the inspected run. | No run-backed functional coverage to transfer. |
+| Engram | CI includes deterministic eval (4/4) and tests for deny-by-default sandbox network, explicit approval before tainted egress, refusal when untrusted and sensitive content are combined, approval requests that stop without granting, and memory facts tagged with the active actor. | Strong narrow authority/sandbox/taint evidence; does not prove separate NAIA/Anna stores, credentials, channels, or broker-only handoff. |
+| Holt | Build and CLI smoke tests passed on Node 20 and 22. | Smoke checks do not exercise the frozen external-brain dependency authority seam. |
+| RustFox | Tests passed for `allowlist_isolation_across_bots`, high-risk task approval, per-bot session-key isolation for the same user, cancellation isolation across bots, and secret masking/private secret storage. | This is the strongest directly relevant cross-bot test evidence in this pass, but it still does not prove separate cross-role memory/channel domains or composed scheduled authority. |
+| PsychAgent | No push or PR workflow run observed at the pin. | No run-backed test coverage to transfer. |
+| OpenCouch | Backend tests passed (1,633); logs include database rejection of invalid memory namespace kinds. | Schema validation is not cross-agent isolation evidence. |
+
+### Coverage result
+
+The observed upstream tests provide **transferable, narrow evidence** for particular mechanisms: sandbox/network default, approval and replay, per-bot allowlist/session/cancellation isolation, memory actor tagging, and memory/provider-slot separation. The log review found no test that demonstrates all Atento requirements together: isolated NAIA/Anna memory, credential, tool, and channel authority with only explicit brokered handoff.
+
+This is a coverage gap map, not a failure score. Existing assertions should be reused at their proven boundary; the missing composed property remains for a later, separately gated probe.
