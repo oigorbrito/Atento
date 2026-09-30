@@ -56,7 +56,7 @@ Browser/computer use is measured separately because the NAIA target includes it,
 | **QwenPaw** `7774417...` | complete assistant product surface | strong per-Agent memory/workspace model | cron/scheduled tasks present | multiple IM channels + console/TUI/desktop | browser + beta Windows/macOS Computer Use present | local + cloud providers | strong policy primitives, but sandbox default/fallback and cron safety defaults require hardening | `STATIC_CONTRACT_AUDIT_COMPLETE`; hardened runtime profile required before qualification |
 | **AI Butler** `c35d3af...` | complete self-hosted assistant surface | strong per-profile memory banks | persistent scheduler + mission engine | webchat/terminal ready; 10 additional channels beta | browser + OS scripting present; Windows Tier 3/4 real desktop validation pending | Claude/Ollama ready upstream; other providers mixed | fail-closed shell allowlist, capability gates, default-deny credential broker | `STATIC_CONTRACT_AUDIT_COMPLETE`; targeted runtime validation still required |
 | **NanoClaw** `4c1eabd...` | complete containerized assistant surface | per-agent/group workspace + memory | scheduled tasks | channels installed through skills | container/browser/tool surface; no generic desktop CUA claim | provider paths installed/composed through skills | strong container + credential-gateway model | `CHANGE_SURFACE_AUDIT_COMPLETE`; total migration cost is profile-dependent; current Ollama skill requires rederivation at pin |
-| **TrustClaw** `c07410b...` | `ESTABLISHED_DOCS`; web + Telegram | `ESTABLISHED_SOURCE`; memory save/search/flush surfaces | `ESTABLISHED_SOURCE`; cron routes/tools/settings | web + Telegram | 1000+ Composio-connected actions documented; no local browser/computer control established | model configuration exists, but provider replaceability is not established by this audit | cloud sandbox and OAuth-connected-account boundary documented | comparable personal-assistant product; `REQUIRES_RUNTIME_AUDIT`; external platform/deployment/cost boundaries are material |
+| **TrustClaw** `c07410b...` | complete web/Telegram assistant surface | instance-scoped pgvector memory | persistent cron + fencing/auth | web + Telegram | Composio-managed external action surface; no local generic CUA | cloud/provider-routed models + external embeddings | user-scoped Composio session, but local per-action approval not established | `STATIC_CONTRACT_AUDIT_COMPLETE`; composed Composio/Vercel authority/cost runtime audit required |
 | **Open Assistant** `32c55d2...` | `ESTABLISHED_DOCS`; single-container assistant | `ESTABLISHED_SOURCE`; memory repo/service/model | `ESTABLISHED_SOURCE`; cron repo/service/API/tests | web + WhatsApp + Slack documented | Playwright browser and email/calendar integrations have implementation/tests | OpenRouter/Anthropic/Groq/Ollama/vLLM documented | tool registry/executor and auth surfaces present; sandbox equivalence not established | comparable technical product; `LEGAL_ADOPTION_REVIEW` (BSL 1.1) + `REQUIRES_RUNTIME_AUDIT` |
 
 No row above is a rank or selection.
@@ -239,6 +239,10 @@ RUNTIME_TRANSFER_TO_NAIA = NOT_ESTABLISHED
 The extension model is a change-surface question, not an automatic rejection.
 
 ### TrustClaw
+
+Detailed operational-contract audit:
+
+`docs/evaluation/trustclaw-contract-audit-2026-09-29.md`
 
 At pin `c07410bccb916236b45b563e8c4ff76ad83d3855`:
 
