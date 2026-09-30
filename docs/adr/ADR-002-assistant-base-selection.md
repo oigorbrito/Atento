@@ -118,7 +118,7 @@ This does not create shortlist status.
 
 docs/evaluation/naia-common-probe-profile-2026-09-29.md
 
-The already-enumerated candidate audits now support a common missing-evidence phase. The next work is not a broad benchmark: reuse sufficient evidence and run only NCP-01..04 deltas needed to establish restart continuity, authority consistency, NAIA/Anna isolation and total adaptation/runtime cost. This ADR remains NOT_SELECTED until comparable raw evidence closes the decision-relevant gaps.
+The common NCP profile is retained for the later local-delta phase, but the expanded persistent-agent discovery means local probes are not the current next step. First reconcile the new candidates' exact pins, upstream tests/evals and available execution artifacts. Only an `ATENTO_DELTA` or blocking `UNPROVEN` invariant justifies NCP-01..04 execution. This ADR remains NOT_SELECTED.
 
 ## Historical candidates — evidence preserved, shortlist reset
 
