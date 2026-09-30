@@ -919,3 +919,42 @@ NEXT_EXECUTION_TARGET = AI Butler
 Candidate-specific tests are limited to the explicit add-ons in the matrix. Broad upstream retesting remains forbidden as redundant.
 
 Execution order is evidence-minimizing, not a ranking.
+
+
+## Gate-2 empirical execution attempt / evidence exhaustion — 2026-09-30
+
+Canonical records:
+
+- `docs/evaluation/naia-gate2-empirical-execution-infrastructure-block-2026-09-30.md`
+- `docs/evaluation/naia-gate2-evidence-exhaustion-gate-2026-09-30.md`
+
+The first Atento-hosted common-composition execution was attempted against AI Butler.
+
+```text
+LOCAL_MATERIALIZATION = BLOCKED_DNS
+HOSTED_JOB_CREATED = YES
+HOSTED_JOB_STEPS = []
+CANDIDATE_CHECKOUT = NOT_RUN
+
+AI_BUTLER_COMPOSITION = BLOCKED_ENVIRONMENT
+```
+
+No candidate code or assertion executed, so this is not a candidate failure.
+
+Current Gate-2 state:
+
+```text
+TECHNICAL_SURVIVORS = 25
+TRANSFERABLE_FRONTIER = 12
+NON_FRONTIER = 13
+
+GATE2_EMPIRICAL_PASS = 0
+GATE2_STRUCTURAL_FAIL_FROM_EMPIRICAL = 0
+GATE2_EXECUTION_INFRA = BLOCKED
+
+STATIC_RESEARCH_LOOP = CLOSED_FOR_CURRENT_PINS
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+Further Gate-2 progress requires executable exact-pin composition or materially new upstream executed evidence. Broad static/CI reconciliation is now considered exhausted at the frozen pins.
