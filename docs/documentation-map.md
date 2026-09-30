@@ -44,6 +44,9 @@ Fonte de verdade para o estado da decisão de chassis do Apollo. Enquanto `DEFER
 ### docs/evaluation/harness.md — defensável
 Possui responsabilidade clara: metodologia de avaliação. Não deve carregar status geral do projeto.
 
+### docs/evaluation/candidate-reenumeration-2026-09-29.md — universo comparável, não shortlist
+Registra a reconstrução pós-reset dos universos de candidatos da NAIA e da Anna, com pins, classificação inicial, provenance e gaps para auditoria. Não possui autoridade para declarar shortlist, vencedor, prioridade de execução ou adoção.
+
 ### docs/evaluation/*qualification*.md / *research*.md — evidência, não decisão
 Registros datados podem consolidar inspeções, benchmarks usados como referência, provas Git, execução de probes e bloqueios. Devem declarar pins e limitações. Não substituem o harness, ADR, third-party registry ou roadmap.
 
