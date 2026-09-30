@@ -20,6 +20,7 @@ Current phase gate:
 FROZEN_CANDIDATE_UNIVERSE_V1 = COMPLETE
 EXPANDED_EXTERNAL_EVIDENCE_GATE = COMPLETE_V1
 RESIDUAL_ONLY_PROBE_LEDGER = COMPLETE_V1
+STATIC_RESIDUAL_DISPOSITION = COMPLETE_V1
 LOCAL_RESIDUAL_PROBE_EXECUTION = NOT_STARTED
 ~~~
 
@@ -28,6 +29,7 @@ Before any NCP execution, consult:
 - `docs/evaluation/naia-persistent-agent-discovery-2026-09-29.md`
 - `docs/evaluation/naia-external-evidence-preflight-2026-09-29.md`
 - `docs/evaluation/naia-residual-only-probe-ledger-2026-09-30.md`
+- `docs/evaluation/naia-static-residual-disposition-2026-09-30.md`
 
 A candidate must have its exact pin, upstream implementation contract, relevant upstream tests/evals, available CI/run evidence and one-sentence Atento delta recorded first.
 
