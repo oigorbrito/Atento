@@ -34,6 +34,11 @@ Expanded upstream-evidence matrix:
 
 Transfer audit for Suna / Letta Code / PersonalJarvis:
 
+Transfer audit for Rakazo / Gobii:
+
+`docs/evaluation/naia-transfer-audit-rakazo-gobii-2026-09-29.md`
+
+
 `docs/evaluation/naia-transfer-audit-suna-letta-jarvis-2026-09-29.md`
 
 
