@@ -475,3 +475,28 @@ Resume queue:
 `docs/evaluation/naia-gate2-composition-execution-queue-v1-2026-09-30.yaml`
 
 When executable exact-pin access returns, resume directly at AI Butler. Do not repeat upstream CI/source reconciliation and do not regenerate the frontier.
+
+
+## Gate-2 common prerequisites now frozen
+
+```text
+COMMON_HARNESS = NAIA-GATE2-COMPOSITION-V1
+BROKER_CONTRACT = FROZEN_V1
+
+LOCAL_EXECUTION = BLOCKED_ENVIRONMENT
+HOSTED_RUNNER_OBSERVED = UNASSIGNED (runner_id=0, steps=[])
+BROKER_RUNTIME_INTEGRATION = NOT_RUN
+
+GATE2_EMPIRICAL_PASS = 0
+NEXT_CANDIDATE_WHEN_EXECUTABLE = AI Butler
+```
+
+Canonical assets:
+
+- `evals/atentoeval/composition.py`
+- `evals/config/naia_gate2_composition_v1.json`
+- `evals/atentoeval/handoff_broker.py`
+- `docs/evaluation/naia-gate2-handoff-broker-contract-v1-2026-09-30.md`
+- `evals/results/naia_gate2_aibutler_blocked_2026-09-30.json`
+
+Do not treat the existing synthetic `ISO6_explicit_broker_positive_control` helper under `tools/naia_gate2/aibutler` as Gate-2 evidence. The result validator intentionally rejects synthetic broker evidence.
