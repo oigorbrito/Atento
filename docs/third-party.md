@@ -50,6 +50,41 @@ O Atento está atualmente em **modo de pesquisa/estudo**. A política interna pe
 
 
 
+## Candidate re-enumeration sources — 2026-09-29
+
+These entries support the post-reset NAIA/Anna universe rebuild. Presence here is provenance only, not shortlist status.
+
+| ID | Agent scope | Project | Repo | Current pin | Terms observed | Current treatment |
+|---|---|---|---|---|---|---|
+| SRC-QWENPAW | NAIA | QwenPaw | https://github.com/agentscope-ai/QwenPaw | `777441721aa72db8e380d90e4d0481b05cbfd4cc` | Apache-2.0 | technical persistent-assistant base candidate; not selected |
+| SRC-AIBUTLER | NAIA | AI Butler | https://github.com/LumabyteCo/aibutler | `c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c` | Apache-2.0 | technical persistent-assistant base candidate; public-beta maturity audit required |
+| SRC-NANOCLAW | NAIA | NanoClaw | https://github.com/nanocoai/nanoclaw | `4c1eabd3ddd74cc3d71b1871da857391a9411c8d` | MIT | technical persistent-assistant base candidate; runtime/provider breadth audit required |
+| SRC-TRUSTCLAW | NAIA | TrustClaw | https://github.com/ComposioHQ/trustclaw | `c07410bccb916236b45b563e8c4ff76ad83d3855` | MIT | technical persistent-assistant base candidate; external platform/dependency audit required |
+| SRC-OPENASSISTANT | NAIA | Open Assistant | https://github.com/open-assistant-org/open-assistant | `32c55d2643f9fe38777f9212588b2eee45392514` | BSL 1.1 | technical candidate only; adoption/legal review required before any code use |
+| SRC-OPENCOUCH | ANNA | OpenCouch | https://github.com/whanyu1212/OpenCouch | `ac5af6ee4c9a06b4050c5a912439f343ade2c35c` | AGPL-3.0 | therapeutic/emotional-support base candidate pending domain-fit and product-maturity audit |
+| SRC-INNERDIALOGUE | ANNA | Inner Dialogue | https://github.com/ataglianetti/inner-dialogue | `ffc9e8f78d0f15a8d720436f92fb6e0887fe7461` | MIT (verified from repository LICENSE) | unclassified pending audit: complete chassis vs tooling/mechanism package |
+| SRC-THERAPIST-REFLECT | ANNA | therapist | https://github.com/matteodante/therapist | `dd9848fe9662ee6ea7f44f1795fe1d6b8114a47d` | AGPL-3.0 | domain-adjacent mechanism donor; project explicitly scopes itself to self-reflection / not therapy |
+
+Current-head repins for existing candidate evidence:
+
+| ID | Previous Atento qualification pin | Current observed head | Required treatment |
+|---|---|---|---|
+| SRC-OPENCLAW | `e9571d77e76bd6d35996273d9e8398ad539b26e1` | `ca8f24d05fc49a224adab0c9426077fd8d93801d` | targeted transfer/delta audit only |
+| SRC-OPENMAUS | `947bef311bf5c3f55d3590849abf0eb329408519` | `6005b1bf5883a7ffa639c07e729321f89b9532e1` | targeted transfer/delta audit only |
+| SRC-PA | `469f45ef468b968b3fccd1936d7e6a0a574e4c5c` | same | reuse existing evidence |
+| SRC-THERAPYMIND | `bfed3f5be61bab262bb00a0f3cc9718c4a965243` | same | reuse existing evidence |
+| SRC-THERAMIND | `416d0a00ecc8c76229512197765dc95be6513de5` | same | reuse existing evidence |
+| SRC-PSYCHAT | `5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4` | same | reuse existing evidence; complete-base status still unproven |
+
+Rule:
+
+```text
+PROVENANCE_ENTRY != SHORTLIST
+CURRENT_HEAD != QUALIFIED_HEAD
+TECHNICAL_CANDIDATE != LEGAL_ADOPTION_CLEARED
+```
+
+
 ## Historical chassis benchmark candidates — 2026-09-29
 
 These entries preserve shared chassis/evolvability evidence from PR #11. They do not assign an agent base and do not create a NAIA shortlist.
