@@ -160,3 +160,25 @@ external_path_or_hash:
 derived_artifacts:
 approved_for:
 ```
+
+
+## NAIA persistent-agent discovery expansion — 2026-09-29
+
+These are provenance entries for technical discovery. Terms/license are intentionally **not used as a technical exclusion or ordering criterion in this phase**. Where terms were not independently reviewed in this pass, that is recorded rather than guessed.
+
+| ID | Agent scope | Project | Repo | Observed pin | Terms in this discovery pass | Current treatment |
+|---|---|---|---|---|---|---|
+| SRC-RAKAZO | NAIA | Rakazo | https://github.com/elie222/rakazo | `f4583525d632fcd8643fd6e24c7f51e3e04cb990` | not used as technical filter | persistent-agent base candidate; direct Grok-Bot-class match |
+| SRC-GOBII | NAIA | Gobii | https://github.com/gobii-ai/gobii-platform | `c9929bf8ea59b4695b99dcab59aa6c97a09c5bdb` | not used as technical filter | persistent AI-employee candidate with durable queue/event/eval surface |
+| SRC-OCTOP | NAIA | Octop | https://github.com/TencentCloud/Octop | `e473dd3c4a4741618ffde1a42a3492341a189e8e` | not used as technical filter | multi-user/multi-agent persistent assistant candidate |
+| SRC-PERSONALJARVIS | NAIA | PersonalJarvis | https://github.com/PersonalJarvis/PersonalJarvis | `1be33c457739ca7e161ee6fbaf298ec10d4dad3b` | not used as technical filter | desktop persistent-assistant candidate with computer-use |
+| SRC-LETTACODE | NAIA | Letta Code | https://github.com/letta-ai/letta-code | `21daa38a8cdd74f2d03b634c8312253080bacfc1` | not used as technical filter | persistent-agent runtime/product-harness candidate |
+| SRC-KORTIX | NAIA | Kortix / Suna | https://github.com/kortix-ai/suna | `270c4a57c8ae5ffb85eff6d5b9700c5713612f28` | not used as technical filter | persistent agent-management/platform candidate |
+| SRC-ROME | NAIA | Rome | https://github.com/rome-os/rome | `ef523c4659149e2711744deb04ec42c3be339907` | not used as technical filter | persistent-agent base candidate; Grok Bot/Muse class |
+| SRC-AGENTZERO | NAIA | Agent Zero | https://github.com/agent0ai/agent-zero | `e3051fb584b1a36be2b0a0c90606f1c2c2d356ec` | not used as technical filter | framework/product boundary candidate with full computer runtime |
+| SRC-OPENGROKBOT | NAIA | OpenGrokBot | https://github.com/wolfqing/OpenGrokBot | `43ba51fc0487b7adbb23861a1062a113390833d9` | not used as technical filter | early persistent-agent candidate; direct Grok-Bot-class match |
+| SRC-SELFAGENT | NAIA | SelfAgent | https://github.com/oezercet/SelfAgent | `c86b0b1fbc0e177e67b59b8d26cc2ce9c18406d1` | not used as technical filter | provisional persistent-assistant candidate |
+| SRC-GOCLAW | NAIA | GoClaw | https://github.com/sausheong/goclaw | `c24c50ba2d16daff6aa2809b6c1a6f592977ae54` | not used as technical filter | provisional persistent-assistant candidate |
+| SRC-NEBO | NAIA | Nebo | https://github.com/NeboLoop/nebo-go | `d566d27ec7c5ab36f3b95fdfda371bb45994dfd7` | not used as technical filter | provisional persistent desktop-assistant candidate |
+| SRC-GROKBOT-REF | NAIA | Grok Bot | https://docs.x.ai/grok-bot/overview | current product docs observed 2026-09-29 | closed product reference; terms not relevant to source admission | reference product shape only |
+| SRC-MUSE-REF | NAIA | Meta Muse | https://ai.meta.com/muse/ | current product docs observed 2026-09-29 | closed product reference; terms not relevant to source admission | reference product shape only |

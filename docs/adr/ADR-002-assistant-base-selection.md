@@ -24,6 +24,26 @@ This record expands/classifies the candidate universe but does not alter this AD
 
 Current same-protocol completeness evidence:
 
+Current persistent-agent discovery expansion:
+
+`docs/evaluation/naia-persistent-agent-discovery-2026-09-29.md`
+
+Current external/upstream evidence preflight:
+
+`docs/evaluation/naia-external-evidence-preflight-2026-09-29.md`
+
+The initial seven-candidate set is no longer treated as a closed universe. Grok Bot and Meta Muse are retained as product-shape references, and newly surfaced technical candidates include Rakazo, Gobii, Octop, PersonalJarvis, Letta Code, Kortix/Suna, Rome, Agent Zero and OpenGrokBot, plus the prior SelfAgent/GoClaw/Nebo discovery pool.
+
+For technical discovery, license is not an exclusion/ranking criterion. No local NCP/benchmark starts until the expanded candidate has an exact pin and its relevant upstream tests/evals/run evidence are reconciled.
+
+```text
+CANDIDATE_UNIVERSE_COMPLETE = false
+LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+
 `docs/evaluation/naia-candidate-completeness-audit-2026-09-29.md`
 
 This audit establishes comparability/missing evidence only. It does not create a shortlist or alter `NOT_SELECTED`.
@@ -98,7 +118,7 @@ This does not create shortlist status.
 
 docs/evaluation/naia-common-probe-profile-2026-09-29.md
 
-The already-enumerated candidate audits now support a common missing-evidence phase. The next work is not a broad benchmark: reuse sufficient evidence and run only NCP-01..04 deltas needed to establish restart continuity, authority consistency, NAIA/Anna isolation and total adaptation/runtime cost. This ADR remains NOT_SELECTED until comparable raw evidence closes the decision-relevant gaps.
+The common NCP profile is retained for the later local-delta phase, but the expanded persistent-agent discovery means local probes are not the current next step. First reconcile the new candidates' exact pins, upstream tests/evals and available execution artifacts. Only an `ATENTO_DELTA` or blocking `UNPROVEN` invariant justifies NCP-01..04 execution. This ADR remains NOT_SELECTED.
 
 ## Historical candidates — evidence preserved, shortlist reset
 

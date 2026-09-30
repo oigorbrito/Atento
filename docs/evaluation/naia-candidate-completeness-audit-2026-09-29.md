@@ -314,47 +314,53 @@ NAIA_BASE = NOT_SELECTED
 
 ## 5. Smallest next evidence
 
-The already-enumerated seven-candidate static/completeness block is now complete enough to freeze a common empirical profile without ranking candidates.
+The first seven-candidate static/completeness block is complete **only for that original audited subset**.
 
-Canonical profile:
+The candidate universe has since expanded materially. See:
 
-docs/evaluation/naia-common-probe-profile-2026-09-29.md
+- `docs/evaluation/naia-persistent-agent-discovery-2026-09-29.md`
+- `docs/evaluation/naia-external-evidence-preflight-2026-09-29.md`
 
-Do not run a seven-way broad benchmark.
+The common NCP profile remains canonical for later local-delta work:
 
-Use four common probe families only where evidence is still missing:
+`docs/evaluation/naia-common-probe-profile-2026-09-29.md`
 
-1. NCP-01 — memory + schedule + restart continuity;
-2. NCP-02 — interactive/background authority consistency, denied/allowed external action and credential boundary;
-3. NCP-03 — strict NAIA/Anna memory/tool/credential/channel isolation composition;
-4. NCP-04 — frozen-profile adaptation touchpoints plus wall time, calls, tokens and monetary cost when observable.
+But local NCP execution is not the next phase.
 
-Reuse current evidence aggressively. For example:
-
-- OpenClaw does not need unchanged restart/channel tests repeated;
-- OpenMausBot does not need the redundant reconciliation branch repeated;
-- NanoClaw must use one frozen recipe and must not apply the stale Ollama skill blindly;
-- Open Assistant should not receive adoption-oriented runtime spend while LEGAL_ADOPTION_CLEARED = NO.
-
-Discovery pool (SelfAgent, goclaw, nebo-go) remains separate and unaudited, so:
+Required order:
 
 ~~~text
-ENUMERATED_CANDIDATE_STATIC_BLOCK = COMPLETE
+expanded candidate discovery
+→ exact-pin admission/completeness audit
+→ upstream tests/evals/run-artifact inventory
+→ transfer/relevance classification
+→ identify remaining material Atento delta
+→ only then execute the smallest NCP sub-check
+~~~
+
+The previously audited seven retain their evidence. Do not redo OpenClaw/OpenMausBot/QwenPaw/AI Butler/NanoClaw/TrustClaw/Open Assistant merely because the universe expanded.
+
+For technical discovery, license is not used as an exclusion or ordering criterion.
+
+~~~text
+ORIGINAL_AUDITED_SET_STATIC_BLOCK = COMPLETE
+EXPANDED_CANDIDATE_UNIVERSE = OPEN
 CANDIDATE_UNIVERSE_COMPLETE = false
+LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
 NAIA_SHORTLIST = NOT_SELECTED
 ~~~
 
 ## 6. Outcome
 
 ~~~text
-NAIA_COMPARABLE_PRODUCTS_IDENTIFIED = 7
+ORIGINAL_AUDITED_COMPARABLE_PRODUCTS = 7
+EXPANDED_COMPARABLE_OR_PROVISIONAL_PRODUCTS > 7
 CURRENT_PIN_QUALIFIED = 0
 HISTORICAL_EVIDENCE_REUSABLE = [OpenClaw, OpenMausBot]
 STATIC_PRODUCT_AUDITS_COMPLETE = [QwenPaw, AI Butler, NanoClaw, TrustClaw, Open Assistant]
 OPEN_ASSISTANT_STATIC_RESULT = PASS_WITH_SCOPE
 OPEN_ASSISTANT_CURRENT_PIN_QUALIFIED = NO
-LEGAL_ADOPTION_CLEARED = NO
 SHORTLIST = NOT_SELECTED
 WINNER = NOT_SELECTED
-NEXT_BLOCK = COMMON_MISSING_PROBES_ONLY
-~~~ 
+NEXT_BLOCK = EXPANDED_CANDIDATE_ADMISSION_AND_EXTERNAL_EVIDENCE_PREFLIGHT
+~~~
