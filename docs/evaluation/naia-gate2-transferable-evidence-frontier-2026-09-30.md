@@ -18,7 +18,7 @@ A candidate enters this frontier only when:
 ## Frontier result
 
 ```text
-TRANSFERABLE_EVIDENCE_FRONTIER = COMPLETE_V2
+TRANSFERABLE_EVIDENCE_FRONTIER = COMPLETE_V3
 
 ADMITTED:
   AI Butler
@@ -26,6 +26,9 @@ ADMITTED:
   Octop
   Rome
   Engram
+  Suna
+  Letta Code
+  RustFox
 
 NOT_ADMITTED_YET:
   OpenClaw
@@ -195,11 +198,11 @@ FROZEN_UNIVERSE = 26
 TECHNICAL_ELIMINATED = [SelfAgent]
 TECHNICAL_SURVIVORS = 25
 
-TRANSFERABLE_EVIDENCE_FRONTIER_COUNT = 5
-TRANSFERABLE_EVIDENCE_FRONTIER = [AI Butler, AgentOS, Octop, Rome, Engram]
+TRANSFERABLE_EVIDENCE_FRONTIER_COUNT = 8
+TRANSFERABLE_EVIDENCE_FRONTIER = [AI Butler, AgentOS, Octop, Rome, Engram, Suna, Letta Code, RustFox]
 
 NEXT_EMPIRICAL_COMPOSITION_TARGET = AI Butler
-OTHER_READY_COMPOSITION_TARGETS = [AgentOS, Octop, Rome, Engram]
+OTHER_READY_COMPOSITION_TARGETS = [AgentOS, Octop, Rome, Engram, Suna, Letta Code, RustFox]
 
 AUTHORITY_ISOLATION_EMPIRICAL_PASS = 0
 NAIA_SHORTLIST = NOT_SELECTED
@@ -241,3 +244,56 @@ FRONTIER_ENTRY != SELECTED
 ```
 
 The remaining Gate-2 work for these candidates is composition-specific rather than generic runtime-health testing.
+
+
+## V3 additions
+
+Exact-pin hosted-execution reconciliation adds three candidates:
+
+### Suna
+
+`docs/evaluation/suna-gate2-transferable-authority-closure-2026-09-30.md`
+
+```text
+exact-pin Tests = SUCCESS
+core scenarios = 502 PASS
+project/IAM denials = run-backed
+residual = hardened connector/project policy + two-project role composition
+```
+
+### Letta Code
+
+`docs/evaluation/letta-code-gate2-transferable-authority-closure-2026-09-30.md`
+
+```text
+exact-pin CI = SUCCESS
+permission engine / pre-tool blocking / headless surfaces = executed
+residual = strict permissions + shell/runtime/memory role separation
+```
+
+### RustFox
+
+`docs/evaluation/rustfox-gate2-transferable-authority-closure-2026-09-30.md`
+
+```text
+exact-pin CI = SUCCESS
+multi-bot isolation + supervisor approval/restart tests = executed
+residual = universal effect owner + role memory/credential composition
+```
+
+Current frontier:
+
+```text
+FRONTIER_V3 = [
+  AI Butler,
+  AgentOS,
+  Octop,
+  Rome,
+  Engram,
+  Suna,
+  Letta Code,
+  RustFox
+]
+```
+
+No ordering, shortlist or qualification is implied.
