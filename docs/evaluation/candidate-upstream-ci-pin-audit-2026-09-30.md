@@ -148,6 +148,33 @@ The CI log for pin `c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c` shows the race-ena
 This narrows the reusable evidence: sandbox mechanisms exist and their configuration contracts have tests, while the default plugin policy is network-permissive and `ModeOff` is not a confinement boundary. An Atento composition would need to choose and verify the strict profiles explicitly. None of these tests assert independent NAIA/Anna memory, credential, or channel authority.
 
 
+
+## Exact-pin source inventory for pins without observed CI runs
+
+At the frozen commits below, a repository-tree filename scan counted test-like paths and workflow files. This establishes source presence only; it does not establish that tests are runnable, relevant, or executed. “0 found” means no matching test-like paths/workflows in that tree-name scan, not that the repository has no conceivable tests.
+
+| Candidate | Test-like paths found | Workflow files found | What the source inventory establishes |
+|---|---:|---:|---|
+| TrustClaw | 0 | 0 | No test-like paths or workflow files surfaced in the tree-name scan. |
+| Letta Code | 939 | 17 | Extensive test-named source and CI workflows exist, but no exact-pin push/PR run was observed; execution status is unknown. |
+| SelfAgent | 6 | 0 | Small test suite exists (`agent`, `config`, `memory`, `model_router`, `tools`); no workflow file or observed run at pin. |
+| GoClaw | 0 | 0 | No test-like paths or workflow files surfaced; Makefile and Go module metadata exist. |
+| AutoMate | 8 | 0 | Tests exist for agent commands, config, cron, gateway, memory, sessions, system, and tools; no workflow file or observed run at pin. |
+| OpenAgentd | 312 | 7 | Core workflow defines pytest over `tests/`, but no exact-pin push/PR run was observed. Source assertions reviewed below remain unexecuted at this pin. |
+| Open Intern (deferred) | 12 | 2 | Test source and CI workflow exist, but no exact-pin push/PR run was observed. Candidate remains deferred. |
+| PsychAgent | 0 | 0 | No test-like paths or workflow files surfaced in the tree-name scan. |
+
+### OpenAgentd source assertions reviewed at the frozen pin
+
+At `b2acf236f4e9e6b503281f2364e9915a60158376`, `.github/workflows/core.yml` runs `uv run pytest --no-cov -q` on push/PR when matching paths change. No run for this exact pin was found in the workflow audit, so the following are source-level test intent only, not CI results:
+
+- `test_mailbox.py` checks registration, FIFO delivery, broadcast to every registered agent except sender, and inbox behavior. Broadcast is deliberately shared with every teammate, so this is a team communication primitive rather than a restrictive broker-only handoff.
+- `test_team_message_tool.py` checks single/multiple recipient delivery, self-filtering, missing-recipient errors, and message formatting. The API accepts recipient names; these assertions do not test a policy that limits agents to an approved peer or a sanitizing broker.
+- `test_member_drift.py` checks agent rebuilds when configuration changes and preservation of member/session handles. It does not check that memory, credentials, tools, or channel authority remain separated during rebuild.
+- `test_member_worker.py` covers worker notifications, open-task nudging, and team runtime behavior. No identity spoofing or cross-role storage boundary is asserted in the reviewed excerpts.
+
+This candidate therefore has substantial team-runtime test source, but the reviewed tests do not demonstrate Atento's narrow communication lane or composed role isolation, and there is no run-backed result at the frozen pin.
+
 ## OpenCouch exact-pin namespace tests
 
 The backend workflow at `ac5af6ee4c9a06b4050c5a912439f343ade2c35c` ran `uv run pytest -q tests/unit tests/integration` with `OPENCOUCH_ENABLE_POSTGRES_INTEGRATION_TESTS=1`; the job reported 1,633 passed. At the same pin:
