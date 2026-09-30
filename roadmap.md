@@ -252,6 +252,38 @@ A regra de engenharia é preservar capacidade funcional comprovada e comparar o 
 - **Estado:** donor arquitetural forte; maior custo de integração como base completa da Assistente no snapshot avaliado.
 - **Termos:** licença de raiz não detectada na revisão.
 
+#### SRC-OPENSEARCH-SEC — OpenSearch Security resource authority
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
+- **Repo:** https://github.com/opensearch-project/security
+- **Commit observado:** `75f5c204ae17ed5d1d266953238abdd9a5eb3b50`.
+- **Candidato para:** ownership explícito, resource-level authorization, tenant-aware access, grants/action groups e auditabilidade para isolamento entre agentes.
+- **Evidência externa:** Resource Sharing and Access Control está GA no OpenSearch 3.9; testes upstream existem, mas benchmark quantitativo de cross-agent leakage/authority não foi localizado.
+- **Regra:** mecanismo donor; não é chassi completo da NAIA. Transferência exige probes locais de isolamento.
+- **Registro datado:** `docs/evaluation/opensearch-mechanism-donor-research-2026-09-30.md`.
+
+#### SRC-OPENSEARCH-ML — OpenSearch ML Commons
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
+- **Repo:** https://github.com/opensearch-project/ml-commons
+- **Commit observado:** `594445ced5f1473d73586287ddc14fada0bcdf3f`.
+- **Candidato para:** Tool SPI/factories, capability registration, agent executor abstraction, tenant propagation, memory/context mechanisms.
+- **Evidência externa:** avaliação oficial de agentic search reporta 604/736 casos válidos corretos, 82,07% de execution accuracy no Spider adaptado; esse número não prova authority/isolation.
+- **Regra:** donor parcial; direct sub-agent invocation não substitui o HandoffBroker do Atento.
+
+#### SRC-OPENSEARCH-AGENTHEALTH — OpenSearch Agent Health
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
+- **Repo:** https://github.com/opensearch-project/agent-health
+- **Commit observado:** `9a7852020e3d1816052238ac1614d681a0028b9c`.
+- **Candidato para:** run comparison, per-assertion evidence, traces/trajectory, pass/fail, accuracy, latency, tokens, cost, LLM calls e provenance do judge.
+- **Regra:** donor de padrões/instrumentação para AtentoEval; não substitui a metodologia canônica do harness.
+
+#### SRC-OPENSEARCH-BENCH — OpenSearch Benchmark / retrieval evidence
+- **Tipo:** `BENCHMARK_REFERENCE` + `IMPLEMENTATION_REFERENCE`.
+- **Repo:** https://github.com/opensearch-project/opensearch-benchmark
+- **Commit observado:** `1e8cd69bb1050b2642a9562c98ad153e68bb8cfb`.
+- **Candidato para:** metodologia de macrobenchmark e referência de performance do backend de retrieval.
+- **Evidência externa relevante:** OpenSearch 3.7 reporta 5,5x E2E e 14,7x server-side para retrieval de vetores no workload publicado; OpenSearch 3.9 reporta +39% throughput, 3,3x build e 8x menor JVM heap para sparse native em corpus de 8,8 milhões de documentos.
+- **Regra:** `BENCHMARK_GAIN != TRANSFERABLE_GAIN`; não extrapolar para hardware/uso do Atento sem execução local.
+
 #### SRC-ATENTO — Arquitetura própria do Atento
 - **Tipo:** `ATENTO_NATIVE`.
 - **Usar para:** contratos, integration glue, policy composition, privacy, RBAC, observabilidade, CI/CD, infraestrutura e componentes sem donor superior comprovado.
@@ -261,6 +293,7 @@ A regra de engenharia é preservar capacidade funcional comprovada e comparar o 
 | Módulo / feature | Donor/Referência primária | Referência secundária | Regra de adoção |
 |---|---|---|---|
 | Session/API | `SRC-ATENTO` | `SRC-PSYCHAT` | donor permitido se reduzir esforço sem degradar contratos |
+| Cross-agent resource authority | `SRC-OPENSEARCH-SEC` | `SRC-ATENTO` | selective-port/pattern donor somente após probes locais de deny-by-default, ownership, grants e restart/recovery |
 | State/Profile | `SRC-CADSS` | `SRC-UKA`, `SRC-MHB` | copiar/adaptar implementação disponível ou construir local |
 | Belief/uncertainty | `SRC-UKA` | `SRC-ENPMR`, `SRC-AGENTMENTAL` | implementar/adaptar conforme evidência |
 | Longitudinal memory | `SRC-PA` | `SRC-ENPMR`, `SRC-PE` | donor integral/parcial permitido se testável |
@@ -268,11 +301,12 @@ A regra de engenharia é preservar capacidade funcional comprovada e comparar o 
 | Planner | `SRC-CADSS` | `SRC-SAGE`, `SRC-ESCONV`, `SRC-PA` | donor/adaptação permitidos |
 | Skill Library | `SRC-PA` | `SRC-ESCONV` | donor/adaptação permitidos; V1 limitada às skills aprovadas |
 | RAG | `SRC-PSYCHAT`, `SRC-SAGE` | `SRC-UKA` | full donor de PsyChat é candidato explícito |
-| Tools | `SRC-TEA` | `SRC-ATENTO` | adaptar benchmark patterns; runtime pode ser nativo ou donor |
+| Retrieval/storage backend | `SRC-OPENSEARCH-BENCH` | `SRC-OPENSEARCH-ML` | benchmark signal forte; seleção depende de fit operacional e prova local de latência/custo/memória |
+| Tools | `SRC-TEA` | `SRC-OPENSEARCH-ML`, `SRC-ATENTO` | adaptar benchmark patterns; Tool SPI/capability registry é donor candidato; runtime pode ser nativo ou donor |
 | Generator | `SRC-SOULCHAT`, `SRC-EMOLLM`, `SRC-MINDCHAT` | `SRC-CADSS` | comparar via Model Gateway; full donor permitido |
 | Critic/Reranker | `SRC-SAGE`, `SRC-PA` | `SRC-COUNSEL` | donor/adaptação condicionados a ablation |
 | Safety | `SRC-ATENTO` | `SRC-MHB`, `SRC-COUNSEL`, `SRC-MHSAFE`, `SRC-THERAPYMIND` | donor pode fornecer partes, mas gate final permanece independente/testável |
-| AtentoEval | `SRC-ATENTO` | todos os benchmarks, incluindo `SRC-PATIENTPSI` e `SRC-MHSAFE` | preservar protocolos; adapters próprios ou copiados quando vantajoso |
+| AtentoEval | `SRC-ATENTO` | `SRC-OPENSEARCH-AGENTHEALTH` + benchmarks, incluindo `SRC-PATIENTPSI` e `SRC-MHSAFE` | preservar protocolo canônico; reutilizar comparação/telemetria/judge provenance apenas quando compatível |
 
 ### Provenance obrigatório para donor
 
