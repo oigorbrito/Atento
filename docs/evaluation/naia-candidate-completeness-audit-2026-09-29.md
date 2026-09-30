@@ -269,62 +269,92 @@ RUNTIME_TRANSFER_TO_NAIA = NOT_ESTABLISHED
 
 ### Open Assistant
 
-At pin `32c55d2643f9fe38777f9212588b2eee45392514`:
+Detailed exact-pin audit:
 
-Source tree establishes implementation surfaces for:
+docs/evaluation/open-assistant-contract-audit-2026-09-29.md
 
-- memory;
-- cron jobs with execution locks;
-- tool registry/executor;
-- browser;
-- Outlook/calendar;
-- credentials/auth.
+At pin 32c55d2643f9fe38777f9212588b2eee45392514:
 
-Upstream documentation describes WhatsApp/Slack, email/calendar and local providers.
+Established static contracts include:
 
-The repository `LICENSE` is Business Source License 1.1.
+- persistent conversation-scoped memory;
+- persisted cron jobs reloaded at scheduler startup;
+- execution history and instance locking;
+- skill/service tool filtering;
+- real Playwright browser automation;
+- encrypted credential storage;
+- OpenRouter/Anthropic/Groq/Ollama/vLLM provider paths.
+
+Material boundaries include:
+
+- no independent repository-owned per-action approval/deny policy established;
+- multi-step planning can expand to all enabled skills;
+- no separate technical capability subset for background jobs established;
+- credentials are stored globally by service_name rather than agent/user identity;
+- strict NAIA/Anna memory/tool/credential isolation is not established;
+- browser network/URL authority needs hardening;
+- desktop computer-use is not established;
+- exact-pin hosted execution is not observed.
+
+The repository LICENSE is Business Source License 1.1. Technical audit and product-adoption authority remain separate.
 
 Classification:
 
-```text
-PRODUCT_COMPARABLE = YES
-TECHNICAL_AUDIT_ALLOWED = YES
-PRODUCT_ADOPTION_CLEARED = NO
-LEGAL_ADOPTION_REVIEW = REQUIRED
-RUNTIME_TRANSFER_TO_NAIA = NOT_ESTABLISHED
-```
+~~~text
+OPEN_ASSISTANT_STATIC_CONTRACT_AUDIT = COMPLETE
+OPEN_ASSISTANT_STATIC_RESULT = PASS_WITH_SCOPE
+OPEN_ASSISTANT_PRODUCT_COMPARABLE = YES
+OPEN_ASSISTANT_CURRENT_PIN_QUALIFIED = NO
+LEGAL_ADOPTION_CLEARED = NO
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+~~~
 
 ---
 
 ## 5. Smallest next evidence
 
-The next block is **not** a seven-way benchmark.
+The already-enumerated seven-candidate static/completeness block is now complete enough to freeze a common empirical profile without ranking candidates.
 
-Run only decision-relevant audits:
+Canonical profile:
 
-1. OpenClaw — targeted delta inspection of contracts touched since the old qualified pin.
-2. OpenMausBot — targeted delta inspection of memory/session/auth/policy changes.
-3. QwenPaw — minimal runtime proof for persistence + policy + browser/computer boundary.
-4. AI Butler — minimal runtime proof restricted to features marked ready, plus restart/session ownership.
-5. NanoClaw — measure actual files/touchpoints required to compose NAIA-relevant provider/channel/tool capabilities from skills.
-6. TrustClaw — characterize dependency/cost/deployment boundary and prove one scheduled external action + memory continuity.
-7. Open Assistant — legal terms first for adoption; technical runtime audit remains evidence-only until cleared.
+docs/evaluation/naia-common-probe-profile-2026-09-29.md
 
-Discovery pool (`SelfAgent`, `goclaw`, `nebo-go`) remains unaudited, so:
+Do not run a seven-way broad benchmark.
 
-```text
+Use four common probe families only where evidence is still missing:
+
+1. NCP-01 — memory + schedule + restart continuity;
+2. NCP-02 — interactive/background authority consistency, denied/allowed external action and credential boundary;
+3. NCP-03 — strict NAIA/Anna memory/tool/credential/channel isolation composition;
+4. NCP-04 — frozen-profile adaptation touchpoints plus wall time, calls, tokens and monetary cost when observable.
+
+Reuse current evidence aggressively. For example:
+
+- OpenClaw does not need unchanged restart/channel tests repeated;
+- OpenMausBot does not need the redundant reconciliation branch repeated;
+- NanoClaw must use one frozen recipe and must not apply the stale Ollama skill blindly;
+- Open Assistant should not receive adoption-oriented runtime spend while LEGAL_ADOPTION_CLEARED = NO.
+
+Discovery pool (SelfAgent, goclaw, nebo-go) remains separate and unaudited, so:
+
+~~~text
+ENUMERATED_CANDIDATE_STATIC_BLOCK = COMPLETE
 CANDIDATE_UNIVERSE_COMPLETE = false
 NAIA_SHORTLIST = NOT_SELECTED
-```
+~~~
 
 ## 6. Outcome
 
-```text
+~~~text
 NAIA_COMPARABLE_PRODUCTS_IDENTIFIED = 7
 CURRENT_PIN_QUALIFIED = 0
 HISTORICAL_EVIDENCE_REUSABLE = [OpenClaw, OpenMausBot]
-NEW_STATIC_PRODUCT_AUDITS = [QwenPaw, AI Butler, NanoClaw, TrustClaw, Open Assistant]
+STATIC_PRODUCT_AUDITS_COMPLETE = [QwenPaw, AI Butler, NanoClaw, TrustClaw, Open Assistant]
+OPEN_ASSISTANT_STATIC_RESULT = PASS_WITH_SCOPE
+OPEN_ASSISTANT_CURRENT_PIN_QUALIFIED = NO
+LEGAL_ADOPTION_CLEARED = NO
 SHORTLIST = NOT_SELECTED
 WINNER = NOT_SELECTED
-NEXT_BLOCK = TARGETED_MISSING_DELTA_AUDITS
-```
+NEXT_BLOCK = COMMON_MISSING_PROBES_ONLY
+~~~ 
