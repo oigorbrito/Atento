@@ -1,8 +1,8 @@
 diff --git a/crates/engramd/src/main.rs b/crates/engramd/src/main.rs
-index 0b115d3..d163c8e 100644
+index 0b115d3..45af4a8 100644
 --- a/crates/engramd/src/main.rs
 +++ b/crates/engramd/src/main.rs
-@@ -7778,6 +7778,87 @@ fn init_tracing() {
+@@ -7778,6 +7778,91 @@ fn init_tracing() {
  mod tests {
      use super::*;
  
@@ -68,21 +68,25 @@ index 0b115d3..d163c8e 100644
 +        let interactive = task_store.create("interactive probe".into(), "invoke interactive adapter".into(), "ui".into());
 +        task_store.set_agent(&interactive.id, Some(agent.id));
 +
-+        let call_interactive = || Completion {
++        let call_tool = |name: &str| Completion {
 +            text: String::new(), model: "probe".into(), tokens_in: 1, tokens_out: 1,
-+            tool_calls: vec![ToolCall { id: "probe-call".into(), name: interactive_name.into(), arguments: json!({
-+                "destination":"https://example.test/form", "action":"click", "selector":"#save", "origin":"scheduled"
++            tool_calls: vec![ToolCall { id: "probe-call".into(), name: name.into(), arguments: json!({
++                "destination":"https://example.test/form", "action":"type", "selector":"#note", "text":"benign probe", "origin":"scheduled"
 +            }) }],
 +        };
 +        let answer = || Completion { text: "done".into(), model: "probe".into(), tokens_in: 1, tokens_out: 1, tool_calls: vec![] };
-+        gateway.set_provider(Arc::from(ScriptedProvider::new(vec![call_interactive(), answer()])));
++        gateway.set_provider(Arc::from(ScriptedProvider::new(vec![call_tool(scheduled_name), call_tool(interactive_name), answer()])));
 +        let scheduled_result = run_task_core(&app, &scheduled.id, None, false, false).await.unwrap();
-+        gateway.set_provider(Arc::from(ScriptedProvider::new(vec![call_interactive(), answer()])));
++        gateway.set_provider(Arc::from(ScriptedProvider::new(vec![call_tool(interactive_name), answer()])));
 +        let interactive_result = run_task_core(&app, &interactive.id, None, false, true).await.unwrap();
 +
-+        let scheduled_obs = scheduled_result.run.unwrap().steps.into_iter().find(|s| s.tool == interactive_name).unwrap().observation;
++        let scheduled_steps = scheduled_result.run.unwrap().steps;
++        let scheduled_denial = scheduled_steps.iter().find(|s| s.tool == scheduled_name).unwrap().observation.clone();
++        let scheduled_obs = scheduled_steps.into_iter().find(|s| s.tool == interactive_name).unwrap().observation;
 +        let interactive_obs = interactive_result.run.unwrap().steps.into_iter().find(|s| s.tool == interactive_name).unwrap().observation;
 +        assert!(scheduled_obs.contains("interactive"), "scheduled observation: {scheduled_obs}");
++        assert!(scheduled_obs.contains("typed"), "scheduled observation: {scheduled_obs}");
++        assert!(scheduled_denial.contains("AuthorityDenied"), "scheduled denial: {scheduled_denial}");
 +        assert!(interactive_obs.contains("interactive"), "interactive observation: {interactive_obs}");
 +        assert!(!scheduled_obs.contains("BROWSER_PROVIDER_SECRET_DO_NOT_LEAK"));
 +    }
