@@ -258,3 +258,46 @@ BASE = NOT_SELECTED
 ```
 
 Rome and Engram now have exact-pin CI-backed Gate-2 authority clauses. Octop already had exhaustive exact-pin execution. Only Atento-specific hardened composition deltas remain useful for these five.
+
+
+## Gate-2 frontier V3 / exact-pin execution reconciliation
+
+Canonical records:
+
+- `docs/evaluation/naia-gate2-exact-pin-hosted-execution-reconciliation-2026-09-30.md`
+- `docs/evaluation/naia-gate2-transferable-evidence-frontier-2026-09-30.md`
+
+```text
+FRONTIER_V3 = [
+  AI Butler,
+  AgentOS,
+  Octop,
+  Rome,
+  Engram,
+  Suna,
+  Letta Code,
+  RustFox
+]
+
+FRONTIER_COUNT = 8
+NEXT_EMPIRICAL_TARGET = AI Butler
+NEW_TECHNICAL_ELIMINATIONS = 0
+SHORTLIST = NOT_SELECTED
+BASE = NOT_SELECTED
+```
+
+Do not rerun broad upstream suites for frontier candidates.
+
+Exact-pin automation reconciliation also found:
+
+```text
+Holt = green build CI only; authority clauses not closed
+HubOS = green pre-commit only; authority clauses not closed
+
+Rakazo = exact-pin CI failure, attribution pending
+Gobii = exact-pin CI failure, attribution pending
+PersonalJarvis = exact-pin CI failure, attribution pending
+OpenGrokBot = exact-pin CI failure, attribution pending
+```
+
+Do not convert un-attributed CI failures into candidate elimination.
