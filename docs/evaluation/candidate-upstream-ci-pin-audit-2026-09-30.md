@@ -4,7 +4,7 @@
 
 This is one additional evidence pass for the frozen candidate pins recorded in the candidate freeze documents. It captures upstream GitHub Actions workflow health at those pins so that later Atento-specific probes can account for current source health.
 
-This audit does **not** qualify any pin, rank candidates, award an isolation score, or establish Atento behavior. A green upstream workflow is not evidence of role isolation, authority parity, or safe external-effect recovery. The chassis probe `RP-EFFECT-01` remains **PENDING** and was not run.
+This audit does **not** qualify any pin, rank candidates, award an isolation score, or establish Atento behavior. A green upstream workflow is not evidence of role isolation, authority parity, or safe external-effect recovery. The real Engram→adapter/browser chassis integration remains **PENDING** and was not run. The adapter-only suite had already passed 8/8.
 
 ## Method
 
@@ -54,7 +54,7 @@ This audit does **not** qualify any pin, rank candidates, award an isolation sco
 - This audit adds upstream workflow health and pinpointed failure evidence only.
 - It does not close residual families A/I/L/B/E/D/C/G from the residual-only probe ledger.
 - No candidate is promoted or removed based on this status pass.
-- `RP-EFFECT-01 = PENDING`; no uncertain-outcome external effect was exercised.
+- The real Engram→adapter/browser chassis integration remains **PENDING**; it was not exercised in this pass.
 - Rows with no observed runs remain **unknown coverage**, not test failures.
 
 
@@ -184,3 +184,8 @@ The backend workflow at `ac5af6ee4c9a06b4050c5a912439f343ade2c35c` ran `uv run p
 - `test_batch_round_trip_overwrite_and_namespace_isolation` exercises compound namespace identity and separate owner namespaces in the shared store contract.
 
 These are run-backed positive tests for memory-store separation by owner and namespace. They are materially reusable if the Atento design maps NAIA and Anna to distinct owner IDs and preserves that mapping through every retrieval path. They do not prove that mapping, prevent owner-ID spoofing by an agent, or cover memory writes/reads through the complete agent runtime.
+
+
+### SelfAgent exact-pin memory and tool-source review
+
+At `c86b0b1fbc0e177e67b59b8d26cc2ce9c18406d1`, the tree-name scan found six test-like paths and no workflow files. `tests/test_memory.py` tests in-process message add/get/trim/clear, SQLite persistence of recent conversation messages, and a single user-profile store. `tests/test_tools.py` checks a single registry's registration, enable/disable behavior, execution, and plugin loading. The tests do not instantiate two agents with separate identities and attempt cross-read or cross-tool access. No exact-pin CI run was observed, so these remain unexecuted source assertions. This is basic persistence/registry coverage, not Atento role isolation.
