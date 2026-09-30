@@ -20,19 +20,24 @@ Rakazo  f4583525d632fcd8643fd6e24c7f51e3e04cb990
 Gobii   c9929bf8ea59b4695b99dcab59aa6c97a09c5bdb
 ```
 
-Exact-pin CI visibility observed in the prior matrix:
+Exact-pin CI visibility has since been re-audited.
+
+Rakazo now has direct hosted evidence at the frozen pin. See:
+
+`docs/evaluation/rakazo-exhaustive-verification-2026-09-30.md`
+
+Observed Rakazo status:
 
 ```text
-Rakazo:
-  GitHub Actions workflow runs = none observed
-  combined status = Vercel success only
-
-Gobii:
-  GitHub Actions workflow runs = none observed
-  combined statuses = none observed
+unit = 5504 passed / 172 skipped
+postgres journeys = PASS
+push web E2E = 154 passed / 1 failed
+later same-pin nightly web E2E = 155 passed
 ```
 
-No hosted runtime qualification is inferred from that visibility.
+The single browser failure is retained as mixed/flaky same-pin evidence; it is not erased by the later green run.
+
+Gobii execution is tracked separately and should not inherit Rakazo's result.
 
 ---
 
@@ -479,7 +484,7 @@ LOCAL_GENERIC_NCP_NOW = NO
 | ambiguous external effect | explicit `uncertain`, no blind replay | queue/lock durability strong; generic effect reconciliation not established |
 | scheduled work | persisted routine E2E | real-harness scheduled-work eval protocol |
 | strict multi-agent isolation | separate Space + Private Computer needed for strongest boundary | per-agent state strong; broader org/global scopes must be constrained |
-| current-pin hosted runtime result | not observed | not observed |
+| current-pin hosted runtime result | unit/Postgres green; one push E2E red, later same-pin 155/155 nightly green | tracked separately; see subsequent verification records |
 
 No row is a score or ranking.
 
