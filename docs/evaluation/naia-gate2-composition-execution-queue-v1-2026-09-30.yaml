@@ -1,0 +1,97 @@
+blocker_id: NAIA-G2-EXEC-INFRA-2026-09-30-01
+type: executor_network
+blocked_operation: exact_pin_runtime_acquisition_for_gate2_composition
+observed_evidence:
+  - "git ls-remote https://github.com/LumabyteCo/aibutler.git HEAD -> Could not resolve host: github.com"
+  - "no local preloaded checkout found for Atento, AI Butler, OpenMausBot, NanoClaw"
+impact:
+  common_harness: NAIA-GATE2-COMPOSITION-V1
+  frontier_candidates_blocked: 12
+  candidate_state_change: none
+work_continuable: true
+unblock_condition:
+  any_of:
+    - executor_can_resolve_and_access_github_com
+    - exact_candidate_checkouts_preloaded_locally
+    - authorized_executable_environment_exposes_exact_pin_with_artifact_capture
+
+queue:
+  - order: 1
+    candidate: AI Butler
+    repo: LumabyteCo/aibutler
+    sha: c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c
+    add_ons: []
+    status: BLOCKED_ENVIRONMENT
+  - order: 2
+    candidate: OpenMausBot
+    repo: milind-soni/OpenMausBot
+    sha: 6005b1bf5883a7ffa639c07e729321f89b9532e1
+    add_ons: [same_owner_role_boundary]
+    status: BLOCKED_ENVIRONMENT
+  - order: 3
+    candidate: NanoClaw
+    repo: nanocoai/nanoclaw
+    sha: 4c1eabd3ddd74cc3d71b1871da857391a9411c8d
+    add_ons: [recipe_freeze]
+    status: BLOCKED_ENVIRONMENT
+  - order: 4
+    candidate: AgentOS
+    repo: use-agent-os/agent-os
+    sha: 226c906291fc68f3c4517623446bdaec1b48a82d
+    add_ons: [browser_effect_policy]
+    status: BLOCKED_ENVIRONMENT
+  - order: 5
+    candidate: Rome
+    repo: rome-os/rome
+    sha: ef523c4659149e2711744deb04ec42c3be339907
+    add_ons: [consequential_action_coverage, provider_bypass]
+    status: BLOCKED_ENVIRONMENT
+  - order: 6
+    candidate: Suna
+    repo: kortix-ai/suna
+    sha: 270c4a57c8ae5ffb85eff6d5b9700c5713612f28
+    add_ons: [connector_policy]
+    status: BLOCKED_ENVIRONMENT
+  - order: 7
+    candidate: Rakazo
+    repo: elie222/rakazo
+    sha: f4583525d632fcd8643fd6e24c7f51e3e04cb990
+    add_ons: [consequential_rules]
+    status: BLOCKED_ENVIRONMENT
+  - order: 8
+    candidate: Letta Code
+    repo: letta-ai/letta-code
+    sha: 21daa38a8cdd74f2d03b634c8312253080bacfc1
+    add_ons: [hardened_permission_profile]
+    status: BLOCKED_ENVIRONMENT
+  - order: 9
+    candidate: Octop
+    repo: TencentCloud/Octop
+    sha: e473dd3c4a4741618ffde1a42a3492341a189e8e
+    add_ons: [authority_fail_closed, cron_connector_authority]
+    status: BLOCKED_ENVIRONMENT
+  - order: 10
+    candidate: QwenPaw
+    repo: agentscope-ai/QwenPaw
+    sha: 777441721aa72db8e380d90e4d0481b05cbfd4cc
+    add_ons: [sandbox_unavailable_fail_closed, cron_authority]
+    runtime_scope: exclude_unresolved_python_3_13_pty
+    status: BLOCKED_ENVIRONMENT
+  - order: 11
+    candidate: RustFox
+    repo: chinkan/RustFox
+    sha: 6e24388d36d1c6fac399039d8cab07cd9cb8264b
+    add_ons: [universal_effect_owner]
+    status: BLOCKED_ENVIRONMENT
+  - order: 12
+    candidate: Engram
+    repo: radotsvetkov/engram
+    sha: 3a43667deec4a680b42f3e880d7d6bac3baf0746
+    add_ons: [browser_effect_policy, trusted_run_effect]
+    status: BLOCKED_ENVIRONMENT
+
+resume:
+  next_execution_target: AI Butler
+  harness: NAIA-GATE2-COMPOSITION-V1
+  rerun_upstream_reconciliation: false
+  broad_retest: forbidden_as_redundant
