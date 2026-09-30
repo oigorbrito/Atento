@@ -61,3 +61,46 @@ NAIA_BASE = NOT_SELECTED
 OPENCLAW_SHORTLIST = NOT_SELECTED
 ANNA = SEPARATE_DOMAIN
 ```
+
+
+## PRs #1–#10 — PsyChat / Anna
+
+**Disposition:** `CLOSE_AFTER_RECONCILIATION`
+
+These PRs are historical Anna/PsyChat evidence. They do not define the current Anna chassis.
+
+Primary spike:
+- #1 head `8f14cb1599e106596b0f311596a21d52beea26d0`
+- reusable case sets preserved on the reset branch:
+  - `evals/cases/psychat_multilingual_gold_v0.jsonl`
+  - `evals/cases/rag_v0.jsonl`
+- larger experimental adapter/probe tree remains traceable at the immutable #1 head.
+
+Evidence sequence:
+- #2 `a6c5c38c5a020ecaaba281c4b1f11c0e6fbe0428`
+- #3 `afdae6b10d28515cb466ba97fd49969c94de6e78`
+- #4 `a309475e8578c888f36e16bbd95dbb22a15cf52a`
+- #5 `bdb21f9a7581ac5c5aac78b4b94ccef0aac186e0`
+- #6 `75707879a8ced08e1f5e48af517156b6c4a414e5`
+- #7 `ac8b7ce2a5fe9a6540c4702f3358cddbb3a766f9`
+- #8 `da07c84c9ed6ae979b04bbf8d6091c7a64f90762`
+- #9 `f74be929b056db8d7cb1035c4de9512a5796cdc9`
+- #10 `7eb5d516f5b5d6491ad6babbed4e00018b690aa6`
+
+PRs #9 and #10 contain identical final blobs for the four principal source files:
+- psychology agent: `e0284eee8ee2790a48a85946781e4a4a3a3d6085`
+- RAG system: `8240d29b9870b86e5773e427e92e62747b01fe21`
+- vector store: `a6b1690d9ecbbb799b3227006d1644aa547c5ef6`
+- data processor: `22f9d362bad10a2238e9e638929799308d8478f1`
+
+#9 is the preferred historical source snapshot because it also includes the license in its PR surface.
+
+Current interpretation:
+
+```text
+PSYCHAT_EVIDENCE = PRESERVED
+PSYCHAT_BASE_FOR_ANNA = NOT_SELECTED
+PSYCHAT_SHORTLIST = NOT_SELECTED
+OLD_BLOCK_CENTRIC_DECISIONS = SUPERSEDED
+ANNA_ROLE = EMOTIONAL_THERAPEUTIC_DOMAIN
+```
