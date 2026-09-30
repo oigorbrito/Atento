@@ -776,3 +776,34 @@ NAIA_BASE = NOT_SELECTED
 ```
 
 This is not a shortlist. It only identifies candidates for which broad upstream retesting is now redundant and only Atento-specific composition residuals remain decision-relevant.
+
+
+## Gate-2 hosted-execution reconciliation / frontier V3 — 2026-09-30
+
+Canonical reconciliation:
+
+`docs/evaluation/naia-gate2-exact-pin-hosted-execution-reconciliation-2026-09-30.md`
+
+Current transferable-evidence frontier:
+
+```text
+FRONTIER_V3 = [
+  AI Butler,
+  AgentOS,
+  Octop,
+  Rome,
+  Engram,
+  Suna,
+  Letta Code,
+  RustFox
+]
+
+FRONTIER_COUNT = 8
+NEW_TECHNICAL_ELIMINATIONS = 0
+AUTHORITY_ISOLATION_EMPIRICAL_PASS = 0
+
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+Holt and HubOS have exact-pin green automation but not relevant authority test execution. Rakazo, Gobii, PersonalJarvis and OpenGrokBot have exact-pin failed CI, but failure attribution is required before any technical elimination.
