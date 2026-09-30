@@ -78,6 +78,28 @@ NanoClaw is a comparable persistent-assistant product with explicit container/cr
 
 TrustClaw is a comparable persistent-assistant product with strong local instance-memory and cron contracts. Its broad external-action and remote-sandbox authority is materially delegated to Composio, while the standard deployment/model path is Vercel-oriented. Qualification therefore requires a composed dependency/cost/authority probe. This does not create shortlist status.
 
+## Current Open Assistant contract evidence
+
+docs/evaluation/open-assistant-contract-audit-2026-09-29.md
+
+Open Assistant is a comparable persistent-assistant product with real conversation memory, persisted cron scheduling, skill/tool filtering, browser automation, encrypted credential storage and multi-provider support. The exact-pin audit also finds material NAIA hardening gaps: no independent per-action approval/deny boundary, plan-driven expansion to all enabled skills, global-by-service credential scope, no established strict NAIA/Anna isolation and no desktop computer-use surface. Exact-pin hosted execution was not observed.
+
+Its BSL 1.1 license is a separate adoption boundary:
+
+~~~text
+OPEN_ASSISTANT_STATIC_RESULT = PASS_WITH_SCOPE
+OPEN_ASSISTANT_CURRENT_PIN_QUALIFIED = NO
+LEGAL_ADOPTION_CLEARED = NO
+~~~
+
+This does not create shortlist status.
+
+## Current common empirical profile
+
+docs/evaluation/naia-common-probe-profile-2026-09-29.md
+
+The already-enumerated candidate audits now support a common missing-evidence phase. The next work is not a broad benchmark: reuse sufficient evidence and run only NCP-01..04 deltas needed to establish restart continuity, authority consistency, NAIA/Anna isolation and total adaptation/runtime cost. This ADR remains NOT_SELECTED until comparable raw evidence closes the decision-relevant gaps.
+
 ## Historical candidates — evidence preserved, shortlist reset
 
 ### A — OpenMausBot
