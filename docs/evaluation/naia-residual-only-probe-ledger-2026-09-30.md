@@ -12,6 +12,7 @@ The input evidence is already canonical in:
 - `docs/evaluation/naia-expanded-upstream-evidence-matrix-2026-09-29.md`
 - `docs/evaluation/naia-static-residual-disposition-2026-09-30.md`
 - the candidate-specific delta / transfer audits under `docs/evaluation/`
+- `docs/evaluation/candidate-upstream-ci-pin-audit-2026-09-30.md` — exact-pin upstream GitHub Actions status pass (health evidence only; no residual probe or candidate decision changes)
 
 State on entry:
 
