@@ -459,14 +459,14 @@ FROZEN_CANDIDATE_UNIVERSE_V1 = COMPLETE
 CANDIDATE_UNIVERSE_COMPLETE = true_for_frozen_v1_snapshot
 SECONDARY_TRANSFER_AUDITS = COMPLETE_7_OF_7
 EXPANDED_EXTERNAL_EVIDENCE_GATE = COMPLETE_V1
-LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
-RESIDUAL_ONLY_PROBE_DERIVATION = NEXT
+RESIDUAL_ONLY_PROBE_DERIVATION = COMPLETE_V1
+LOCAL_RESIDUAL_PROBE_EXECUTION = NOT_STARTED
 NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
 ~~~
 
 This freeze prevents discovery churn; it is not a permanent claim that no new candidate can ever appear.
 
-Broad local NCP remains unjustified now that the external-evidence gate is complete. Any local execution must be derived from an explicit unresolved Atento delta and reuse all materially equivalent evidence already recorded.
+Broad local NCP remains unjustified now that the external-evidence gate is complete. Cross-candidate residual normalization is frozen in `docs/evaluation/naia-residual-only-probe-ledger-2026-09-30.md`.
 
-The next work is therefore **cross-candidate residual normalization and the smallest residual-only probe derivation**, not generic local benchmarking.
+Any local execution must now name one unresolved Atento property, freeze the exact hardened composition, reuse materially equivalent evidence, and execute only the matching residual microprobe. Generic local benchmarking remains out of scope.
