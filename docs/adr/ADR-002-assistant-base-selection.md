@@ -607,3 +607,27 @@ NAIA_BASE = NOT_SELECTED
 SelfAgent is stopped only as a **complete NAIA base candidate at its frozen pin** because existing exact-pin evidence requires cross-cutting repairs across central action authority, background execution and scheduler lifecycle before the required contract can be represented. It remains usable as reference/donor evidence and may be reconsidered after a material upstream change.
 
 Survival of Gate 1 is not qualification. The remaining 25 candidates proceed only to candidate-specific authority/isolation composition under the residual-only protocol.
+
+
+## Authority/isolation Gate 2 screen — 2026-09-30
+
+Canonical result:
+
+`docs/evaluation/naia-authority-isolation-gate2-screen-2026-09-30.md`
+
+All 25 Gate-1 survivors have now received the authority/isolation static screen.
+
+```text
+AUTHORITY_ISOLATION_STATIC_SCREEN = COMPLETE_V1
+AUTHORITY_ISOLATION_SCREENED = 25_OF_25
+VENDOR_DEFAULT_AUTHORITY_PASS = 0
+AUTHORITY_ISOLATION_EMPIRICAL_PASS = 0
+ADDITIONAL_GATE_2_STRUCTURAL_STOPS = 0
+
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+This closes the question of whether any current vendor/default profile can proceed directly: none can. It does not mean all 25 fail. Each still has at least one bounded hardened-composition/dependency path that must be frozen before a candidate-specific proof can close Gate 2.
+
+Broad vendor-default retesting and a generic 25-candidate runtime battery are therefore not justified.
