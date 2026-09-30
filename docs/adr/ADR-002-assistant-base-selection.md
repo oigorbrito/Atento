@@ -54,7 +54,11 @@ The registered discovery pools have now been bounded and frozen as the V1 decisi
 - `docs/evaluation/naia-transfer-audit-hubos-rustfox-2026-09-30.md`
 - `docs/evaluation/naia-transfer-audit-engram-holt-2026-09-30.md`
 
-First bounded residual execution evidence:\n\n\`docs/evaluation/naia-engram-browser-authority-probe-2026-09-30.md\`\n\nThe full residual-only execution map is:
+First bounded residual execution evidence:
+
+`docs/evaluation/naia-engram-browser-authority-probe-2026-09-30.md`
+
+The full residual-only execution map is:
 
 `docs/evaluation/naia-residual-only-probe-ledger-2026-09-30.md`
 
