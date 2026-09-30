@@ -66,6 +66,12 @@ QwenPaw is a comparable persistent-assistant product with strong memory/governan
 
 AI Butler is a comparable persistent-assistant product with strong static evidence for memory isolation, fail-closed shell authority, credential gating, scheduler persistence and long-horizon mission state. Current qualification remains pending because channel/provider maturity is mixed and Windows computer-use still lacks real interactive validation. This does not create shortlist status.
 
+## Current NanoClaw adaptation evidence
+
+`docs/evaluation/nanoclaw-change-surface-audit-2026-09-29.md`
+
+NanoClaw is a comparable persistent-assistant product with explicit container/credential boundaries and an unusually explicit skill/update model. The current audit shows that total fork cost is capability-profile dependent: channel/gateway surfaces can be modest, while provider integrations such as OpenCode are multi-point. The pinned Ollama skill also requires rederivation against the current provider-contribution architecture. This does not create shortlist status.
+
 ## Historical candidates — evidence preserved, shortlist reset
 
 ### A — OpenMausBot
