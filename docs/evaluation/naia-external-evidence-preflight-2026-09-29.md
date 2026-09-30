@@ -345,7 +345,31 @@ A local NCP or benchmark may run only after all five are true:
 
 If item 5 cannot be stated, the local test is not yet justified.
 
-## 5. Candidate-universe gate
+## 5. Expanded transfer-audit progress
+
+The comparable expanded candidates now have bounded transfer audits for:
+
+- Suna / Letta Code / PersonalJarvis;
+- Rakazo / Gobii;
+- Octop / Agent Zero / Rome / OpenGrokBot.
+
+The newest transfer record is:
+
+docs/evaluation/naia-transfer-audit-octop-agentzero-rome-opengrokbot-2026-09-30.md
+
+No generic local NCP is justified by those four audits. Their remaining questions are configuration/topology deltas, not missing broad product benchmarks.
+
+The next universe-completion block is the provisional admission pass for:
+
+~~~text
+SelfAgent
+GoClaw
+Nebo
+~~~
+
+Only after that admission block should the candidate-universe gate be reconsidered.
+
+## 6. Candidate-universe gate
 
 The candidate universe is still open.
 
