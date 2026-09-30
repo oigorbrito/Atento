@@ -18,7 +18,7 @@ A candidate enters this frontier only when:
 ## Frontier result
 
 ```text
-TRANSFERABLE_EVIDENCE_FRONTIER = COMPLETE_V4
+TRANSFERABLE_EVIDENCE_FRONTIER = COMPLETE_V5
 
 ADMITTED:
   AI Butler
@@ -30,6 +30,9 @@ ADMITTED:
   Letta Code
   RustFox
   Rakazo
+  OpenMausBot
+  NanoClaw
+  QwenPaw
 
 NOT_ADMITTED_YET:
   OpenClaw
@@ -199,11 +202,11 @@ FROZEN_UNIVERSE = 26
 TECHNICAL_ELIMINATED = [SelfAgent]
 TECHNICAL_SURVIVORS = 25
 
-TRANSFERABLE_EVIDENCE_FRONTIER_COUNT = 9
-TRANSFERABLE_EVIDENCE_FRONTIER = [AI Butler, AgentOS, Octop, Rome, Engram, Suna, Letta Code, RustFox, Rakazo]
+TRANSFERABLE_EVIDENCE_FRONTIER_COUNT = 12
+TRANSFERABLE_EVIDENCE_FRONTIER = [AI Butler, AgentOS, Octop, Rome, Engram, Suna, Letta Code, RustFox, Rakazo, OpenMausBot, NanoClaw, QwenPaw]
 
 NEXT_EMPIRICAL_COMPOSITION_TARGET = AI Butler
-OTHER_READY_COMPOSITION_TARGETS = [AgentOS, Octop, Rome, Engram, Suna, Letta Code, RustFox, Rakazo]
+OTHER_READY_COMPOSITION_TARGETS = [AgentOS, Octop, Rome, Engram, Suna, Letta Code, RustFox, Rakazo, OpenMausBot, NanoClaw, QwenPaw]
 
 AUTHORITY_ISOLATION_EMPIRICAL_PASS = 0
 NAIA_SHORTLIST = NOT_SELECTED
@@ -330,4 +333,66 @@ FRONTIER_V4 = [
   RustFox,
   Rakazo
 ]
+```
+
+
+## V5 additions — OpenMausBot, NanoClaw, QwenPaw
+
+### OpenMausBot
+
+`docs/evaluation/openmausbot-gate2-transferable-authority-closure-2026-09-30.md`
+
+Exact-pin CI is fully green across Linux/macOS/Windows and includes direct authority/isolation tests:
+
+```text
+request-auth = 46 PASS
+permission-proxy = 11 PASS
+Windows CUA isolation = 8 PASS
+approval-mode = 22 PASS
+peer-approval = 18 PASS
+routine delegation = 8 PASS
+cron confirmation = PASS
+routine continuity = PASS
+behavior evals = 66 PASS
+```
+
+Residual = strict same-owner NAIA/Anna composition.
+
+### NanoClaw
+
+`docs/evaluation/nanoclaw-gate2-transferable-authority-closure-2026-09-30.md`
+
+Exact-pin CI executes:
+
+```text
+3033 PASS / 1 skipped
++ 516 secondary tests
+gateway approval = 46 PASS
+channel approval = 18 PASS
+permissions = 15 PASS
+restart honesty = 8 PASS
+mount security = 5 PASS
+container restart = 9 PASS
+```
+
+Residual = frozen least-privilege recipe + two-role composition.
+
+### QwenPaw
+
+`docs/evaluation/qwenpaw-gate2-transferable-authority-closure-2026-09-30.md`
+
+Exact-pin nightly matrix executes contract/integration suites cross-platform. Contract suite:
+
+```text
+412 PASS / 1 skipped
+```
+
+Python 3.13 Linux unit suite has four PTY/terminal failures after 17040 passes. The failure is runtime-specific and not an authority-policy failure.
+
+Residual = fail-closed sandbox-unavailable policy + cron authority + two-role composition + runtime scope excluding unresolved py3.13 PTY path.
+
+```text
+FRONTIER_V5_COUNT = 12
+FRONTIER_ENTRY != SHORTLIST
+FRONTIER_ENTRY != QUALIFIED
 ```
