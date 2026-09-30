@@ -18,7 +18,7 @@ A candidate enters this frontier only when:
 ## Frontier result
 
 ```text
-TRANSFERABLE_EVIDENCE_FRONTIER = COMPLETE_V3
+TRANSFERABLE_EVIDENCE_FRONTIER = COMPLETE_V4
 
 ADMITTED:
   AI Butler
@@ -29,6 +29,7 @@ ADMITTED:
   Suna
   Letta Code
   RustFox
+  Rakazo
 
 NOT_ADMITTED_YET:
   OpenClaw
@@ -198,11 +199,11 @@ FROZEN_UNIVERSE = 26
 TECHNICAL_ELIMINATED = [SelfAgent]
 TECHNICAL_SURVIVORS = 25
 
-TRANSFERABLE_EVIDENCE_FRONTIER_COUNT = 8
-TRANSFERABLE_EVIDENCE_FRONTIER = [AI Butler, AgentOS, Octop, Rome, Engram, Suna, Letta Code, RustFox]
+TRANSFERABLE_EVIDENCE_FRONTIER_COUNT = 9
+TRANSFERABLE_EVIDENCE_FRONTIER = [AI Butler, AgentOS, Octop, Rome, Engram, Suna, Letta Code, RustFox, Rakazo]
 
 NEXT_EMPIRICAL_COMPOSITION_TARGET = AI Butler
-OTHER_READY_COMPOSITION_TARGETS = [AgentOS, Octop, Rome, Engram, Suna, Letta Code, RustFox]
+OTHER_READY_COMPOSITION_TARGETS = [AgentOS, Octop, Rome, Engram, Suna, Letta Code, RustFox, Rakazo]
 
 AUTHORITY_ISOLATION_EMPIRICAL_PASS = 0
 NAIA_SHORTLIST = NOT_SELECTED
@@ -297,3 +298,36 @@ FRONTIER_V3 = [
 ```
 
 No ordering, shortlist or qualification is implied.
+
+
+## V4 addition — Rakazo
+
+Canonical evidence:
+
+`docs/evaluation/rakazo-gate2-transferable-authority-closure-2026-09-30.md`
+
+The exact-pin workflow is globally red because one onboarding UI timing assertion failed. The same run records successful authority/isolation E2E cases, while Unit tests and Postgres journeys are independently green.
+
+```text
+RAKAZO_AUTHORITY_EVIDENCE = PASS_WITH_SCOPE
+GLOBAL_CI_RED_CAUSE = UNRELATED_ONBOARDING_E2E
+RAKAZO_RESIDUAL = HARDENED_CONSEQUENTIAL_RULES + ROLE_COMPOSITION
+```
+
+Therefore Rakazo enters the transferable-evidence frontier without becoming qualified, shortlisted or selected.
+
+Current frontier:
+
+```text
+FRONTIER_V4 = [
+  AI Butler,
+  AgentOS,
+  Octop,
+  Rome,
+  Engram,
+  Suna,
+  Letta Code,
+  RustFox,
+  Rakazo
+]
+```
