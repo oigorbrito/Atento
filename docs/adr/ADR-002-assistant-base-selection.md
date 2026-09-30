@@ -734,3 +734,24 @@ AI_BUTLER_COMPOSITION_EXECUTION = READY_BUT_NOT_RUN
 ```
 
 Do not convert the executor/network limitation into candidate evidence.
+
+
+## Gate-2 transferable-evidence frontier — 2026-09-30
+
+Canonical record:
+
+`docs/evaluation/naia-gate2-transferable-evidence-frontier-2026-09-30.md`
+
+```text
+TRANSFERABLE_EVIDENCE_FRONTIER = COMPLETE_V1
+FRONTIER = [AI Butler, AgentOS]
+
+NEXT_EMPIRICAL_COMPOSITION_TARGET = AI Butler
+SECOND_READY_COMPOSITION_TARGET = AgentOS
+
+AUTHORITY_ISOLATION_EMPIRICAL_PASS = 0
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+This frontier is not a shortlist or ranking. It only records that these two candidates currently have enough exact-pin executed Gate-2 evidence to avoid broad retesting and proceed directly to Atento-specific hardened composition.
