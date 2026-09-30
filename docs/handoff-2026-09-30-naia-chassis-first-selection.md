@@ -68,9 +68,10 @@ Therefore the remaining architecture-screen workload is **23 candidates**, not 2
 Planned funnel to the first NAIA base choice:
 
 ### Gate 1 — chassis/architecture
-- **26 total candidate architecture screens**
-- **23 new screens remaining**
-- static/source evidence first; no expensive runtime battery by default
+- **26/26 architecture screens complete**
+- **25 candidates advance to Gate 2**
+- **SelfAgent stops as a complete base candidate at its frozen pin**
+- canonical result: `docs/evaluation/naia-architecture-gate1-screen-2026-09-30.md`
 
 ### Gate 2 — authority/isolation
 - only survivors from Gate 1
@@ -146,7 +147,7 @@ Do not provide micro-step updates.
 
 Do not repeat completed batteries.
 
-First perform the architecture-first screening of the remaining candidate universe using existing evidence.
+Gate 1 is complete. Continue with authority/isolation only for Gate-1 survivors, using the frozen residual ledger and existing exact-pin evidence before any local execution.
 
 For each candidate, record:
 
@@ -174,3 +175,18 @@ Do not convert benchmark signal into local qualification.
 - candidate-specific verification reports: execution evidence
 - historical comparison documents: non-authoritative unless explicitly reused
 
+
+
+## Gate 1 closure update
+
+```text
+ARCHITECTURE_GATE_1 = COMPLETE_V1
+ARCHITECTURE_SCREENED = 26_OF_26
+ARCHITECTURE_SURVIVORS = 25
+COMPLETE_BASE_STOPS = [SelfAgent]
+NEXT_GATE = AUTHORITY_ISOLATION
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+Do not restart the 26-candidate architecture sweep. Gate 2 should stop early whenever an authority/isolation hard failure becomes structural, and should not execute vendor-default profiles merely to reconfirm already-known permissive behavior.
