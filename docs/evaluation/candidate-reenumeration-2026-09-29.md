@@ -168,15 +168,18 @@ For OpenClaw and OpenMausBot:
 3. carry forward unaffected evidence explicitly;
 4. run a local delta only when transfer is not defensible.
 
-For the five newly admitted candidates:
+For the previously admitted candidates and the new persistent-agent expansion:
 
-1. establish runtime/product completeness;
-2. map NAIA target capabilities;
-3. classify authority/security model;
-4. identify memory ownership and restart behavior;
-5. measure provider/tool/channel coupling;
-6. record legal/adoption constraints;
-7. estimate adaptation surface before any behavioral benchmark.
+1. establish runtime/product completeness at an exact pin;
+2. locate directly relevant upstream tests/evals and available run artifacts;
+3. map NAIA target capabilities;
+4. classify authority/security model;
+5. identify memory ownership and restart behavior;
+6. measure provider/tool/channel coupling;
+7. estimate adaptation surface before any behavioral benchmark;
+8. run a local test only for a material Atento delta or blocking unproven invariant.
+
+License is not used as a technical discovery/admission filter in the current phase.
 
 ### Anna
 
@@ -215,5 +218,5 @@ ANNA_BASE = NOT_SELECTED
 ANNA_SHORTLIST = NOT_SELECTED
 APOLLO = DEFERRED
 CANDIDATE_UNIVERSE_COMPLETE = false
-NEXT_BLOCK = SAME_PROTOCOL_STATIC_AND_RUNTIME_COMPLETENESS_AUDIT
+NEXT_BLOCK = EXPANDED_CANDIDATE_ADMISSION_AND_EXTERNAL_EVIDENCE_PREFLIGHT
 ```
