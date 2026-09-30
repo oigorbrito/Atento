@@ -24,7 +24,11 @@ STATIC_RESIDUAL_DISPOSITION = COMPLETE_V1
 LOCAL_RESIDUAL_PROBE_EXECUTION = STARTED_BOUNDED
 ~~~
 
-First bounded residual execution evidence:\n\n- \`docs/evaluation/naia-engram-browser-authority-probe-2026-09-30.md\`\n\nBefore any NCP execution, consult:
+First bounded residual execution evidence:
+
+- `docs/evaluation/naia-engram-browser-authority-probe-2026-09-30.md`
+
+Before any NCP execution, consult:
 
 - `docs/evaluation/naia-persistent-agent-discovery-2026-09-29.md`
 - `docs/evaluation/naia-external-evidence-preflight-2026-09-29.md`
