@@ -755,3 +755,24 @@ NAIA_BASE = NOT_SELECTED
 ```
 
 This frontier is not a shortlist or ranking. It only records that these two candidates currently have enough exact-pin executed Gate-2 evidence to avoid broad retesting and proceed directly to Atento-specific hardened composition.
+
+
+## Gate-2 transferable-evidence frontier V2 — 2026-09-30
+
+Exact-pin executed evidence now supports a five-candidate composition frontier:
+
+```text
+FRONTIER_V2 = [
+  AI Butler,
+  AgentOS,
+  Octop,
+  Rome,
+  Engram
+]
+
+AUTHORITY_ISOLATION_EMPIRICAL_PASS = 0
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+This is not a shortlist. It only identifies candidates for which broad upstream retesting is now redundant and only Atento-specific composition residuals remain decision-relevant.
