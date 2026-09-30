@@ -83,3 +83,24 @@ HARNESS = NAIA-GATE2-COMPOSITION-V1
 ```
 
 Do not restart upstream evidence reconciliation or broad candidate testing.
+
+
+## Canonical blocker record
+
+```text
+blocker_id = NAIA-G2-EXEC-INFRA-2026-09-30-01
+type = executor_network
+blocked_operation = exact_pin_runtime_acquisition_for_gate2_composition
+impact = 12 frontier candidates blocked from local composition execution
+work_continuable = YES
+unblock_condition =
+  github.com DNS/access restored
+  OR exact checkouts preloaded
+  OR another authorized executable exact-pin environment is available
+```
+
+Machine-readable resume queue:
+
+`docs/evaluation/naia-gate2-composition-execution-queue-v1-2026-09-30.yaml`
+
+The queue freezes exact repository, SHA, execution order, candidate-specific add-ons and `BLOCKED_ENVIRONMENT` status for all twelve frontier candidates. No candidate state changes because of this blocker.
