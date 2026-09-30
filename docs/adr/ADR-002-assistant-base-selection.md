@@ -241,6 +241,13 @@ Detailed evidence record:
 
 `docs/evaluation/openclaw-qualification-2026-09-29.md`
 
+
+Current-pin delta audit:
+
+`docs/evaluation/openclaw-current-delta-audit-2026-09-29.md`
+
+At current observed head `ca8f24d05fc49a224adab0c9426077fd8d93801d`, the 67-commit delta from the qualified pin has been audited statically. Approval/restart/channel-durability evidence remains transferable with scope; memory sanitization, browser ownership and channel/gateway boundaries are stronger in source. Exact-current-pin hosted execution is not observed. This does not grant shortlist status.
+
 #### Product surface
 
 Observed:

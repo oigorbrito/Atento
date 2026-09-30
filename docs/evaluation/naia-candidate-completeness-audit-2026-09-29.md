@@ -51,7 +51,7 @@ Browser/computer use is measured separately because the NAIA target includes it,
 
 | Candidate | Assistant runtime | Persistence / memory | Scheduled/background | Interaction/channels | Browser/computer / external actions | Model/provider | Authority/security | Current audit disposition |
 |---|---|---|---|---|---|---|---|---|
-| **OpenClaw** `ca8f24d...` | historical Atento evidence | historical Atento evidence | historical Atento evidence | historical Atento evidence | historical Atento evidence | historical Atento evidence | historical Atento evidence | `REQUIRES_DELTA_AUDIT`: current head is 67 commits ahead of the qualified pin and touches memory, CUA/computer-use, device/gateway/channel-boundary surfaces |
+| **OpenClaw** `ca8f24d...` | historical Atento evidence | historical evidence + stronger memory sanitization | historical Atento evidence | historical channel evidence + stronger interaction boundaries | historical CUA/browser surface + stronger ownership ambiguity handling | historical Atento evidence | historical approval evidence + stronger gateway/channel boundary tests | `DELTA_STATIC_AUDIT_COMPLETE`; current-pin hardening/runtime probe remains pending only if decision-relevant |
 | **OpenMausBot** `6005b1b...` | historical Atento evidence | historical evidence + current lending-memory hardening | historical evidence | historical evidence | historical evidence + stronger lending-memory gate | historical evidence + ChatGPT-plan additions | current request-auth/lending contracts audited statically | `DELTA_STATIC_AUDIT_COMPLETE`; targeted current-pin runtime tests remain pending |
 | **QwenPaw** `7774417...` | `ESTABLISHED_DOCS` | `ESTABLISHED_DOCS`; three-layer memory | `ESTABLISHED_DOCS`; cron/scheduled tasks | `ESTABLISHED_DOCS`; multiple IM channels + console/TUI/desktop | browser documented; computer-use source/approval/runtime files exist, while upstream feature table still marks computer-use in progress | `ESTABLISHED_DOCS`; local runtime/Ollama/LM Studio + cloud providers | `ESTABLISHED_SOURCE`; sandbox, tool/file guards, access policy and computer-use approval surfaces present | comparable product; `REQUIRES_RUNTIME_AUDIT`, especially computer-use and effective authority policy |
 | **AI Butler** `c35d3af...` | `ESTABLISHED_DOCS`; upstream calls v0.1 public beta | `ESTABLISHED_SOURCE`; extensive memory code/tests/migrations | `ESTABLISHED_DOCS`; persistent scheduler marked ready | webchat/terminal ready; many additional channels explicitly beta | file/shell/git and OS scripting documented ready; browser implementation/tests exist | Claude/Ollama documented ready; several other providers beta | `ESTABLISHED_SOURCE`; permissions/auth/security surfaces and tests exist | comparable product; `REQUIRES_RUNTIME_AUDIT`; preserve ready-vs-beta distinctions |
@@ -66,6 +66,10 @@ No row above is a rank or selection.
 ## 3. Historical-pin transfer audit
 
 ### OpenClaw
+
+Detailed current-pin delta evidence:
+
+`docs/evaluation/openclaw-current-delta-audit-2026-09-29.md`
 
 Atento qualified:
 
