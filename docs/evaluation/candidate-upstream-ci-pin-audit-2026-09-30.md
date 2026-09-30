@@ -189,3 +189,10 @@ These are run-backed positive tests for memory-store separation by owner and nam
 ### SelfAgent exact-pin memory and tool-source review
 
 At `c86b0b1fbc0e177e67b59b8d26cc2ce9c18406d1`, the tree-name scan found six test-like paths and no workflow files. `tests/test_memory.py` tests in-process message add/get/trim/clear, SQLite persistence of recent conversation messages, and a single user-profile store. `tests/test_tools.py` checks a single registry's registration, enable/disable behavior, execution, and plugin loading. The tests do not instantiate two agents with separate identities and attempt cross-read or cross-tool access. No exact-pin CI run was observed, so these remain unexecuted source assertions. This is basic persistence/registry coverage, not Atento role isolation.
+
+
+### Letta Code exact-pin shared-memory skill boundary review
+
+At `21daa38a8cdd74f2d03b634c8312253080bacfc1`, the repository contains a CI workflow and a large test tree, but no exact-pin push/PR run was observed. `src/agent/client-skills-shared-memory.test.ts` is source-level coverage only in this audit. It uses one fixed `AGENT_ID` and attached repository names to verify shared-memory repository skills are discovered, detached/missing/unsafe repositories are handled, project/agent skills take precedence, per-agent cache invalidation works, and an agent does not load another local agent's shared skills. The workflow's CI unit job runs `node scripts/run-unit-tests.cjs` shards; API integration jobs run only for pushes or eligible same-repository PRs.
+
+This is useful agent-scoped repository/skill visibility evidence and explicit cross-agent visibility protection for that client-skill path. The reviewed test does not exercise message memory, credentials, tool authority, brokered communication, or a malicious agent attempting to forge another `agentId`. Because no run at the frozen pin was observed, the assertions are not run-backed here.
