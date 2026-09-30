@@ -2,7 +2,7 @@
 
 ## Scope
 
-This is a bounded execution follow-up to [the first residual probe](../naia-engram-browser-authority-probe-2026-09-30.md). It exercises the exact Engram pin through its `engram-agent::Agent::run` path with a deterministic provider and the Atento-owned adapter wrapped as two MCP tool identities.
+This is a bounded execution follow-up to [the first residual probe](naia-engram-browser-authority-probe-2026-09-30.md). It exercises the exact Engram pin through its `engram-agent::Agent::run` path with a deterministic provider and the Atento-owned adapter wrapped as two MCP tool identities.
 
 It does not execute the Engram daemon's real scheduler dispatch and does not qualify, select, accept, or promote Engram.
 
@@ -22,7 +22,7 @@ The temporary candidate patch adds only a `#[cfg(test)]` test module to Engram's
 Command:
 
 ```sh
-evals/probes/engram_browser_authority/run_engram_probe.sh <output-dir>
+bash evals/probes/engram_browser_authority/run_engram_probe.sh <output-dir>
 ```
 
 The runner clones Engram, checks out and verifies the exact pin, applies the test-only patch, copies the pinned Atento adapter and MCP wrapper into the run directory, and runs one exact Rust test. Raw output: `evidence/engram-agent-runtime-probe-2026-09-30.log`.
