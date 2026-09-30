@@ -60,6 +60,12 @@ FEATURE_RICH != GOOD_CHASSIS
 
 QwenPaw is a comparable persistent-assistant product with strong memory/governance/computer-use primitives. The current pin still requires an Atento hardening probe because sandbox fallback and scheduled-task defaults can broaden authority relative to NAIA's fail-closed contract. This does not create shortlist status.
 
+## Current AI Butler contract evidence
+
+`docs/evaluation/aibutler-contract-audit-2026-09-29.md`
+
+AI Butler is a comparable persistent-assistant product with strong static evidence for memory isolation, fail-closed shell authority, credential gating, scheduler persistence and long-horizon mission state. Current qualification remains pending because channel/provider maturity is mixed and Windows computer-use still lacks real interactive validation. This does not create shortlist status.
+
 ## Historical candidates — evidence preserved, shortlist reset
 
 ### A — OpenMausBot
