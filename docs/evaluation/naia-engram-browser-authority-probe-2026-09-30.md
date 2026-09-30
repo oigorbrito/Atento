@@ -263,3 +263,25 @@ CURRENT_PIN_QUALIFIED = 0
 ~~~
 
 The failure classification is limited to the tested dual-identity AgentDef composition. The due fixture was persisted directly; the scheduler job-creation UI/API was not exercised. The resident tick, a real browser, and control-failure behavior through this exact CLI path remain unproven. No shortlist, base, topology, or promotion decision changed.
+
+
+## Follow-up — scheduled-only binding and policy-control failure (2026-09-30)
+
+The exact Engram pin was exercised through a reduced static scheduled-only AgentDef in PR #52. Both real `--run-due` and attended daemon paths exposed only the scheduled adapter identity: the scheduled click executed, scheduled type was denied, and the model-authored origin did not override trusted server origin. This is `PASS_WITH_SCOPE` for the restricted composition; interactive-only type is unavailable through that AgentDef. Raw task receipts and logs are under `docs/evaluation/evidence/naia-engram-scheduled-only-binding-2026-09-30/`.
+
+A second exact-pin run exercised the scheduled adapter with the policy hook deterministically unavailable. The real `--run-due` task receipt contains `AuthorityControlUnavailable`; the authority trace records `decision=control_error` with trusted `origin=scheduled`; the instrumented driver trace has zero events. This is `PASS_WITH_SCOPE` for the fail-closed integration subcheck. Full evidence and the reproduction harness are recorded in `naia-engram-policy-control-failure-result-2026-09-30.md` and its evidence directory.
+
+Current bounded state:
+
+```ini
+ENGRAM_PIN = 3a43667deec4a680b42f3e880d7d6bac3baf0746
+DUAL_IDENTITY_UNATTENDED_SEPARATION = FAIL_EMPIRICAL_FOR_TESTED_COMPOSITION
+STATIC_SCHEDULED_ONLY_BINDING = PASS_WITH_SCOPE
+POLICY_CONTROL_ERROR_FAIL_CLOSED = PASS_WITH_SCOPE
+ENGRAM_BROWSER_EFFECT_AUTHORITY = STILL_OPEN
+REAL_BROWSER = NOT_RUN
+RESIDENT_SCHEDULER_TICK = NOT_RUN
+CURRENT_PIN_QUALIFIED = 0
+```
+
+The scheduled-only result does not repair the broader dual-identity failure: it proves a narrow equal-authority composition by removing interactive-only type from the AgentDef. No selection, promotion, or NAIA/Anna topology state changed.

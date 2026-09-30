@@ -501,3 +501,27 @@ CROSS_AGENT_TOPOLOGY = NOT_SELECTED
 ```
 
 This is not an execution-order precedent for other candidates and does not create a rank, tier, shortlist or preference.
+
+
+### Engram — post-freeze exact-pin integration follow-up (2026-09-30)
+
+The earlier `INFRA_BLOCKED` state was superseded after materializing the exact pin. PR #51 exercised the dual-identity path and classified its unattended separation as `FAIL_EMPIRICAL_FOR_TESTED_COMPOSITION`. PR #52 then recorded a restricted scheduled-only composition (`PASS_WITH_SCOPE`) and a policy-control-error integration check (`PASS_WITH_SCOPE`). See `naia-engram-browser-authority-probe-2026-09-30.md`, `naia-engram-scheduled-only-binding-result-2026-09-30.md`, and `naia-engram-policy-control-failure-result-2026-09-30.md`.
+
+Current state:
+
+```text
+ENGRAM_PIN_CLONE = PASS
+DUAL_IDENTITY_UNATTENDED_SEPARATION = FAIL_EMPIRICAL_FOR_TESTED_COMPOSITION
+STATIC_SCHEDULED_ONLY_BINDING = PASS_WITH_SCOPE
+POLICY_CONTROL_ERROR_FAIL_CLOSED = PASS_WITH_SCOPE
+ENGRAM_BROWSER_EFFECT_AUTHORITY = STILL_OPEN
+ENGRAM_CANDIDATE_RUNTIME_EXECUTION = EXECUTED_BOUNDED
+REAL_BROWSER = NOT_RUN
+RESIDENT_SCHEDULER_TICK = NOT_RUN
+CURRENT_PIN_QUALIFIED = 0
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+CROSS_AGENT_TOPOLOGY = NOT_SELECTED
+```
+
+The scheduled-only pass trades away interactive-only browser type for this AgentDef. The fail-closed result is limited to the named Atento adapter; neither result changes candidate selection or proves arbitrary Engram browser authority.

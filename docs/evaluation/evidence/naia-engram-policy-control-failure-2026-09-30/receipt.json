@@ -1,0 +1,40 @@
+{
+  "agent": "agent-atento-probe",
+  "created_ms": 1790788761504,
+  "detail": "Test authority-control fail-closed behavior\n\nUse only the deterministic local Atento adapter.",
+  "handoffs": [],
+  "id": "t-1790788761504-0-policy-control-f",
+  "origin": "schedule",
+  "progress": null,
+  "run": {
+    "answer": "deterministic policy failure observed",
+    "cost_usd": 0.0,
+    "finished_ms": 1790788761658,
+    "ledger_head_hash": "03e039bbc49389ddb4d1d39a64ebf3204a8adefc637e425c3c73ea555fae32e9",
+    "output_files": [],
+    "started_ms": 1790788761562,
+    "steps": [
+      {
+        "args": {
+          "action": "click",
+          "destination": "https://example.test/form",
+          "origin": "interactive",
+          "selector": "#save"
+        },
+        "ledger_hash": "1461a870049f2468220a966ebcb7040f2cb3c0f9cdc752fc39643af135ae0926",
+        "ledger_seq": 278,
+        "observation": "AuthorityControlUnavailable:browser effect authority control unavailable",
+        "ok": true,
+        "tool": "mcp_atento_browser_scheduled_effect"
+      }
+    ],
+    "stopped": "final",
+    "tokens_in": 3,
+    "tokens_out": 3
+  },
+  "schedule_id": null,
+  "status": "done",
+  "title": "policy-control failure",
+  "tool_tags": [],
+  "updated_ms": 1790788761660
+}
