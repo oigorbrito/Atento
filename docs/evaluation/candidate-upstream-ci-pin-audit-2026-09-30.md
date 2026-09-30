@@ -64,17 +64,17 @@ A second pass inspected completed job summaries and logs for tests relevant to a
 | Candidate | Test execution / directly relevant assertions observed | What remains unproved for Atento |
 |---|---|---|
 | OpenClaw | The push run executed `security-fast`; core checks, test shards, and UI/E2E jobs were skipped. | No functional tests from this observed pin run to transfer. |
-| OpenMausBot | Pin-specific push result remains unverified after correcting the SHA; corrected PR query returned no run. | No test evidence attributed in this pass. |
-| QwenPaw | UI smoke: 4 passed, 234 deselected. Exact-pin source uses mocked auth/agents/catch-all API routes and only checks login-page rendering. Frontend/pre-commit passed; main Tests workflow still waits for maintainer approval. | Smoke validates frontend harness only; no backend or cross-role isolation assertion ran. |
-| AI Butler | Race-enabled Go tests passed, including `internal/permissions`, `internal/plugin/sandbox`, and `internal/shell/sandbox`; integration and security jobs passed. Package coverage reported 94.7% permissions, 90.9% plugin sandbox, and 35.3% shell sandbox. | Package coverage is not evidence that separate roles cannot cross-read memory, credentials, tools, or channels. No explicit three-role isolation assertion was identified in these logs. |
+| OpenMausBot | Corrected exact-pin push CI includes 42 control-plane/workerd tests and 66 offline behavior-eval tests; macOS approval/origin/pairing smoke and Ubuntu/Windows packaged-server smoke passed. Scheduled iOS thread UI passed 27 tests. | Strong approval, pairing, origin, and packaging evidence; no full NAIA/Anna memory/tool/channel separation assertion. |
+| QwenPaw | Frontend smoke: 4 passed, 234 deselected, using mocked routes. Separate exact-pin nightly failed 4 terminal/PTY tests (17,040 passed, 24 skipped); push Tests workflow awaits maintainer approval. | UI smoke is narrow; nightly failures concern terminal/PTY behavior, not isolation. No cross-role assertion. |
+| AI Butler | Race-enabled permission/plugin/shell sandbox tests and CI passed. A scheduled exact-pin govulncheck failed: 7 vulnerabilities with detected code paths, plus 6 additional dependency findings without a detected call path. | Sandbox test evidence remains narrow; security findings are a separate concern. No three-role isolation assertion. |
 | NanoClaw | Host/container suites passed. Logs include per-provider continuation state selecting the correct slot, memory scaffolding that avoids importing legacy workspace memory, and failure-closed behavior for malformed memory-hook input. | These are narrow provider/workspace-memory boundaries, not cross-role credential/tool/channel isolation. |
-| TrustClaw | No push or PR workflow run observed at the pin. | No run-backed test coverage to transfer. |
-| Open Assistant | The observed workflow only created a release. | No test execution evidence from that run. |
-| Rakazo | Unit tests (including integration and Postgres journeys) passed; 154 browser E2E cases passed and one failed: delayed focus card remained visible after sending should have cancelled it. | The observed suite does not close the selected profile's cross-role boundaries. |
+| TrustClaw | No product test run observed. The exact-head scheduled run was successful CodeQL only; source inventory found no test-like paths. | Static analysis only; no run-backed functional coverage to transfer. |
+| Open Assistant | Release, scheduled code-quality, and manual Docker build/publish succeeded; no functional test execution was identified. | Build/release/static-analysis evidence only. |
+| Rakazo | Push CI had one Playwright failure (focus card remained after send/cancel); separate same-pin nightly passed 155 browser E2Es plus 2 marketing tests. | Mixed results across distinct suites; neither closes the selected profile's cross-role boundaries. |
 | Gobii | Sandbox-server and most backend shards passed. Two shards failed on an SMTP BCC assertion and an absent migration module. | No evidence that per-agent memory/secret primitives compose into independent NAIA/Anna authority domains. |
 | Octop | CodeQL analysis passed. | Static security analysis only; no functional boundary assertion in this run. |
 | PersonalJarvis | Linux test shard reported 5,003 passed, 51 failed (50 baseline-known, one new); static gates for silent exceptions, async routes, and public docs failed. Several realtime-provider tests returned 404. | Functional suites remain mixed; target-profile authority and cross-role isolation are open. |
-| Letta Code | No push or PR workflow run observed at the pin. | No run-backed test coverage to transfer. |
+| Letta Code | Exact-head push CI passed unit/API shards, headless scenarios, package smoke, and platform jobs. A Claude Agent Watch failed separately because its drift scanner rejected a documentation URL outside its allowlist. | Run-backed broad product test evidence; watch failure is scanner configuration, not a product-test failure. Cross-role isolation remains unproved. |
 | Kortix/Suna | Core/browser/package suites passed (logs report 709/709 and 502/502 in separate test invocations). Logs cover session-cache ownership across sandboxes, collision handling for duplicate session IDs, and project-secret strategy/audit behavior. | Session ownership and secret lifecycle tests do not establish separate role memory/tool/channel authority. |
 | Rome | Integration suite: 31 passed, 3 skipped. Tests explicitly cover approval exception → journal persistence → replay → action execution, and strict-mode behavior on replay divergence. | Useful approval/recovery evidence; it does not establish role separation or background authority parity. |
 | Agent Zero | Image build/publish workflow succeeded; no functional test job ran in the inspected run. | No run-backed test coverage to transfer from that run. |
@@ -148,14 +148,14 @@ This narrows the reusable evidence: sandbox mechanisms exist and their configura
 
 
 
-## Exact-pin source inventory for pins without observed CI runs
+## Exact-pin source inventory from the initial no-run pass
 
 At the frozen commits below, a repository-tree filename scan counted test-like paths and workflow files. This establishes source presence only; it does not establish that tests are runnable, relevant, or executed. “0 found” means no matching test-like paths/workflows in that tree-name scan, not that the repository has no conceivable tests.
 
 | Candidate | Test-like paths found | Workflow files found | What the source inventory establishes |
 |---|---:|---:|---|
-| TrustClaw | 0 | 0 | No test-like paths or workflow files surfaced in the tree-name scan. |
-| Letta Code | 939 | 17 | Extensive test-named source and CI workflows exist, but no exact-pin push/PR run was observed; execution status is unknown. |
+| TrustClaw | 0 | 0 | No test-like/committed workflow paths surfaced in the initial tree-name scan; follow-up found scheduled CodeQL, not functional tests. |
+| Letta Code | 939 | 17 | Initial pass missed the exact-head push CI; successful execution is documented above. |
 | SelfAgent | 6 | 0 | Small test suite exists (`agent`, `config`, `memory`, `model_router`, `tools`); no workflow file or observed run at pin. |
 | GoClaw | 0 | 0 | No test-like paths or workflow files surfaced; Makefile and Go module metadata exist. |
 | AutoMate | 8 | 0 | Tests exist for agent commands, config, cron, gateway, memory, sessions, system, and tools; no workflow file or observed run at pin. |
