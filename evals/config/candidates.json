@@ -33,7 +33,7 @@
       "ci_profile": "python_static_chassis",
       "external_terms_note": "MIT; preserve upstream notice. Canonical provenance remains in docs/third-party.md.",
       "agent_scope": "ANNA",
-      "candidate_class": "UNCLASSIFIED_PENDING_AUDIT",
+      "candidate_class": "MECHANISM_DONOR",
       "selection_status": "NOT_SELECTED"
     },
     {
@@ -48,7 +48,7 @@
       "ci_profile": null,
       "external_terms_note": "Experimental Atento wrapper; enable only when the adapter is present on the evaluated ref.",
       "agent_scope": "ANNA",
-      "candidate_class": "UNCLASSIFIED_PENDING_AUDIT",
+      "candidate_class": "MECHANISM_DONOR",
       "selection_status": "NOT_SELECTED"
     },
     {
@@ -63,7 +63,7 @@
       "ci_profile": null,
       "external_terms_note": "Fork variant must record the exact patched ref separately before execution.",
       "agent_scope": "ANNA",
-      "candidate_class": "UNCLASSIFIED_PENDING_AUDIT",
+      "candidate_class": "MECHANISM_DONOR",
       "selection_status": "NOT_SELECTED"
     },
     {
@@ -78,7 +78,7 @@
       "ci_profile": null,
       "external_terms_note": "MIT + contextual mental-health notice; see docs/third-party.md.",
       "agent_scope": "ANNA",
-      "candidate_class": "UNCLASSIFIED_PENDING_AUDIT",
+      "candidate_class": "MECHANISM_DONOR",
       "selection_status": "NOT_SELECTED"
     },
     {
@@ -93,7 +93,7 @@
       "ci_profile": null,
       "external_terms_note": "Repository license was not detected in the reviewed revision; research clone only until terms are cleared.",
       "agent_scope": "ANNA",
-      "candidate_class": "UNCLASSIFIED_PENDING_AUDIT",
+      "candidate_class": "THERAPEUTIC_BASE_CANDIDATE",
       "selection_status": "NOT_SELECTED"
     },
     {

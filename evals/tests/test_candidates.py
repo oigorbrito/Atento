@@ -31,7 +31,15 @@ class CandidateRegistryTest(unittest.TestCase):
         self.assertEqual(by_id["psychat_upstream"].agent_scope, AgentScope.ANNA)
         self.assertEqual(
             by_id["psychat_upstream"].candidate_class,
-            CandidateClass.UNCLASSIFIED_PENDING_AUDIT,
+            CandidateClass.MECHANISM_DONOR,
+        )
+        self.assertEqual(
+            by_id["psychagent_upstream"].candidate_class,
+            CandidateClass.THERAPEUTIC_BASE_CANDIDATE,
+        )
+        self.assertEqual(
+            by_id["therapymind_upstream"].candidate_class,
+            CandidateClass.MECHANISM_DONOR,
         )
         self.assertEqual(
             by_id["psychat_upstream"].selection_status,

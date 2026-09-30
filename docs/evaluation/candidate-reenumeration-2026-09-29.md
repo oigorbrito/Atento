@@ -96,14 +96,16 @@ A complete Anna base should provide an end-to-end emotional/therapeutic interact
 
 ### Initial set
 
+> The Anna completeness audit supersedes the provisional class labels in the first enumeration where source/runtime inspection established non-equivalence. See `docs/evaluation/anna-candidate-completeness-audit-2026-09-29.md`.
+
 | Source | Current pin | Class | Why it enters enumeration | Current evidence state |
 |---|---|---|---|---|
 | PsychAgent — `ECNU-ICALK/PsychAgent` | `469f45ef468b968b3fccd1936d7e6a0a574e4c5c` | `THERAPEUTIC_BASE_CANDIDATE` | runnable multi-session counseling generation + web workspace, longitudinal memory/planning, skill retrieval and multiple therapy schools | existing Atento evidence reusable; full post-session evolution assets absent; repository license still unresolved |
-| TherapyMind — `zx070326-hash/TherapyMind` | `bfed3f5be61bab262bb00a0f3cc9718c4a965243` | `THERAPEUTIC_BASE_CANDIDATE` | modular counseling agent with session lifecycle, persistence/recovery, safety layers and internal review chain | existing evidence reusable; runtime completeness and external terms require audit |
-| TheraMind — `Emo-gml/TheraMind` | `416d0a00ecc8c76229512197765dc95be6513de5` | `THERAPEUTIC_BASE_CANDIDATE` | executable therapist/patient longitudinal loop with adaptive therapy selection and multi-session planning | existing evidence reusable; research/educational terms block ordinary product adoption |
+| TherapyMind — `zx070326-hash/TherapyMind` | `bfed3f5be61bab262bb00a0f3cc9718c4a965243` | `MECHANISM_DONOR` | modular counseling agent with session lifecycle, persistence/recovery, safety layers and internal review chain | existing evidence reusable; runtime completeness and external terms require audit |
+| TheraMind — `Emo-gml/TheraMind` | `416d0a00ecc8c76229512197765dc95be6513de5` | `MECHANISM_DONOR` | executable therapist/patient longitudinal loop with adaptive therapy selection and multi-session planning | existing evidence reusable; research/educational terms block ordinary product adoption |
 | OpenCouch — `whanyu1212/OpenCouch` | `ac5af6ee4c9a06b4050c5a912439f343ade2c35c` | `THERAPEUTIC_BASE_CANDIDATE` **pending domain-fit audit** | persistent emotional-support product with Postgres state/memory, safety routing, crisis audit, guided multi-turn exercises and observable runtime | **new candidate; pre-beta; must test whether wellness/support scope adequately maps to Anna target** |
-| Inner Dialogue — `ataglianetti/inner-dialogue` | `ffc9e8f78d0f15a8d720436f92fb6e0887fe7461` | `UNCLASSIFIED_PENDING_AUDIT` | persistent local therapy toolkit with session files, multiple modalities, update/doctor tooling and safety framework | **new source; must determine whether it is a complete chassis or a Claude/tooling-dependent mechanism package** |
-| PsyChat — `wink-wink-wink555/PsyChat` | `5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4` | `UNCLASSIFIED_PENDING_AUDIT` | existing therapeutic project with Agentic RAG and prototype runtime | historical Atento evidence is heavily RAG/adaptation-centric; complete Anna-base status remains unproven |
+| Inner Dialogue — `ataglianetti/inner-dialogue` | `ffc9e8f78d0f15a8d720436f92fb6e0887fe7461` | `MECHANISM_DONOR` | persistent local therapy toolkit with session files, multiple modalities, update/doctor tooling and safety framework | **new source; must determine whether it is a complete chassis or a Claude/tooling-dependent mechanism package** |
+| PsyChat — `wink-wink-wink555/PsyChat` | `5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4` | `MECHANISM_DONOR` | existing therapeutic project with Agentic RAG and prototype runtime | historical Atento evidence is heavily RAG/adaptation-centric; complete Anna-base status remains unproven |
 | `matteodante/therapist` | `dd9848fe9662ee6ea7f44f1795fe1d6b8114a47d` | `MECHANISM_DONOR / DOMAIN_ADJACENT` | strong local encrypted longitudinal memory, atomic state commit and explicit intervention records | project explicitly scopes itself to self-reflection / not therapy; do not compare as full Anna base without a role-contract change |
 
 ### Sources that remain non-base by category

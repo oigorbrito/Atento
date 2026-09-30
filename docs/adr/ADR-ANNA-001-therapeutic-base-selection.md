@@ -30,6 +30,13 @@ Post-reset re-enumeration is recorded in:
 This record expands/classifies the candidate universe but does not alter this ADR's `NOT_SELECTED` state or create a shortlist.
 
 
+
+Current equivalence/completeness audit:
+
+`docs/evaluation/anna-candidate-completeness-audit-2026-09-29.md`
+
+This audit partitions complete chassis from mechanism donors; it does not create a shortlist.
+
 ## Decision question
 
 > Entre agentes terapêuticos/emocionais realmente comparáveis, qual sistema funcionando chega à Anna alvo com a menor mudança total, preservando a maior quantidade de capacidade útil já provada?
@@ -97,7 +104,7 @@ Gaps already recorded include:
 - incomplete public release relative to the paper-scale post-session evolution/training pipeline;
 - terms not fully cleared in the prior audit.
 
-**Decision status now:** `UNCLASSIFIED_PENDING_AUDIT`.
+**Current equivalence class:** `THERAPEUTIC_BASE_CANDIDATE`.
 
 The historical characterization as a strong therapeutic engine remains evidence, not selection authority.
 
@@ -116,7 +123,7 @@ Evidence already recorded includes:
 - profile/session persistence;
 - prior full-donor/fork/lab-spike consideration.
 
-**Decision status now:** `UNCLASSIFIED_PENDING_AUDIT`.
+**Current equivalence class:** `MECHANISM_DONOR`.
 
 The previous `FULL_DONOR_CANDIDATE` label is not a current shortlist decision.
 
@@ -139,9 +146,9 @@ Evidence already recorded includes:
 
 The current Atento evidence is heavily concentrated in RAG/chassis adaptation.
 
-**Decision status now:** `UNCLASSIFIED_PENDING_AUDIT`.
+**Current equivalence class:** `MECHANISM_DONOR`.
 
-Before PsyChat can be considered a complete Anna chassis, the audit must establish that it is a sufficiently complete therapeutic agent rather than mainly a component donor.
+The completeness audit found the current pin to be primarily an Agentic-RAG/retrieval/style mechanism rather than a complete longitudinal Anna chassis.
 
 ### TheraMind — Emo-gml
 
@@ -163,9 +170,29 @@ Gaps already recorded include:
 - state-access inconsistencies;
 - no independent crisis/safety subsystem established in the inspected source.
 
-**Decision status now:** `UNCLASSIFIED_PENDING_AUDIT`.
+**Current equivalence class:** `MECHANISM_DONOR`.
 
-The historical label “mechanism/architecture donor” is preserved as a prior interpretation, not a current exclusion from re-audit.
+The current pin is an executable research therapist/patient simulation and remains valuable for dual-loop/adaptive-therapy mechanisms, but does not establish a product/runtime chassis comparable to Anna.
+
+### OpenCouch
+
+Pinned evidence:
+
+`whanyu1212/OpenCouch@ac5af6ee4c9a06b4050c5a912439f343ade2c35c`
+
+**Current equivalence class:** `THERAPEUTIC_BASE_CANDIDATE`.
+
+The source audit establishes a durable emotional-support runtime with Postgres session/memory ownership, safety routing, crisis audit, guided exercises, web/TUI surfaces and observability. Upstream explicitly scopes itself as a supportive companion rather than a therapist, so Anna role/domain transfer remains a material audit before any shortlist decision.
+
+### Inner Dialogue
+
+Pinned evidence:
+
+`ataglianetti/inner-dialogue@ffc9e8f78d0f15a8d720436f92fb6e0887fe7461`
+
+**Current equivalence class:** `MECHANISM_DONOR`.
+
+It provides persistent local profile/session conventions, therapy modalities, safety hooks/evals and update tooling, but relies on an external AI host rather than owning the inference/session runtime required by the current base-equivalence contract.
 
 ## Sources that are not automatically chassis candidates
 
