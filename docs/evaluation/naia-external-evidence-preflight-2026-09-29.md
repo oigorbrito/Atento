@@ -367,36 +367,50 @@ Record:
 
 All three meet the technical comparable-product threshold; none is current-pin qualified.
 
-The remaining universe-completion block is a bounded admission screen for the secondary discovery pool:
+The bounded secondary-pool screen is complete.
+
+Record:
+
+`docs/evaluation/naia-secondary-pool-admission-screen-2026-09-30.md`
+
+Result:
 
 ~~~text
-supastishn/AutoMate
-use-agent-os/agent-os
-TBNRFPS01/OpenAgent
-truenorth-lj/open-intern
-hubos-ai/HubOS
-radotsvetkov/engram
-holt-os/holt
-chinkan/RustFox
+ADMITTED_COMPARABLE:
+  AutoMate
+  AgentOS
+  OpenAgentd
+  HubOS
+  Engram
+  Holt
+  RustFox
+
+DEFERRED_AT_CURRENT_PIN:
+  Open Intern
 ~~~
 
-Local NCP remains blocked until that screen determines whether any additional comparable candidate requires the same protocol.
+The seven admitted candidates still require exact upstream implementation/test/eval transfer mapping. That is the remaining external-evidence work before any local NCP can be justified for them.
+
+Open Intern is not sent into the same transfer-audit block at its current pin because required NAIA product surfaces are explicitly not shipped there yet.
 
 ## 6. Candidate-universe gate
 
-The candidate universe is still open.
+The registered discovery pools have received bounded admission screening.
 
-The discovery expansion record is:
+The frozen V1 snapshot is:
 
-`docs/evaluation/naia-persistent-agent-discovery-2026-09-29.md`
-
-Until the secondary discovery pool receives a bounded admission screen:
-
-```text
-CANDIDATE_UNIVERSE_COMPLETE = false
+~~~text
+REGISTERED_DISCOVERY_POOL_SCREENING = COMPLETE_V1
+FROZEN_CANDIDATE_UNIVERSE_V1 = COMPLETE
+CANDIDATE_UNIVERSE_COMPLETE = true_for_frozen_v1_snapshot
+SECONDARY_TRANSFER_AUDITS = REQUIRED
 LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
 NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
-```
+~~~
 
-The next work is therefore **secondary-pool admission screening**, not local benchmarking.
+This freeze prevents discovery churn; it is not a permanent claim that no new candidate can ever appear.
+
+Local NCP remains blocked for the newly admitted seven until the external-evidence gate is satisfied candidate by candidate.
+
+The next work is therefore **grouped upstream evidence / transfer audits for the newly admitted secondary candidates**, not local benchmarking.
