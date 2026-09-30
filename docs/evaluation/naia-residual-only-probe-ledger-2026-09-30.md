@@ -465,3 +465,30 @@ NEXT_BLOCK =
 ~~~
 
 This document intentionally does not decide which candidate should be composed first.
+
+---
+
+## 7. Post-ledger composition freezes
+
+### Engram — frozen, runtime probe not executed
+
+The first residual composition frozen after this ledger is recorded in:
+
+`docs/evaluation/naia-engram-hardened-composition-freeze-2026-09-30.md`
+
+The reason for freezing this composition is bounded to a decision-relevant residual already present in the ledger: the target profile requires browser/web action, while the exact Engram pin marks browser click/type as side-effecting but outside the destination-aware egress classification.
+
+State:
+
+```text
+ENGRAM_HARDENED_COMPOSITION = FROZEN_V1
+ENGRAM_BROWSER_EFFECT_AUTHORITY = UNPROVEN
+RESIDUAL_BROWSER_AUTHORITY_PROBE = READY_NOT_EXECUTED
+RP-LIFE-01_FOR_FIRST_BROWSER_AUTHORITY_BLOCK = NOT_EXECUTED
+CURRENT_PIN_QUALIFIED = NO
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+CROSS_AGENT_TOPOLOGY = NOT_SELECTED
+```
+
+This is not an execution-order precedent for other candidates and does not create a rank, tier, shortlist or preference.
