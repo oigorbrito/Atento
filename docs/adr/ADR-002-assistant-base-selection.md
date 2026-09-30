@@ -54,6 +54,10 @@ The registered discovery pools have now been bounded and frozen as the V1 decisi
 - `docs/evaluation/naia-transfer-audit-hubos-rustfox-2026-09-30.md`
 - `docs/evaluation/naia-transfer-audit-engram-holt-2026-09-30.md`
 
+First bounded residual execution evidence:
+
+`docs/evaluation/naia-engram-browser-authority-probe-2026-09-30.md`
+
 The full residual-only execution map is:
 
 `docs/evaluation/naia-residual-only-probe-ledger-2026-09-30.md`
@@ -66,7 +70,7 @@ For technical discovery, license remains separate from technical evidence and no
 FROZEN_CANDIDATE_UNIVERSE_V1 = COMPLETE
 EXPANDED_EXTERNAL_EVIDENCE_GATE = COMPLETE_V1
 RESIDUAL_ONLY_PROBE_LEDGER = COMPLETE_V1
-LOCAL_RESIDUAL_PROBE_EXECUTION = NOT_STARTED
+LOCAL_RESIDUAL_PROBE_EXECUTION = STARTED_BOUNDED
 NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
 ```

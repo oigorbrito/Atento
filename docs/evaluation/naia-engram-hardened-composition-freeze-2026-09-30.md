@@ -299,15 +299,18 @@ If scheduled/background parity requires the real agent/scheduler path, only that
 
 Thus the composition-freeze gate is closed.
 
-Runtime execution remains separate:
+Execution result is recorded in:
+
+`docs/evaluation/naia-engram-browser-authority-probe-2026-09-30.md`
+
+The deterministic Atento adapter boundary executed successfully, but the exact Engram pin could not be cloned in the local runtime because DNS resolution for `github.com` was unavailable. Candidate-runtime integration therefore remains unexecuted rather than failed.
 
 ```text
 ENGRAM_HARDENED_COMPOSITION = FROZEN_V1
-ENGRAM_BROWSER_EFFECT_AUTHORITY = UNPROVEN
-RESIDUAL_BROWSER_AUTHORITY_PROBE = READY_NOT_EXECUTED
-RAW_RUNTIME_EVIDENCE = NOT_YET_COLLECTED
-ADAPTATION_TOUCHPOINTS = NOT_YET_OBSERVED
-RUNTIME_COST = NOT_YET_OBSERVED
+ENGRAM_BROWSER_ADAPTER_BOUNDARY = PASS_EMPIRICAL
+ENGRAM_BROWSER_EFFECT_AUTHORITY = STILL_OPEN
+ENGRAM_CANDIDATE_RUNTIME_EXECUTION = INFRA_BLOCKED
+RESIDUAL_BROWSER_AUTHORITY_PROBE = PARTIAL_EXECUTION
 
 CURRENT_PIN_QUALIFIED = NO
 NAIA_SHORTLIST = NOT_SELECTED
@@ -315,4 +318,4 @@ NAIA_BASE = NOT_SELECTED
 CROSS_AGENT_TOPOLOGY = NOT_SELECTED
 ```
 
-This freeze does not establish that Engram is preferred over any other candidate. It only makes one already-identified residual empirically executable without broad retesting.
+This freeze does not establish that Engram is preferred over any other candidate. The passing adapter sub-boundary must not be generalized to the unexecuted Engram integration boundary.
