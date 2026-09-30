@@ -131,3 +131,22 @@ A metodologia multi-candidato está registrada em
 O `core_v0.jsonl` contém casos explicitamente marcados como `ANNA`, `NAIA` ou `SHARED`.
 
 Para decisão de seleção, não usar uma média comportamental que misture agentes. O relatório expõe `by_agent_scope` e marca quando uma execução contém múltiplos scopes. Casos `SHARED` podem ser executados junto ao agente relevante quando representam invariantes comuns de privacy/safety.
+
+
+## NAIA Gate-2 composition evidence
+
+The frozen common composition protocol uses:
+
+`evals/config/naia_gate2_composition_v1.json`
+
+Validate a produced Gate-2 result with:
+
+```bash
+python -m evals.atentoeval.composition validate-result \
+  --matrix evals/config/naia_gate2_composition_v1.json \
+  --result /path/to/gate2-result.json
+```
+
+The validator is fail-closed for evidence provenance. A PASS cannot be created from a wrong SHA, static-only evidence, omitted candidate add-ons, or a synthetic `ISO-6` broker fixture.
+
+The reference broker contract is implemented in `evals/atentoeval/handoff_broker.py`. It defines the bounded cross-role message envelope but does not by itself establish production/runtime integration.
