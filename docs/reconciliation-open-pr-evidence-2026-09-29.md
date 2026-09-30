@@ -50,7 +50,7 @@ Closing PR #11 does not delete its evidence. Its immutable head remains a histor
 
 - OpenClaw qualification evidence: already preserved in the reset line.
 - Former finalist comparison: archived under `docs/evaluation/history/` and non-authoritative.
-- OpenClaw probe artifacts and historical runner: preserved under `evals/chassis/openclaw/` and `evals/chassis/openclaw_naya_probe.py`.
+- OpenClaw probe artifacts and historical runner: preserved at PR #17 head `d62626d03685b55ee9110b98c707e797465d4f60`; deliberately excluded from active `main` during pre-merge cleanup.
 - Exact legacy Anna/Therapist-specific artifact not promoted; it remains traceable at PR #17 head `d62626d03685b55ee9110b98c707e797465d4f60`.
 - Old shortlist ordering and execution priority: superseded.
 
@@ -71,10 +71,7 @@ These PRs are historical Anna/PsyChat evidence. They do not define the current A
 
 Primary spike:
 - #1 head `8f14cb1599e106596b0f311596a21d52beea26d0`
-- reusable case sets preserved on the reset branch:
-  - `evals/cases/psychat_multilingual_gold_v0.jsonl`
-  - `evals/cases/rag_v0.jsonl`
-- larger experimental adapter/probe tree remains traceable at the immutable #1 head.
+- PsyChat case sets and the larger experimental adapter/probe tree remain traceable at immutable PR #1 head `8f14cb1599e106596b0f311596a21d52beea26d0`; candidate-specific executable evidence was deliberately excluded from active `main` during pre-merge cleanup.
 
 Evidence sequence:
 - #2 `a6c5c38c5a020ecaaba281c4b1f11c0e6fbe0428`
@@ -104,3 +101,23 @@ PSYCHAT_SHORTLIST = NOT_SELECTED
 OLD_BLOCK_CENTRIC_DECISIONS = SUPERSEDED
 ANNA_ROLE = EMOTIONAL_THERAPEUTIC_DOMAIN
 ```
+
+
+## Pre-merge executable-artifact cleanup
+
+Candidate-specific historical executables are not part of the active reset architecture.
+
+Removed from the PR before merge:
+- historical PsyChat workflow from active `.github/workflows/`;
+- PsyChat historical case sets that were only needed for the closed spike line;
+- OpenClaw hardening fixtures, controlled-effect plugin and historical qualification runner.
+
+Preservation rule:
+
+```text
+EVIDENCE_PRESERVED_AT_IMMUTABLE_PR_HEAD
+!=
+EXECUTABLE_ARTIFACT_MERGED_TO_MAIN
+```
+
+The generic candidate registry, generic candidate-evidence workflow, AtentoEval agent-scope machinery and decision-reset guards remain active.
