@@ -21,6 +21,15 @@ Ela não decide:
 - **Shortlist:** `NOT_SELECTED`
 - **Date:** 2026-09-29
 
+## Current candidate-universe evidence
+
+Post-reset re-enumeration is recorded in:
+
+`docs/evaluation/candidate-reenumeration-2026-09-29.md`
+
+This record expands/classifies the candidate universe but does not alter this ADR's `NOT_SELECTED` state or create a shortlist.
+
+
 ## Decision question
 
 > Entre agentes terapêuticos/emocionais realmente comparáveis, qual sistema funcionando chega à Anna alvo com a menor mudança total, preservando a maior quantidade de capacidade útil já provada?
