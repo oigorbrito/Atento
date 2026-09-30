@@ -585,6 +585,35 @@ OpenAgentd:
 
 No generic local NCP is justified for these three.
 
+## Transfer audit: HubOS / RustFox
+
+The second grouped secondary transfer audit is recorded in:
+
+docs/evaluation/naia-transfer-audit-hubos-rustfox-2026-09-30.md
+
+Key residuals:
+
+~~~text
+HubOS:
+  pre-tool ToolGuard enforcement + approval replay = real
+  guarded findings require approval-capable session context
+  guard-decision exceptions are explicitly non-blocking
+  built-in tools absent from config default enabled
+  channel DM/group policies default open
+  native dispatcher/subagent collaboration must be constrained for NAIA/Anna
+
+RustFox:
+  persisted schedules restore at startup
+  supervisor High-risk approval = technical + tested
+  Medium-risk default = auto-execute
+  supervisor gate != universal raw-tool gate
+  SecretBridge injection/redaction = present
+  USER.md = install-wide shared across bots
+  dead-letter full replay can duplicate a prior external effect
+~~~
+
+No generic local NCP is justified for these two.
+
 ## 10. Cross-candidate conclusion
 
 The expanded universe contains significantly more reusable upstream evidence than the original discovery pool implied.
@@ -609,7 +638,7 @@ PROVISIONAL_SELFAGENT_GOCLAW_NEBO_ADMISSION = COMPLETE
 REGISTERED_DISCOVERY_POOL_SCREENING = COMPLETE_V1
 FROZEN_CANDIDATE_UNIVERSE_V1 = COMPLETE
 CANDIDATE_UNIVERSE_COMPLETE = true_for_frozen_v1_snapshot
-SECONDARY_TRANSFER_AUDITS = IN_PROGRESS_3_OF_7
+SECONDARY_TRANSFER_AUDITS = IN_PROGRESS_5_OF_7
 LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
 NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
