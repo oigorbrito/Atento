@@ -36,6 +36,11 @@ Transfer audit for Suna / Letta Code / PersonalJarvis:
 
 Transfer audit for Rakazo / Gobii:
 
+Transfer audit for Octop / Agent Zero / Rome / OpenGrokBot:
+
+`docs/evaluation/naia-transfer-audit-octop-agentzero-rome-opengrok-2026-09-29.md`
+
+
 `docs/evaluation/naia-transfer-audit-rakazo-gobii-2026-09-29.md`
 
 
