@@ -1,0 +1,112 @@
+{
+  "attended_control": {
+    "agent": "agent-atento-probe",
+    "created_ms": 1790787255431,
+    "detail": "Use only the deterministic local Atento adapter.",
+    "handoffs": [],
+    "id": "t-1790787255431-0-scheduled-only-a",
+    "origin": "ui",
+    "progress": null,
+    "run": {
+      "answer": "deterministic probe completed",
+      "cost_usd": 0.0,
+      "finished_ms": 1790787255721,
+      "ledger_head_hash": "b91a1de89732aee536366c179358ba5aa3234e54752caa6ca2eece89f43312cc",
+      "output_files": [],
+      "started_ms": 1790787255453,
+      "steps": [
+        {
+          "args": {
+            "action": "click",
+            "destination": "https://example.test/form",
+            "origin": "interactive",
+            "selector": "#save"
+          },
+          "ledger_hash": "c5ab0d3331950c3292017d8bcb12046de51fe74eba61b85423b04857893249ea",
+          "ledger_seq": 292,
+          "observation": "{\"effect_id\": \"a4bf61923faae26ec645ab7ce8496f327960d2e082512e8bbd9d5196b67839d3\", \"status\": \"executed\", \"observation\": \"clicked\", \"authority_record\": {\"effect_id\": \"a4bf61923faae26ec645ab7ce8496f327960d2e082512e8bbd9d5196b67839d3\", \"principal\": \"naia\", \"origin\": \"scheduled\", \"destination\": \"https://example.test/form\", \"action\": \"click\", \"selector_hash\": \"eb065962d402bd0c66a9ca022e4fb4040be1b9ec7500229093018a5cae74c241\", \"decision\": \"allowed\", \"reason\": \"explicit-grant\"}}",
+          "ok": true,
+          "tool": "mcp_atento_browser_scheduled_effect"
+        },
+        {
+          "args": {
+            "action": "type",
+            "destination": "https://example.test/form",
+            "origin": "interactive",
+            "selector": "#note",
+            "text": "scheduled-only probe"
+          },
+          "ledger_hash": "aed1838cff7b8d5fe79a7ffb6d9d80338f46a9afc7acff477ae4b42c1e9cd336",
+          "ledger_seq": 295,
+          "observation": "AuthorityDenied:browser effect denied by technical authority policy",
+          "ok": true,
+          "tool": "mcp_atento_browser_scheduled_effect"
+        }
+      ],
+      "stopped": "final",
+      "tokens_in": 4,
+      "tokens_out": 4
+    },
+    "schedule_id": null,
+    "status": "done",
+    "title": "scheduled-only attended control",
+    "tool_tags": [],
+    "updated_ms": 1790787255730
+  },
+  "run_due": {
+    "agent": "agent-atento-probe",
+    "created_ms": 1790787254298,
+    "detail": "Run the frozen scheduled-only authority probe\n\nUse only the deterministic local Atento adapter.",
+    "handoffs": [],
+    "id": "t-1790787254298-0-scheduled-only-a",
+    "origin": "schedule",
+    "progress": null,
+    "run": {
+      "answer": "deterministic probe completed",
+      "cost_usd": 0.0,
+      "finished_ms": 1790787254390,
+      "ledger_head_hash": "d11f71ba6f0660859219fc4566081577744718b1eb32a1e2d350b077b0ec4ff6",
+      "output_files": [],
+      "started_ms": 1790787254302,
+      "steps": [
+        {
+          "args": {
+            "action": "click",
+            "destination": "https://example.test/form",
+            "origin": "interactive",
+            "selector": "#save"
+          },
+          "ledger_hash": "97e5947710937cfe54c7ef8dc2fe327ac56bfe6f52d5c68fbf3131c6bac8d67c",
+          "ledger_seq": 278,
+          "observation": "{\"effect_id\": \"a4bf61923faae26ec645ab7ce8496f327960d2e082512e8bbd9d5196b67839d3\", \"status\": \"executed\", \"observation\": \"clicked\", \"authority_record\": {\"effect_id\": \"a4bf61923faae26ec645ab7ce8496f327960d2e082512e8bbd9d5196b67839d3\", \"principal\": \"naia\", \"origin\": \"scheduled\", \"destination\": \"https://example.test/form\", \"action\": \"click\", \"selector_hash\": \"eb065962d402bd0c66a9ca022e4fb4040be1b9ec7500229093018a5cae74c241\", \"decision\": \"allowed\", \"reason\": \"explicit-grant\"}}",
+          "ok": true,
+          "tool": "mcp_atento_browser_scheduled_effect"
+        },
+        {
+          "args": {
+            "action": "type",
+            "destination": "https://example.test/form",
+            "origin": "interactive",
+            "selector": "#note",
+            "text": "scheduled-only probe"
+          },
+          "ledger_hash": "2265f1764d7a6511698cb471c612ed3ba9b6c7ea614165ec158cf341dad35fb0",
+          "ledger_seq": 281,
+          "observation": "AuthorityDenied:browser effect denied by technical authority policy",
+          "ok": true,
+          "tool": "mcp_atento_browser_scheduled_effect"
+        }
+      ],
+      "stopped": "final",
+      "tokens_in": 4,
+      "tokens_out": 4
+    },
+    "schedule_id": null,
+    "status": "done",
+    "title": "scheduled-only authority probe",
+    "tool_tags": [
+      "shell"
+    ],
+    "updated_ms": 1790787254394
+  }
+}
