@@ -552,6 +552,39 @@ All eight screened pins had no observable GitHub workflow runs or combined statu
 
 The seven admitted candidates require upstream implementation/test/eval transfer mapping before any local NCP. Open Intern is deferred at its current pin because the repository itself marks proactive heartbeat, human approval workflow and browser automation as not yet shipped.
 
+## Transfer audit: AutoMate / AgentOS / OpenAgentd
+
+The first grouped secondary transfer audit is recorded in:
+
+`docs/evaluation/naia-transfer-audit-automate-agentos-openagentd-2026-09-30.md`
+
+Key residuals:
+
+~~~text
+AutoMate:
+  per-agent memory/session directories = present
+  shared-memory surface = present
+  allow/deny execution gate = present
+  requireApproval config = present but central enforcement not established
+  elevated shell context bypasses dangerous-command patterns
+  scheduler reloads persisted jobs and routes fires through the same agent turn path
+
+AgentOS:
+  SQLite scheduler + rich policy primitives = present
+  interactive permission default = bypass
+  cron agent-turn default = bypass
+  browser runs outside process sandbox under a separate browser policy layer
+
+OpenAgentd:
+  allow/deny/ask engine = present
+  default PermissionService = AutoAllow
+  sandbox = trusted-host denylist model
+  lead/member team collaboration != strict NAIA/Anna security boundary
+  interactive browser action is not established as a built-in at this pin
+~~~
+
+No generic local NCP is justified for these three.
+
 ## 10. Cross-candidate conclusion
 
 The expanded universe contains significantly more reusable upstream evidence than the original discovery pool implied.
@@ -576,7 +609,7 @@ PROVISIONAL_SELFAGENT_GOCLAW_NEBO_ADMISSION = COMPLETE
 REGISTERED_DISCOVERY_POOL_SCREENING = COMPLETE_V1
 FROZEN_CANDIDATE_UNIVERSE_V1 = COMPLETE
 CANDIDATE_UNIVERSE_COMPLETE = true_for_frozen_v1_snapshot
-SECONDARY_TRANSFER_AUDITS = REQUIRED
+SECONDARY_TRANSFER_AUDITS = IN_PROGRESS_3_OF_7
 LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
 NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED

@@ -389,7 +389,30 @@ DEFERRED_AT_CURRENT_PIN:
   Open Intern
 ~~~
 
-The seven admitted candidates still require exact upstream implementation/test/eval transfer mapping. That is the remaining external-evidence work before any local NCP can be justified for them.
+The seven admitted candidates require exact upstream implementation/test/eval transfer mapping before any local NCP can be justified.
+
+The first grouped transfer audit is complete for:
+
+~~~text
+AutoMate
+AgentOS
+OpenAgentd
+~~~
+
+Record:
+
+`docs/evaluation/naia-transfer-audit-automate-agentos-openagentd-2026-09-30.md`
+
+Those three now have bounded Atento residuals; no generic local NCP is justified for them.
+
+Remaining secondary transfer group:
+
+~~~text
+HubOS
+RustFox
+Engram
+Holt
+~~~
 
 Open Intern is not sent into the same transfer-audit block at its current pin because required NAIA product surfaces are explicitly not shipped there yet.
 
@@ -403,7 +426,7 @@ The frozen V1 snapshot is:
 REGISTERED_DISCOVERY_POOL_SCREENING = COMPLETE_V1
 FROZEN_CANDIDATE_UNIVERSE_V1 = COMPLETE
 CANDIDATE_UNIVERSE_COMPLETE = true_for_frozen_v1_snapshot
-SECONDARY_TRANSFER_AUDITS = REQUIRED
+SECONDARY_TRANSFER_AUDITS = IN_PROGRESS_3_OF_7
 LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
 NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
@@ -413,4 +436,4 @@ This freeze prevents discovery churn; it is not a permanent claim that no new ca
 
 Local NCP remains blocked for the newly admitted seven until the external-evidence gate is satisfied candidate by candidate.
 
-The next work is therefore **grouped upstream evidence / transfer audits for the newly admitted secondary candidates**, not local benchmarking.
+The next work is therefore **grouped upstream evidence / transfer audits for HubOS / RustFox and Engram / Holt**, not local benchmarking.
