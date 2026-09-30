@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Freeze the smallest comparable empirical profile for the later local-delta phase. The candidate universe has since expanded; this profile is retained but local execution is gated by discovery and upstream-evidence reconciliation.
+Freeze the smallest comparable empirical profile for the local-delta phase. The frozen V1 candidate universe and broad upstream-evidence reconciliation are now complete; local execution remains gated to explicit residual Atento deltas.
 
 This is not a benchmark leaderboard and does not create a shortlist or winner.
 
@@ -17,15 +17,17 @@ Existing sufficient evidence must be reused. Only missing material deltas are ex
 Current phase gate:
 
 ~~~text
-CANDIDATE_UNIVERSE_COMPLETE = false
-EXTERNAL_EVIDENCE_PREFLIGHT_REQUIRED = YES
-LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
+FROZEN_CANDIDATE_UNIVERSE_V1 = COMPLETE
+EXPANDED_EXTERNAL_EVIDENCE_GATE = COMPLETE_V1
+RESIDUAL_ONLY_PROBE_LEDGER = COMPLETE_V1
+LOCAL_RESIDUAL_PROBE_EXECUTION = NOT_STARTED
 ~~~
 
 Before any NCP execution, consult:
 
 - `docs/evaluation/naia-persistent-agent-discovery-2026-09-29.md`
 - `docs/evaluation/naia-external-evidence-preflight-2026-09-29.md`
+- `docs/evaluation/naia-residual-only-probe-ledger-2026-09-30.md`
 
 A candidate must have its exact pin, upstream implementation contract, relevant upstream tests/evals, available CI/run evidence and one-sentence Atento delta recorded first.
 
@@ -254,16 +256,17 @@ No candidate ranking is implied.
 Run work in the order that minimizes repetition:
 
 ~~~text
-0. expand the candidate universe and keep CANDIDATE_UNIVERSE_COMPLETE=false until same-protocol admission is sufficient
-1. freeze exact candidate pin/profile
-2. locate upstream implementation contracts, tests/evals and available run/CI artifacts
-3. classify evidence as UPSTREAM_PROVEN / TRANSFERABLE_WITH_CONSTRAINTS / ATENTO_DELTA / UNPROVEN
-4. state the remaining Atento delta in one sentence
-5. execute NCP-02 only if authority remains materially unproven
-6. execute NCP-01 only where restart/state evidence remains materially unproven
-7. execute NCP-03 only where isolation composition remains materially unproven
-8. collect NCP-04 from real adaptation work rather than a hypothetical patch
-9. compare raw evidence only after decision-relevant gaps are closed
+0. keep the frozen V1 universe closed unless a material new candidate/delta appears
+1. freeze exact candidate pin + hardened profile/topology/dependency
+2. reuse mapped upstream implementation contracts, tests/evals and available run/CI artifacts
+3. name exactly one remaining ATENTO_DELTA / blocking UNPROVEN property
+4. consult the residual-only ledger and choose only the matching microprobe family
+5. execute authority work only if effective authority remains materially unproven
+6. execute lifecycle work only for the named restart/schedule seam
+7. execute isolation work only where the composed topology cannot be closed statically
+8. execute browser/dependency/effect probes only for candidates with those special seams
+9. collect adaptation/cost evidence during the same real composition
+10. compare raw evidence only after decision-relevant gaps are closed
 ~~~
 
 ## 5. Decision rule
@@ -278,4 +281,4 @@ VERIFIED != ACCEPTED
 ACCEPTED != PROMOTED
 ~~~
 
-The next work item is not a local NCP. It is candidate-universe expansion plus upstream/external evidence reconciliation. NCP execution begins only after a material local delta remains.
+Candidate-universe expansion and broad external-evidence reconciliation are complete for the frozen V1 snapshot. The next work is residual-only: freeze an exact hardened composition only when a named Atento delta remains decision-relevant, then execute only the matching microprobe from `naia-residual-only-probe-ledger-2026-09-30.md`.
