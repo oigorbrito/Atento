@@ -76,6 +76,14 @@ NAIA_BASE = NOT_SELECTED
 
 This audit establishes comparability/missing evidence only. It does not create a shortlist or alter `NOT_SELECTED`.
 
+## Decision-method policy
+
+Candidate comparison and promotion are governed by:
+
+`docs/adr/ADR-003-evidence-first-engineering-decision-policy.md`
+
+In particular, user/evaluator preference and architectural aesthetics cannot override stronger property-specific evidence. Preferences may operate only among evidence-compatible options.
+
 ## Decision question
 
 > Qual sistema funcionando chega à Assistente alvo com menor mudança estrutural, preservando a maior quantidade de capacidade já provada?
