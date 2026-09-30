@@ -1,0 +1,30 @@
+{
+  "candidate": "AI Butler",
+  "harness_version": "NAIA-GATE2-COMPOSITION-V1",
+  "upstream_repo": "LumabyteCo/aibutler",
+  "upstream_sha": "c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c",
+  "state": "BLOCKED_ENVIRONMENT",
+  "blocker_id": "NAIA-G2-EXEC-INFRA-2026-09-30-01",
+  "composition_profile": {
+    "roles": [
+      "NAIA",
+      "Anna"
+    ],
+    "stores": "separate"
+  },
+  "composition_profile_hash": "4c4e0204b487b41c6241dc31427b5c8750977d644952c5ac860572d3cd6f17fc",
+  "policy": {
+    "cross_role": "broker_only"
+  },
+  "policy_hash": "1eb5438d3a17619ccf432925b1b51369c13d97a6d8e2c15d7e74bf7721118b5a",
+  "assertions": [],
+  "add_ons": [],
+  "environment_evidence": {
+    "local_executor": "github.com DNS resolution blocked; no exact checkout",
+    "github_actions_run_id": 36789543149,
+    "github_actions_job_id": 110138936806,
+    "github_actions_runner_id": 0,
+    "github_actions_steps": [],
+    "interpretation": "job failed before runner assignment; candidate code was not executed"
+  }
+}
