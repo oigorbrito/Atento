@@ -55,7 +55,7 @@ Browser/computer use is measured separately because the NAIA target includes it,
 | **OpenMausBot** `6005b1b...` | historical Atento evidence | historical evidence + current lending-memory hardening | historical evidence | historical evidence | historical evidence + stronger lending-memory gate | historical evidence + ChatGPT-plan additions | current request-auth/lending contracts audited statically | `DELTA_STATIC_AUDIT_COMPLETE`; targeted current-pin runtime tests remain pending |
 | **QwenPaw** `7774417...` | complete assistant product surface | strong per-Agent memory/workspace model | cron/scheduled tasks present | multiple IM channels + console/TUI/desktop | browser + beta Windows/macOS Computer Use present | local + cloud providers | strong policy primitives, but sandbox default/fallback and cron safety defaults require hardening | `STATIC_CONTRACT_AUDIT_COMPLETE`; hardened runtime profile required before qualification |
 | **AI Butler** `c35d3af...` | complete self-hosted assistant surface | strong per-profile memory banks | persistent scheduler + mission engine | webchat/terminal ready; 10 additional channels beta | browser + OS scripting present; Windows Tier 3/4 real desktop validation pending | Claude/Ollama ready upstream; other providers mixed | fail-closed shell allowlist, capability gates, default-deny credential broker | `STATIC_CONTRACT_AUDIT_COMPLETE`; targeted runtime validation still required |
-| **NanoClaw** `4c1eabd...` | `ESTABLISHED_DOCS` | `ESTABLISHED_DOCS`; per-agent/group memory | `ESTABLISHED_DOCS`; scheduled tasks | multi-channel capability installed through skills | agent tool surface/container runtime established in source; general computer-use is not claimed here | Claude native path; Codex/OpenCode/Ollama provider modules installed through skills | container isolation + credential gateway documented; credential/provider isolation tests exist in skills | comparable product; `REQUIRES_RUNTIME_AUDIT` and adaptation-surface audit because capabilities are materialized into the fork via skills |
+| **NanoClaw** `4c1eabd...` | complete containerized assistant surface | per-agent/group workspace + memory | scheduled tasks | channels installed through skills | container/browser/tool surface; no generic desktop CUA claim | provider paths installed/composed through skills | strong container + credential-gateway model | `CHANGE_SURFACE_AUDIT_COMPLETE`; total migration cost is profile-dependent; current Ollama skill requires rederivation at pin |
 | **TrustClaw** `c07410b...` | `ESTABLISHED_DOCS`; web + Telegram | `ESTABLISHED_SOURCE`; memory save/search/flush surfaces | `ESTABLISHED_SOURCE`; cron routes/tools/settings | web + Telegram | 1000+ Composio-connected actions documented; no local browser/computer control established | model configuration exists, but provider replaceability is not established by this audit | cloud sandbox and OAuth-connected-account boundary documented | comparable personal-assistant product; `REQUIRES_RUNTIME_AUDIT`; external platform/deployment/cost boundaries are material |
 | **Open Assistant** `32c55d2...` | `ESTABLISHED_DOCS`; single-container assistant | `ESTABLISHED_SOURCE`; memory repo/service/model | `ESTABLISHED_SOURCE`; cron repo/service/API/tests | web + WhatsApp + Slack documented | Playwright browser and email/calendar integrations have implementation/tests | OpenRouter/Anthropic/Groq/Ollama/vLLM documented | tool registry/executor and auth surfaces present; sandbox equivalence not established | comparable technical product; `LEGAL_ADOPTION_REVIEW` (BSL 1.1) + `REQUIRES_RUNTIME_AUDIT` |
 
@@ -209,6 +209,10 @@ RUNTIME_TRANSFER_TO_NAIA = NOT_ESTABLISHED
 Claims about upstream test counts remain upstream claims unless independently executed.
 
 ### NanoClaw
+
+Detailed adaptation/change-surface audit:
+
+`docs/evaluation/nanoclaw-change-surface-audit-2026-09-29.md`
 
 At pin `4c1eabd3ddd74cc3d71b1871da857391a9411c8d`:
 
