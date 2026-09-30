@@ -272,9 +272,12 @@ Classification:
 ```text
 UPSTREAM_TEST_SURFACE = MATERIAL
 INDEPENDENT_EXTERNAL_EXECUTION = OLDER_PIN_SIGNAL
-CURRENT_PIN_RUNTIME_TRANSFER = NOT_ESTABLISHED
+EXACT_PIN_TRANSFER_AUDIT = COMPLETE_V1
+DEFAULT_HITL = DISABLED
+DEFAULT_TOOL_GUARD = WARN
+PENDING_HITL_RESTART_CONTINUITY = NOT_ESTABLISHED
 CURRENT_PIN_HOSTED_EXECUTION = NOT_OBSERVED
-LOCAL_BENCHMARK_JUSTIFIED = NO, before exact-pin upstream inventory
+LOCAL_BENCHMARK_JUSTIFIED = NO, except later decision-critical composition deltas
 ```
 
 ## 7. Agent Zero
@@ -304,10 +307,12 @@ Classification:
 
 ```text
 UPSTREAM_PRODUCT_SURFACE = STRONG
-CONTRACT_TEST_MAP = INCOMPLETE
-FRAMEWORK_PRODUCT_BOUNDARY = REQUIRES_AUDIT
+EXACT_PIN_TRANSFER_AUDIT = COMPLETE_V1
+PROJECT_MEMORY_ISOLATION_DEFAULT = TRUE
+TOOL_POLICY_DEFAULT = INHERIT_ALLOW
+FRAMEWORK_PRODUCT_BOUNDARY = MAPPED_WITH_COMPOSITION_RESIDUALS
 CURRENT_PIN_HOSTED_EXECUTION = NOT_OBSERVED
-LOCAL_BENCHMARK_JUSTIFIED = NO
+LOCAL_BENCHMARK_JUSTIFIED = NO, except later decision-critical composition deltas
 ```
 
 ## 8. Rome
@@ -336,9 +341,12 @@ Classification:
 
 ```text
 UPSTREAM_PRODUCT_CONTRACT = MATERIAL
-UPSTREAM_RUNTIME_EVIDENCE = INCOMPLETE
+EXACT_PIN_TRANSFER_AUDIT = COMPLETE_V1
+PROFILE_DATA_ISOLATION = EXPLICIT_CONTRACT
+ACTION_APPROVAL = STRONG_WHEN_CONFIGURED
+CAPABILITY_CREATION_AUTOAPPROVAL_DEFAULT = TRUE
 CURRENT_PIN_HOSTED_EXECUTION = NOT_OBSERVED
-LOCAL_BENCHMARK_JUSTIFIED = NO
+LOCAL_BENCHMARK_JUSTIFIED = NO, except later decision-critical composition deltas
 ```
 
 ## 9. OpenGrokBot
@@ -373,9 +381,12 @@ Classification:
 ```text
 UPSTREAM_CONTRACT_TESTS = PRESENT
 DIRECT_GROK_BOT_CLASS_MATCH = YES
+PER_BOT_CONTAINER_BOUNDARY = STRONG_STATIC_CONTRACT
+OUTWARD_BROWSER_APPROVAL = CONVENTION_NOT_ENFORCEMENT
+ROUTINE_TOOLSET = FULL
 MATURITY_EVIDENCE = LIMITED
 CURRENT_PIN_HOSTED_EXECUTION = NOT_OBSERVED
-LOCAL_BENCHMARK_JUSTIFIED = NO
+LOCAL_BENCHMARK_JUSTIFIED = NO, except later decision-critical composition deltas
 ```
 
 ## Transfer audit: Suna / Letta Code / PersonalJarvis
@@ -434,6 +445,45 @@ Gobii:
 ```
 
 No generic local NCP is justified yet.
+
+## Transfer audit: Octop / Agent Zero / Rome / OpenGrokBot
+
+A deeper transferability pass is recorded in:
+
+docs/evaluation/naia-transfer-audit-octop-agentzero-rome-opengrokbot-2026-09-30.md
+
+Key residuals found without local execution:
+
+~~~text
+Octop:
+  default HITL = disabled
+  default tool guard = warn
+  pending HITL registry = process-local / TTL
+  per-account default-open connectors can flow into empty Cron selections
+  hardened NAIA security/profile composition is required
+
+Agent Zero:
+  project memory isolation default = true
+  project secrets/agents/skills/MCP are scoped
+  tool policy default = inherit + allow for local and MCP
+  instance-wide plugins and host Computer Use are separate authority domains
+  scheduled effective profile/policy composition remains an Atento delta
+
+Rome:
+  profile = explicit data-isolation boundary
+  approval state machine/API = strong when requiresApproval is configured
+  action visibility defaults public; requiresApproval is optional metadata
+  agent-initiated skill/tool/workflow creation autoapproval defaults true
+  Codex provider uses danger-full-access + approvalPolicy=never at the provider seam
+
+OpenGrokBot:
+  per-bot container/workspace and gateway approval endpoint boundaries are strong
+  bot cannot authenticate its own hold approval
+  outward browser hold discipline is explicitly not an enforcement point
+  routines run with the full toolset
+~~~
+
+These are configuration/topology residuals, not reasons to run generic benchmarks now.
 
 ## 10. Cross-candidate conclusion
 
