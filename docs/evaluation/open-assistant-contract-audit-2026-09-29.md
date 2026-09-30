@@ -164,22 +164,38 @@ No broad channel benchmark is warranted at this stage.
 
 ## 8. Exact-pin hosted execution visibility
 
-For 32c55d2643f9fe38777f9212588b2eee45392514, the available GitHub evidence returned:
+This section is superseded by:
 
-~~~text
-workflow_runs = []
-combined_statuses = []
-~~~
+`docs/evaluation/open-assistant-exhaustive-verification-2026-09-30.md`
+
+The PR head used to create the frozen commit and the frozen commit itself point to the identical Git tree:
+
+```
+01581596cd6032e09b8f226786e24333f0afbbd3
+```
+
+That tree passed the repository PR CI:
+
+```text
+596 passed
+26 skipped
+8 warnings
+coverage = 32% (6057/19132 lines)
+```
+
+The exact frozen SHA also has successful Docker build/push, release automation and CodeQL runs.
 
 Therefore:
 
 ~~~text
-CURRENT_PIN_HOSTED_EXECUTION = NOT_OBSERVED
-CODE_PASS = NOT_CLAIMED
-CODE_FAIL = NOT_CLAIMED
+CURRENT_PIN_CONTENT_FUNCTIONAL_CI = PASS
+EXACT_PIN_DOCKER_BUILD = PASS
+EXACT_PIN_CODEQL = PASS
+REAL_BROWSER_DRIVER_TESTS = SKIPPED
+ATENTO_COMPOSITION = NOT_RUN
 ~~~
 
-Absence of a hosted run is not treated as a code failure.
+These upstream results do not establish the strict NAIA/Anna authority boundary.
 
 ## 9. License boundary
 
@@ -222,7 +238,7 @@ MATERIAL_GAPS:
   - browser network/URL authority needs hardening
   - desktop computer-use not established
   - durable arbitrary external-effect semantics not established
-  - exact-pin runtime execution not observed
+  - strict Atento composition not executed; upstream functional CI is now observed and green, while real browser-driver tests were skipped
 
 OPEN_ASSISTANT_CURRENT_PIN_QUALIFIED = NO
 OPEN_ASSISTANT_SHORTLIST = NOT_SELECTED
