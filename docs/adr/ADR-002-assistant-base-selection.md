@@ -72,6 +72,12 @@ AI Butler is a comparable persistent-assistant product with strong static eviden
 
 NanoClaw is a comparable persistent-assistant product with explicit container/credential boundaries and an unusually explicit skill/update model. The current audit shows that total fork cost is capability-profile dependent: channel/gateway surfaces can be modest, while provider integrations such as OpenCode are multi-point. The pinned Ollama skill also requires rederivation against the current provider-contribution architecture. This does not create shortlist status.
 
+## Current TrustClaw contract evidence
+
+`docs/evaluation/trustclaw-contract-audit-2026-09-29.md`
+
+TrustClaw is a comparable persistent-assistant product with strong local instance-memory and cron contracts. Its broad external-action and remote-sandbox authority is materially delegated to Composio, while the standard deployment/model path is Vercel-oriented. Qualification therefore requires a composed dependency/cost/authority probe. This does not create shortlist status.
+
 ## Historical candidates — evidence preserved, shortlist reset
 
 ### A — OpenMausBot
