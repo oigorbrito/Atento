@@ -22,6 +22,11 @@ This record applies that rule to the expanded persistent-agent universe.
 
 It does not rank candidates.
 
+
+Expanded same-protocol upstream matrix:
+
+`docs/evaluation/naia-expanded-upstream-evidence-matrix-2026-09-29.md`
+
 ## 1. Evidence classes
 
 ### PRODUCT_REFERENCE
