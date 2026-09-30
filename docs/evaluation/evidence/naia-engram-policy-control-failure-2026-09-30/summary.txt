@@ -1,0 +1,19 @@
+PROBE=Engram RP-AUTH-01 policy-control failure integration
+PIN_EXPECTED=3a43667deec4a680b42f3e880d7d6bac3baf0746
+PIN_ACTUAL=3a43667deec4a680b42f3e880d7d6bac3baf0746
+START_UTC=2026-09-30T17:19:20Z
+ENTRYPOINT=real engramd --run-due with one due job
+TREATMENT=scheduled adapter policy hook raises before authorization
+EFFECTIVE_TOOLS=scheduled MCP identity only; native browser tools disabled
+MODEL_ORIGIN_ARGUMENT=interactive; trusted authority origin=scheduled
+POLICY_RESULT=AuthorityControlUnavailable returned into Engram task receipt
+AUTHORITY_AUDIT=control_error on scheduled origin
+DRIVER_EFFECTS=0
+PROVIDER=deterministic loopback; external inference=NO
+REAL_BROWSER=NO
+TEST_CREDENTIAL_LEAK=NOT_OBSERVED
+PROVIDER_CALLS=3
+WALL_SECONDS=2.072
+RESULT=PASS_WITH_SCOPE
+RESIDENT_TICK=NOT_RUN
+CANDIDATE_QUALIFIED=NO

@@ -1,0 +1,195 @@
+[
+  {
+    "max_tokens": 8192,
+    "messages": [
+      {
+        "content": "Today's date is Thursday, 1 October 2026. Use the current year for any time-sensitive search or content.\n\nauthority fail-closed probe\n\nSkills you can reuse (run one with skill_run, find more with skill_search, or offer a better version with skill_improve \u2014 prefer this over redoing work; when you solve something reusable, keep it with skill_author):\n- shout: Uppercase the input text. (3 gold examples)\n- ab_significance: Two-proportion z-test for A/B tests (math.erf-based normal CDF): z-score, p-value, significance, and relative uplift. Input JSON {control_conversions, control_total, variant_conversions, variant_total, confidence?}.\n- accessibility_audit_checklist: Scores a page against a canonical 12-item WCAG-inspired accessibility checklist, returning present/missing and prioritized fixes with real-world impact. Input JSON {present_elements}.\n- ad_copy_check: Checks ad headline/description length against Google Search, Meta, or LinkedIn ad-platform character limits. Input JSON {platform, headline?, description?}.\n- adr_template: Fills a Michael Nygard-style Markdown Architecture Decision Record, with bracketed prompts for any omitted section. Input JSON {title, status?, context?, decision?, consequences?}.\n- air_quality: Air quality (US AQI + pollutants) for any place via the free, keyless Open-Meteo air-quality API. Input JSON {location} or {latitude,longitude}.\n- amdahl_speedup: Parallel speedup math: Amdahl and Gustafson speedups, efficiency, and the max theoretical speedup for a parallel fraction and processor count(s). Input JSON {parallel_fraction, num_processors}.\n- android_compose_scaffold: Android/Kotlin: scaffolds a Jetpack Compose Material3 screen with @Preview; optionally a ViewModel exposing StateFlow collected via collectAsStateWithLifecycle. Input JSON {name, screen?, with_viewmodel?}.\n\nYou are Engram, an autonomous agent that completes the user's task by calling tools. Work step by step: call tools to gather information and take actions, observe the results, and continue. For a multi-step task, call update_plan early to outline your plan, and update it as you make progress. You may call several independent tools in one turn - they run in parallel. When the task is done, reply in plain text with NO tool call. Tools available: mcp_atento_browser_scheduled_effect.",
+        "role": "system"
+      },
+      {
+        "content": "policy-control failure\n\nTest authority-control fail-closed behavior\n\nUse only the deterministic local Atento adapter.",
+        "role": "user"
+      }
+    ],
+    "model": "probe",
+    "temperature": 0.699999988079071,
+    "tools": [
+      {
+        "function": {
+          "description": "Authority-bound browser action",
+          "name": "mcp_atento_browser_scheduled_effect",
+          "parameters": {
+            "properties": {
+              "action": {
+                "type": "string"
+              },
+              "destination": {
+                "type": "string"
+              },
+              "origin": {
+                "type": "string"
+              },
+              "selector": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "destination",
+              "action",
+              "selector"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  {
+    "max_tokens": 8192,
+    "messages": [
+      {
+        "content": "Today's date is Thursday, 1 October 2026. Use the current year for any time-sensitive search or content.\n\nauthority fail-closed probe\n\nSkills you can reuse (run one with skill_run, find more with skill_search, or offer a better version with skill_improve \u2014 prefer this over redoing work; when you solve something reusable, keep it with skill_author):\n- shout: Uppercase the input text. (3 gold examples)\n- ab_significance: Two-proportion z-test for A/B tests (math.erf-based normal CDF): z-score, p-value, significance, and relative uplift. Input JSON {control_conversions, control_total, variant_conversions, variant_total, confidence?}.\n- accessibility_audit_checklist: Scores a page against a canonical 12-item WCAG-inspired accessibility checklist, returning present/missing and prioritized fixes with real-world impact. Input JSON {present_elements}.\n- ad_copy_check: Checks ad headline/description length against Google Search, Meta, or LinkedIn ad-platform character limits. Input JSON {platform, headline?, description?}.\n- adr_template: Fills a Michael Nygard-style Markdown Architecture Decision Record, with bracketed prompts for any omitted section. Input JSON {title, status?, context?, decision?, consequences?}.\n- air_quality: Air quality (US AQI + pollutants) for any place via the free, keyless Open-Meteo air-quality API. Input JSON {location} or {latitude,longitude}.\n- amdahl_speedup: Parallel speedup math: Amdahl and Gustafson speedups, efficiency, and the max theoretical speedup for a parallel fraction and processor count(s). Input JSON {parallel_fraction, num_processors}.\n- android_compose_scaffold: Android/Kotlin: scaffolds a Jetpack Compose Material3 screen with @Preview; optionally a ViewModel exposing StateFlow collected via collectAsStateWithLifecycle. Input JSON {name, screen?, with_viewmodel?}.\n\nYou are Engram, an autonomous agent that completes the user's task by calling tools. Work step by step: call tools to gather information and take actions, observe the results, and continue. For a multi-step task, call update_plan early to outline your plan, and update it as you make progress. You may call several independent tools in one turn - they run in parallel. When the task is done, reply in plain text with NO tool call. Tools available: mcp_atento_browser_scheduled_effect.",
+        "role": "system"
+      },
+      {
+        "content": "policy-control failure\n\nTest authority-control fail-closed behavior\n\nUse only the deterministic local Atento adapter.",
+        "role": "user"
+      },
+      {
+        "content": "",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"action\":\"click\",\"destination\":\"https://example.test/form\",\"origin\":\"interactive\",\"selector\":\"#save\"}",
+              "name": "mcp_atento_browser_scheduled_effect"
+            },
+            "id": "policy-failure-call",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "AuthorityControlUnavailable:browser effect authority control unavailable",
+        "role": "tool",
+        "tool_call_id": "policy-failure-call"
+      }
+    ],
+    "model": "probe",
+    "temperature": 0.699999988079071,
+    "tools": [
+      {
+        "function": {
+          "description": "Authority-bound browser action",
+          "name": "mcp_atento_browser_scheduled_effect",
+          "parameters": {
+            "properties": {
+              "action": {
+                "type": "string"
+              },
+              "destination": {
+                "type": "string"
+              },
+              "origin": {
+                "type": "string"
+              },
+              "selector": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "destination",
+              "action",
+              "selector"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  {
+    "max_tokens": 8192,
+    "messages": [
+      {
+        "content": "Today's date is Thursday, 1 October 2026. Use the current year for any time-sensitive search or content.\n\nauthority fail-closed probe\n\nSkills you can reuse (run one with skill_run, find more with skill_search, or offer a better version with skill_improve \u2014 prefer this over redoing work; when you solve something reusable, keep it with skill_author):\n- shout: Uppercase the input text. (3 gold examples)\n- ab_significance: Two-proportion z-test for A/B tests (math.erf-based normal CDF): z-score, p-value, significance, and relative uplift. Input JSON {control_conversions, control_total, variant_conversions, variant_total, confidence?}.\n- accessibility_audit_checklist: Scores a page against a canonical 12-item WCAG-inspired accessibility checklist, returning present/missing and prioritized fixes with real-world impact. Input JSON {present_elements}.\n- ad_copy_check: Checks ad headline/description length against Google Search, Meta, or LinkedIn ad-platform character limits. Input JSON {platform, headline?, description?}.\n- adr_template: Fills a Michael Nygard-style Markdown Architecture Decision Record, with bracketed prompts for any omitted section. Input JSON {title, status?, context?, decision?, consequences?}.\n- air_quality: Air quality (US AQI + pollutants) for any place via the free, keyless Open-Meteo air-quality API. Input JSON {location} or {latitude,longitude}.\n- amdahl_speedup: Parallel speedup math: Amdahl and Gustafson speedups, efficiency, and the max theoretical speedup for a parallel fraction and processor count(s). Input JSON {parallel_fraction, num_processors}.\n- android_compose_scaffold: Android/Kotlin: scaffolds a Jetpack Compose Material3 screen with @Preview; optionally a ViewModel exposing StateFlow collected via collectAsStateWithLifecycle. Input JSON {name, screen?, with_viewmodel?}.\n\nYou are Engram, an autonomous agent that completes the user's task by calling tools. Work step by step: call tools to gather information and take actions, observe the results, and continue. For a multi-step task, call update_plan early to outline your plan, and update it as you make progress. You may call several independent tools in one turn - they run in parallel. When the task is done, reply in plain text with NO tool call. Tools available: mcp_atento_browser_scheduled_effect.",
+        "role": "system"
+      },
+      {
+        "content": "policy-control failure\n\nTest authority-control fail-closed behavior\n\nUse only the deterministic local Atento adapter.",
+        "role": "user"
+      },
+      {
+        "content": "",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"action\":\"click\",\"destination\":\"https://example.test/form\",\"origin\":\"interactive\",\"selector\":\"#save\"}",
+              "name": "mcp_atento_browser_scheduled_effect"
+            },
+            "id": "policy-failure-call",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "AuthorityControlUnavailable:browser effect authority control unavailable",
+        "role": "tool",
+        "tool_call_id": "policy-failure-call"
+      },
+      {
+        "content": "deterministic policy failure observed",
+        "role": "assistant"
+      },
+      {
+        "content": "Before finishing, SILENTLY and critically verify your answer fully satisfies the task. If anything is missing, wrong, or unverified, call the tools needed to fix it. If it is complete, reply with ONLY the final answer for the user \u2014 clean and well-formatted (use tables and links where helpful). Do NOT include verification notes, checklists, status markers (e.g. \"\u2705 included\"), or any meta-commentary about the task; output just the deliverable itself.",
+        "role": "user"
+      }
+    ],
+    "model": "probe",
+    "temperature": 0.699999988079071,
+    "tools": [
+      {
+        "function": {
+          "description": "Authority-bound browser action",
+          "name": "mcp_atento_browser_scheduled_effect",
+          "parameters": {
+            "properties": {
+              "action": {
+                "type": "string"
+              },
+              "destination": {
+                "type": "string"
+              },
+              "origin": {
+                "type": "string"
+              },
+              "selector": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "destination",
+              "action",
+              "selector"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  }
+]

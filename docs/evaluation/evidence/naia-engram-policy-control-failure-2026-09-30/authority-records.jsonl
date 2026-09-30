@@ -1,0 +1,1 @@
+{"effect_id": "a4bf61923faae26ec645ab7ce8496f327960d2e082512e8bbd9d5196b67839d3", "principal": "naia", "origin": "scheduled", "destination": "https://example.test/form", "action": "click", "selector_hash": "eb065962d402bd0c66a9ca022e4fb4040be1b9ec7500229093018a5cae74c241", "decision": "control_error", "reason": "policy-control-error:RuntimeError"}

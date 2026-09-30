@@ -319,3 +319,22 @@ CROSS_AGENT_TOPOLOGY = NOT_SELECTED
 ```
 
 This freeze does not establish that Engram is preferred over any other candidate. The passing adapter sub-boundary must not be generalized to the unexecuted Engram integration boundary.
+
+
+## 10. Exact-pin runtime follow-up — current bounded state (2026-09-30)
+
+PR #52 records two exact-pin Engram integration observations beyond the initial adapter-only boundary:
+
+1. With a scheduled-only AgentDef allowlist, real `--run-due` and attended daemon execution reached only the scheduled adapter identity. Click executed, type was denied, and trusted origin remained scheduled (`PASS_WITH_SCOPE`). This composition removes interactive-only browser type.
+2. With the scheduled adapter policy hook unavailable, real `--run-due` returned `AuthorityControlUnavailable` into the task receipt; audit recorded `control_error` on scheduled origin; the instrumented driver trace recorded zero effects (`PASS_WITH_SCOPE`).
+
+These are exact composition subchecks, not qualification. The earlier dual-identity composition remains `FAIL_EMPIRICAL_FOR_TESTED_COMPOSITION`. Real browser behavior and resident scheduler tick remain unrun, so:
+
+```ini
+ENGRAM_BROWSER_EFFECT_AUTHORITY = STILL_OPEN
+ENGRAM_CANDIDATE_RUNTIME_EXECUTION = EXECUTED_BOUNDED
+CURRENT_PIN_QUALIFIED = 0
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+CROSS_AGENT_TOPOLOGY = NOT_SELECTED
+```
