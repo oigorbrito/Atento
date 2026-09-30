@@ -102,7 +102,7 @@ RESULT = 1 passed; 0 failed
 RUNTIME = 0.15s
 ```
 
-The deterministic provider made no external model call. The adapter used a fake reversible driver; no real browser was launched. This is a runtime failure of separation for the tested dual-identity AgentDef composition: run_task_core(... attended=false) did not prevent the interactive adapter identity from being called. It is not a failure classification for all Engram configurations.
+The deterministic provider made no external model call. The adapter used a fake reversible driver; no real browser was launched. The test first requested a type effect through the scheduled identity and observed AuthorityDenied, then requested the same effect through the interactive identity and observed successful typing under the interactive-only grant. This is a runtime failure of separation for the tested dual-identity AgentDef composition: run_task_core(... attended=false) did not prevent the interactive adapter identity from being called. It is not a failure classification for all Engram configurations.
 
 Reproduction assets:
 - Test-only daemon patch: evals/probes/engram_browser_authority/engramd-run-task-core-probe.patch
