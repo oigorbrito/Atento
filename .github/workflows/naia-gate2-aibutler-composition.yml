@@ -1,0 +1,48 @@
+name: NAIA Gate2 AI Butler Composition
+
+on:
+  push:
+    paths:
+      - ".github/workflows/naia-gate2-aibutler-composition.yml"
+      - "tools/naia_gate2/aibutler/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  composition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout Atento harness
+        uses: actions/checkout@v4
+
+      - name: Checkout exact AI Butler pin
+        uses: actions/checkout@v4
+        with:
+          repository: LumabyteCo/aibutler
+          ref: c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c
+          path: candidate
+          persist-credentials: false
+
+      - name: Verify exact pin
+        working-directory: candidate
+        run: |
+          test "$(git rev-parse HEAD)" = "c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c"
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: "1.26.5"
+          cache-dependency-path: candidate/go.sum
+
+      - name: Inject Atento Gate2 composition test
+        run: |
+          mkdir -p candidate/internal/atento_gate2
+          cp tools/naia_gate2/aibutler/atento_gate2_test.go candidate/internal/atento_gate2/atento_gate2_test.go
+
+      - name: Run six common Gate2 composition assertions
+        working-directory: candidate
+        run: |
+          go test ./internal/atento_gate2 -count=1 -v
