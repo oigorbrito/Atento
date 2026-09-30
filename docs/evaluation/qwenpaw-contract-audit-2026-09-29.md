@@ -204,23 +204,24 @@ RUNTIME_PROOF_AT_PIN = NOT_OBSERVED
 
 ## 8. Hosted execution evidence
 
+**Superseded in part 2026-09-30:** direct Actions lookup by exact `head_sha` found hosted workflows.
+
 For the exact pin:
 
 `777441721aa72db8e380d90e4d0481b05cbfd4cc`
 
-the available GitHub connector reports:
+observed:
 
 ```text
-workflow_runs = []
-combined_statuses = []
+E2E Smoke Tests = SUCCESS
+Frontend Tests = SUCCESS
+Pre-commit Checks = SUCCESS
+CodeQL = SUCCESS
+Tests = WAITING
+Full Tests Nightly = FAILURE
 ```
 
-Therefore:
-
-```text
-HOSTED_RUNTIME/TEST_PASS = NOT_CLAIMED
-HOSTED_RUNTIME/TEST_FAIL = NOT_CLAIMED
-```
+The successful E2E job is a Playwright UI smoke and does not establish the sandbox-fallback or cron-authority clauses. The principal Tests workflow is not observed as successfully complete, so authority runtime PASS is not claimed.
 
 ## 9. Current disposition
 
