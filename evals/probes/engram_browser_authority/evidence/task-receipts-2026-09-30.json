@@ -1,0 +1,102 @@
+{
+  "interactive_control": {
+    "agent": "agent-atento-probe",
+    "created_ms": 1790785484581,
+    "detail": "Use the deterministic local adapter only.",
+    "handoffs": [],
+    "id": "t-1790785484581-0-interactive-brow",
+    "origin": "ui",
+    "progress": null,
+    "run": {
+      "answer": "deterministic probe completed",
+      "cost_usd": 0.0,
+      "finished_ms": 1790785484633,
+      "ledger_head_hash": "c2412a07a9e1aeb61970b4061bc8738be4d9fcd764957f2cef66b73df63a026d",
+      "output_files": [],
+      "started_ms": 1790785484590,
+      "steps": [
+        {
+          "args": {
+            "action": "type",
+            "destination": "https://example.test/form",
+            "origin": "scheduled",
+            "selector": "#note",
+            "text": "scheduled probe"
+          },
+          "ledger_hash": "af5bc1dd4863d6ed9ef6d4dfe32056ce19f68a001df768db8b709c0652df82ce",
+          "ledger_seq": 292,
+          "observation": "{\"effect_id\": \"9f0a9b4ebde25682c73d0d6bbc4e35251e877a78c2fee80db11d3821138eea81\", \"status\": \"executed\", \"observation\": \"typed\", \"authority_record\": {\"effect_id\": \"9f0a9b4ebde25682c73d0d6bbc4e35251e877a78c2fee80db11d3821138eea81\", \"principal\": \"naia\", \"origin\": \"interactive\", \"destination\": \"https://example.test/form\", \"action\": \"type\", \"selector_hash\": \"7b0c7cccef4e2c72fb8c0066a695e82a5c5156974d19c02f21cb423d3010fa1d\", \"decision\": \"allowed\", \"reason\": \"explicit-grant\"}}",
+          "ok": true,
+          "tool": "mcp_atento_browser_interactive_effect"
+        }
+      ],
+      "stopped": "final",
+      "tokens_in": 3,
+      "tokens_out": 3
+    },
+    "schedule_id": null,
+    "status": "done",
+    "title": "interactive browser authority probe",
+    "tool_tags": [
+      "browser"
+    ],
+    "updated_ms": 1790785484638
+  },
+  "scheduled": {
+    "agent": "agent-atento-probe",
+    "created_ms": 1790785483896,
+    "detail": "Exercise one scheduled browser effect via the adapter\n\nUse the deterministic local adapter only.",
+    "handoffs": [],
+    "id": "t-1790785483896-0-browser-authorit",
+    "origin": "schedule",
+    "progress": null,
+    "run": {
+      "answer": "deterministic probe completed",
+      "cost_usd": 0.0,
+      "finished_ms": 1790785483957,
+      "ledger_head_hash": "d68e66d3afe913f29c3c7ab4fd6e62f25be50314cacf8a919862d50b6dcb110c",
+      "output_files": [],
+      "started_ms": 1790785483902,
+      "steps": [
+        {
+          "args": {
+            "action": "type",
+            "destination": "https://example.test/form",
+            "origin": "scheduled",
+            "selector": "#note",
+            "text": "scheduled probe"
+          },
+          "ledger_hash": "2b6e8c7be61bd4b13eeb6f23a1212def3f09f26e95f6f0c020c62654af6a5551",
+          "ledger_seq": 278,
+          "observation": "AuthorityDenied:browser effect denied by technical authority policy",
+          "ok": true,
+          "tool": "mcp_atento_browser_scheduled_effect"
+        },
+        {
+          "args": {
+            "action": "type",
+            "destination": "https://example.test/form",
+            "origin": "scheduled",
+            "selector": "#note",
+            "text": "scheduled probe"
+          },
+          "ledger_hash": "285404caaa2009bb43a48dcfab2bd900f4d83759c39078b3562cf4a376d1caa9",
+          "ledger_seq": 281,
+          "observation": "{\"effect_id\": \"9f0a9b4ebde25682c73d0d6bbc4e35251e877a78c2fee80db11d3821138eea81\", \"status\": \"executed\", \"observation\": \"typed\", \"authority_record\": {\"effect_id\": \"9f0a9b4ebde25682c73d0d6bbc4e35251e877a78c2fee80db11d3821138eea81\", \"principal\": \"naia\", \"origin\": \"interactive\", \"destination\": \"https://example.test/form\", \"action\": \"type\", \"selector_hash\": \"7b0c7cccef4e2c72fb8c0066a695e82a5c5156974d19c02f21cb423d3010fa1d\", \"decision\": \"allowed\", \"reason\": \"explicit-grant\"}}",
+          "ok": true,
+          "tool": "mcp_atento_browser_interactive_effect"
+        }
+      ],
+      "stopped": "final",
+      "tokens_in": 4,
+      "tokens_out": 4
+    },
+    "schedule_id": null,
+    "status": "done",
+    "title": "browser authority probe",
+    "tool_tags": [
+      "browser"
+    ],
+    "updated_ms": 1790785483962
+  }
+}
