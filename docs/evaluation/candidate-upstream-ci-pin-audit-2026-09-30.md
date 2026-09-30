@@ -20,7 +20,7 @@ This audit does **not** qualify any pin, rank candidates, award an isolation sco
 | Candidate | Frozen pin | Observed upstream CI/workflow result at pin | Interpretation |
 |---|---|---|---|
 | OpenClaw | `ca8f24d05fc49a224adab0c9426077fd8d93801d` | Only `security-fast` ran successfully; preflight, core checks, and UI/E2E jobs were skipped at this push. [Run](https://github.com/openclaw/openclaw/actions/runs/36650380651) | Security/diff checks only; this pin has no functional-test execution evidence from the observed push run. |
-| OpenMausBot | `6005b1bf5883a7ffa639c07e729321f89b9532e1` | Corrected SHA: PR-trigger query returned none. Push result not verified due to initial wrong-SHA query. A Vercel status on the candidate had been observed separately. | **Unverified** in this battery; do not infer no tests or pass. |
+| OpenMausBot | `6005b1bf5883a7ffa639c07e729321f89b9532e1` | Corrected-SHA CI and Docker image runs both succeeded. CI includes unit/eval and platform smoke jobs. [CI](https://github.com/milind-soni/OpenMausBot/actions/runs/36647214650) · [Docker](https://github.com/milind-soni/OpenMausBot/actions/runs/36647214680) | Corrected result supersedes the unverified row in the initial audit; details and boundary limits below. |
 | QwenPaw | `777441721aa72db8e380d90e4d0481b05cbfd4cc` | Frontend, pre-commit, CodeQL, E2E smoke, formatting succeeded; Tests workflow remains waiting at Maintainer Approval. [Waiting run](https://github.com/agentscope-ai/QwenPaw/actions/runs/36559841525) | Partial green; core Tests run is pending approval, not a failure. |
 | AI Butler | `c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c` | CI and Security succeeded. | Green observed workflows; no isolation proof. |
 | NanoClaw | `4c1eabd3ddd74cc3d71b1871da857391a9411c8d` | CI and registry-skills workflows succeeded. | Green observed workflows; no isolation proof. |
@@ -119,3 +119,19 @@ The code search index for some files pointed at later default-branch commits, so
 ## Current execution gate
 
 Only the Engram/Atento composition has a frozen hardened topology in the present evaluation record. Its adapter-only tests already passed 8/8. The remaining real browser-adapter/chassis integration is the explicitly pending test and remains untouched. Other candidates do not yet have frozen Atento-specific profiles/topologies satisfying the residual microprobe gate; their upstream test artifacts are reusable coverage, but cannot produce local Atento PASS/FAIL by themselves.
+
+
+## OpenMausBot corrected-pin CI follow-up
+
+The initial push query used the wrong SHA. A corrected query for `6005b1bf5883a7ffa639c07e729321f89b9532e1` found two push runs on 2026-09-29: CI (`36647214650`) and Docker image (`36647214680`), both successful. The earlier “unverified” disposition is superseded.
+
+Observed test and smoke evidence:
+
+- Control-plane check / workerd tests / dry run: 42 tests passed.
+- Offline behavior-eval workflow: 66 tests passed across 13 files, including redaction tests. Tier 3 was intentionally kept offline in CI.
+- macOS packaged-server smoke: approval mode transitions passed; HTTP elevation was rejected; private grant and resumed-mode transitions were verified. Reported app permissions were microphone allowed, camera denied, display intent-bound, and foreign origin denied.
+- Paired-phone authorization smoke: real pairing succeeded; forged headers were ignored; unpaired/revoked pairing and failed bootstrap were denied; pairing survived restart.
+- Packaged-server smoke passed on Ubuntu and Windows; four-shard Vitest passed on Ubuntu, macOS, and Windows.
+- Docker-image boot smoke asserted the server did not bind a public interface, tested tenant-stack pairing, and checked non-root browser operation.
+
+This is materially relevant upstream evidence for approval, origin, pairing, packaging, and bootstrap controls. It is not evidence that NAIA and Anna have independent memory, credential, tool, or channel authority, nor that cross-role handoff is broker-only.
