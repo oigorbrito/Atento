@@ -70,6 +70,13 @@ Upstream had advanced to:
 
 during the 2026-09-29 remote audit.
 
+
+Current-pin delta audit:
+
+`docs/evaluation/openmaus-current-delta-audit-2026-09-29.md`
+
+At current observed head `6005b1bf5883a7ffa639c07e729321f89b9532e1`, the four-commit delta from the last Atento-reviewed comparison pin has been audited statically. Lending-memory and request-auth boundaries are stronger in source, but exact-current-pin runtime execution is still pending. This does not grant shortlist status.
+
 #### Expensive capability already present
 
 Observed in the qualification snapshot:
