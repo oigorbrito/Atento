@@ -47,7 +47,7 @@ This audit does **not** qualify any pin, rank candidates, award an isolation sco
 | Holt | `3a9cb8b0fd62e0b61e5e600a3fa341bd5b03e65e` | CI and Release succeeded. | Green observed workflows; no isolation proof. |
 | RustFox | `6e24388d36d1c6fac399039d8cab07cd9cb8264b` | CI succeeded. | Green observed workflow; no isolation proof. |
 | PsychAgent | `469f45ef468b968b3fccd1936d7e6a0a574e4c5c` | No push or PR-triggered runs observed at the pin. | No run observed; functional test coverage unknown. |
-| OpenCouch | `ac5af6ee4c9a06b4050c5a912439f343ade2c35c` | CI succeeded. | Green observed workflow; no isolation proof. |
+| OpenCouch | `ac5af6ee4c9a06b4050c5a912439f343ade2c35c` | Backend CI passed 1,633 tests with PostgreSQL integration enabled. It includes same-key namespace isolation checks across user owners and memory kinds. | Positive memory-store owner/namespace boundary evidence; not complete agent-role isolation. |
 
 ## Effect on the Atento evaluation
 
@@ -92,7 +92,7 @@ A second pass inspected completed job summaries and logs for tests relevant to a
 | Holt | Build and CLI smoke tests passed on Node 20 and 22. | Smoke checks do not exercise the frozen external-brain dependency authority seam. |
 | RustFox | Tests passed for `allowlist_isolation_across_bots`, high-risk task approval, per-bot session-key isolation for the same user, cancellation isolation across bots, and secret masking/private secret storage. | This is the strongest directly relevant cross-bot test evidence in this pass, but it still does not prove separate cross-role memory/channel domains or composed scheduled authority. |
 | PsychAgent | No push or PR workflow run observed at the pin. | No run-backed test coverage to transfer. |
-| OpenCouch | Backend tests passed (1,633); logs include database rejection of invalid memory namespace kinds. | Schema validation is not cross-agent isolation evidence. |
+| OpenCouch | Backend run: 1,633 passed, with PostgreSQL integration enabled. At this pin, `test_namespaces_isolated_across_users` checks that the same key returns distinct owner-specific values; `test_get_enforces_namespace_isolation` checks semantic vs episodic slots. | Positive memory-store owner and namespace separation; this does not bind those owners to NAIA/Anna identities or isolate tools/credentials/channels. |
 
 ### Coverage result
 
@@ -146,3 +146,14 @@ The CI log for pin `c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c` shows the race-ena
 - `ModeOff` wraps a shell command as `sh -lc`; the workspace-only and allowlist modes select OS-specific confinement wrappers.
 
 This narrows the reusable evidence: sandbox mechanisms exist and their configuration contracts have tests, while the default plugin policy is network-permissive and `ModeOff` is not a confinement boundary. An Atento composition would need to choose and verify the strict profiles explicitly. None of these tests assert independent NAIA/Anna memory, credential, or channel authority.
+
+
+## OpenCouch exact-pin namespace tests
+
+The backend workflow at `ac5af6ee4c9a06b4050c5a912439f343ade2c35c` ran `uv run pytest -q tests/unit tests/integration` with `OPENCOUCH_ENABLE_POSTGRES_INTEGRATION_TESTS=1`; the job reported 1,633 passed. At the same pin:
+
+- `test_namespaces_isolated_across_users` writes the same key under two distinct owner IDs and asserts each read returns only that owner's value.
+- `test_get_enforces_namespace_isolation` writes the same key to semantic and episodic namespaces and asserts each read returns the matching value.
+- `test_batch_round_trip_overwrite_and_namespace_isolation` exercises compound namespace identity and separate owner namespaces in the shared store contract.
+
+These are run-backed positive tests for memory-store separation by owner and namespace. They are materially reusable if the Atento design maps NAIA and Anna to distinct owner IDs and preserves that mapping through every retrieval path. They do not prove that mapping, prevent owner-ID spoofing by an agent, or cover memory writes/reads through the complete agent runtime.
