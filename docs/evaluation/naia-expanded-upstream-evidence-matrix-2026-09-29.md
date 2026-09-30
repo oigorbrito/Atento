@@ -526,7 +526,31 @@ CURRENT_PIN_QUALIFIED = NO
 LOCAL_GENERIC_NCP_NOW = NO
 ~~~
 
-The secondary discovery pool still requires admission screening before universe closure.
+## Secondary-pool admission screen
+
+The bounded secondary-pool screen is recorded in:
+
+`docs/evaluation/naia-secondary-pool-admission-screen-2026-09-30.md`
+
+Exact-pin result:
+
+~~~text
+ADMITTED_COMPARABLE:
+  AutoMate
+  AgentOS
+  OpenAgentd
+  HubOS
+  Engram
+  Holt
+  RustFox
+
+DEFERRED_AT_CURRENT_PIN:
+  Open Intern
+~~~
+
+All eight screened pins had no observable GitHub workflow runs or combined statuses through the available connector, so no hosted PASS/FAIL is inferred.
+
+The seven admitted candidates require upstream implementation/test/eval transfer mapping before any local NCP. Open Intern is deferred at its current pin because the repository itself marks proactive heartbeat, human approval workflow and browser automation as not yet shipped.
 
 ## 10. Cross-candidate conclusion
 
@@ -548,10 +572,12 @@ Immediate state:
 
 ```text
 EXPANDED_UPSTREAM_EVIDENCE_MATRIX = COMPLETE_V1
-LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
-CANDIDATE_UNIVERSE_COMPLETE = false
 PROVISIONAL_SELFAGENT_GOCLAW_NEBO_ADMISSION = COMPLETE
-SECONDARY_DISCOVERY_POOL_SCREENING = REQUIRED
+REGISTERED_DISCOVERY_POOL_SCREENING = COMPLETE_V1
+FROZEN_CANDIDATE_UNIVERSE_V1 = COMPLETE
+CANDIDATE_UNIVERSE_COMPLETE = true_for_frozen_v1_snapshot
+SECONDARY_TRANSFER_AUDITS = REQUIRED
+LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
 NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
 ```
