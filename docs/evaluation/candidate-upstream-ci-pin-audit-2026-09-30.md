@@ -197,3 +197,15 @@ At `c86b0b1fbc0e177e67b59b8d26cc2ce9c18406d1`, the tree-name scan found six test
 At `21daa38a8cdd74f2d03b634c8312253080bacfc1`, the repository contains a CI workflow and a large test tree, but no exact-pin push/PR run was observed. `src/agent/client-skills-shared-memory.test.ts` is source-level coverage only in this audit. It uses one fixed `AGENT_ID` and attached repository names to verify shared-memory repository skills are discovered, detached/missing/unsafe repositories are handled, project/agent skills take precedence, per-agent cache invalidation works, and an agent does not load another local agent's shared skills. The workflow's CI unit job runs `node scripts/run-unit-tests.cjs` shards; API integration jobs run only for pushes or eligible same-repository PRs.
 
 This is useful agent-scoped repository/skill visibility evidence and explicit cross-agent visibility protection for that client-skill path. The reviewed test does not exercise message memory, credentials, tool authority, brokered communication, or a malicious agent attempting to forge another `agentId`. Because no run at the frozen pin was observed, the assertions are not run-backed here.
+
+
+### Open Intern (deferred) exact-pin source review
+
+Open Intern remains **deferred** at `e2d9dc312a1a07a304c55d88a92c1f0b86cd68c9`; this inspection does not reopen admission or create an execution comparison. Its `.github/workflows/ci.yml` defines pytest with a PostgreSQL 17/pgvector service, but no exact-pin push/PR run was observed. The reviewed tests and implementation are therefore source-level evidence only:
+
+- `tests/test_auth_api.py` covers JWT/password checks, admin-vs-user endpoint access, user-to-agent access-list management, and single-agent-scoped API keys. Its endpoint integration tests are skipped if PostgreSQL is unavailable; the workflow provisions PostgreSQL, but this pin has no observed run.
+- `tests/test_agent_config_db.py` checks encryption/decryption for per-agent provider/platform secrets and system-level default key fallback. This verifies storage configuration behavior, not that one runtime role cannot obtain another role's decrypted credential.
+- `memory/store.py` binds each `MemoryStore` instance to an `agent_id` and applies that ID in memory recall/context/forget/count queries. The scanned test inventory contains no dedicated memory-store cross-agent isolation test, so this boundary is implementation evidence without a direct adversarial assertion.
+- `tests/test_scheduler.py` covers job CRUD/execution paths and stores `agent_id`; the reviewed execution test verifies the scheduler retrieves an agent by that ID. It does not test permission parity or revocation between foreground and scheduled execution.
+
+This is potentially reusable evidence for user/API-key scoping, encrypted per-agent configuration, and agent-keyed memory queries. It does not prove the complete NAIA/Anna isolation or broker-only handoff required by Atento. The candidate remains deferred and was not run locally.
