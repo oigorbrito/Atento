@@ -10,6 +10,7 @@ The input evidence is already canonical in:
 
 - `docs/evaluation/naia-common-probe-profile-2026-09-29.md`
 - `docs/evaluation/naia-expanded-upstream-evidence-matrix-2026-09-29.md`
+- `docs/evaluation/naia-static-residual-disposition-2026-09-30.md`
 - the candidate-specific delta / transfer audits under `docs/evaluation/`
 
 State on entry:
@@ -450,8 +451,10 @@ H. collect RP-COST-01 during the same real composition
 RESIDUAL_ONLY_PROBE_LEDGER = COMPLETE_V1
 FROZEN_CANDIDATE_UNIVERSE_V1 = COMPLETE
 EXPANDED_EXTERNAL_EVIDENCE_GATE = COMPLETE_V1
+STATIC_RESIDUAL_DISPOSITION = COMPLETE_V1
 
 GENERIC_LOCAL_BENCHMARK = NOT_JUSTIFIED
+GENERIC_VENDOR_DEFAULT_RETEST = NOT_JUSTIFIED
 LOCAL_RESIDUAL_PROBE_EXECUTION = NOT_STARTED
 CURRENT_PIN_QUALIFIED = 0
 NAIA_SHORTLIST = NOT_SELECTED
