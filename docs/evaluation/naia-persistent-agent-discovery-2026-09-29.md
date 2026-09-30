@@ -452,30 +452,41 @@ ADMISSION_AUDIT = COMPLETE
 CURRENT_PIN_QUALIFIED = NO
 ```
 
-## 4. Secondary discovery pool
+## 4. Secondary discovery pool — screened
 
-The following systems also surfaced and should be retained for later admission screening rather than silently discarded:
+The bounded same-protocol screen is recorded in:
 
-```text
-supastishn/AutoMate
-use-agent-os/agent-os
-TBNRFPS01/OpenAgent
-truenorth-lj/open-intern
-hubos-ai/HubOS
-radotsvetkov/engram
-holt-os/holt
-chinkan/RustFox
-```
+`docs/evaluation/naia-secondary-pool-admission-screen-2026-09-30.md`
 
-They are not yet promoted into the comparable set by this record.
+Exact-pin result:
+
+~~~text
+ADMITTED_COMPARABLE:
+  - supastishn/AutoMate
+  - use-agent-os/agent-os
+  - TBNRFPS01/OpenAgent
+  - hubos-ai/HubOS
+  - radotsvetkov/engram
+  - holt-os/holt
+  - chinkan/RustFox
+
+DEFERRED_AT_CURRENT_PIN:
+  - truenorth-lj/open-intern
+~~~
+
+Open Intern remains in discovery history, but its exact current pin explicitly marks proactive heartbeat, human approval workflow and browser automation as not yet shipped. Re-admission is triggered by a material upstream release that closes those product-surface gaps.
+
+The seven admitted systems require upstream evidence/transfer mapping before any local NCP.
 
 ## 5. Result
 
-The previous seven-candidate set is not complete.
+The registered discovery pools have now received bounded admission screening.
 
-```text
+~~~text
 PREVIOUS_ENUMERATED_SET_COMPLETE = NO
-CANDIDATE_UNIVERSE_COMPLETE = false
+REGISTERED_DISCOVERY_POOL_SCREENING = COMPLETE_V1
+FROZEN_CANDIDATE_UNIVERSE_V1 = COMPLETE
+CANDIDATE_UNIVERSE_COMPLETE = true_for_frozen_v1_snapshot
 
 NEW_COMPARABLE:
   - Rakazo
@@ -490,16 +501,26 @@ NEW_COMPARABLE:
   - SelfAgent
   - GoClaw
   - Nebo
+  - AutoMate
+  - AgentOS
+  - OpenAgentd
+  - HubOS
+  - Engram
+  - Holt
+  - RustFox
 
-PROVISIONAL_ADMISSION_BLOCK = COMPLETE
-SECONDARY_DISCOVERY_POOL_SCREENING = REQUIRED
+DEFERRED_AT_CURRENT_PIN:
+  - Open Intern
 
 REFERENCE_PRODUCTS:
   - Grok Bot
   - Meta Muse
 
+LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
 NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
-```
+~~~
 
-No local benchmark or NCP probe should begin merely because the previous static block was complete. External/upstream evidence for this expanded set must be reconciled first.
+The frozen V1 universe is a decision snapshot, not a claim that no future project can ever be discovered. Reopen discovery only for a material new candidate or material upstream delta; do not continuously broaden the search while decision-relevant evidence remains unresolved.
+
+The next block is upstream evidence and transfer reconciliation for the seven newly admitted secondary candidates, not local benchmarking.
