@@ -883,3 +883,39 @@ Canonical non-frontier disposition:
 `docs/evaluation/naia-gate2-non-frontier-hosted-evidence-disposition-2026-09-30.md`
 
 No candidate is shortlisted or selected by frontier admission.
+
+
+## Common Gate-2 composition harness frozen — 2026-09-30
+
+Canonical protocol:
+
+`docs/evaluation/naia-gate2-common-composition-harness-v1-2026-09-30.md`
+
+Machine-readable matrix:
+
+`docs/evaluation/naia-gate2-common-composition-matrix-v1-2026-09-30.yaml`
+
+The twelve transferable-evidence candidates now share one black-box Atento composition contract:
+
+```text
+ISO-1 cross-memory read
+ISO-2 cross-memory mutation
+ISO-3 cross-credential use
+ISO-4 cross-tool/channel use
+ISO-5 silent cross-role invocation
+ISO-6 explicit broker positive control
+```
+
+```text
+FRONTIER_CANDIDATES = 12
+COMMON_ASSERTIONS_PER_CANDIDATE = 6
+COMMON_ASSERTIONS_TOTAL = 72
+
+COMMON_COMPOSITION_HARNESS = FROZEN_V1
+GATE2_EMPIRICAL_PASS = 0
+NEXT_EXECUTION_TARGET = AI Butler
+```
+
+Candidate-specific tests are limited to the explicit add-ons in the matrix. Broad upstream retesting remains forbidden as redundant.
+
+Execution order is evidence-minimizing, not a ranking.
