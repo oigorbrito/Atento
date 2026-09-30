@@ -234,14 +234,13 @@ For exact pin:
 
 `4c1eabd3ddd74cc3d71b1871da857391a9411c8d`
 
-the available GitHub connector reports:
+hosted execution is now observed and recorded in:
 
-```text
-workflow_runs = []
-combined_statuses = []
-```
+`docs/evaluation/nanoclaw-exhaustive-verification-2026-09-30.md`
 
-No current-pin hosted code pass/fail is claimed.
+Exact-pin core CI run `36624644303` passed, including Node 22/24 host+container matrices and the Iron front-proxy race gate. Exact-pin registry-skills run `36624644411` also passed its channel/provider matrix, combined-provider, legacy-refresh, promotion and registry gates.
+
+This supersedes the original no-run observation without changing the earlier change-surface measurements.
 
 ## 6. Adaptation profiles
 
