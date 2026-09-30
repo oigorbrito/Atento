@@ -677,3 +677,35 @@ HubOS has also completed the next Gate-2 structural authority preflight. Its fai
 Canonical record:
 
 `docs/evaluation/hubos-gate2-authority-preflight-2026-09-30.md`
+
+
+## Gate-2 high-hardening structural preflight — 2026-09-30
+
+Canonical result:
+
+`docs/evaluation/naia-gate2-high-hardening-structural-preflight-2026-09-30.md`
+
+The five candidates previously marked as the highest structural-hardening risk have now been source-preflighted:
+
+```text
+Open Assistant = BOUNDED_HARDENING_PATH
+OpenGrokBot    = BOUNDED_HARDENING_PATH
+OpenAgentd     = BOUNDED_HARDENING_PATH
+HubOS          = BOUNDED_HARDENING_PATH
+RustFox        = BOUNDED_HARDENING_PATH
+
+NEW_STRUCTURAL_ELIMINATIONS = 0
+```
+
+No candidate is promoted by this result. It only establishes that the current evidence does not justify structural elimination before a hardened composition test.
+
+Current technical funnel:
+
+```text
+FROZEN_UNIVERSE = 26
+TECHNICAL_ELIMINATED = [SelfAgent]
+TECHNICAL_SURVIVORS = 25
+AUTHORITY_ISOLATION_EMPIRICAL_PASS = 0
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
