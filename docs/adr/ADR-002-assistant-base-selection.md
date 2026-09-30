@@ -650,3 +650,29 @@ OPENCLAW_GATE2 = NOT_CLOSED
 ```
 
 The next OpenClaw evidence, if executed, is the two-role negative authority/isolation composition test; broad upstream retesting remains unnecessary.
+
+
+## Adoption-funnel update — 2026-09-30
+
+Open Assistant at `32c55d2643f9fe38777f9212588b2eee45392514` is removed from the current Atento base-adoption funnel under its exact-pin BSL 1.1 terms. This is an `R-LEGAL` elimination, not a technical failure.
+
+Canonical record:
+
+`docs/evaluation/open-assistant-adoption-elimination-2026-09-30.md`
+
+Current funnel state:
+
+```text
+FROZEN_UNIVERSE = 26
+SELFAGENT = ELIMINATED_ARCHITECTURE
+OPEN_ASSISTANT = ELIMINATED_ADOPTION_LICENSE
+CURRENT_ADOPTION_SURVIVORS = 24
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+HubOS has also completed the next Gate-2 structural authority preflight. Its fail-open/sessionless guard gaps are real, but the exact pin exposes a single central `ToolGuardMixin._acting` enforcement path; therefore a cross-cutting rewrite is not yet established and HubOS is not eliminated at this stage.
+
+Canonical record:
+
+`docs/evaluation/hubos-gate2-authority-preflight-2026-09-30.md`
