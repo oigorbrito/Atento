@@ -8,7 +8,7 @@ This audit does **not** qualify any pin, rank candidates, award an isolation sco
 
 ## Method
 
-- The initial pass queried `push` and PR-associated runs. This follow-up queried GitHub Actions by `head_sha` for all 29 exact candidate pins, including scheduled, manual, release, and other associated events. The endpoint returns at most 100 runs per page; OpenClaw has 383 associated records, so its event history is not fully paged here.
+- The initial pass queried `push` and PR-associated runs. This follow-up queried GitHub Actions by `head_sha` for all 29 exact candidate pins, including scheduled, manual, release, and other associated events. The endpoint returns at most 100 runs per page; OpenClaw's 383 associated records were checked across all four pages. Besides its push `CI` run (which executed `security-fast` only; product test jobs were skipped), the additional records were issue/PR automation, successful Security Review jobs, skipped workflows, or cancelled manual Testbox attempts; none adds functional test execution.
 - Reviewed run metadata, jobs, and decoded logs where the event could materially change functional-test or security evidence. Security automation, release packaging, dependency bots, and issue handlers are identified separately from product tests.
 - A push query for OpenMausBot was initially made against an incorrect SHA. The corrected-SHA push query confirmed successful CI and Docker image runs; the wrong-SHA result is excluded.
 - For pins without observed test runs, a repository-tree filename scan counted test-like paths and workflow files; this is source inventory, not evidence of execution or relevance.
