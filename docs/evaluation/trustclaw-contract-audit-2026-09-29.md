@@ -209,14 +209,16 @@ For exact pin:
 
 `c07410bccb916236b45b563e8c4ff76ad83d3855`
 
-the available GitHub connector reports:
+hosted execution is now partially observed. Repeated GitHub-managed scheduled CodeQL runs exist at the exact SHA; reviewed run `36133477273` passed JavaScript/TypeScript analysis. No repository-owned product regression workflow or functional test harness was found. See:
+
+`docs/evaluation/trustclaw-exhaustive-verification-2026-09-30.md`
+
+Therefore:
 
 ```text
-workflow_runs = []
-combined_statuses = []
+CODEQL_AT_PIN = PASS
+FUNCTIONAL_RUNTIME_PASS = NOT_ESTABLISHED
 ```
-
-No current-pin CI/runtime pass or failure is claimed.
 
 ## 9. Current disposition
 
@@ -241,7 +243,7 @@ MATERIAL_NAIA_GAPS:
   - no local technical capability subset for background jobs established
   - external dependency/cost/availability boundary not measured
   - generic browser/computer-use is not established as a local product surface
-  - exact-pin runtime execution not observed
+  - exact-pin functional runtime execution not established; CodeQL is observed and green
 
 TRUSTCLAW_CURRENT_PIN_QUALIFIED = NO
 NAIA_SHORTLIST = NOT_SELECTED
