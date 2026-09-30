@@ -807,3 +807,38 @@ NAIA_BASE = NOT_SELECTED
 ```
 
 Holt and HubOS have exact-pin green automation but not relevant authority test execution. Rakazo, Gobii, PersonalJarvis and OpenGrokBot have exact-pin failed CI, but failure attribution is required before any technical elimination.
+
+
+## Gate-2 CI-failure attribution / frontier V4 — 2026-09-30
+
+Canonical gate:
+
+`docs/evaluation/naia-gate2-ci-failure-attribution-gate-2026-09-30.md`
+
+```text
+FRONTIER_V4 = [
+  AI Butler,
+  AgentOS,
+  Octop,
+  Rome,
+  Engram,
+  Suna,
+  Letta Code,
+  RustFox,
+  Rakazo
+]
+
+FRONTIER_COUNT = 9
+
+Gobii = CURRENT_PIN_PRIVACY_REGRESSION_BLOCK
+PersonalJarvis = CURRENT_PIN_POLICY_COVERAGE_BLOCK
+OpenGrokBot = BROWSER_EFFECT_GATE_OPEN
+
+NEW_TECHNICAL_ELIMINATIONS = 0
+AUTHORITY_ISOLATION_EMPIRICAL_PASS = 0
+
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+Rakazo enters only because the failed global workflow is attributable to an unrelated onboarding test while the exact-pin authority/isolation cases relevant to Gate 2 executed successfully with scope.
