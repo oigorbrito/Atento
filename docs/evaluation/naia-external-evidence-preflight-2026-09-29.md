@@ -359,15 +359,28 @@ docs/evaluation/naia-transfer-audit-octop-agentzero-rome-opengrokbot-2026-09-30.
 
 No generic local NCP is justified by those four audits. Their remaining questions are configuration/topology deltas, not missing broad product benchmarks.
 
-The next universe-completion block is the provisional admission pass for:
+The provisional admission pass for SelfAgent, GoClaw and Nebo is complete.
+
+Record:
+
+`docs/evaluation/naia-admission-audit-selfagent-goclaw-nebo-2026-09-30.md`
+
+All three meet the technical comparable-product threshold; none is current-pin qualified.
+
+The remaining universe-completion block is a bounded admission screen for the secondary discovery pool:
 
 ~~~text
-SelfAgent
-GoClaw
-Nebo
+supastishn/AutoMate
+use-agent-os/agent-os
+TBNRFPS01/OpenAgent
+truenorth-lj/open-intern
+hubos-ai/HubOS
+radotsvetkov/engram
+holt-os/holt
+chinkan/RustFox
 ~~~
 
-Only after that admission block should the candidate-universe gate be reconsidered.
+Local NCP remains blocked until that screen determines whether any additional comparable candidate requires the same protocol.
 
 ## 6. Candidate-universe gate
 
@@ -377,7 +390,7 @@ The discovery expansion record is:
 
 `docs/evaluation/naia-persistent-agent-discovery-2026-09-29.md`
 
-Until the new comparable candidates receive at least a same-protocol admission/completeness pass:
+Until the secondary discovery pool receives a bounded admission screen:
 
 ```text
 CANDIDATE_UNIVERSE_COMPLETE = false
@@ -386,4 +399,4 @@ NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
 ```
 
-The next work is therefore **external evidence reconciliation and candidate admission**, not local benchmarking.
+The next work is therefore **secondary-pool admission screening**, not local benchmarking.

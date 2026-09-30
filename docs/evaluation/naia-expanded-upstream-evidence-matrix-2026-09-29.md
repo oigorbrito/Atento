@@ -485,6 +485,49 @@ OpenGrokBot:
 
 These are configuration/topology residuals, not reasons to run generic benchmarks now.
 
+## Admission audit: SelfAgent / GoClaw / Nebo
+
+The same-protocol admission record is:
+
+`docs/evaluation/naia-admission-audit-selfagent-goclaw-nebo-2026-09-30.md`
+
+Exact-pin admission results:
+
+~~~text
+SelfAgent:
+  comparable persistent personal-assistant product = YES
+  confirmation metadata exists but is not enforced by the central registry path
+  scheduler definitions are persisted but startup reload/re-arm is not wired
+  scheduled raw shell bypasses the interactive terminal/registry authority path
+  strict NAIA/Anna composition requires separate runtimes/stores
+
+GoClaw:
+  comparable persistent multi-agent assistant product = YES
+  per-agent sessions/workspaces/tool policies = PRESENT
+  default bash policy = FULL
+  BM25 memory + Cortex = INSTANCE_GLOBAL
+  ask_agent target scope = ALL_CONFIGURED_AGENTS when enabled
+  strict NAIA/Anna composition requires memory/store separation and delegation control
+
+Nebo:
+  comparable persistent desktop personal-assistant product = YES
+  hard host safeguard + direct tests = PRESENT
+  source-level comm/app/skill shell deny = ENABLED
+  default interactive policy = ALLOWLIST / ON_MISS
+  OriginSystem work auto-approves ordinary approval requests
+  strict NAIA/Anna composition requires separate runtime/data authority domains
+~~~
+
+For all three exact pins:
+
+~~~text
+CURRENT_PIN_HOSTED_EXECUTION = NOT_OBSERVED
+CURRENT_PIN_QUALIFIED = NO
+LOCAL_GENERIC_NCP_NOW = NO
+~~~
+
+The secondary discovery pool still requires admission screening before universe closure.
+
 ## 10. Cross-candidate conclusion
 
 The expanded universe contains significantly more reusable upstream evidence than the original discovery pool implied.
@@ -507,6 +550,8 @@ Immediate state:
 EXPANDED_UPSTREAM_EVIDENCE_MATRIX = COMPLETE_V1
 LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
 CANDIDATE_UNIVERSE_COMPLETE = false
+PROVISIONAL_SELFAGENT_GOCLAW_NEBO_ADMISSION = COMPLETE
+SECONDARY_DISCOVERY_POOL_SCREENING = REQUIRED
 NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
 ```
