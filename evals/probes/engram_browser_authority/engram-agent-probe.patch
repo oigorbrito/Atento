@@ -1,0 +1,53 @@
+diff --git a/crates/engram-agent/src/lib.rs b/crates/engram-agent/src/lib.rs
+index 84ed9f7..66933c3 100644
+--- a/crates/engram-agent/src/lib.rs
++++ b/crates/engram-agent/src/lib.rs
+@@ -168,3 +168,48 @@ pub fn browser_available() -> bool {
+         false
+     }
+ }
++#[cfg(test)]
++mod atento_mcp_runtime_probe {
++ use crate::tool::{Policy,ToolCtx};
++ use engram_core::Ledger;
++ use engram_gateway::{Completion,ScriptedProvider,ToolCall};
++ use engram_memory::{Memory,TrigramHashEmbedder};
++ use engram_skills::{Registry,SkillSigner};
++ use serde_json::json;
++ use std::{collections::BTreeMap,sync::Arc};
++ fn call(name:&str,args:serde_json::Value)->Completion { Completion{text:String::new(),model:"probe".into(),tokens_in:0,tokens_out:0,tool_calls:vec![ToolCall{id:"1".into(),name:name.into(),arguments:args}]} }
++ fn answer()->Completion { Completion{text:"done".into(),model:"probe".into(),tokens_in:0,tokens_out:1,tool_calls:vec![]} }
++ async fn run(dir:&std::path::Path,tool:Arc<dyn crate::Tool>,origin:&str,tool_name:&str,action:&str,selector:&str)->crate::AgentRun {
++  let ledger=Arc::new(Ledger::open(dir.join(format!("{origin}-{action}-ledger"))).unwrap());
++  let memory=Arc::new(Memory::open(dir.join(format!("{origin}-{action}.db")),Arc::new(TrigramHashEmbedder::default()),ledger.clone()).unwrap());
++  let signer=Arc::new(SkillSigner::load_or_create(dir.join(format!("{origin}-{action}.key"))).unwrap());
++  let skills=Arc::new(Registry::open(dir,signer,ledger.clone()).unwrap());
++  let gateway=Arc::new(engram_gateway::Gateway::new(Box::new(ScriptedProvider::new(vec![call(tool_name,json!({"destination":"https://example.test/form","action":action,"selector":selector,"text":"benign","origin":"interactive"})),answer()])),ledger.clone()));
++  let mut policy=Policy::default(); policy.attended=origin=="interactive";
++  let ctx=ToolCtx{memory,skills,gateway:gateway.clone(),ledger,taint:engram_core::Taint::Trusted,sensitive:false,policy,workdir:dir.to_path_buf(),model:"probe".into(),depth:0,browser:Arc::new(crate::tool::NoBrowser),scope:engram_core::ScopeCtx::any(),halt:None,spend_counter:None,token_budget:None,on_step:None,on_narration:None,allowed_tools:None,agent_actor:Some("naia".into())};
++  let tools=crate::default_tools().with(tool).retaining(|n|n==tool_name);
++  crate::Agent::new(gateway,tools,"probe").run("Invoke the one permitted mediated browser effect.",ctx).await.unwrap()
++ }
++ async fn connect(root:&std::path::Path,origin:&str,fail:bool)->Arc<dyn crate::Tool>{
++  let mut env=BTreeMap::new(); env.insert("PYTHONPATH".into(),root.to_string_lossy().into_owned()); env.insert("ATENTO_ORIGIN".into(),origin.into()); env.insert("BROWSER_PROVIDER_SECRET".into(),"BROWSER_PROVIDER_SECRET_DO_NOT_LEAK".into());
++  if fail { env.insert("ATENTO_POLICY_FAIL".into(),"1".into()); }
++  let spec=crate::McpServerSpec{name:format!("atento_browser_{origin}"),command:"python3".into(),args:vec!["-u".into(),root.join("mcp_server.py").to_string_lossy().into_owned()],env,cwd:Some(root.to_string_lossy().into_owned()),trusted:true,..Default::default()};
++  crate::connect_servers(&[spec]).await.remove(0)
++ }
++ #[tokio::test]
++ async fn candidate_agent_routes_both_origins_through_adapter_and_fails_closed(){
++  let root=std::path::PathBuf::from(std::env::var("ATENTO_PROBE_DIR").expect("ATENTO_PROBE_DIR")); crate::set_global_disabled_tools(vec!["browser_click".into(),"browser_type".into()]);
++  let native=crate::default_tools(); assert!(!native.names().contains(&"browser_click")); assert!(!native.names().contains(&"browser_type"));
++  let dir=tempfile::tempdir().unwrap();
++  let i=run(dir.path(),connect(&root,"interactive",false).await,"interactive","mcp_atento_browser_interactive_effect","click","#save").await;
++  let s=run(dir.path(),connect(&root,"scheduled",false).await,"scheduled","mcp_atento_browser_scheduled_effect","click","#save").await;
++  let denied=run(dir.path(),connect(&root,"scheduled",false).await,"scheduled","mcp_atento_browser_scheduled_effect","type","#note").await;
++  let failed=run(dir.path(),connect(&root,"interactive",true).await,"interactive","mcp_atento_browser_interactive_effect","click","#save").await;
++  assert!(i.steps[0].observation.contains("interactive"),"{}",i.steps[0].observation);
++  assert!(s.steps[0].observation.contains("scheduled"),"{}",s.steps[0].observation);
++  assert!(denied.steps[0].observation.contains("AuthorityDenied"),"{}",denied.steps[0].observation);
++  assert!(failed.steps[0].observation.contains("AuthorityControlUnavailable"),"{}",failed.steps[0].observation);
++  for run in [&i,&s,&denied,&failed] { assert!(!run.steps[0].observation.contains("BROWSER_PROVIDER_SECRET_DO_NOT_LEAK")); }
++  crate::set_global_disabled_tools(vec![]);
++ }
++}

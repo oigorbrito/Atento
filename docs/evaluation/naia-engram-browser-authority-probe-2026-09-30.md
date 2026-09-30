@@ -220,3 +220,22 @@ CROSS_AGENT_TOPOLOGY = NOT_SELECTED
 ```
 
 The next Engram-specific work, if the environment can materialize the pin, is only the remaining Engram→adapter integration boundary. The 8 passing adapter checks should not be rerun without a material adapter delta.
+
+
+## Follow-up — exact-pin adapter runtime boundary (2026-09-30)
+
+The earlier clone failure records the state of that first attempt. A subsequent isolated run successfully cloned the frozen Engram pin, built `engram-agent`, and executed a bounded `Agent::run` + MCP + Atento adapter harness. Its result and limitations are recorded in:
+
+- `docs/evaluation/naia-engram-browser-authority-runtime-followup-2026-09-30.md`
+- `evals/probes/engram_browser_authority/evidence/engram-agent-runtime-probe-2026-09-30.log`
+
+Current bounded classification:
+
+```ini
+ENGRAM_PIN_CLONE = PASS
+ENGRAM_AGENT_MCP_ADAPTER_BOUNDARY = PASS_WITH_SCOPE
+REAL_DAEMON_SCHEDULER_DISPATCH = NOT_RUN
+PRODUCTION_SCHEDULED_TOOLSET_BINDING = NOT_PROVEN
+ENGRAM_BROWSER_EFFECT_AUTHORITY = STILL_OPEN
+CURRENT_PIN_QUALIFIED = 0
+```
