@@ -47,8 +47,32 @@ O Atento está atualmente em **modo de pesquisa/estudo**. A política interna pe
 | SRC-PATIENTPSI | PATIENT-Ψ | https://github.com/ruiyiw/patient-psi | `de72a768e5366d3e94f7d8c711c563fb4a5b4d26` | MIT | EXTERNAL_RESEARCH_CLONE | patient-style simulation/evaluation, including reserved/evasive behavior |
 | SRC-MHSAFE | MHSafeEval | https://github.com/suhyun565/MHSafeEval | `9889223844464cfa777a7b8066fd14418f287b85` | no root license detected in reviewed revision; verify paper/assets terms before integration | EXTERNAL_RESEARCH_CLONE | adversarial multi-turn mental-health safety evaluation |
 | SRC-THERAMIND | TheraMind (Emo-gml; Anna research; distinct from SRC-THERAPYMIND; selection reset) | https://github.com/Emo-gml/TheraMind | `416d0a00ecc8c76229512197765dc95be6513de5` | README: research and educational use only | EXTERNAL_RESEARCH_CLONE | longitudinal dual-loop/adaptive-therapy mechanism donor; not a cleared product base |
+| SRC-OPENSEARCH-SEC | OpenSearch Security | https://github.com/opensearch-project/security | `75f5c204ae17ed5d1d266953238abdd9a5eb3b50` | Apache-2.0 | EXTERNAL_RESEARCH_CLONE | resource ownership/sharing/access-control mechanism donor for cross-agent authority; local isolation proof still required |
+| SRC-OPENSEARCH-ML | OpenSearch ML Commons | https://github.com/opensearch-project/ml-commons | `594445ced5f1473d73586287ddc14fada0bcdf3f` | Apache-2.0 | EXTERNAL_RESEARCH_CLONE | Tool SPI/factories, agent executor, tenant propagation, memory/context mechanism donor; not a complete NAIA base |
+| SRC-OPENSEARCH-AGENTHEALTH | OpenSearch Agent Health | https://github.com/opensearch-project/agent-health | `9a7852020e3d1816052238ac1614d681a0028b9c` | Apache-2.0 | EXTERNAL_RESEARCH_CLONE | evaluation/comparison/trace/cost-token-latency instrumentation donor for AtentoEval patterns |
+| SRC-OPENSEARCH-BENCH | OpenSearch Benchmark | https://github.com/opensearch-project/opensearch-benchmark | `1e8cd69bb1050b2642a9562c98ad153e68bb8cfb` | Apache-2.0 | EXTERNAL_RESEARCH_CLONE | reproducible macrobenchmark methodology and retrieval-performance reference; benchmark deltas are not transferable proof |
 
 
+
+## OpenSearch mechanism-donor benchmark refinement — 2026-09-30
+
+Canonical evidence record:
+
+- `docs/evaluation/opensearch-mechanism-donor-research-2026-09-30.md`
+
+Classification rule:
+
+```text
+OPENSEARCH_PROJECT
+!=
+COMPLETE_NAIA_CHASSIS
+
+UPSTREAM_BENCHMARK
+!=
+ATENTO_LOCAL_PROOF
+```
+
+The OpenSearch sources above are tracked as bounded mechanism/evaluation/retrieval donors. Their presence in this registry does not create a NAIA/Anna shortlist, select the cross-agent topology, or authorize a code port. Any copied code requires path-level license/notice review and an explicit donor record.
 
 ## Candidate re-enumeration sources — 2026-09-29
 
