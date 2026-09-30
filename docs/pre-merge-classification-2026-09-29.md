@@ -108,9 +108,64 @@ The candidate loader now fails closed if a registry attempts `SELECTED` while:
 DOCUMENT_RECONCILIATION = READY_FOR_REVIEW
 HISTORICAL_EXECUTABLE_CLEANUP = COMPLETE
 HOSTED_VALIDATION = INFRA_BLOCKED
-LOCAL_EXECUTABLE_VALIDATION = REQUIRED
+LOCAL_EXECUTABLE_VALIDATION = PASS_EMPIRICAL
 MERGE_AUTHORIZATION = NO
 RUNTIME_PROMOTION = NO
 ```
 
 The Actions result with no executable steps is not a code failure and is not a pass. Merge remains blocked on the active `NEEDS_LOCAL_VALIDATION` surface until an executable local validation is observed.
+
+
+## Local executable validation result
+
+A local reconstruction of the active Python validation surface from the PR head was executed outside GitHub Actions.
+
+Observed:
+
+```text
+test_candidates = PASS
+test_chassis = PASS
+test_metrics = PASS
+test_runner = PASS
+TOTAL = 12/12 PASS
+```
+
+Covered materially:
+
+- registry pin and identity validation;
+- CI matrix selection;
+- fail-closed rejection of `SELECTED` during `DECISION_RESET`;
+- external candidate pin requirement;
+- typed `PASS_STATIC` preservation;
+- rejection of invented evidence status;
+- chassis audit semantics;
+- provider-bypass/session-state detection;
+- metric scoring;
+- by-agent-scope aggregation;
+- critical-failure counting;
+- rejection of release/selection gates mixing NAIA and Anna.
+
+Configuration/data parsing:
+
+```text
+benchmark_registry.json = VALID_JSON
+candidates.json = VALID_JSON
+release_gates.json = VALID_JSON
+system_matrix.json = VALID_JSON
+core_v0.jsonl = VALID_JSONL
+core_v0 cases = 7
+core_v0 scopes = [ANNA, NAIA, SHARED]
+duplicate case ids = 0
+```
+
+The GitHub Actions workflow itself was accepted sufficiently for GitHub to create the exact-head run/jobs, but hosted execution still stopped before steps because of account infrastructure.
+
+Updated gate:
+
+```text
+LOCAL_EXECUTABLE_VALIDATION = PASS_EMPIRICAL
+HOSTED_VALIDATION = INFRA_BLOCKED
+CODE_FAILURE = NOT_ESTABLISHED
+DOCUMENT_RECONCILIATION = READY
+HISTORICAL_EXECUTABLE_CLEANUP = COMPLETE
+```
