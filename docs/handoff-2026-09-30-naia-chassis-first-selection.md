@@ -400,3 +400,43 @@ BASE = NOT_SELECTED
 ```
 
 All frontier candidates now use the same six black-box role-boundary assertions. Execute only listed candidate-specific add-ons. If an environment block prevents exact-pin composition, record `BLOCKED_ENVIRONMENT` and continue to the next candidate rather than changing the candidate result.
+
+
+## Gate-2 execution attempt and current hard stop
+
+First common-harness execution target: AI Butler.
+
+Atento Actions run:
+
+`36789543149`
+
+```text
+workflow accepted = YES
+job created = YES
+job failed before steps
+checkout = NOT_RUN
+composition assertions = NOT_RUN
+
+LOCAL_GITHUB_DNS = BLOCKED
+HOSTED_EXECUTOR = BLOCKED_BEFORE_STEPS
+AI_BUTLER = BLOCKED_ENVIRONMENT
+```
+
+Do not repeat the same broken executor path for the remaining 11 frontier candidates.
+
+Canonical block:
+`docs/evaluation/naia-gate2-empirical-execution-infrastructure-block-2026-09-30.md`
+
+Canonical phase gate:
+`docs/evaluation/naia-gate2-evidence-exhaustion-gate-2026-09-30.md`
+
+```text
+STATIC_RESEARCH_LOOP = CLOSED_FOR_CURRENT_PINS
+FRONTIER = 12
+NON_FRONTIER = 13
+GATE2_EMPIRICAL_PASS = 0
+SHORTLIST = NOT_SELECTED
+BASE = NOT_SELECTED
+```
+
+Resume only when an executor can materialize an exact pin or materially new exact-pin executed evidence appears.
