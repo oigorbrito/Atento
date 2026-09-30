@@ -100,10 +100,10 @@ However:
 
 ```text
 E2E_SOURCE_WIRING = PASS_STATIC
-E2E_EXECUTION_AT_CURRENT_PIN = NOT_OBSERVED
+E2E_EXECUTION_AT_CURRENT_PIN = UPSTREAM_CI_PASS
 ```
 
-The repository's exact current head exposes no GitHub Actions run through the available commit-run API. Combined commit status contains only a successful Vercel deployment/status, which is not code-test evidence.
+This was superseded by the all-events exact-head run query: CI run `36647214650` checked out the exact frozen SHA and succeeded. The four focused changed-contract tests were visible in the Ubuntu shard logs and passed; see the `OpenMausBot changed-contract tests` section in `candidate-upstream-ci-pin-audit-2026-09-30.md`.
 
 ## 4. Request/auth delta
 
@@ -126,7 +126,8 @@ Classification:
 REQUEST_AUTH_DEFAULT_DENY = PASS_STATIC
 REMOTE_CLIENT_ADMIN_SEPARATION = PASS_STATIC
 LOOPBACK_PROXY_CONFUSION_DEFENSE = PASS_STATIC
-CURRENT_PIN_RUNTIME_EXECUTION = NOT_OBSERVED
+CURRENT_PIN_CHANGED_CONTRACT_CI = PASS_WITH_SCOPE
+ATENTO_COMPOSED_RUNTIME = NOT_RUN
 ```
 
 ## 5. Historical evidence transfer
@@ -139,7 +140,7 @@ The old shared-computer/memory concern is materially better characterized at the
 SHARED_COMPUTER_MEMORY_BOUNDARY:
   previous = NEEDS_REINFORCEMENT / historical concern
   current = STRONGER_STATIC_EVIDENCE
-  current_runtime = PENDING
+  current_runtime = UPSTREAM_CI_PASS_WITH_SCOPE
 ```
 
 This does not by itself make the whole candidate qualified.
@@ -179,7 +180,8 @@ PRODUCT_COMPARABILITY = ESTABLISHED
 HISTORICAL_EVIDENCE_REUSE = YES
 DELTA_STATIC_AUDIT = COMPLETE
 DELTA_STATIC_RESULT = PASS_WITH_SCOPE
-CURRENT_PIN_RUNTIME_TRANSFER = PENDING
+CURRENT_PIN_CHANGED_CONTRACT_EXECUTION = PASS_WITH_SCOPE
+ATENTO_COMPOSED_RUNTIME_TRANSFER = PENDING
 CURRENT_PIN_QUALIFIED = NO
 SHORTLIST = NOT_SELECTED
 WINNER = NOT_SELECTED
@@ -187,30 +189,16 @@ WINNER = NOT_SELECTED
 
 `PASS_WITH_SCOPE` here means only that the inspected delta adds/retains defensible static contracts; it is not a candidate qualification state.
 
-## 7. Smallest remaining runtime check
+## 7. Remaining decision-relevant boundary
 
-Do not rerun the full upstream suite.
+The current-pin **upstream changed-contract test gate is closed**; do not rerun those files locally merely to repeat an already observed exact-pin CI result.
 
-If OpenMausBot remains decision-relevant after the broader NAIA candidate set is narrowed by evidence, execute only the current-pin tests that cover the changed contracts:
+If OpenMausBot remains decision-relevant after the broader NAIA candidate set is narrowed by evidence, the next work is the Atento-specific composed authority/isolation boundary. It requires a frozen NAIA/Anna topology and must distinguish two bots belonging to one owner from the owner/guest boundary tested upstream.
 
-- `server/lending-memory.test.ts`;
-- `server/cloud-lending-memory.e2e.test.ts`;
-- `server/request-auth.test.ts`;
-- `server/sessions.test.ts`;
-- directly affected cloud-home/lending tests.
-
-Acceptance:
+Until that composition is frozen and its result can change the candidate decision:
 
 ```text
-exact current pin
-+ targeted changed-contract tests execute
-+ raw output preserved
-+ no Atento patch to donor during qualification
-```
-
-Until then:
-
-```text
-CURRENT_PIN_RUNTIME = PENDING
+CURRENT_PIN_CHANGED_CONTRACT_CI = PASS_WITH_SCOPE
+ATENTO_COMPOSED_RUNTIME = NOT_RUN
 NAIA_BASE = NOT_SELECTED
 ```
