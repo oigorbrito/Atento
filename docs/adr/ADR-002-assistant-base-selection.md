@@ -958,3 +958,27 @@ NAIA_BASE = NOT_SELECTED
 ```
 
 Further Gate-2 progress requires executable exact-pin composition or materially new upstream executed evidence. Broad static/CI reconciliation is now considered exhausted at the frozen pins.
+
+
+## Gate-2 composition execution block — 2026-09-30
+
+Canonical evidence:
+
+`docs/evaluation/naia-gate2-composition-execution-block-2026-09-30.md`
+
+The common composition harness is frozen and ready, but this executor cannot acquire exact upstream runtime pins because `github.com` DNS resolution fails and no candidate checkout is preloaded locally.
+
+```text
+COMMON_COMPOSITION_EXECUTION = BLOCKED_ENVIRONMENT
+EXECUTOR_INFRA_BLOCK != CANDIDATE_FAIL
+
+AI_BUTLER_COMPOSITION = BLOCKED_ENVIRONMENT
+OPENMAUSBOT_COMPOSITION = BLOCKED_ENVIRONMENT
+NANOCLAW_COMPOSITION = BLOCKED_ENVIRONMENT
+
+GATE2_EMPIRICAL_PASS = 0
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+The same infrastructure precondition applies to the rest of the 12-candidate frontier in this executor. Do not convert the shared infrastructure failure into per-candidate negative evidence.
