@@ -631,3 +631,22 @@ NAIA_BASE = NOT_SELECTED
 This closes the question of whether any current vendor/default profile can proceed directly: none can. It does not mean all 25 fail. Each still has at least one bounded hardened-composition/dependency path that must be frozen before a candidate-specific proof can close Gate 2.
 
 Broad vendor-default retesting and a generic 25-candidate runtime battery are therefore not justified.
+
+
+## First Gate-2 candidate preflight — OpenClaw
+
+Canonical record:
+
+`docs/evaluation/openclaw-gate2-hardening-preflight-2026-09-30.md`
+
+Result:
+
+```text
+OPENCLAW_PROFILE_EXPRESSIBILITY = PASS_STATIC_WITH_SCOPE
+CORE_PATCH_REQUIRED_TO_EXPRESS_POLICY = NO
+EXACT_PIN_CI = PASS
+ATENTO_TWO_ROLE_RUNTIME_COMPOSITION = NOT_RUN
+OPENCLAW_GATE2 = NOT_CLOSED
+```
+
+The next OpenClaw evidence, if executed, is the two-role negative authority/isolation composition test; broad upstream retesting remains unnecessary.
