@@ -12,8 +12,8 @@ This audit does **not** qualify any pin, rank candidates, award an isolation sco
 - For rows with no observed push run, queried the connector's commit-associated workflow-runs endpoint, which is limited to pull-request-triggered runs. Those queries returned no runs.
 - Inspected job summaries and available logs for the failing runs and the QwenPaw waiting run.
 - Legacy commit statuses were inspected separately. OpenMausBot and Rakazo showed Vercel deployment success; this is deployment status, not a test result.
-- A push query for OpenMausBot was initially made against an incorrect SHA. That row is explicitly marked unverified; the wrong-SHA result is excluded. Its corrected-SHA PR query returned no run, but a corrected-SHA push query was not confirmed in this pass.
-- These are observed workflow records, not a locally reproduced test suite. The audit is time-bounded to the queried events and does not cover scheduled, manual, release, or other workflow triggers unless listed.
+- A push query for OpenMausBot was initially made against an incorrect SHA. The corrected-SHA push query later confirmed successful CI and Docker image runs; the wrong-SHA result is excluded.
+- For pins without observed CI, a repository-tree filename scan counted test-like paths and workflow files; this is source inventory, not evidence of execution or relevance. - These are observed workflow records, not a locally reproduced test suite. The audit is time-bounded to the queried events and does not cover scheduled, manual, release, or other workflow triggers unless listed.
 
 ## Results
 
