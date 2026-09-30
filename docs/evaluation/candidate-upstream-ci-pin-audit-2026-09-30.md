@@ -207,3 +207,19 @@ Open Intern remains **deferred** at `e2d9dc312a1a07a304c55d88a92c1f0b86cd68c9`; 
 - `tests/test_scheduler.py` covers job CRUD/execution paths and stores `agent_id`; the reviewed execution test verifies the scheduler retrieves an agent by that ID. It does not test permission parity or revocation between foreground and scheduled execution.
 
 This is potentially reusable evidence for user/API-key scoping, encrypted per-agent configuration, and agent-keyed memory queries. It does not prove the complete NAIA/Anna isolation or broker-only handoff required by Atento. The candidate remains deferred and was not run locally.
+
+
+## OpenMausBot changed-contract tests — exact-pin run-log confirmation
+
+The corrected current-pin CI run `36647214650` checked out exactly `6005b1bf5883a7ffa639c07e729321f89b9532e1` and completed successfully. I inspected its Ubuntu Vitest shard logs and fetched each changed-contract test file at that same SHA. The exact targeted files appeared in the run output:
+
+| Exact-pin test file | Run result | Directly asserted boundary |
+|---|---:|---|
+| `server/lending-memory.test.ts` | 12 passed | Detects foreign-turn edits across bot memory/workspace inputs; owner review binds to current content; malformed/linked/oversized state fails closed. |
+| `server/cloud-lending-memory.e2e.test.ts` | 21 passed | Real-server guest/owner flows cover memory capture and writes, conversation/session ownership, approval settings, provider reload, and routine output. |
+| `server/request-auth.test.ts` | 46 passed | Default-deny endpoint scopes; client/admin limits; proxy and loopback trust; origin/cookie checks; revoked credentials do not fall back to owner trust. |
+| `server/sessions.test.ts` | 40 passed | Pairing and session scope, membership rechecks, revocation, fail-closed snapshot errors, and unclean-restart behavior. |
+
+Source blobs at the frozen pin: `feed6bae1281a5196cad02c1d8caf36286b5f179`, `f0186a899e4c19a1dee6c5dcffd09d05c2ddf01f`, `de0c1b780da900b2ca5d642d36aab4b0a03c6424`, and `b3cd8a4bc896aad29959808d3e76726bb58c9e94`, respectively. The Ubuntu shards reported 194 test files passed / 6 skipped and 2,764 tests passed / 21 skipped across the full Vitest suite; the full corrected-pin CI run also passed its other platform and package jobs.
+
+This closes the OpenMausBot `UPSTREAM_FIRST` changed-contract execution check with scope. These tests demonstrate owner/guest and session authority boundaries in OpenMausBot. They do not demonstrate NAIA/Anna separation for two agents belonging to the same owner, nor broker-only handoff. No Atento-specific composition was run, no candidate was selected, and no Atento requirement was marked satisfied by proxy.
