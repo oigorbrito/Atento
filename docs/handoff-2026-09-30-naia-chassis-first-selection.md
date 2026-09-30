@@ -190,3 +190,22 @@ NAIA_BASE = NOT_SELECTED
 ```
 
 Do not restart the 26-candidate architecture sweep. Gate 2 should stop early whenever an authority/isolation hard failure becomes structural, and should not execute vendor-default profiles merely to reconfirm already-known permissive behavior.
+
+
+## Gate 2 static screen update
+
+Canonical result:
+
+`docs/evaluation/naia-authority-isolation-gate2-screen-2026-09-30.md`
+
+```text
+AUTHORITY_ISOLATION_STATIC_SCREEN = COMPLETE_V1
+AUTHORITY_ISOLATION_SCREENED = 25_OF_25
+VENDOR_DEFAULT_AUTHORITY_PASS = 0
+AUTHORITY_ISOLATION_EMPIRICAL_PASS = 0
+ADDITIONAL_GATE_2_STOPS = 0
+```
+
+Do not rerun vendor/default authority behavior. None of the 25 survivors can defensibly pass authority/isolation without an exact hardened composition, dependency freeze, or the one candidate-specific upstream-first prerequisite already recorded.
+
+Next work is candidate-specific and evidence-minimizing: freeze only decision-relevant compositions, reuse exact-pin clauses already proved, run only missing negative authority/isolation checks, and stop on any cross-cutting structural authority repair.
