@@ -123,17 +123,33 @@ Residual microprobe gate from the canonical ledger:
 7. pre/post adaptation diff will be preserved
 ```
 
-Current cross-candidate state:
+Current generic cross-candidate state remains:
 
 ```text
 GATE_1_EXACT_PIN = SATISFIED_BY_CANONICAL_AUDITS
-GATE_2_HARDENED_COMPOSITION = NOT_SATISFIED
+GATE_2_HARDENED_COMPOSITION = NOT_SATISFIED_GENERICALLY
 GATE_3_UPSTREAM_MAPPING = SATISFIED_FOR_FROZEN_V1
 GATE_4_CURRENT_PIN_CI_RUN_CHECK = SATISFIED_AS_OBSERVATION_ONLY
-GATE_5_SINGLE_PROPERTY = NOT_FROZEN_FOR_LOCAL_EXECUTION
-GATE_6_DECISION_RELEVANCE = NOT_ESTABLISHED
+GATE_5_SINGLE_PROPERTY = NOT_FROZEN_GENERICALLY
+GATE_6_DECISION_RELEVANCE = NOT_ESTABLISHED_GENERICALLY
 GATE_7_DIFF_PRESERVATION = PLANNED_NOT_EXECUTED
 ```
+
+Post-pass exception already merged after this static sweep:
+
+```text
+Engram:
+  GATE_2_HARDENED_COMPOSITION = SATISFIED_FOR_FROZEN_V1_COMPOSITION
+  GATE_5_SINGLE_PROPERTY = ENGRAM_BROWSER_EFFECT_AUTHORITY
+  GATE_6_DECISION_RELEVANCE = ESTABLISHED_FOR_BOUNDED_BROWSER_AUTHORITY_PROBE
+  RUNTIME_EXECUTION = NOT_STARTED
+```
+
+Canonical freeze:
+
+`docs/evaluation/naia-engram-hardened-composition-freeze-2026-09-30.md`
+
+This exception does not establish a generic execution order or candidate preference.
 
 Therefore:
 
@@ -148,7 +164,9 @@ RP_DEP_01 = NOT_EXECUTED
 RP_COST_01 = NOT_EXECUTED
 ```
 
-This is intentional fail-closed behavior. Starting any local RP at this point would violate gate 2 and gate 6.
+This is intentional fail-closed behavior for every candidate/profile that has not yet closed gates 2 and 6.
+
+Engram is now the bounded exception: its hardened composition and single browser-authority property are frozen, so the matching residual probe is ready but still not executed.
 
 ## 5. Next allowed block
 
@@ -184,6 +202,9 @@ STATIC_RESIDUAL_DISPOSITION = COMPLETE_V1
 GENERIC_LOCAL_BENCHMARK = NOT_JUSTIFIED
 GENERIC_VENDOR_DEFAULT_RETEST = NOT_JUSTIFIED
 LOCAL_RESIDUAL_PROBE_EXECUTION = NOT_STARTED
+ENGRAM_HARDENED_COMPOSITION = FROZEN_V1
+ENGRAM_BROWSER_EFFECT_AUTHORITY = UNPROVEN
+RESIDUAL_BROWSER_AUTHORITY_PROBE = READY_NOT_EXECUTED
 
 CURRENT_PIN_QUALIFIED = 0
 NAIA_SHORTLIST = NOT_SELECTED
