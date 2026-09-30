@@ -1,0 +1,63 @@
+version: NAIA-GATE2-COMPOSITION-V1
+date: 2026-09-30
+frontier_count: 12
+common_assertions_per_candidate: 6
+common_assertions_total: 72
+states:
+  - PASS_WITH_SCOPE
+  - FAIL_LOCALIZED
+  - FAIL_STRUCTURAL
+  - BLOCKED_ENVIRONMENT
+  - INVALID_EVIDENCE
+common:
+  - id: ISO-1
+    property: cross_memory_read
+  - id: ISO-2
+    property: cross_memory_mutation
+  - id: ISO-3
+    property: cross_credential_use
+  - id: ISO-4
+    property: cross_tool_channel_use
+  - id: ISO-5
+    property: silent_cross_role_invocation
+  - id: ISO-6
+    property: explicit_broker_positive_control
+candidates:
+  - name: AI Butler
+    add_ons: []
+  - name: OpenMausBot
+    add_ons: [same_owner_role_boundary]
+  - name: NanoClaw
+    add_ons: [recipe_freeze]
+  - name: AgentOS
+    add_ons: [browser_effect_policy]
+  - name: Rome
+    add_ons: [consequential_action_coverage, provider_bypass]
+  - name: Suna
+    add_ons: [connector_policy]
+  - name: Rakazo
+    add_ons: [consequential_rules]
+  - name: Letta Code
+    add_ons: [hardened_permission_profile]
+  - name: Octop
+    add_ons: [authority_fail_closed, cron_connector_authority]
+  - name: QwenPaw
+    add_ons: [sandbox_unavailable_fail_closed, cron_authority]
+    runtime_scope: exclude_unresolved_python_3_13_pty
+  - name: RustFox
+    add_ons: [universal_effect_owner]
+  - name: Engram
+    add_ons: [browser_effect_policy, trusted_run_effect]
+execution_order:
+  - AI Butler
+  - OpenMausBot
+  - NanoClaw
+  - AgentOS
+  - Rome
+  - Suna
+  - Rakazo
+  - Letta Code
+  - Octop
+  - QwenPaw
+  - RustFox
+  - Engram
