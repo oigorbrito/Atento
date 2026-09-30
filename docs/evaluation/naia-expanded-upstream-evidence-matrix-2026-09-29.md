@@ -614,6 +614,36 @@ RustFox:
 
 No generic local NCP is justified for these two.
 
+## Transfer audit: Engram / Holt
+
+The final grouped secondary transfer audit is recorded in:
+
+`docs/evaluation/naia-transfer-audit-engram-holt-2026-09-30.md`
+
+Key residuals:
+
+~~~text
+Engram:
+  technical taint + sensitive-data + destination-aware egress gate = present
+  signed unattended autonomy + shared egress budget = present
+  shell default = off; delegated tool scope cannot exceed parent scope
+  browser click/type are side-effecting but explicitly non-egress
+  universal consequential-action approval = not established
+  scheduler persists/reopens and marks due occurrence before execution
+  dynamic next-wake re-arming is not wired at this pin
+  per-agent tools/provider keys exist but user-global memory remains shared in one ENGRAM_HOME
+
+Holt:
+  per-workspace memory isolation = default; global memory = opt-in
+  OS-native launchd/cron/Task Scheduler scheduling = present
+  interactive and noninteractive agentic authority belongs to the selected CLI brain
+  direct API brain runner is text-only
+  ~/.holt provider credentials + Telegram config are global across workspaces
+  strict NAIA/Anna credential/channel isolation requires separate authority domains
+~~~
+
+No generic local NCP is justified for these two. Any later local work must target only the frozen residual composition/authority seam.
+
 ## 10. Cross-candidate conclusion
 
 The expanded universe contains significantly more reusable upstream evidence than the original discovery pool implied.
@@ -638,8 +668,10 @@ PROVISIONAL_SELFAGENT_GOCLAW_NEBO_ADMISSION = COMPLETE
 REGISTERED_DISCOVERY_POOL_SCREENING = COMPLETE_V1
 FROZEN_CANDIDATE_UNIVERSE_V1 = COMPLETE
 CANDIDATE_UNIVERSE_COMPLETE = true_for_frozen_v1_snapshot
-SECONDARY_TRANSFER_AUDITS = IN_PROGRESS_5_OF_7
+SECONDARY_TRANSFER_AUDITS = COMPLETE_7_OF_7
+EXPANDED_EXTERNAL_EVIDENCE_GATE = COMPLETE_V1
 LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
+RESIDUAL_ONLY_PROBE_DERIVATION = NEXT
 NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
 ```
