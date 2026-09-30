@@ -18,15 +18,19 @@ A candidate enters this frontier only when:
 ## Frontier result
 
 ```text
-TRANSFERABLE_EVIDENCE_FRONTIER = COMPLETE_V1
+TRANSFERABLE_EVIDENCE_FRONTIER = COMPLETE_V2
 
 ADMITTED:
   AI Butler
   AgentOS
+  Octop
+  Rome
+  Engram
 
 NOT_ADMITTED_YET:
   OpenClaw
   QwenPaw
+  Agent Zero
   all other current technical survivors
 
 THIS_IS_NOT = shortlist | ranking | selection
@@ -85,6 +89,73 @@ AGENTOS_GATE2 =
   + EXPLICIT_BROWSER_POLICY_DOMAIN
 ```
 
+## Octop
+
+Canonical evidence:
+
+`docs/evaluation/octop-exhaustive-verification-2026-09-30.md`
+
+Exact-pin run-backed evidence includes:
+
+- non-live suite: 3951 passed / 17 skipped;
+- cross-user workspace denial;
+- security defaults;
+- Bridge allow/deny policy;
+- multiplatform package/runtime smoke;
+- CodeQL.
+
+Residual remains Atento-specific:
+
+```text
+same-owner NAIA/Anna topology
++ fail-closed HITL/tool-guard profile
++ explicit cron connector authority
++ no stock Bridge role mutation authority
++ pending-HITL restart only if decision-critical
+```
+
+Octop therefore enters the transferable-evidence frontier, but is not qualified.
+
+## Rome
+
+Canonical evidence:
+
+`docs/evaluation/rome-gate2-transferable-authority-closure-2026-09-30.md`
+
+Exact-pin CI and E2E are green. The executed integration suite closes Rome's durable approval replay/state-machine path with scope.
+
+Residual:
+
+```text
+two-profile Atento composition
++ consequential-action coverage completeness
++ provider-native bypass exclusion
++ capability-creation autoapproval disabled
+```
+
+Rome enters the frontier without creating shortlist status.
+
+## Engram
+
+Canonical evidence:
+
+`docs/evaluation/engram-gate2-transferable-authority-closure-2026-09-30.md`
+
+Exact-pin CI is green. Executed tests close taint/egress, bounded autonomy, shell-disabled, filesystem confinement and related authority clauses with scope.
+
+Residual:
+
+```text
+two-ENGRAM_HOME role composition
++ trusted-run consequential effect gate
++ browser consequential action gate
++ deployment wake policy
+```
+
+Real Chrome browser tests were ignored upstream, so browser authority remains explicitly open.
+
+Engram enters the frontier without creating shortlist status.
+
 ## Why OpenClaw is not admitted yet
 
 Exact-pin CI is observed, but the exact push run executed only `security-fast`; the main preflight/core/QA lanes relevant to the A2A and two-runtime authority composition were skipped.
@@ -124,11 +195,11 @@ FROZEN_UNIVERSE = 26
 TECHNICAL_ELIMINATED = [SelfAgent]
 TECHNICAL_SURVIVORS = 25
 
-TRANSFERABLE_EVIDENCE_FRONTIER_COUNT = 2
-TRANSFERABLE_EVIDENCE_FRONTIER = [AI Butler, AgentOS]
+TRANSFERABLE_EVIDENCE_FRONTIER_COUNT = 5
+TRANSFERABLE_EVIDENCE_FRONTIER = [AI Butler, AgentOS, Octop, Rome, Engram]
 
 NEXT_EMPIRICAL_COMPOSITION_TARGET = AI Butler
-SECOND_READY_COMPOSITION_TARGET = AgentOS
+OTHER_READY_COMPOSITION_TARGETS = [AgentOS, Octop, Rome, Engram]
 
 AUTHORITY_ISOLATION_EMPIRICAL_PASS = 0
 NAIA_SHORTLIST = NOT_SELECTED
@@ -155,3 +226,18 @@ EXECUTOR_INFRA_BLOCK != CANDIDATE_FAIL
 ```
 
 and continue evidence reconciliation without claiming Gate-2 empirical PASS.
+
+
+## V2 interpretation
+
+The frontier now contains five candidates with exact-pin executed evidence strong enough to eliminate broad upstream retesting.
+
+```text
+FRONTIER_V2 = [AI Butler, AgentOS, Octop, Rome, Engram]
+
+FRONTIER_ENTRY != SHORTLIST
+FRONTIER_ENTRY != QUALIFIED
+FRONTIER_ENTRY != SELECTED
+```
+
+The remaining Gate-2 work for these candidates is composition-specific rather than generic runtime-health testing.
