@@ -32,6 +32,11 @@ Current external/upstream evidence preflight:
 
 Expanded upstream-evidence matrix:
 
+Transfer audit for Suna / Letta Code / PersonalJarvis:
+
+`docs/evaluation/naia-transfer-audit-suna-letta-jarvis-2026-09-29.md`
+
+
 `docs/evaluation/naia-expanded-upstream-evidence-matrix-2026-09-29.md`
 
 
