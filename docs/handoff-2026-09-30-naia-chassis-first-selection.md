@@ -228,3 +228,20 @@ COMPOSITION_EXECUTION = NOT_RUN
 ```
 
 Do not restart broad candidate tests. The next executable evidence is only the frozen AI Butler NAIA/Anna two-runtime negative composition. If the environment cannot obtain the exact pin, preserve the block as executor infrastructure and continue non-redundant evidence work; do not mark the candidate failed.
+
+
+## Gate-2 transferable-evidence frontier
+
+Canonical record:
+
+`docs/evaluation/naia-gate2-transferable-evidence-frontier-2026-09-30.md`
+
+```text
+FRONTIER = [AI Butler, AgentOS]
+NEXT = AI Butler two-role negative composition
+SECOND_READY = AgentOS hardened two-role composition
+SHORTLIST = NOT_SELECTED
+BASE = NOT_SELECTED
+```
+
+Do not treat the frontier as a product ranking. It is only the set whose exact-pin executed evidence already closes enough authority clauses to make an Atento-specific composition the next non-redundant test.
