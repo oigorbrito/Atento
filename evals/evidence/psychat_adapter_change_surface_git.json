@@ -1,0 +1,34 @@
+{
+  "metric_version": "atento-adapter-change-surface-git-v0.1",
+  "evidence_type": "github_git_compare",
+  "baseline_commit": "dc183ca01b6937f55a71b1afdb666c81f13c965c",
+  "scenarios": {
+    "swap_registered_executor": {
+      "commit": "bdb21f9a7581ac5c5aac78b4b94ccef0aac186e0",
+      "preserving_ref": "evidence/adapter-swap-zero",
+      "files_touched_total": 0,
+      "existing_chassis_files_touched": 0
+    },
+    "introduce_new_executor": {
+      "commit": "a309475e8578c888f36e16bbd95dbb22a15cf52a",
+      "preserving_ref": "evidence/adapter-new-executor",
+      "files_touched_total": 1,
+      "existing_chassis_files_touched": 0,
+      "extension_files_touched": 1,
+      "changed_files": [
+        "evals/evidence/adapter-change-surface/alternate_rag_executor.py"
+      ]
+    },
+    "add_new_capability": {
+      "commit": "afdae6b10d28515cb466ba97fd49969c94de6e78",
+      "preserving_ref": "evidence/adapter-new-capability",
+      "files_touched_total": 1,
+      "existing_chassis_files_touched": 0,
+      "extension_files_touched": 1,
+      "changed_files": [
+        "evals/evidence/adapter-change-surface/lookup_capability.py"
+      ]
+    }
+  },
+  "interpretation": "Git compare proves runtime selection requires no source mutation and extension scenarios add one file without modifying existing chassis files."
+}
