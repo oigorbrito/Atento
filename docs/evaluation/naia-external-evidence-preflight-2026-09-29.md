@@ -405,11 +405,22 @@ Record:
 
 Those three now have bounded Atento residuals; no generic local NCP is justified for them.
 
-Remaining secondary transfer group:
+The second grouped transfer audit is complete for:
 
 ~~~text
 HubOS
 RustFox
+~~~
+
+Record:
+
+docs/evaluation/naia-transfer-audit-hubos-rustfox-2026-09-30.md
+
+Those two now have bounded Atento residuals; no generic local NCP is justified.
+
+Remaining secondary transfer group:
+
+~~~text
 Engram
 Holt
 ~~~
@@ -426,7 +437,7 @@ The frozen V1 snapshot is:
 REGISTERED_DISCOVERY_POOL_SCREENING = COMPLETE_V1
 FROZEN_CANDIDATE_UNIVERSE_V1 = COMPLETE
 CANDIDATE_UNIVERSE_COMPLETE = true_for_frozen_v1_snapshot
-SECONDARY_TRANSFER_AUDITS = IN_PROGRESS_3_OF_7
+SECONDARY_TRANSFER_AUDITS = IN_PROGRESS_5_OF_7
 LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
 NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
@@ -436,4 +447,4 @@ This freeze prevents discovery churn; it is not a permanent claim that no new ca
 
 Local NCP remains blocked for the newly admitted seven until the external-evidence gate is satisfied candidate by candidate.
 
-The next work is therefore **grouped upstream evidence / transfer audits for HubOS / RustFox and Engram / Holt**, not local benchmarking.
+The next work is therefore **the final grouped secondary transfer audit for Engram / Holt**, not local benchmarking.
