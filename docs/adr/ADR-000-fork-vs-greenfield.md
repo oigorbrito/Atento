@@ -1,54 +1,59 @@
-# ADR-000 — Fork vs Greenfield
+# ADR-000 — Fork vs Greenfield (historical strategy research)
+
+> **DECISION RESET — 2026-09-29:** a evidência abaixo é preservada, mas nenhuma seleção, ordem de execução, shortlist ou gate derivado desta ADR possui autoridade decisória enquanto a reconciliação conceitual de NAIA/Anna/Apollo estiver aberta. Não apagar medições já produzidas; revalidar apenas as conclusões.
 
 ## Document contract
 
-Esta ADR possui **uma única responsabilidade**: decidir a estratégia de adoção de upstream para a base executiva do Atento.
+Esta ADR preserva a pesquisa histórica sobre estratégias de adoção de upstream. Seu escopo decisório está **reaberto** porque a reconciliação anterior misturou candidatos a chassis completos, donors de blocos, modelos e benchmarks.
 
 Ela deve conter contexto, alternativas, evidência do spike, decisão e consequências. Não é roadmap, não é registry de licenças e não é benchmark spec.
 
 A fonte canônica de progresso continua sendo `roadmap.md`; a fonte canônica de licenças/provenance é `docs/third-party.md`.
 
-- **Status:** Proposed
+- **Status:** Reopened — `DECISION_RESET`
 - **Date:** TBD
 - **Decision owners:** TBD
 
 ## Context
 
-O Atento pode ser implementado como arquitetura própria, selective port, **full donor**, fork de um projeto existente, model adapter ou combinação dessas estratégias. O projeto autoriza adoção integral de donors quando a evidência mostrar vantagem. Esta ADR deve ser concluída antes da migração dos blocos para a base executiva definitiva.
+O Atento pode ser implementado como arquitetura própria, selective port, **full donor**, fork de um projeto existente, model adapter ou combinação dessas estratégias. O projeto autoriza adoção integral de donors quando a evidência mostrar vantagem. Não usar esta ADR como gate de migração até que os conjuntos de candidatos de **NAIA** e **Anna** sejam reconstruídos por categoria equivalente.
 
-## Candidates
+## Historical Anna-related candidate set — shortlist reset
+
+> This list is evidence inventory only. The canonical current Anna selection state is `docs/adr/ADR-ANNA-001-therapeutic-base-selection.md`.
+
 
 ### PsyChat
 - Repo: https://github.com/wink-wink-wink555/PsyChat
 - Commit avaliado: `5bf6f806e0f30e45b4e1dd72282fd6afd83b66f4`
 - Terms: MIT
-- Current status: candidate for full donor / fork / selective port
+- Historical status: candidate for full donor / fork / selective port. **Current Anna decision status:** `UNCLASSIFIED_PENDING_AUDIT`.
 
 ### PsychAgent
 - Repo: https://github.com/ECNU-ICALK/PsychAgent
 - Commit avaliado: `469f45ef468b968b3fccd1936d7e6a0a574e4c5c`
 - Terms: nenhuma licença de repo verificada na revisão
-- Current status: external research clone / architecture donor candidate
+- Historical status: external research clone / architecture donor candidate. **Current Anna decision status:** `UNCLASSIFIED_PENDING_AUDIT`.
 
 ### TherapyMind
 - Repo: https://github.com/zx070326-hash/TherapyMind
 - Commit avaliado: `bfed3f5be61bab262bb00a0f3cc9718c4a965243`
 - Terms: MIT + contextual notice
-- Current status: full donor / lab spike candidate
+- Historical status: full donor / lab spike candidate. **Current Anna decision status:** `UNCLASSIFIED_PENDING_AUDIT`.
 
 ### TheraMind (Emo-gml) — supplemental candidate/donor
 - Repo: https://github.com/Emo-gml/TheraMind
 - Commit avaliado: `416d0a00ecc8c76229512197765dc95be6513de5`
 - Terms: README limits use to research and education
-- Current status: architecture/mechanism donor; not a cleared product-base candidate
+- Historical status: architecture/mechanism donor; not a cleared product-base candidate. **Current Anna decision status:** `UNCLASSIFIED_PENDING_AUDIT`.
 - Important: **distinct project from TherapyMind above**
 
 ### SoulChat2.0 / EmoLLM / MindChat
 Tratar primariamente como trilha de modelos/checkpoints, não como base do Executive Runtime.
 
-## Block-migration rule
+## Historical block-migration rule — inactive
 
-A decisão desta ADR deve mapear a estratégia escolhida para **blocos A–S completos**. Não definir migração por semanas, prompts ou frações artificiais.
+A formulação anterior exigia mapear adoção para blocos A–S completos. Essa regra é preservada como histórico e **não é obrigatória durante o DECISION_RESET**. A arquitetura real de migração deve ser derivada do chassis/agente selecionado e depois mapeada ao ledger técnico sem perder evidência.
 
 Exemplo:
 
@@ -63,15 +68,15 @@ BLOCO E — Memory
   donor: PsychAgent
 ```
 
-Project Points são usados para medir a evidência produzida durante a migração do bloco, não para fracionar a migração.
+Project Points continuam preservando evidência produzida. Eles não transformam os blocos históricos em arquitetura obrigatória dos três agentes.
 
 ## Full donor rule
 
-Adoção integral não é penalizada por princípio. O donor pode ser copiado/forkeado na íntegra para o estudo quando isso melhorar a solução de forma mensurável. A ADR deve comparar o donor integral com alternativas razoáveis usando o mesmo AtentoEval.
+Adoção integral não é penalizada por princípio. Um donor pode ser estudado como full donor/fork quando isso melhorar a solução de forma mensurável. A decisão concreta deve ocorrer na ADR específica do agente, após comparar candidatos equivalentes e medir custo total de adaptação.
 
 A autorização interna do projeto não substitui os termos externos de redistribuição; isso é registrado separadamente em `docs/third-party.md`.
 
-## Evaluation matrix
+## Historical evaluation matrix — non-authoritative
 
 Preencher de 0–5:
 
@@ -113,7 +118,7 @@ This batch did **not** compare every ADR candidate under one common AtentoEval r
 - **Product gaps:** demo-grade auth/privacy surface; no qualified crisis/suicide/escalation runtime found in inspected source.
 - **Release gap:** public repo does not contain the complete paper-scale post-session evolution/training pipeline.
 - **Terms blocker:** repository license was not detected; checkpoint terms were not cleared for product adoption in this audit.
-- **Disposition:** strong therapeutic-engine reference/candidate, **adoption HOLD** pending terms, safety boundary and local transfer tests.
+- **Historical disposition (non-authoritative):** strong therapeutic-engine reference/candidate; prior audit recorded an adoption HOLD. Current selection authority is reset; underlying gaps/evidence remain preserved.
 
 #### TheraMind (Emo-gml)
 - **Pinned commit:** `416d0a00ecc8c76229512197765dc95be6513de5`.
@@ -121,7 +126,7 @@ This batch did **not** compare every ADR candidate under one common AtentoEval r
 - **Observed chassis concerns:** JSON/file-backed state, hard-coded provider paths and concrete state-access inconsistencies in the public research implementation.
 - **Safety:** no independent crisis/safety subsystem was established in the inspected source.
 - **Terms blocker:** research/educational use only.
-- **Disposition:** mechanism/architecture donor; not preferred as a direct product base.
+- **Historical disposition (non-authoritative):** mechanism/architecture donor; prior audit did not prefer it as a direct product base. Current selection authority is reset; reclassification is pending.
 
 #### Scope limitation
 The result above means only:
@@ -176,7 +181,7 @@ Esse registro documenta:
 
 O documento **não seleciona um vencedor** e não altera o status `Proposed` desta ADR.
 
-## Mandatory spike results
+## Historical spike checklist — inactive
 
 ### Upstream execution
 - [ ] PsyChat runs unchanged
@@ -220,9 +225,11 @@ estimated_greenfield_effort:
 
 A porcentagem de código retido é informativa, não decisiva. Full donor continua válido se o ganho sistêmico em tempo, qualidade, safety, custo e manutenção for melhor.
 
-## Acceptance criteria
+## Historical acceptance criteria — inactive
 
-Esta ADR só pode mudar de `Proposed` para `Accepted` quando:
+Os critérios abaixo pertencem à formulação anterior e ficam preservados somente como histórico. Eles não autorizam seleção nem bloqueiam a nova enumeração de candidatos.
+
+A formulação anterior exigia:
 
 - o upstream selecionado tiver sido executado sem alteração ou a impossibilidade estiver documentada;
 - termos externos e estratégia de armazenamento/redistribuição tiverem sido registrados;
@@ -232,17 +239,17 @@ Esta ADR só pode mudar de `Proposed` para `Accepted` quando:
 - riscos de safety/privacidade/provider coupling estiverem documentados;
 - a decisão indicar estratégia de sync/rollback.
 
-## Decision
+## Decision reset
 
 ```yaml
-decision: TBD # full-donor | fork | selective-port | native | hybrid | model-adapter
-primary_reason:
-upstream_sync_strategy:
-modules_reused:
-modules_reimplemented:
-model_strategy:
-external_terms_note:
-data_provenance:
+decision: NOT_SELECTED
+status: DECISION_RESET
+naia_base: NOT_SELECTED
+anna_base: NOT_SELECTED
+adoption_mode: NOT_SELECTED
+reason: product framing and candidate equivalence are being reconciled
+preserve_existing_measurements: true
+reuse_existing_evidence: true
 ```
 
 ## Consequences

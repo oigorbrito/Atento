@@ -1,5 +1,7 @@
 # AGENTS.md — Regras de Engenharia do Atento
 
+> **PRODUCT / DECISION RESET — 2026-09-29:** enquanto `docs/product-concept-reset.md` estiver ativo, preservar evidência existente e não inferir decisões de chassis, shortlist, arquitetura global ou ordem de execução a partir da documentação histórica.
+
 Este arquivo define como agentes de código, copilotos e contribuidores automatizados devem trabalhar neste repositório.
 
 O objetivo é manter o Atento **arquiteturalmente defensável, auditável, reproduzível e seguro**.
@@ -38,7 +40,7 @@ O repositório canônico do projeto é:
 
 `https://github.com/oigorbrito/Atento`
 
-Repos listados em `docs/third-party.md` — incluindo NaIA, OpenMausBot, OpenClaw, PsychAgent, PsyChat e outros — são **donors, referências, clones de pesquisa ou candidatos externos**.
+Repos listados em `docs/third-party.md` — incluindo o repositório histórico `oigorbrito/NaIa`, OpenMausBot, OpenClaw, PsychAgent, PsyChat e outros — são **donors, referências, clones de pesquisa ou entradas de avaliação externas**. O repositório histórico `NaIa` não deve ser confundido com **NAIA**, o agente/produto atual.
 
 Regras:
 
@@ -60,16 +62,17 @@ DONOR REPO = EXTERNAL IMPLEMENTATION / EXPERIMENT SOURCE
 Antes de implementar, consultar nesta ordem:
 
 1. **`AGENTS.md`** — regras operacionais e de defensabilidade;
-2. **`roadmap.md`** — arquitetura, módulos, fases e provenance;
-3. **`docs/adr/`** — decisões arquiteturais aprovadas;
-4. **`docs/evaluation/harness.md`** — critérios de avaliação;
-5. **`evals/config/`** — benchmarks, sistemas e release gates;
-6. **`docs/third-party.md`** — dependências externas, licença e provenance;
-7. **`docs/documentation-map.md`** — autoridade, conteúdo e limites de cada documento;
-8. documentação local do módulo;
-9. testes existentes.
+2. **`docs/product-concept-reset.md`** — identidade corrente de NAIA/Anna/Apollo enquanto o reset estiver ativo;
+3. **ADR específica do agente/decisão** — seleção de base, boundaries e decisões estruturais;
+4. **`roadmap.md`** — Project Points, ledger técnico e arquitetura histórica/em reconciliação;
+5. **`docs/evaluation/harness.md`** — metodologia de avaliação;
+6. **`evals/config/`** — sistemas/evidência executável e release gates; registro não implica shortlist;
+7. **`docs/third-party.md`** — dependências externas, termos e provenance;
+8. **`docs/documentation-map.md`** — autoridade, conteúdo e limites de cada documento;
+9. documentação local do módulo;
+10. testes existentes.
 
-Se houver conflito entre documentos, **não escolher silenciosamente**. Abrir ou atualizar ADR.
+Se houver conflito entre documentos, **não escolher silenciosamente**. Durante o `DECISION_RESET`, a identidade de produto vem de `docs/product-concept-reset.md`; decisões de chassis vêm das ADRs específicas de NAIA/Anna/Apollo. Evidência datada não substitui essas fontes.
 
 ---
 
@@ -78,7 +81,7 @@ Se houver conflito entre documentos, **não escolher silenciosamente**. Abrir ou
 
 Antes de iniciar nova pesquisa, benchmark ou implementação de arquitetura:
 
-1. consultar `roadmap.md`, ADRs, `docs/third-party.md` e resultados/evidências já existentes;
+1. consultar `docs/product-concept-reset.md`, a ADR específica do agente, `roadmap.md`, `docs/third-party.md` e resultados/evidências já existentes;
 2. verificar se a propriedade já foi demonstrada externamente por paper, benchmark reproduzível ou testes upstream;
 3. registrar o protocolo, população/tarefa, versão/commit, métrica e limitações da evidência externa;
 4. identificar o **delta material do Atento** (por exemplo idioma, modelo, runtime, memória, safety, side effects, privacidade ou licença);
@@ -112,13 +115,13 @@ QUALIFIED != PROMOTED
 
 ## 2.1 Roadmap e progresso global do projeto
 
-O `roadmap.md` é a **fonte canônica de escopo e progresso**.
+O `roadmap.md` permanece a **fonte canônica de Project Points e progresso medido**. Durante o `DECISION_RESET`, ele **não é a fonte canônica da identidade do produto nem da arquitetura final dos três agentes**.
 
 ### Regra crítica
 
 **100% representa o projeto inteiro, não um bloco individual.**
 
-O projeto usa exatamente **100 Project Points**, distribuídos entre os blocos A–S do roadmap. Cada ponto corresponde a um critério verificável do **Project Point Ledger**.
+O ledger atual mantém **100 Project Points** distribuídos entre os blocos A–S históricos. Esses pontos preservam trabalho/evidência já produzido; a distribuição poderá ser reavaliada somente por decisão explícita depois da reconciliação. Não interpretar os blocos A–S como decomposição final obrigatória de NAIA/Anna/Apollo.
 
 Portanto:
 
@@ -175,48 +178,27 @@ Mudança nos pesos ou na definição dos 100 Project Points exige ADR ou altera�
 - os 100 Project Points estiverem `[x]`;
 - todos os blocos A–S estiverem `[x]`;
 - todos os release gates bloqueantes passarem;
-- a Fase 8 tiver seus critérios de saída satisfeitos;
+- o `DECISION_RESET` estiver encerrado e os critérios de saída/release da arquitetura então vigente estiverem satisfeitos;
 - não existir regressão crítica conhecida não resolvida.
 
 
-## 2.2 Migração obrigatoriamente por blocos
+## 2.2 Unidade de execução durante a reconciliação
 
-A unidade de implementação/migração é um **BLOCO A–S do roadmap**.
+Os blocos A–S são um **ledger técnico histórico**, não a arquitetura obrigatória dos três agentes.
 
-Project Points medem progresso; **não são tickets, prompts ou mini-fases**.
+Enquanto NAIA e Anna estiverem com seleção de base aberta:
 
-O agente deve:
+1. não iniciar migração ampla apenas porque um bloco A–S existe;
+2. primeiro identificar o agente afetado: NAIA, Anna, Apollo ou infraestrutura compartilhada;
+3. consultar a ADR específica de seleção/composição;
+4. reutilizar evidência e implementação já válida;
+5. executar somente deltas materiais que possam alterar a decisão;
+6. registrar qualquer novo trabalho no ledger existente sem fingir que o ledger já representa a arquitetura final.
 
-1. selecionar um bloco arquitetural;
-2. ler a responsabilidade completa desse bloco;
-3. trabalhar o bloco como uma unidade coerente;
-4. integrar donor/native/hybrid através do chassi;
-5. testar/evaluar o bloco;
-6. atualizar seus Project Points conforme evidência;
-7. só declarar o bloco `DONE` quando todos os pontos e gates do bloco estiverem satisfeitos.
+Depois que um chassis for selecionado, a unidade de migração deve seguir os **boundaries reais do sistema escolhido** e seus contratos de adaptação. Os blocos A–S podem ser mantidos, mapeados, divididos ou substituídos por decisão explícita, sem perder a evidência histórica.
 
-É proibido criar um plano do tipo:
+Apollo permanece `DEFERRED` e não deve receber spikes ou migrações sem reativação explícita.
 
-```text
-prompt 1
-prompt 2
-prompt 3
-semana 1
-semana 2
-50% do bloco
-```
-
-para controlar a execução.
-
-Se o contexto ou uma limitação externa impedir a conclusão do bloco na mesma execução, o agente registra `BLOCKED` ou `IN_PROGRESS` com a evidência real e, na próxima execução, **retoma o mesmo bloco**, em vez de converter o restante em uma sequência planejada de prompts.
-
-Mudança de bloco antes de concluir o atual só é aceitável quando:
-
-- existe dependência arquitetural explícita;
-- o bloco atual está objetivamente bloqueado; ou
-- o usuário redefine a prioridade.
-
-A regra é: **bloco é unidade de migração; Project Point é unidade de medição.**
 
 
 ---
@@ -354,7 +336,7 @@ Isso é um requisito de provenance/redistribuição, não uma preferência arqui
 
 ### Gate
 
-Antes de promover qualquer donor para a base do Atento:
+Antes de promover qualquer donor para a base de **NAIA, Anna ou Apollo**:
 
 1. pinçar commit/versão;
 2. executar upstream;
@@ -363,12 +345,13 @@ Antes de promover qualquer donor para a base do Atento:
 5. identificar código mantido, adaptado e substituído;
 6. registrar riscos;
 7. atualizar `docs/third-party.md`;
-8. decidir em ADR.
+8. confirmar que os candidatos comparados pertencem à mesma classe de chassis;
+9. decidir na ADR específica do agente.
 
 ---
-# 7. Arquitetura alvo é modular, não multi-agent por obrigação
+# 7. Três agentes de produto; modularidade interna sem multi-agent por obrigação
 
-Não transformar uma função em "agente" sem necessidade.
+NAIA, Anna e Apollo são agentes de produto deliberadamente separados. **Dentro de cada um deles**, não transformar uma função em "agente" sem necessidade.
 
 Evitar:
 

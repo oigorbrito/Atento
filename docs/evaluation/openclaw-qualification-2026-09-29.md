@@ -1,8 +1,10 @@
 # OpenClaw qualification — 2026-09-29
 
+> **HISTORICAL EVIDENCE / DECISION RESET:** todos os pins, achados e limitações deste documento são preservados. Qualquer linguagem de “finalist”, “next decision step” ou prioridade de `OC-NAYA-*` está **inativa** até OpenClaw ser reenquadrado na nova enumeração comparável da **NAIA**. Os IDs `OC-NAYA-*` são identificadores históricos e não definem a nomenclatura atual do produto.
+
 ## Contract
 
-Este registro preserva a qualificação do OpenClaw como candidato a base da Nayá Assistente.
+Este registro preserva a qualificação técnica histórica do OpenClaw como possível chassis de assistente persistente. Ele não concede shortlist ou prioridade atual para a NAIA.
 
 Não é uma decisão de seleção. O repositório canônico continua sendo o Atento.
 
@@ -76,7 +78,7 @@ GENERIC_TOOL_EFFECT_DURABILITY  = NOT_PROVEN
 GENERAL_EXACTLY_ONCE            = NOT_CLAIMED
 ```
 
-A universal Nayá guarantee for arbitrary external actions would require one of:
+A universal NAIA guarantee for arbitrary external actions would require one of:
 
 1. a common persisted operation/effect envelope at the tool boundary, with tool participation in idempotency/readback/reconciliation; or
 2. restricting high-risk writes to Atento-controlled adapters that implement those contracts individually.
@@ -97,9 +99,9 @@ OpenClaw provides a substantial authority surface:
 - plugin `before_tool_call` approval/block/rewrite hooks;
 - trusted tool-policy hooks for host-trusted gates.
 
-This is compatible with Nayá, but the defaults are not the Nayá target.
+This is compatible with NAIA, but the defaults are not the NAIA target.
 
-OpenClaw documents `auto` as the recommended default for coding agents. Nayá's required operational posture is narrower:
+OpenClaw documents `auto` as the recommended default for coding agents. NAIA's required operational posture is narrower:
 
 ```text
 default deny / least privilege
@@ -114,10 +116,10 @@ Qualification result:
 ```text
 POLICY_PRIMITIVES = STRONG
 DEFAULT_POLICY_FIT = NEEDS_HARDENING
-NAYA_POLICY_FIT = CONFIGURABLE_BUT_NOT_DEFAULT
+NAIA_POLICY_FIT = CONFIGURABLE_BUT_NOT_DEFAULT
 ```
 
-A Nayá deployment should define an explicit hardening profile rather than inherit general-purpose defaults.
+A NAIA deployment should define an explicit hardening profile rather than inherit general-purpose defaults.
 
 ---
 
@@ -163,7 +165,7 @@ OpenClaw's own security model says one Gateway is trusted-operator infrastructur
 
 Its multi-agent documentation explicitly recommends separate Gateways for strict separation.
 
-Therefore two agents inside one Gateway are not sufficient evidence for the stronger Nayá invariant "Therapy remains completely outside Assistant authority".
+Therefore two agents inside one Gateway are not sufficient evidence for the stronger NAIA invariant "Therapy remains completely outside Assistant authority".
 
 Recommended topology for qualification:
 
@@ -197,7 +199,7 @@ STRICT_THERAPY_BOUNDARY = REQUIRES_SEPARATE_RUNTIME/GATEWAY
 
 ## 5. Trust/security assumptions
 
-Material OpenClaw assumptions that Nayá must not inherit silently:
+Material OpenClaw assumptions that NAIA must not inherit silently:
 
 1. the Gateway is primarily a trusted-operator boundary;
 2. session ownership/visibility are not security boundaries;
@@ -206,9 +208,9 @@ Material OpenClaw assumptions that Nayá must not inherit silently:
 5. native plugins run in the Gateway process and must be trusted;
 6. host execution can be configured to broad authority and some trusted-host modes intentionally skip ordinary approval paths.
 
-These are not defects relative to OpenClaw's documented model, but they differ from Nayá's intended compartmentalization.
+These are not defects relative to OpenClaw's documented model, but they differ from NAIA's intended compartmentalization.
 
-Required Nayá adjustments:
+Required NAIA adjustments:
 
 - explicit sandboxing where side effects are available;
 - narrow `tools.sessions.visibility`;
@@ -243,7 +245,7 @@ These needs do not require a deep fork by themselves.
 
 ### Moderate
 
-Nayá hardening requires a maintained opinionated profile:
+NAIA hardening requires a maintained opinionated profile:
 
 - deny-by-default tool policy;
 - explicit session visibility;
@@ -265,7 +267,7 @@ Classification:
 
 ```text
 PRODUCT_ADAPTATION = LOW_TO_MODERATE
-NAYA_SECURITY_HARDENING = MODERATE
+NAIA_SECURITY_HARDENING = MODERATE
 STRICT_THERAPY_BOUNDARY = DEPLOYMENT_TOPOLOGY_CHANGE
 UNIVERSAL_GENERIC_EFFECT_DURABILITY = CROSS_CUTTING_IF_REQUIRED
 CRITICAL_TOOL_ONLY_DURABILITY = LOCALIZED_IF_ADAPTER_CONTROLLED
@@ -290,18 +292,18 @@ This is not blind trust in donor documentation. Reuse requires that the claim be
 
 ### Transfer constraints
 
-Some upstream evidence transfers only when Nayá preserves the relevant boundary:
+Some upstream evidence transfers only when NAIA preserves the relevant boundary:
 
-- policy evidence transfers only if Nayá uses the supported policy/config hooks rather than bypassing them;
+- policy evidence transfers only if NAIA uses the supported policy/config hooks rather than bypassing them;
 - per-agent state isolation does not prove isolation for every plugin-owned global store;
 - same-Gateway multi-agent controls do not satisfy ADR-001's strict Assistant ↔ Therapist authority boundary;
 - outbound-message durability does not generalize to arbitrary external tool effects.
 
-### OC-NAYA-001 — minimal Nayá hardening/profile probe
+### OC-NAYA-001 — minimal NAIA hardening/profile probe
 
-This is the **only OpenClaw-specific local probe required before finalist comparison**.
+This was the **historical pre-selection probe** proposed before the decision reset. It is now inactive unless OpenClaw re-enters the comparable NAIA candidate set.
 
-Implement the smallest Nayá profile using supported OpenClaw seams and prove:
+If OpenClaw is reselected for audit, implement the smallest NAIA profile using supported OpenClaw seams and prove:
 
 - the authored configuration is valid;
 - effective exec/tool policy is fail-closed for the intended Assistant deployment;
@@ -317,7 +319,7 @@ Record as part of the same probe:
 - config/plugin-only touchpoints;
 - whether the candidate remains upstream-trackable.
 
-Do **not** rewrite OpenClaw's stale-approval/restart test suite. Reuse the upstream tests for the mechanism and test only the Nayá profile that composes them.
+Do **not** rewrite OpenClaw's stale-approval/restart test suite. If this probe is reactivated, reuse upstream evidence for unchanged mechanisms and test only material NAIA deltas.
 
 ### Reclassified work
 
@@ -343,15 +345,15 @@ RESTART_RECOVERY                = STRONG_EVIDENCE
 STALE_AUTHORITY_DEFENSE         = STRONG_EVIDENCE
 OUTBOUND_DELIVERY_DURABILITY    = STRONG_EVIDENCE
 POLICY_PRIMITIVES               = STRONG
-NAYA_POLICY_DEFAULT_FIT         = NEEDS_HARDENING
+NAIA_POLICY_DEFAULT_FIT         = NEEDS_HARDENING
 PER_AGENT_CORE_STATE_ISOLATION  = STRONG
 STRICT_THERAPY_BOUNDARY         = SEPARATE_RUNTIME_REQUIRED
 GENERIC_TOOL_EFFECT_DURABILITY  = NOT_PROVEN
 LICENSE                         = MIT
-STATUS                          = STRONG_CANDIDATE / STATIC_QUALIFICATION_COMPLETE
-LOCAL_PRESELECTION_DELTA        = OC-NAYA-001_PENDING
+STATUS                          = EVIDENCE_PRESERVED / SELECTION_RESET
+LOCAL_PRESELECTION_DELTA        = INACTIVE_UNLESS_RESELECTED
 ```
 
 No base winner is selected by this record.
 
-The next decision step is to execute OC-NAYA-001 only, then compare OpenClaw, OpenMausBot and NaIA using the same ADR-002 decision protocol. The reclassified tests run later in the blocks that actually introduce those adaptations.
+**Current decision state:** no OpenClaw-specific execution step is required. First re-enumerate comparable persistent-assistant chassis for NAIA. Reuse this qualification if OpenClaw remains relevant; execute `OC-NAYA-001` only if a material unresolved delta still matters after that comparison.

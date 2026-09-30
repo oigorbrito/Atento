@@ -1,11 +1,14 @@
 {
-  "registry_version": "0.3.0",
+  "registry_version": "0.4.0",
   "policy": {
     "vendor_external_datasets_by_default": false,
     "preserve_original_splits": true,
     "preserve_original_metrics": true,
     "single_cross_benchmark_score": false,
-    "license_review_required": true
+    "license_review_required": true,
+    "decision_authority": false,
+    "mixed_agent_aggregate_for_selection": false,
+    "apollo_benchmark_research": "NOT_STARTED"
   },
   "benchmarks": [
     {
@@ -24,6 +27,9 @@
         "strategy_accuracy",
         "strategy_macro_f1",
         "support_quality"
+      ],
+      "agent_scopes": [
+        "ANNA"
       ]
     },
     {
@@ -44,6 +50,9 @@
         "goal_tracking",
         "counselor_metrics",
         "client_metrics"
+      ],
+      "agent_scopes": [
+        "ANNA"
       ]
     },
     {
@@ -63,6 +72,9 @@
         "memory_precision",
         "memory_recall",
         "need_memory_alignment"
+      ],
+      "agent_scopes": [
+        "ANNA"
       ]
     },
     {
@@ -86,6 +98,9 @@
         "tool_f1",
         "groundedness",
         "hallucination"
+      ],
+      "agent_scopes": [
+        "ANNA"
       ]
     },
     {
@@ -108,6 +123,9 @@
         "acuity_slice",
         "persona_slice",
         "behavior_dimensions"
+      ],
+      "agent_scopes": [
+        "ANNA"
       ]
     },
     {
@@ -129,6 +147,9 @@
         "expert_dimensions",
         "adversarial_failure_rate",
         "judge_human_gap"
+      ],
+      "agent_scopes": [
+        "ANNA"
       ]
     },
     {
@@ -150,6 +171,9 @@
         "patient_style_slice",
         "reserved_evasive_slice",
         "robustness_gap"
+      ],
+      "agent_scopes": [
+        "ANNA"
       ]
     },
     {
@@ -172,6 +196,9 @@
         "counselor_role",
         "severity",
         "interaction_failure_rate"
+      ],
+      "agent_scopes": [
+        "ANNA"
       ]
     },
     {
@@ -194,7 +221,13 @@
       "canonical_dimensions": [
         "process_metrics",
         "release_gates"
-      ]
+      ],
+      "agent_scopes": [
+        "ANNA",
+        "NAIA",
+        "SHARED"
+      ],
+      "scope_note": "Current core_v0 contains explicit agent_scope labels but is not complete coverage for any agent."
     }
   ]
 }

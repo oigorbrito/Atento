@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "policy": {
     "pin_external_candidates": true,
     "variants": [
@@ -13,7 +13,12 @@
       "python_static_chassis"
     ],
     "decision_requires_same_block_contract": true,
-    "decision_requires_same_case_set_when_behavioral": true
+    "decision_requires_same_case_set_when_behavioral": true,
+    "decision_authority": false,
+    "registry_is_not_shortlist": true,
+    "selection_state": "DECISION_RESET",
+    "candidate_universe_complete": false,
+    "block_semantics": "historical evidence axis; not final NAIA/Anna/Apollo architecture"
   },
   "candidates": [
     {
@@ -26,7 +31,10 @@
       "adapter_id": "psychat_upstream",
       "ci_enabled": true,
       "ci_profile": "python_static_chassis",
-      "external_terms_note": "MIT; preserve upstream notice. Canonical provenance remains in docs/third-party.md."
+      "external_terms_note": "MIT; preserve upstream notice. Canonical provenance remains in docs/third-party.md.",
+      "agent_scope": "ANNA",
+      "candidate_class": "UNCLASSIFIED_PENDING_AUDIT",
+      "selection_status": "NOT_SELECTED"
     },
     {
       "candidate_id": "psychat_wrapped",
@@ -38,7 +46,10 @@
       "adapter_id": "psychat_atento",
       "ci_enabled": false,
       "ci_profile": null,
-      "external_terms_note": "Experimental Atento wrapper; enable only when the adapter is present on the evaluated ref."
+      "external_terms_note": "Experimental Atento wrapper; enable only when the adapter is present on the evaluated ref.",
+      "agent_scope": "ANNA",
+      "candidate_class": "UNCLASSIFIED_PENDING_AUDIT",
+      "selection_status": "NOT_SELECTED"
     },
     {
       "candidate_id": "psychat_forked",
@@ -50,7 +61,10 @@
       "adapter_id": "psychat_fork",
       "ci_enabled": false,
       "ci_profile": null,
-      "external_terms_note": "Fork variant must record the exact patched ref separately before execution."
+      "external_terms_note": "Fork variant must record the exact patched ref separately before execution.",
+      "agent_scope": "ANNA",
+      "candidate_class": "UNCLASSIFIED_PENDING_AUDIT",
+      "selection_status": "NOT_SELECTED"
     },
     {
       "candidate_id": "therapymind_upstream",
@@ -62,7 +76,10 @@
       "adapter_id": "therapymind_upstream",
       "ci_enabled": false,
       "ci_profile": null,
-      "external_terms_note": "MIT + contextual mental-health notice; see docs/third-party.md."
+      "external_terms_note": "MIT + contextual mental-health notice; see docs/third-party.md.",
+      "agent_scope": "ANNA",
+      "candidate_class": "UNCLASSIFIED_PENDING_AUDIT",
+      "selection_status": "NOT_SELECTED"
     },
     {
       "candidate_id": "psychagent_upstream",
@@ -74,7 +91,10 @@
       "adapter_id": "psychagent_upstream",
       "ci_enabled": false,
       "ci_profile": null,
-      "external_terms_note": "Repository license was not detected in the reviewed revision; research clone only until terms are cleared."
+      "external_terms_note": "Repository license was not detected in the reviewed revision; research clone only until terms are cleared.",
+      "agent_scope": "ANNA",
+      "candidate_class": "UNCLASSIFIED_PENDING_AUDIT",
+      "selection_status": "NOT_SELECTED"
     },
     {
       "candidate_id": "atento_native_rag",
@@ -86,7 +106,10 @@
       "adapter_id": "atento_native_rag",
       "ci_enabled": false,
       "ci_profile": null,
-      "external_terms_note": "Atento-native control; no external upstream pin."
+      "external_terms_note": "Atento-native control; no external upstream pin.",
+      "agent_scope": "ANNA",
+      "candidate_class": "NATIVE_CONTROL",
+      "selection_status": "NOT_APPLICABLE"
     }
   ]
 }

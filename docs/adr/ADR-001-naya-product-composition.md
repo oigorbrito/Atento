@@ -1,20 +1,22 @@
-# ADR-001 — Composição do produto Nayá: Assistente e Terapeuta
+# ADR-001 — Composição de agentes do produto
+
+> **DECISION RESET — 2026-09-29:** preservar os requisitos de isolamento e a evidência já produzida, mas não tratar a topologia histórica abaixo como arquitetura selecionada. A nomenclatura corrente é **NAIA / Anna / Apollo**.
 
 ## Document contract
 
-Esta ADR define a hipótese arquitetural de composição do produto Nayá dentro do projeto Atento.
+Esta ADR preserva a hipótese arquitetural histórica de separação entre domínios, mas sua topologia concreta está reaberta durante a reconciliação do produto.
 
 Ela não escolhe o sistema-base da Assistente nem o sistema-base terapêutico. Essas seleções têm ADRs/evidências próprias.
 
-- **Status:** Proposed
+- **Status:** Reopened — `DECISION_RESET`
 - **Date:** 2026-09-29
 - **Decision owners:** TBD
 
 ## Context
 
-O produto pretendido possui dois conjuntos de responsabilidades materialmente diferentes:
+O produto agora possui três agentes conceitualmente distintos. Esta ADR histórica descrevia apenas dois deles e, por isso, não é mais suficiente como definição completa:
 
-1. **Assistente pessoal/secretária**
+1. **NAIA — assistente pessoal/secretária**
    - calendário;
    - mensagens;
    - e-mail;
@@ -24,7 +26,7 @@ O produto pretendido possui dois conjuntos de responsabilidades materialmente di
    - computer/browser use;
    - ferramentas com side effects.
 
-2. **Terapeuta**
+2. **Anna — assistente emocional/terapêutica**
    - conversa terapêutica;
    - memória longitudinal terapêutica;
    - planejamento;
@@ -32,16 +34,50 @@ O produto pretendido possui dois conjuntos de responsabilidades materialmente di
    - safety e escalation;
    - acompanhamento multi-sessão.
 
-A hipótese atual é que essas responsabilidades não devem ser fundidas em um único agente onisciente com acesso irrestrito a tools e memória.
+3. **Apollo — nutrição/personal trainer** — permanece adiado.
 
-## Proposed architecture
+O requisito atual é que esses domínios não sejam fundidos em um agente onisciente com acesso irrestrito a tools, memória ou chats dos demais.
+
+## Functional authority matrix
+
+The product-level role contract is:
+
+| Domain / capability | NAIA | Anna | Apollo |
+|---|---|---|---|
+| general personal assistant / secretary | **OWNER** | out of scope | out of scope |
+| calendar, messages, email, shopping, general research | **OWNER / EXECUTOR** | handoff to NAIA | handoff to NAIA |
+| browser/computer/apps and general personal side effects | **OWNER / EXECUTOR** | no inherited authority | no inherited authority |
+| therapeutic/emotional conversation | out of scope except routing/handoff | **OWNER** | out of scope |
+| therapeutic longitudinal memory / strategy / interventions | no default access | **OWNER** | no default access |
+| therapeutic safety/escalation policy | no default ownership | **OWNER** | no default ownership |
+| fitness/training/nutrition planning | out of scope except routing/handoff | out of scope | **OWNER** |
+| fitness progress / adherence / wearable-domain state | no default access | no default access | **OWNER** |
+| general logistics produced by another domain | **EXECUTOR after explicit handoff** | REQUESTER | REQUESTER |
+
+Interpretation:
 
 ```text
-                         NAYÁ PRODUCT
+DOMAIN_OWNER
+!=
+GENERAL_SIDE_EFFECT_EXECUTOR
+
+NAIA = general personal operational executor
+ANNA = therapeutic/emotional domain authority
+APOLLO = fitness/nutrition domain authority
+```
+
+NAIA may be the primary user-facing entry point, but primary entry point does not grant cross-agent memory or tool authority.
+
+Anna and Apollo may use tools that are intrinsic to their own domain under their own future policy. They do not inherit NAIA's general personal-action toolset.
+
+## Historical candidate topology — not selected
+
+```text
+                         ATENTO PRODUCT
                               |
               +---------------+---------------+
               |                               |
-      PERSONAL ASSISTANT                THERAPIST
+             NAIA                         ANNA
       bounded context                   bounded context
               |                               |
               +--------- HANDOFF BROKER ------+
@@ -137,17 +173,17 @@ runtime capability isolation
 → behavior training/fine-tuning quando necessário
 ```
 
-## Decision
+## Decision reset
 
 ```yaml
-decision: TBD
-candidate: separate-bounded-contexts-with-handoff-broker
-status: proposed
-assistant_memory_authority: separate
-therapy_memory_authority: separate
-assistant_tool_authority: separate
-therapy_tool_authority: restricted
-cross_domain_channel: explicit_handoff_only
+decision: NOT_SELECTED
+status: DECISION_RESET
+required_property: strong_cross_agent_isolation
+naia_memory_authority: separate
+anna_memory_authority: separate
+apollo_memory_authority: separate_when_implemented
+cross_agent_topology: TBD
+handoff_mechanism: TBD
 ```
 
 ## Acceptance evidence required

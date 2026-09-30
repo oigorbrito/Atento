@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Static Chassis Fitness audit for an external donor.
 
-This is a screening metric, not a quality or safety benchmark.
+This is a screening metric, not a quality, safety, shortlist, or winner metric.
+A score is evidence about selected static seams only and has no selection authority.
 It intentionally uses only the Python standard library so it can run
 before installing the donor's runtime dependencies.
 """
@@ -243,7 +244,9 @@ def audit(root: Path, source_id: str, upstream_commit: str | None = None) -> dic
     score = passed * 10
 
     return {
-        "metric_version": "chassis-static-v0.1",
+        "metric_version": "chassis-static-v0.2",
+        "decision_authority": False,
+        "selection_meaning": "NONE",
         "source_id": source_id,
         "upstream_commit": upstream_commit,
         "root": str(root),

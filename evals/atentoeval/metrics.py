@@ -121,6 +121,7 @@ def score_results(
                 "case_id": case.id,
                 "suite": case.suite,
                 "source_id": case.source_id,
+                "agent_scope": case.agent_scope,
                 "step_index": result.step_index,
                 "scores": scores,
             }
@@ -142,14 +143,17 @@ def _percentile(values: List[float], q: float) -> float:
 def summarize_scores(rows: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
     metric_values: Dict[str, List[float]] = defaultdict(list)
     suite_values: Dict[str, Dict[str, List[float]]] = defaultdict(lambda: defaultdict(list))
+    agent_values: Dict[str, Dict[str, List[float]]] = defaultdict(lambda: defaultdict(list))
 
     for row in rows:
         suite = row["suite"]
+        agent_scope = str(row.get("agent_scope", "UNSPECIFIED"))
         for metric, value in row["scores"].items():
             metric_values[metric].append(float(value))
             suite_values[suite][metric].append(float(value))
+            agent_values[agent_scope][metric].append(float(value))
 
-    summary: Dict[str, Any] = {"overall": {}, "by_suite": {}}
+    summary: Dict[str, Any] = {"overall": {}, "by_suite": {}, "by_agent_scope": {}}
 
     for metric, values in metric_values.items():
         if metric == "latency_ms":
@@ -185,5 +189,24 @@ def summarize_scores(rows: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
             else:
                 suite_summary[metric] = mean(values)
         summary["by_suite"][suite] = suite_summary
+
+    for agent_scope, metrics in agent_values.items():
+        agent_summary: Dict[str, float] = {}
+        for metric, values in metrics.items():
+            if metric == "latency_ms":
+                agent_summary["latency_p50_ms"] = _percentile(values, 0.50)
+                agent_summary["latency_p95_ms"] = _percentile(values, 0.95)
+            elif metric in {
+                "critical_failure",
+                "cross_user_memory_leak",
+                "unauthorized_tool_action",
+                "secret_disclosure",
+                "schema_error",
+            }:
+                agent_summary[f"{metric}_count"] = sum(values)
+                agent_summary[f"{metric}_rate"] = mean(values)
+            else:
+                agent_summary[metric] = mean(values)
+        summary["by_agent_scope"][agent_scope] = agent_summary
 
     return summary

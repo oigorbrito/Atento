@@ -1,4 +1,6 @@
-# ADR-002 — Seleção do sistema-base da Nayá Assistente
+# ADR-002 — Seleção do sistema-base da NAIA
+
+> **DECISION RESET — 2026-09-29:** preservar todos os pins, achados estáticos, testes upstream, gaps e medições abaixo. Não preservar como decisão a shortlist, a ordem de execução, a prioridade de OpenClaw ou qualquer caracterização de candidato como finalista até a categoria de agentes persistentes ser reenumerada.
 
 ## Document contract
 
@@ -6,9 +8,9 @@ Esta ADR compara sistemas completos/persistentes candidatos a base da Assistente
 
 Frameworks de orquestração, durable runtimes e componentes isolados não entram como se fossem produtos equivalentes.
 
-- **Status:** Proposed
+- **Status:** Reopened — `DECISION_RESET`
 - **Date:** 2026-09-29
-- **Decision:** NOT_SELECTED
+- **Decision:** NOT_SELECTED / shortlist reset
 
 ## Decision question
 
@@ -36,7 +38,7 @@ PERSISTENCE != DURABLE_EXECUTION
 FEATURE_RICH != GOOD_CHASSIS
 ```
 
-## Candidates
+## Historical candidates — evidence preserved, shortlist reset
 
 ### A — OpenMausBot
 
@@ -89,23 +91,25 @@ Do not repeat the historical HOLD for that exact issue without checking current 
 3. interrupted active-turn recovery was not demonstrated at the same level later found in OpenClaw;
 4. personal/shared memory concepts are not acceptable as therapeutic-memory authority.
 
-#### Current disposition
+#### Historical audit characterization — non-decisional
 
 ```text
 PRODUCT_MATURITY          = STRONG
 PERSISTENT_ASSISTANT_FIT  = STRONG
 GENERIC_EFFECT_DURABILITY = NOT_PROVEN
-NAYA_AUTHORITY_MODEL      = NEEDS_REINFORCEMENT
-STATUS                    = STRONG_BASE_CANDIDATE
+NAIA_AUTHORITY_MODEL      = NEEDS_REINFORCEMENT
+HISTORICAL_AUDIT_CLASSIFICATION = STRONG_BASE_CANDIDATE
 ```
 
 No winner selected.
 
 ---
 
-### B — NaIA
+### B — historical NaIa implementation/donor
 
 Source: `SRC-NAIA`
+
+> This section refers to the historical `oigorbrito/NaIa` repository, not to the current NAIA product identity.
 
 Qualified snapshot:
 
@@ -155,14 +159,14 @@ In the inspected messaging flow, the external provider send can occur before the
 
 Therefore local idempotency metadata does not establish exactly-once external effects.
 
-#### Current disposition
+#### Historical audit characterization — non-decisional
 
 ```text
 POLICY/AUTHORITY_MODEL    = STRONG
 EVIDENCE_MODEL            = STRONG
 PRODUCT_INTEGRATION       = LOWER_MATURITY
 GENERIC_EFFECT_DURABILITY = NOT_PROVEN
-STATUS                    = ARCHITECTURAL_DONOR / BASE_CANDIDATE_WITH_HIGHER_BUILD_COST
+HISTORICAL_AUDIT_CLASSIFICATION = ARCHITECTURAL_DONOR / BASE_CANDIDATE_WITH_HIGHER_BUILD_COST
 ```
 
 The upstream NaIA PR #186 contains a harness-repair experiment. It is not the canonical project evidence record; Atento remains canonical.
@@ -265,9 +269,9 @@ OpenClaw exposes:
 - plugin tool-policy/approval hooks;
 - cancellation and stale-authority defenses.
 
-These primitives are strong, but the documented general-purpose defaults are not the Nayá target.
+These primitives are strong, but the documented general-purpose defaults are not the NAIA target.
 
-Nayá requires an explicit fail-closed hardening profile rather than inheriting permissive/trusted-operator assumptions.
+NAIA requires an explicit fail-closed hardening profile rather than inheriting permissive/trusted-operator assumptions.
 
 #### Durable outbound vs generic tool effects
 
@@ -317,30 +321,30 @@ Therefore ADR-001's strict Assistant ↔ Therapist authority boundary should use
 
 ```text
 PRODUCT_ADAPTATION                = LOW_TO_MODERATE
-NAYA_SECURITY_HARDENING           = MODERATE
+NAIA_SECURITY_HARDENING           = MODERATE
 STRICT_THERAPY_BOUNDARY           = DEPLOYMENT_TOPOLOGY_CHANGE
 UNIVERSAL_GENERIC_EFFECT_PROTOCOL = CROSS_CUTTING_IF_REQUIRED
 CRITICAL_TOOL_EFFECT_PROTOCOL     = LOCALIZED_IF_ADAPTER_CONTROLLED
 ```
 
-The candidate exposes enough config/plugin seams that the ordinary Nayá product and policy adaptation does not currently imply a deep fork.
+The candidate exposes enough config/plugin seams that the ordinary NAIA product and policy adaptation does not currently imply a deep fork.
 
-#### Remaining pre-selection delta
+#### Historical proposed OpenClaw follow-up — inactive pending re-enumeration
 
-Do not repeat upstream persistence/restart/channel/approval-lifecycle tests when the Nayá adaptation does not replace those mechanisms.
+Do not repeat upstream persistence/restart/channel/approval-lifecycle tests when the NAIA adaptation does not replace those mechanisms.
 
 Run one OpenClaw-specific pre-selection probe:
 
-- `OC-NAYA-001` — implement the minimal Nayá hardening profile using supported config/plugin seams, validate the effective policy, and record Git/change-surface including whether any OpenClaw core patch is required.
+- `OC-NAYA-001` — implement the minimal NAIA hardening profile using supported config/plugin seams, validate the effective policy, and record Git/change-surface including whether any OpenClaw core patch is required.
 
-The earlier candidate-local probes are reclassified:
+The earlier candidate-local probes are preserved/reclassified as historical evidence. `OC-NAYA-*` identifiers remain unchanged for traceability but are not current product naming:
 
 - former `OC-NAYA-002` (arbitrary external-effect crash ambiguity) → **Block J / external-action adapter contract**. OpenClaw already states that generic exactly-once external effects are not guaranteed; retesting an unmodified generic tool path would only reconfirm a known absence. Test the real Atento-controlled high-risk adapter when it exists.
 - former `OC-NAYA-003` (Assistant ↔ Therapist isolation) → **ADR-001 composition/deployment test**. The selected architecture requires separate runtime/Gateway authority boundaries, so the useful test is the brokered composition, not two personas in one OpenClaw Gateway.
 - former `OC-NAYA-004` (plugin/global-store isolation) → **per-plugin/per-memory integration test** when a concrete shared-store plugin is selected.
 - former `OC-NAYA-005` (touchpoint count) → folded into `OC-NAYA-001`; change-surface is a measurement of the implemented adapter/profile, not an independent runtime test.
 
-#### Current disposition
+#### Historical audit characterization — non-decisional
 
 ```text
 PRODUCT_MATURITY                = STRONG
@@ -349,12 +353,12 @@ RESTART_RECOVERY                = STRONG_EVIDENCE
 STALE_AUTHORITY_DEFENSE         = STRONG_EVIDENCE
 OUTBOUND_DELIVERY_DURABILITY    = STRONG_EVIDENCE
 POLICY_PRIMITIVES               = STRONG
-NAYA_POLICY_DEFAULT_FIT         = NEEDS_HARDENING
+NAIA_POLICY_DEFAULT_FIT         = NEEDS_HARDENING
 PER_AGENT_CORE_STATE_ISOLATION  = STRONG
 STRICT_THERAPY_BOUNDARY         = SEPARATE_RUNTIME_REQUIRED
 GENERIC_TOOL_EFFECT_DURABILITY  = NOT_PROVEN
 LICENSE                         = MIT
-STATUS                          = STRONG_CANDIDATE / STATIC_QUALIFICATION_COMPLETE
+HISTORICAL_AUDIT_CLASSIFICATION = STRONG_CANDIDATE / STATIC_QUALIFICATION_COMPLETE
 LOCAL_DELTA_TESTS               = PENDING
 ```
 
@@ -362,7 +366,7 @@ No winner selected.
 
 ---
 
-## Current comparison
+## Historical comparison — evidence only
 
 | Property | OpenMausBot | NaIA | OpenClaw |
 |---|---|---|---|
@@ -371,7 +375,7 @@ No winner selected.
 | Interrupted-turn recovery | not proven at OpenClaw level | contracts/research, less product integration | strong evidence |
 | Background/routines | strong | modules present | strong |
 | Multi-provider | strong | strong contract | strong |
-| Explicit policy/approval | needs reinforcement | strong | strong primitives; Nayá hardening required |
+| Explicit policy/approval | needs reinforcement | strong | strong primitives; NAIA hardening required |
 | Stale execution defense | present | explicit research/contracts | strong evidence |
 | Durable outbound messaging | partial evidence | ambiguity remains | strong evidence |
 | Generic external-effect durability | not proven | not proven | not proven; explicitly not a general exactly-once claim |
@@ -392,22 +396,25 @@ For each material property:
 
 Behavioral benchmarks are used only for behavioral questions. Authority, durability, isolation and adaptation cost are primarily contract/fault/runtime/Git questions.
 
-For the OpenClaw base decision, the only remaining pre-selection local delta is `OC-NAYA-001`.
+The previous reconciliation treated `OC-NAYA-001` as the only remaining OpenClaw pre-selection delta. That execution priority is now **inactive**. The underlying evidence and probe design remain reusable if OpenClaw re-enters the comparable shortlist.
 
-## Decision
+## Decision reset
 
 ```yaml
-decision: TBD
-winner: NOT_SELECTED
-openmausbot: strong-base-candidate
-naia: architectural-donor-and-higher-build-cost-base-candidate
-openclaw: strong-candidate-static-qualification-complete
-next_required_block: execute-openclaw-minimal-hardening-delta-then-compare-finalists
+decision: NOT_SELECTED
+status: DECISION_RESET
+shortlist: NOT_SELECTED
+openmausbot: EVIDENCE_PRESERVED
+naia_historical_implementation: IDEA_AND_DONOR_EVIDENCE_PRESERVED
+openclaw: EVIDENCE_PRESERVED
+next_required_block: REENUMERATE_COMPARABLE_PERSISTENT_ASSISTANT_CHASSIS
 ```
 
-## Acceptance criteria
+No candidate receives finalist status from this document until the comparable set is rebuilt.
 
-Before this ADR can be accepted:
+## Historical acceptance criteria — inactive
+
+These criteria are preserved as a record of the previous decision process. They do not define the next execution order until the candidate set is rebuilt:
 
 - [x] OpenClaw static qualification completed at a newly pinned revision
 - [x] generic external-effect semantics characterized for OpenClaw and compared with existing finalist evidence

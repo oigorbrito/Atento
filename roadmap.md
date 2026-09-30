@@ -1,18 +1,20 @@
 # Atento — Roadmap de Arquitetura e Implementação
 
-> Documento vivo para orientar a construção do Atento como um sistema conversacional de apoio emocional com arquitetura executiva explícita, memória longitudinal, planejamento, grounding, ferramentas, segurança e avaliação contínua.
+> **PRODUCT / DECISION RESET — 2026-09-29:** preservar Project Points, sources, medições, benchmarks e trabalho executado. A decomposição arquitetural e as ordens de execução anteriores estão em reconciliação e não devem ser tratadas como decisões finais. A definição conceitual corrente está em `docs/product-concept-reset.md`.
 
 ## 0. Contrato deste documento
 
 Este arquivo é a fonte canônica para:
 
-- escopo do projeto;
-- arquitetura alvo em nível de sistema;
+- ledger de blocos técnicos e evidência já produzida;
+- arquitetura histórica/em reconciliação em nível de sistema;
 - blocos A–S;
 - blocos A–S e suas dependências;
 - Project Points;
 - progresso global do projeto;
 - source mapping arquitetural.
+
+Durante o `DECISION_RESET`, a identidade do produto e a divisão NAIA/Anna/Apollo são definidas provisoriamente em `docs/product-concept-reset.md`.
 
 Este arquivo **não** é a fonte canônica para:
 
@@ -27,23 +29,40 @@ Em caso de duplicação, prevalece o documento que possui a responsabilidade can
 >
 > O score representa o **projeto inteiro**. Nenhum bloco individual possui uma porcentagem própria.
 
-## 1. Objetivo do projeto
+## 1. Objetivo do projeto — em reconciliação
 
-O Atento deve ser construído como **um sistema**, não apenas como um chatbot com um prompt longo.
+O Atento é o repositório canônico do produto composto por três agentes especializados:
 
-A arquitetura alvo separa:
+1. **NAIA — Nova Assistente Inteligente Artificial:** assistente pessoal persistente/secretária;
+2. **Anna:** assistente emocional/terapêutica;
+3. **Apollo:** nutrição/personal trainer, adiado neste momento.
 
-1. **interpretação da entrada**;
-2. **estado e hipóteses sobre a necessidade do usuário**;
-3. **memória longitudinal**;
-4. **planejamento da próxima ação conversacional**;
-5. **recuperação de conhecimento e uso de ferramentas**;
-6. **geração da resposta**;
-7. **crítica e validação**;
-8. **segurança e roteamento de risco**;
-9. **telemetria e avaliação**.
+Os agentes devem ter forte isolamento de chat, memória, ferramentas e autoridade. A topologia concreta de integração/handoff ainda não está selecionada.
 
-A premissa central é que cada bloco tenha **contratos estruturados, métricas próprias e testes independentes**.
+A arquitetura A–S abaixo nasceu principalmente da trilha emocional/terapêutica e continua valiosa como inventário técnico, source mapping e evidência. Ela **não deve ser presumida como decomposição final de todo o produto** até a reconciliação terminar.
+
+As decisões de chassis serão refeitas por categorias equivalentes:
+
+```text
+NAIA:
+persistent personal-assistant chassis
+→ enumerate comparable mature systems
+→ audit existing evidence/benchmarks
+→ measure real adaptation surface
+→ select or reject
+
+Anna:
+therapeutic/emotional-agent chassis
+→ separate complete bases from mechanism donors/models/benchmarks
+→ audit existing evidence/benchmarks
+→ measure real adaptation surface
+→ select or reject
+
+Apollo:
+DEFERRED
+```
+
+A regra de engenharia é preservar capacidade funcional comprovada e comparar o **custo total de adaptação** contra greenfield, em vez de privilegiar uma arquitetura mais limpa apenas por aparência.
 
 ---
 
@@ -79,6 +98,8 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 | `ATENTO_NATIVE` | engenharia própria | usar quando donor não for suficiente ou integração exigir camada local |
 
 ### Source Registry
+
+> **DECISION RESET:** este registry preserva fontes, pins e uso histórico/possível. Labels como candidato, donor integral ou modo permitido **não constituem shortlist nem preferência atual**. Seleção de chassis pertence às ADRs específicas de NAIA/Anna/Apollo.
 
 #### SRC-PA — PsychAgent
 - **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
@@ -210,7 +231,7 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 - **Snapshot qualificado:** `947bef311bf5c3f55d3590849abf0eb329408519`.
 - **Candidato para:** base da Assistente pessoal persistente: bots, rotinas, mensagens, computer/browser, apps e model/provider switching.
 - **Termos:** core Apache-2.0; `enterprise/` possui licença separada source-available para produção.
-- **Estado:** candidato forte, não selecionado; ver ADR específica.
+- **Estado de evidência:** qualificado historicamente como candidato forte. **Estado de seleção atual:** shortlist reset / não selecionado; ver ADR da NAIA.
 
 #### SRC-OPENCLAW — OpenClaw
 - **Tipo:** `IMPLEMENTATION_REFERENCE`.
@@ -219,12 +240,13 @@ A premissa central é que cada bloco tenha **contratos estruturados, métricas p
 - **Pin da qualificação estática:** `e9571d77e76bd6d35996273d9e8398ad539b26e1`.
 - **Candidato para:** base da Assistente pessoal: Gateway, multi-channel, restart recovery, approvals e durable outbound delivery.
 - **Termos:** MIT.
-- **Estado:** candidato forte; qualificação estática concluída; `ASSISTANT_BASE_WINNER = NOT_SELECTED`.
-- **Próximo delta:** provar apenas o perfil mínimo Nayá de autoridade/isolamento configurável e medir a surface de adaptação. Não repetir restart, approval persistence ou outbound durability já cobertos por evidência upstream no pin.
+- **Estado de evidência:** qualificação estática concluída e preservada. **Estado de seleção atual:** shortlist reset / não selecionado.
+- **Execução:** o antigo delta OpenClaw/NAIA (IDs históricos `OC-NAYA-*`) fica inativo até OpenClaw ser reclassificado na nova enumeração comparável da NAIA. Não repetir evidência upstream já válida.
 
-#### SRC-NAIA — NaIA
+#### SRC-NAIA — repositório histórico NaIa (donor)
 - **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
 - **Repo:** https://github.com/oigorbrito/NaIa
+- **Importante:** esta fonte é a implementação/repositório histórico e **não** deve ser confundida com **NAIA — Nova Assistente Inteligente Artificial**, o agente atual do produto.
 - **Commit qualificado:** `23e4ca55abfaf399844047792018a22415ed3738`.
 - **Candidato para:** policy/approval/evidence, semantic operation identity, sensitive-memory authority e fault/durability research.
 - **Estado:** donor arquitetural forte; maior custo de integração como base completa da Assistente no snapshot avaliado.
@@ -272,9 +294,9 @@ external_terms_note:
 
 ---
 
-## 2.2 Gate obrigatório: donor vs fork vs selective-port vs native
+## 2.2 Gate de adoção: donor vs fork vs selective-port vs native
 
-> **Este gate acontece antes da migração arquitetural dos blocos.** A pergunta não é "podemos copiar?", e sim "qual opção é empiricamente melhor para o Atento?".
+> Durante o `DECISION_RESET`, este gate só pode ser aplicado **depois** de o candidato ter sido classificado na categoria correta e ligado a uma decisão específica de NAIA, Anna, Apollo ou infraestrutura compartilhada. A pergunta não é "podemos copiar?", e sim "qual opção minimiza o custo total para a responsabilidade real em avaliação?".
 
 ### Critérios de decisão
 
@@ -293,7 +315,7 @@ Pontuar/medir:
 
 ### Regra de decisão
 
-- **FULL_DONOR** é aceitável quando o projeto externo entrega a maior parte da capacidade necessária e os resultados justificam herdar sua base.
+- **FULL_DONOR** é aceitável quando um candidato comparável entrega a maior parte da capacidade necessária e os resultados justificam herdar sua base.
 - **FORK** é preferível ao copy-paste quando acompanhar upstream agrega valor.
 - **SELECTIVE_PORT** é preferível quando poucas peças são claramente superiores.
 - **MODEL_ADAPTER** é preferível quando o valor está principalmente nos pesos.
@@ -1931,25 +1953,21 @@ O Atento será arquiteturalmente bem-sucedido quando conseguir demonstrar, com a
 - nunca marcar bloco concluído antes de todos os seus Project Points;
 - regressão pode reduzir o score;
 - mudanças de peso exigem decisão explícita de governança;
-- `100/100` exige todos os blocos concluídos + release gates + critérios de saída da Fase 8.
+- `100/100` exige evidência válida para o ledger inteiro, release gates aplicáveis e encerramento explícito do `DECISION_RESET`; a arquitetura final pode exigir rebaselining posterior por decisão de governança.
 
 ---
 
 ## Próximo passo
 
-**Gate pré-migração — Fork/Clone/Donor Spike & ADR-000**
+**Reconciliação de produto e candidatos antes de novos spikes.**
 
-Antes do Bootstrap, concluir a decisão defensável entre:
+1. preservar toda evidência já medida;
+2. manter ADR-000/001/002 em `DECISION_RESET`;
+3. reconstruir a lista comparável de chassis persistentes da NAIA;
+4. reconstruir a lista de bases completas da Anna, separando donors/modelos/benchmarks;
+5. reaproveitar benchmarks e testes upstream transferíveis;
+6. executar localmente apenas deltas materiais ou gaps realmente não provados;
+7. só então registrar novas decisões de fork/full donor/selective-port/native/hybrid.
 
-```text
-fork
-vs selective-port
-vs clean-room
-vs hybrid
-vs model-adapter
-```
-
-Executar PsyChat upstream e o spike adaptado, verificar licenças/provenance, comparar com um vertical slice clean-room usando AtentoEval e preencher `docs/adr/ADR-000-fork-vs-greenfield.md`.
-
-Somente após a ADR-000 sair de `Proposed` para uma decisão aceita, iniciar a migração pelos blocos A–S conforme dependências reais.
+Nenhum candidato recebe prioridade de execução apenas porque apareceu primeiro na reconciliação anterior.
 

@@ -1,5 +1,7 @@
 # AtentoEval
 
+> **DECISION RESET:** o harness preserva evidência e infraestrutura de avaliação, mas nenhum adapter, system entry ou candidate registry entry constitui shortlist ou prioridade de NAIA/Anna/Apollo.
+
 ## Document contract
 
 Este README é **operacional**: como executar o harness, formatos de entrada/saída e status dos adapters.
@@ -25,6 +27,8 @@ Atualmente o scaffold implementa scoring offline de resultados já gerados.
 ```bash
 python -m evals.atentoeval.runner \
   --cases evals/cases/core_v0.jsonl \
+  --agent-scope ANNA \
+  --agent-scope SHARED \
   --results /path/to/results.jsonl \
   --gates evals/config/release_gates.json
 ```
@@ -55,9 +59,11 @@ Formato esperado para cada linha de `results.jsonl`:
 }
 ```
 
-## Próximos adapters
+## Backlog histórico de adapters — sem prioridade decisória
 
-- Atento runtime;
+A lista abaixo preserva integrações já consideradas, mas **não é ordem de execução**:
+
+- runtime Atento;
 - PsyChat upstream/adapted;
 - ESConv;
 - PsychEval;
@@ -65,6 +71,8 @@ Formato esperado para cada linha de `results.jsonl`:
 - TEA-Bench;
 - MentalHealthBench;
 - CounselBench.
+
+Novos adapters orientados a seleção só devem ser priorizados depois da reenumeração de chassis comparáveis da NAIA ou da Anna. Apollo permanece adiado.
 
 Não coloque datasets externos aqui sem revisar licença e provenance.
 
@@ -77,9 +85,12 @@ A identidade reproduzível de candidato inclui:
 
 ```text
 candidate_id
-block
+block                           # eixo histórico de evidência; não arquitetura final
 SOURCE_ID
 variant
+agent_scope
+candidate_class
+selection_status
 repository + full upstream SHA (quando externo)
 adapter_id
 ```
@@ -98,7 +109,7 @@ python -m evals.atentoeval.candidates github-matrix \
   --registry evals/config/candidates.json
 ```
 
-O workflow genérico é `.github/workflows/candidate-eval.yml`. Ele executa somente entradas com `ci_enabled=true` e perfil suportado. Adicionar um donor ao registry **não** significa promovê-lo nem adotá-lo.
+O workflow genérico é `.github/workflows/candidate-eval.yml`. Durante o `DECISION_RESET`, validação do registry pode rodar em CI, mas a execução de donor específico fica manual. Adicionar um donor ao registry, habilitar CI ou produzir `PASS_STATIC` **não** significa shortlist, promoção ou adoção.
 
 Cada job gera um candidate-result tipado. O status de evidência distingue explicitamente:
 
@@ -114,3 +125,9 @@ Cada job gera um candidate-result tipado. O status de evidência distingue expli
 
 A metodologia multi-candidato está registrada em
 `docs/evaluation/donor-candidate-comparison-research-2026-09-29.md`.
+
+## Agent scope
+
+O `core_v0.jsonl` contém casos explicitamente marcados como `ANNA`, `NAIA` ou `SHARED`.
+
+Para decisão de seleção, não usar uma média comportamental que misture agentes. O relatório expõe `by_agent_scope` e marca quando uma execução contém múltiplos scopes. Casos `SHARED` podem ser executados junto ao agente relevante quando representam invariantes comuns de privacy/safety.
