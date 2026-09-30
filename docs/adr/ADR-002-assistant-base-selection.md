@@ -842,3 +842,44 @@ NAIA_BASE = NOT_SELECTED
 ```
 
 Rakazo enters only because the failed global workflow is attributable to an unrelated onboarding test while the exact-pin authority/isolation cases relevant to Gate 2 executed successfully with scope.
+
+
+## Gate-2 frontier V5 — 2026-09-30
+
+Exact-pin hosted evidence now supports twelve candidates for composition-only follow-up:
+
+```text
+FRONTIER_V5 = [
+  AI Butler,
+  AgentOS,
+  Octop,
+  Rome,
+  Engram,
+  Suna,
+  Letta Code,
+  RustFox,
+  Rakazo,
+  OpenMausBot,
+  NanoClaw,
+  QwenPaw
+]
+
+FRONTIER_COUNT = 12
+REMAINING_NON_FRONTIER = 13
+
+AUTHORITY_ISOLATION_EMPIRICAL_PASS = 0
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+New admissions:
+
+- OpenMausBot: exact-pin cross-platform CI with request-auth, permission-proxy, CUA isolation, approval-mode, peer-approval, routine delegation/cron/continuity and behavior eval execution.
+- NanoClaw: exact-pin CI with 3033 primary tests plus permission, approval, restart, mount-security, task and container-restart contracts.
+- QwenPaw: exact-pin contract/integration matrix with 412 contract tests passing; four Python 3.13 PTY failures are runtime-specific and remain scoped rather than being treated as authority failure.
+
+Canonical non-frontier disposition:
+
+`docs/evaluation/naia-gate2-non-frontier-hosted-evidence-disposition-2026-09-30.md`
+
+No candidate is shortlisted or selected by frontier admission.
