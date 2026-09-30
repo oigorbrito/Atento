@@ -12,6 +12,15 @@ Frameworks de orquestração, durable runtimes e componentes isolados não entra
 - **Date:** 2026-09-29
 - **Decision:** NOT_SELECTED / shortlist reset
 
+## Current candidate-universe evidence
+
+Post-reset re-enumeration is recorded in:
+
+`docs/evaluation/candidate-reenumeration-2026-09-29.md`
+
+This record expands/classifies the candidate universe but does not alter this ADR's `NOT_SELECTED` state or create a shortlist.
+
+
 ## Decision question
 
 > Qual sistema funcionando chega à Assistente alvo com menor mudança estrutural, preservando a maior quantidade de capacidade já provada?
