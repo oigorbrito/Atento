@@ -209,3 +209,22 @@ ADDITIONAL_GATE_2_STOPS = 0
 Do not rerun vendor/default authority behavior. None of the 25 survivors can defensibly pass authority/isolation without an exact hardened composition, dependency freeze, or the one candidate-specific upstream-first prerequisite already recorded.
 
 Next work is candidate-specific and evidence-minimizing: freeze only decision-relevant compositions, reuse exact-pin clauses already proved, run only missing negative authority/isolation checks, and stop on any cross-cutting structural authority repair.
+
+
+## Gate-2 empirical frontier
+
+Canonical record:
+
+`docs/evaluation/naia-gate2-empirical-execution-frontier-2026-09-30.md`
+
+```text
+AI_BUTLER_EXACT_PIN_CI = PASS
+AI_BUTLER_AUTHORITY_CLAUSES_TRANSFERRED = PASS_WITH_SCOPE
+AI_BUTLER_GATE2 = ONE_RESIDUAL_COMPOSITION_TEST_REMAINING
+
+NEXT_EMPIRICAL_COMPOSITION_TARGET = AI_BUTLER
+LOCAL_CLONE_NETWORK = BLOCKED_DNS
+COMPOSITION_EXECUTION = NOT_RUN
+```
+
+Do not restart broad candidate tests. The next executable evidence is only the frozen AI Butler NAIA/Anna two-runtime negative composition. If the environment cannot obtain the exact pin, preserve the block as executor infrastructure and continue non-redundant evidence work; do not mark the candidate failed.
