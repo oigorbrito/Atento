@@ -80,6 +80,25 @@ NAIA_BASE = NOT_SELECTED
 
 This audit establishes comparability/missing evidence only. It does not create a shortlist or alter `NOT_SELECTED`.
 
+## Chassis-first selection policy
+
+The selection screen is now explicitly architecture-first. The canonical method is:
+
+`docs/evaluation/naia-architecture-first-chassis-selection-2026-09-30.md`
+
+The governing principle is replacement cost: first evaluate the expensive-to-replace chassis/architecture, then authority/isolation, then persistent runtime, and only afterward spend expensive benchmark/runtime effort on capabilities and integrations.
+
+The candidate universe must therefore not receive identical empirical budgets. Candidates that require cross-cutting structural rewrites are screened out before deep testing unless there is strong evidence that the required change is already supported by clean extension boundaries.
+
+This is a method change, not a selection decision:
+
+- `SELECTION_METHOD = ARCHITECTURE_FIRST`
+- `CHASSIS_GATE = PRIMARY`
+- `AUTHORITY_ISOLATION_GATE = SECONDARY`
+- `BENCHMARK_GATE = LATER`
+- `NAIA_SHORTLIST = NOT_SELECTED`
+- `NAIA_BASE = NOT_SELECTED`
+
 ## Decision-method policy
 
 Candidate comparison and promotion are governed by:
