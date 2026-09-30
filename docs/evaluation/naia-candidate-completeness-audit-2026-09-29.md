@@ -52,7 +52,7 @@ Browser/computer use is measured separately because the NAIA target includes it,
 | Candidate | Assistant runtime | Persistence / memory | Scheduled/background | Interaction/channels | Browser/computer / external actions | Model/provider | Authority/security | Current audit disposition |
 |---|---|---|---|---|---|---|---|---|
 | **OpenClaw** `ca8f24d...` | historical Atento evidence | historical Atento evidence | historical Atento evidence | historical Atento evidence | historical Atento evidence | historical Atento evidence | historical Atento evidence | `REQUIRES_DELTA_AUDIT`: current head is 67 commits ahead of the qualified pin and touches memory, CUA/computer-use, device/gateway/channel-boundary surfaces |
-| **OpenMausBot** `6005b1b...` | historical Atento evidence | historical evidence + current memory/session changes | historical evidence | historical evidence | historical evidence | historical evidence + ChatGPT-plan additions | historical evidence + current auth/policy changes | `REQUIRES_DELTA_AUDIT`: current head is 11 commits ahead of the original qualification and contains material memory/session/auth changes |
+| **OpenMausBot** `6005b1b...` | historical Atento evidence | historical evidence + current lending-memory hardening | historical evidence | historical evidence | historical evidence + stronger lending-memory gate | historical evidence + ChatGPT-plan additions | current request-auth/lending contracts audited statically | `DELTA_STATIC_AUDIT_COMPLETE`; targeted current-pin runtime tests remain pending |
 | **QwenPaw** `7774417...` | `ESTABLISHED_DOCS` | `ESTABLISHED_DOCS`; three-layer memory | `ESTABLISHED_DOCS`; cron/scheduled tasks | `ESTABLISHED_DOCS`; multiple IM channels + console/TUI/desktop | browser documented; computer-use source/approval/runtime files exist, while upstream feature table still marks computer-use in progress | `ESTABLISHED_DOCS`; local runtime/Ollama/LM Studio + cloud providers | `ESTABLISHED_SOURCE`; sandbox, tool/file guards, access policy and computer-use approval surfaces present | comparable product; `REQUIRES_RUNTIME_AUDIT`, especially computer-use and effective authority policy |
 | **AI Butler** `c35d3af...` | `ESTABLISHED_DOCS`; upstream calls v0.1 public beta | `ESTABLISHED_SOURCE`; extensive memory code/tests/migrations | `ESTABLISHED_DOCS`; persistent scheduler marked ready | webchat/terminal ready; many additional channels explicitly beta | file/shell/git and OS scripting documented ready; browser implementation/tests exist | Claude/Ollama documented ready; several other providers beta | `ESTABLISHED_SOURCE`; permissions/auth/security surfaces and tests exist | comparable product; `REQUIRES_RUNTIME_AUDIT`; preserve ready-vs-beta distinctions |
 | **NanoClaw** `4c1eabd...` | `ESTABLISHED_DOCS` | `ESTABLISHED_DOCS`; per-agent/group memory | `ESTABLISHED_DOCS`; scheduled tasks | multi-channel capability installed through skills | agent tool surface/container runtime established in source; general computer-use is not claimed here | Claude native path; Codex/OpenCode/Ollama provider modules installed through skills | container isolation + credential gateway documented; credential/provider isolation tests exist in skills | comparable product; `REQUIRES_RUNTIME_AUDIT` and adaptation-surface audit because capabilities are materialized into the fork via skills |
@@ -102,6 +102,10 @@ NEXT = TARGETED_DELTA_AUDIT
 Do not rerun unchanged historical restart/approval/channel evidence unless the delta touches the relevant contract.
 
 ### OpenMausBot
+
+Detailed current-pin delta evidence:
+
+`docs/evaluation/openmaus-current-delta-audit-2026-09-29.md`
 
 Atento original qualification:
 
