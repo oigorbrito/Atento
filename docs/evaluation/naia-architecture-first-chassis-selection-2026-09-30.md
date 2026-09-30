@@ -2,7 +2,9 @@
 
 ## Status
 
-This document establishes the current selection-screening method for the NAIA base/chassis.
+This document is the **operational screening method** for the NAIA base/chassis. It operates under `ADR-003 — Evidence-first engineering decision policy` and does not override its property-first requirement.
+
+`ARCHITECTURE_FIRST` does **not** mean architectural aesthetics or a preferred framework. It means that the first elimination gate examines high-replacement-cost structural properties and whether the candidate can enforce the required Atento properties without a cross-cutting rewrite.
 
 It does not select a candidate, create a final shortlist, or promote any runtime.
 
@@ -165,7 +167,7 @@ When a numerical triage score is useful, it must be architecture-heavy.
 | External empirical evidence | 10% |
 | Adaptability / component replacement cost | 10% |
 
-The score is a triage instrument, not a qualification score or final selection.
+The score is a triage instrument, not a qualification score or final selection. It must not be used to average away a hard failure of a required property. A candidate that cannot technically enforce a required isolation/authority property is not rescued by a higher chassis or benchmark score.
 
 A missing benchmark does not automatically mean poor architecture.
 
@@ -232,7 +234,18 @@ The intended funnel is:
 -> small empirical set
 -> deep qualification
 
-## 11. Current decision state
+## 11. Authority and non-redundancy
+
+The documents have distinct roles:
+
+- `ADR-003` is the **supreme engineering decision policy**: evidence quality, property-first requirements, transferability, and preference limits.
+- `ADR-002` is the **NAIA base-selection decision record**: candidate universe, decision state, and selection question.
+- This document is the **operational chassis-screen procedure**: replacement-cost classification, architectural gate, screening weights, and test-budget funnel.
+- Historical comparison documents remain evidence only when explicitly marked historical/non-authoritative.
+
+If these documents appear to conflict, `ADR-003` controls the evidence/property rule; `ADR-002` controls the NAIA decision state; this document controls only the screening procedure.
+
+## 12. Current decision state
 
 This policy changes the method, not the current decision.
 
@@ -247,7 +260,7 @@ This policy changes the method, not the current decision.
 
 No candidate receives finalist status merely by scoring highly in this screen.
 
-## 12. Relation to existing Atento methodology
+## 13. Relation to existing Atento methodology
 
 This policy operationalizes the existing decision question:
 
