@@ -1,0 +1,107 @@
+{
+  "version": "NAIA-GATE2-COMPOSITION-V1",
+  "date": "2026-09-30",
+  "common_assertions_per_candidate": 6,
+  "common_assertions_total": 72,
+  "candidates": [
+    {
+      "name": "AI Butler",
+      "repo": "LumabyteCo/aibutler",
+      "sha": "c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c",
+      "add_ons": []
+    },
+    {
+      "name": "OpenMausBot",
+      "repo": "milind-soni/OpenMausBot",
+      "sha": "6005b1bf5883a7ffa639c07e729321f89b9532e1",
+      "add_ons": [
+        "same_owner_role_boundary"
+      ]
+    },
+    {
+      "name": "NanoClaw",
+      "repo": "nanocoai/nanoclaw",
+      "sha": "4c1eabd3ddd74cc3d71b1871da857391a9411c8d",
+      "add_ons": [
+        "recipe_freeze"
+      ]
+    },
+    {
+      "name": "AgentOS",
+      "repo": "use-agent-os/agent-os",
+      "sha": "226c906291fc68f3c4517623446bdaec1b48a82d",
+      "add_ons": [
+        "browser_effect_policy"
+      ]
+    },
+    {
+      "name": "Rome",
+      "repo": "rome-os/rome",
+      "sha": "ef523c4659149e2711744deb04ec42c3be339907",
+      "add_ons": [
+        "consequential_action_coverage",
+        "provider_bypass"
+      ]
+    },
+    {
+      "name": "Suna",
+      "repo": "kortix-ai/suna",
+      "sha": "270c4a57c8ae5ffb85eff6d5b9700c5713612f28",
+      "add_ons": [
+        "connector_policy"
+      ]
+    },
+    {
+      "name": "Rakazo",
+      "repo": "elie222/rakazo",
+      "sha": "f4583525d632fcd8643fd6e24c7f51e3e04cb990",
+      "add_ons": [
+        "consequential_rules"
+      ]
+    },
+    {
+      "name": "Letta Code",
+      "repo": "letta-ai/letta-code",
+      "sha": "21daa38a8cdd74f2d03b634c8312253080bacfc1",
+      "add_ons": [
+        "hardened_permission_profile"
+      ]
+    },
+    {
+      "name": "Octop",
+      "repo": "TencentCloud/Octop",
+      "sha": "e473dd3c4a4741618ffde1a42a3492341a189e8e",
+      "add_ons": [
+        "authority_fail_closed",
+        "cron_connector_authority"
+      ]
+    },
+    {
+      "name": "QwenPaw",
+      "repo": "agentscope-ai/QwenPaw",
+      "sha": "777441721aa72db8e380d90e4d0481b05cbfd4cc",
+      "add_ons": [
+        "sandbox_unavailable_fail_closed",
+        "cron_authority"
+      ],
+      "runtime_scope": "exclude_unresolved_python_3_13_pty"
+    },
+    {
+      "name": "RustFox",
+      "repo": "chinkan/RustFox",
+      "sha": "6e24388d36d1c6fac399039d8cab07cd9cb8264b",
+      "add_ons": [
+        "universal_effect_owner"
+      ]
+    },
+    {
+      "name": "Engram",
+      "repo": "radotsvetkov/engram",
+      "sha": "3a43667deec4a680b42f3e880d7d6bac3baf0746",
+      "add_ons": [
+        "browser_effect_policy",
+        "trusted_run_effect"
+      ]
+    }
+  ]
+}
