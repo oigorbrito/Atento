@@ -169,3 +169,45 @@ CODE_FAILURE = NOT_ESTABLISHED
 DOCUMENT_RECONCILIATION = READY
 HISTORICAL_EXECUTABLE_CLEANUP = COMPLETE
 ```
+
+
+## Exact-head merge blocker
+
+Current head:
+
+`dbec80de60ff568b66b40b0b01ecb4ba716f049a`
+
+Base relation:
+
+```text
+main base = a741fee5d57232083f0baee4aac26573673b7d07
+ahead = 97
+behind = 0
+content divergence = NONE
+```
+
+Exact-head hosted run:
+
+```text
+run = 36650139560
+workflow = Candidate evidence validation
+Validate registry and build matrix = failure
+steps = null
+Static evidence = skipped
+combined commit statuses = []
+```
+
+Therefore:
+
+```text
+LOCAL_EXECUTABLE_VALIDATION = PASS_EMPIRICAL (12/12)
+CONFIG_DATA_PARSE = PASS
+CONTENT_RECONCILIATION = READY
+HOSTED_EXECUTION = INFRA_BLOCKED
+MERGEABLE_BY_GITHUB = NO
+CODE_FAILURE = NOT_ESTABLISHED
+MERGE_BLOCKER = HOSTED_ACTIONS_ACCOUNT_INFRASTRUCTURE
+MERGE_AUTHORIZATION = NO
+```
+
+Do not bypass or weaken the validation contract merely to force a merge. Once hosted runners are available again, rerun the exact active validation surface or an equivalent required check.
