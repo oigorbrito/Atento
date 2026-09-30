@@ -104,3 +104,50 @@ Machine-readable resume queue:
 `docs/evaluation/naia-gate2-composition-execution-queue-v1-2026-09-30.yaml`
 
 The queue freezes exact repository, SHA, execution order, candidate-specific add-ons and `BLOCKED_ENVIRONMENT` status for all twelve frontier candidates. No candidate state changes because of this blocker.
+
+
+## Hosted-runner attribution
+
+A repository-hosted workaround was attempted for AI Butler:
+
+```text
+workflow = NAIA Gate2 AI Butler Composition
+run_id = 36789543149
+job_id = 110138936806
+runner_id = 0
+steps = []
+duration ≈ 1 second
+conclusion = failure
+```
+
+Because no runner was assigned and no steps started:
+
+```text
+HOSTED_RUNNER_AVAILABLE = NO_FOR_OBSERVED_RUN
+CANDIDATE_CODE_EXECUTED = NO
+HARNESS_ASSERTIONS_EXECUTED = 0
+```
+
+This strengthens the infrastructure-block classification. It is not AI Butler evidence.
+
+Typed result artifact:
+
+`evals/results/naia_gate2_aibutler_blocked_2026-09-30.json`
+
+The evaluation harness now also contains a strict result validator:
+
+- `evals/atentoeval/composition.py`
+- `evals/config/naia_gate2_composition_v1.json`
+- `evals/tests/test_composition.py`
+
+The validator rejects:
+
+- wrong repo/SHA;
+- mismatched profile/policy hashes;
+- static or synthetic evidence presented as runtime PASS;
+- missing candidate-specific add-ons;
+- `ISO-6` PASS backed only by a synthetic broker fixture;
+- structural FAIL without a structural reason;
+- environment BLOCK without a blocker id.
+
+Therefore the current injected AI Butler test's synthetic broker echo cannot, by itself, close `ISO-6`.
