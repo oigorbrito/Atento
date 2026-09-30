@@ -435,6 +435,31 @@ Gobii:
 
 No generic local NCP is justified yet.
 
+## Transfer audit: Octop / Agent Zero / Rome / OpenGrokBot
+
+Detailed transfer audit:
+
+`docs/evaluation/naia-transfer-audit-octop-agentzero-rome-opengrok-2026-09-29.md`
+
+Material residuals:
+
+```text
+Octop:
+  HITL disabled by default; shell guard defaults to warn
+
+Agent Zero:
+  tool policy is enforced, but defaults inherit/allow; human approval equivalent not established
+
+Rome:
+  approval engine is strong, but requiresApproval is action-declared and needs catalog completeness audit
+
+OpenGrokBot:
+  per-bot container/memory/A2A boundaries are strong
+  outward-action approval is explicitly a convention, not an enforcement wall
+```
+
+No generic local NCP is justified yet.
+
 ## 10. Cross-candidate conclusion
 
 The expanded universe contains significantly more reusable upstream evidence than the original discovery pool implied.
