@@ -13,7 +13,8 @@ This audit does **not** qualify any pin, rank candidates, award an isolation sco
 - Inspected job summaries and available logs for the failing runs and the QwenPaw waiting run.
 - Legacy commit statuses were inspected separately. OpenMausBot and Rakazo showed Vercel deployment success; this is deployment status, not a test result.
 - A push query for OpenMausBot was initially made against an incorrect SHA. The corrected-SHA push query later confirmed successful CI and Docker image runs; the wrong-SHA result is excluded.
-- For pins without observed CI, a repository-tree filename scan counted test-like paths and workflow files; this is source inventory, not evidence of execution or relevance. - These are observed workflow records, not a locally reproduced test suite. The audit is time-bounded to the queried events and does not cover scheduled, manual, release, or other workflow triggers unless listed.
+- For pins without observed CI, a repository-tree filename scan counted test-like paths and workflow files; this is source inventory, not evidence of execution or relevance.
+- These are observed workflow records, not a locally reproduced test suite. The audit is time-bounded to the queried events and does not cover scheduled, manual, release, or other workflow triggers unless listed.
 
 ## Results
 
