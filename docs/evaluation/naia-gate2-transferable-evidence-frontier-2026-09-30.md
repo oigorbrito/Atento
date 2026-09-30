@@ -36,9 +36,8 @@ ADMITTED:
 
 NOT_ADMITTED_YET:
   OpenClaw
-  QwenPaw
   Agent Zero
-  all other current technical survivors
+  other current technical survivors not listed under ADMITTED
 
 THIS_IS_NOT = shortlist | ranking | selection
 ```
