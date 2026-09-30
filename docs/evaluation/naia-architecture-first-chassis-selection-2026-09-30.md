@@ -17,9 +17,9 @@ Current authority:
 
 The Atento candidate-selection problem is not equivalent to choosing the candidate with the highest feature count or the highest behavioral benchmark score.
 
-The primary question is: Which existing system provides the strongest, most appropriate and least structurally expensive chassis/architecture on which NAIA can be built?
+The primary question is: **which existing system provides the required structural properties with the lowest expected cross-cutting reconstruction cost?**
 
-The governing analogy is automotive: a good chassis is expensive to replace; suspension, wheels, interior, electronics and other components can often be replaced or adapted; a poor chassis can make every later repair expensive because defects propagate through the architecture.
+The automotive analogy is useful as a cost-of-change model: chassis defects propagate across the system, while many peripheral components can be replaced through stable interfaces. The analogy is not a claim that architecture is intrinsically superior to measured behavior.
 
 Therefore the screening order is:
 
@@ -30,7 +30,7 @@ Therefore the screening order is:
 5. Capabilities / integrations
 6. UI / peripheral details
 
-This is a replacement-cost principle, not an aesthetic preference.
+This is a **replacement-cost and reversibility principle**, not an architectural-aesthetics preference.
 
 ## 2. What is expensive versus repairable
 
@@ -115,7 +115,7 @@ Can capabilities be added or replaced without rewriting the core execution archi
 
 Can the security boundary be expressed by the runtime/deployment topology rather than only by application-level prompt or convention?
 
-A candidate that fails one of these because its architecture cannot naturally represent the required invariant should be eliminated before expensive runtime benchmarking.
+A candidate that cannot technically represent or enforce a required invariant should be eliminated before expensive runtime benchmarking. A candidate is not eliminated merely because its architecture differs from a preferred pattern.
 
 ## 4. Benchmark role
 
@@ -127,7 +127,7 @@ A benchmark can answer questions such as task completion, memory retrieval, comp
 
 It cannot, by itself, establish NAIA/Anna isolation, credential boundaries, broker-only handoff, stale-authority rejection, deployment security, adaptation cost or structural suitability of the chassis.
 
-Therefore benchmark results are used after architectural viability has been established, primarily to differentiate viable architectures and identify useful component donors.
+Therefore benchmark results are used after architectural viability has been established, primarily to differentiate viable candidates and identify useful component donors. A benchmark result cannot rescue a hard failure of a required property.
 
 ## 5. Candidate screening sequence
 
@@ -167,7 +167,7 @@ When a numerical triage score is useful, it must be architecture-heavy.
 | External empirical evidence | 10% |
 | Adaptability / component replacement cost | 10% |
 
-The score is a triage instrument, not a qualification score or final selection. It must not be used to average away a hard failure of a required property. A candidate that cannot technically enforce a required isolation/authority property is not rescued by a higher chassis or benchmark score.
+The score is a triage instrument, not a qualification score or final selection. It must not average away a hard failure of a required property. A candidate that cannot technically enforce required isolation/authority is not rescued by a higher benchmark or architecture score.
 
 A missing benchmark does not automatically mean poor architecture.
 
@@ -272,10 +272,10 @@ It also formalizes the existing distinctions:
 - PERSISTENCE != DURABLE_EXECUTION
 - FEATURE_RICH != GOOD_CHASSIS
 
-The selection process should therefore prefer a mature, structurally suitable chassis and add or replace peripheral capabilities afterward, rather than reconstructing the architecture around individually attractive features.
+The selection process should therefore minimize expected structural change while preserving demonstrated capability. A mature, structurally suitable chassis is preferred when it satisfies the required properties with defensible evidence; peripheral capabilities can then be added or replaced through bounded interfaces.
 
 ## Final rule
 
-> Primeiro compre/adote o que é caro de construir: o chassi e a arquitetura. Depois aproveite ou substitua o que é barato de trocar: componentes, integrações e detalhes.
+> **Primeiro filtre pelo que é caro de reconstruir: o chassi e as propriedades estruturais. Depois compare o que é mensurável e substituível: componentes, integrações e detalhes.**
 
 This is the governing screening principle for the next NAIA candidate reduction.
