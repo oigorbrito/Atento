@@ -82,3 +82,10 @@ NAIA_BASE = NOT_SELECTED
 ```
 
 The next decisive probe is to locate the real scheduler's run construction and show that an unattended NAIA run receives only the scheduled adapter identity while the interactive run receives the interactive identity, then execute those real entrypoints through the adapter. Do not rerun this harness or the eight standalone adapter checks without a material delta.
+
+
+## Follow-up — daemon scheduler source audit (2026-09-30)
+
+The exact-pin source audit found that Agent::run can use distinct adapter registries, but the real daemon builds allowed_tools statically from the assigned AgentDef for both interactive and scheduled runs. The scheduler sets attended=false; the inspected toolset filter does not branch on that value. MCP receives model-authored arguments without trusted run-origin metadata. This leaves the production scheduled-toolset binding unproven and the Engram browser authority residual open.
+
+Source mapping and the bounded inference are recorded in docs/evaluation/naia-engram-scheduler-toolset-source-audit-2026-09-30.md. This is static source evidence, not a scheduler runtime FAIL.
