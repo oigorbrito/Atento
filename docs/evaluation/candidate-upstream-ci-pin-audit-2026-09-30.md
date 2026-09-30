@@ -99,3 +99,23 @@ A second pass inspected completed job summaries and logs for tests relevant to a
 The observed upstream tests provide **transferable, narrow evidence** for particular mechanisms: sandbox/network default, approval and replay, per-bot allowlist/session/cancellation isolation, memory actor tagging, and memory/provider-slot separation. The log review found no test that demonstrates all Atento requirements together: isolated NAIA/Anna memory, credential, tool, and channel authority with only explicit brokered handoff.
 
 This is a coverage gap map, not a failure score. Existing assertions should be reused at their proven boundary; the missing composed property remains for a later, separately gated probe.
+
+
+## Exact-pin assertion review
+
+For the narrow test names called out above, source files were fetched at the same candidate SHAs used by the workflows. This checks what the tests actually assert, rather than relying on names or CI green status.
+
+| Candidate / exact-pin test | Assertion verified in source | Evidence scope |
+|---|---|---|
+| RustFox — `tests/telegram_update_injector.rs::allowlist_isolation_across_bots` | Main bot accepts a Telegram update; researcher bot with a different allowed-chat set returns `RejectedAllowlist`. | Positive, narrow per-bot Telegram allowlist routing. It does not test memory, credentials, tool registry, or channel/session isolation. |
+| RustFox — `tests/supervisor_dod_smoke.rs::dod_high_risk_task_requires_approval` | With `require_approval_for_medium = true`, a medium-risk task returns `NeedsApproval`. | Authority-gate behavior for one configured risk threshold; not a scheduled/background parity test. |
+| NanoClaw — `container/agent-runner/src/db/session-state.test.ts` | Claude and Codex continuation identifiers are stored/read from distinct provider slots; clearing Codex leaves Claude intact. | Provider-session state separation only, not agent-role memory separation. |
+| Rome — `packages/core/src/actions/engine.integration.test.ts` | A child action requiring approval parks during recording; execution journal persists; replay after approval resumes the action. Separate assertions cover strict-mode replay divergence. | Approval/recovery lifecycle and action execution; no role-boundary assertion. |
+| OpenGrokBot — `gateway/test/server-v021.test.ts` | A scout bot cannot stop the ticker bot's routine, while it can stop its own; database state and scheduler removal are asserted. | Direct per-bot routine ownership check. The same workflow's turn-queue test failed at this pin. |
+| Engram — `crates/engram-agent/src/agent.rs` | After a read marked both untrusted and sensitive, the next egress step is refused; the egress tool did not execute; ledger sequence/hash evidence is asserted. | Strong narrow taint/egress control. It does not test the deferred real browser-adapter integration or distinct NAIA/Anna runtime homes. |
+
+The code search index for some files pointed at later default-branch commits, so those results were not treated as pin evidence. The assertion review above uses direct file fetches at each frozen commit.
+
+## Current execution gate
+
+Only the Engram/Atento composition has a frozen hardened topology in the present evaluation record. Its adapter-only tests already passed 8/8. The remaining real browser-adapter/chassis integration is the explicitly pending test and remains untouched. Other candidates do not yet have frozen Atento-specific profiles/topologies satisfying the residual microprobe gate; their upstream test artifacts are reusable coverage, but cannot produce local Atento PASS/FAIL by themselves.
