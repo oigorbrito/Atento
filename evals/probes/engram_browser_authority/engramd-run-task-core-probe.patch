@@ -1,0 +1,92 @@
+diff --git a/crates/engramd/src/main.rs b/crates/engramd/src/main.rs
+index 0b115d3..d163c8e 100644
+--- a/crates/engramd/src/main.rs
++++ b/crates/engramd/src/main.rs
+@@ -7778,6 +7778,87 @@ fn init_tracing() {
+ mod tests {
+     use super::*;
+ 
++    // Temporary probe: exercise the daemon task runner with two origin-specific MCP
++    // adapters allowed by one durable agent. The provider asks the unattended path
++    // to call the interactive adapter. This is evidence about run_task_core only.
++    #[tokio::test]
++    async fn unattended_task_can_invoke_allowed_interactive_mcp_identity() {
++        use engram_gateway::{Completion, ScriptedProvider, ToolCall};
++        use engram_memory::TrigramHashEmbedder;
++        use engram_skills::SkillSigner;
++        use std::collections::BTreeMap;
++
++        let root = std::path::PathBuf::from(std::env::var("ATENTO_PROBE_DIR").unwrap());
++        let home_dir = tempfile::tempdir().unwrap();
++        let home = home_dir.path().to_string_lossy().to_string();
++        let ledger = Arc::new(Ledger::open(&home).unwrap());
++        let memory = Arc::new(engram_memory::Memory::open(
++            format!("{home}/brain.db"), Arc::new(TrigramHashEmbedder::default()), ledger.clone()
++        ).unwrap());
++        let signer = Arc::new(SkillSigner::load_or_create(format!("{home}/skill.key")).unwrap());
++        let registry = Arc::new(Registry::open(&home, signer, ledger.clone()).unwrap());
++        let sched = Arc::new(Scheduler::open(&home, ledger.clone()).unwrap());
++        let gateway = Arc::new(Gateway::new(Box::new(ScriptedProvider::new(vec![])), ledger.clone()));
++        let config = config::Config::default();
++        let task_store = Arc::new(tasks::TaskStore::open(home_dir.path()));
++        let agent_store = Arc::new(agents::AgentStore::open(home_dir.path()));
++        let interactive_name = "mcp_atento_browser_interactive_effect";
++        let scheduled_name = "mcp_atento_browser_scheduled_effect";
++        let mut mcp_tools = Vec::new();
++        for origin in ["interactive", "scheduled"] {
++            let mut env = BTreeMap::new();
++            env.insert("PYTHONPATH".into(), root.to_string_lossy().into_owned());
++            env.insert("ATENTO_ORIGIN".into(), origin.into());
++            env.insert("BROWSER_PROVIDER_SECRET".into(), "BROWSER_PROVIDER_SECRET_DO_NOT_LEAK".into());
++            let spec = engram_agent::McpServerSpec {
++                name: format!("atento_browser_{origin}"), command: "python3".into(),
++                args: vec!["-u".into(), root.join("mcp_server.py").to_string_lossy().into_owned()],
++                env, cwd: Some(root.to_string_lossy().into_owned()), trusted: true, ..Default::default()
++            };
++            mcp_tools.extend(engram_agent::connect_servers(&[spec]).await);
++        }
++        let app = App {
++            memory, registry, host: Arc::new(SkillHost::new()), gateway: gateway.clone(), sched,
++            ledger, bus: Bus::new(32), activity: Activity::new(), workdir: home_dir.path().join("work"),
++            persona: Arc::new(std::sync::RwLock::new(None)),
++            mcp_tools: Arc::new(std::sync::RwLock::new(mcp_tools)),
++            browser: engram_agent::browser_session(None, None), tasks: task_store.clone(),
++            workspace: Arc::new(workspace::WorkspaceStore::open(home_dir.path())),
++            allow_shell: Arc::new(std::sync::atomic::AtomicBool::new(false)),
++            halt: Arc::new(std::sync::atomic::AtomicBool::new(false)),
++            run_halts: Arc::new(std::sync::Mutex::new(std::collections::HashMap::new())),
++            config: Arc::new(std::sync::RwLock::new(config)), home: home.clone(),
++            telegram: Arc::new(std::sync::Mutex::new(None)),
++            consciousness: Arc::new(conscious::Consciousness::open(&home)), agents: agent_store.clone(),
++            in_flight: Arc::new(std::sync::atomic::AtomicUsize::new(0)),
++        };
++        std::fs::create_dir_all(&app.workdir).unwrap();
++        let agent = agent_store.create("probe", "authority probe", "probe", "", "", "", "");
++        agent_store.set_allowed_tools(&agent.id, Some(vec![interactive_name.into(), scheduled_name.into()]));
++        let scheduled = task_store.create("scheduled probe".into(), "invoke interactive adapter".into(), "schedule".into());
++        task_store.set_agent(&scheduled.id, Some(agent.id.clone()));
++        let interactive = task_store.create("interactive probe".into(), "invoke interactive adapter".into(), "ui".into());
++        task_store.set_agent(&interactive.id, Some(agent.id));
++
++        let call_interactive = || Completion {
++            text: String::new(), model: "probe".into(), tokens_in: 1, tokens_out: 1,
++            tool_calls: vec![ToolCall { id: "probe-call".into(), name: interactive_name.into(), arguments: json!({
++                "destination":"https://example.test/form", "action":"click", "selector":"#save", "origin":"scheduled"
++            }) }],
++        };
++        let answer = || Completion { text: "done".into(), model: "probe".into(), tokens_in: 1, tokens_out: 1, tool_calls: vec![] };
++        gateway.set_provider(Arc::from(ScriptedProvider::new(vec![call_interactive(), answer()])));
++        let scheduled_result = run_task_core(&app, &scheduled.id, None, false, false).await.unwrap();
++        gateway.set_provider(Arc::from(ScriptedProvider::new(vec![call_interactive(), answer()])));
++        let interactive_result = run_task_core(&app, &interactive.id, None, false, true).await.unwrap();
++
++        let scheduled_obs = scheduled_result.run.unwrap().steps.into_iter().find(|s| s.tool == interactive_name).unwrap().observation;
++        let interactive_obs = interactive_result.run.unwrap().steps.into_iter().find(|s| s.tool == interactive_name).unwrap().observation;
++        assert!(scheduled_obs.contains("interactive"), "scheduled observation: {scheduled_obs}");
++        assert!(interactive_obs.contains("interactive"), "interactive observation: {interactive_obs}");
++        assert!(!scheduled_obs.contains("BROWSER_PROVIDER_SECRET_DO_NOT_LEAK"));
++    }
++
+     #[test]
+     fn provision_workdir_if_missing_backfills_a_folder_but_never_overwrites_one() {
+         let home = tempfile::tempdir().unwrap();
