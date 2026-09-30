@@ -381,3 +381,22 @@ New exact-pin evidence:
 Canonical residual disposition for the remaining non-frontier candidates:
 
 `docs/evaluation/naia-gate2-non-frontier-hosted-evidence-disposition-2026-09-30.md`
+
+
+## Common Gate-2 composition harness V1
+
+Canonical:
+- `docs/evaluation/naia-gate2-common-composition-harness-v1-2026-09-30.md`
+- `docs/evaluation/naia-gate2-common-composition-matrix-v1-2026-09-30.yaml`
+
+```text
+FRONTIER = 12 candidates
+COMMON_ASSERTIONS = 72
+NEXT_EXECUTION_TARGET = AI Butler
+
+BROAD_RETEST = FORBIDDEN
+SHORTLIST = NOT_SELECTED
+BASE = NOT_SELECTED
+```
+
+All frontier candidates now use the same six black-box role-boundary assertions. Execute only listed candidate-specific add-ons. If an environment block prevents exact-pin composition, record `BLOCKED_ENVIRONMENT` and continue to the next candidate rather than changing the candidate result.
