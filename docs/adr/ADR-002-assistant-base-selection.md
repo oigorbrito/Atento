@@ -30,6 +30,11 @@ Current persistent-agent discovery expansion:
 
 Current external/upstream evidence preflight:
 
+Expanded upstream-evidence matrix:
+
+`docs/evaluation/naia-expanded-upstream-evidence-matrix-2026-09-29.md`
+
+
 `docs/evaluation/naia-external-evidence-preflight-2026-09-29.md`
 
 The initial seven-candidate set is no longer treated as a closed universe. Grok Bot and Meta Muse are retained as product-shape references, and newly surfaced technical candidates include Rakazo, Gobii, Octop, PersonalJarvis, Letta Code, Kortix/Suna, Rome, Agent Zero and OpenGrokBot, plus the prior SelfAgent/GoClaw/Nebo discovery pool.
