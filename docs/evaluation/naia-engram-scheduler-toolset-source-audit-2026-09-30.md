@@ -44,3 +44,23 @@ CURRENT_PIN_QUALIFIED = 0
 ## Next decisive work
 
 Before another execution, freeze a composition that binds trusted run context to the effective adapter authority while preserving the intended NAIA identity and memory boundary. Compare the narrow options on evidence and total adaptation/maintenance cost. Then test the real daemon entrypoints (interactive and scheduled) with a deterministic provider and the Atento MCP adapter. A new generic adapter suite or repeated Agent::run harness would not address this gap.
+
+
+## Follow-up — bounded daemon task-core runtime probe (2026-09-30)
+
+A test-only patch on the exact Engram pin invoked the daemon's actual run_task_core twice: once with attended=false and once with attended=true. Both tasks used one durable AgentDef whose static allowlist contained the interactive and scheduled MCP identities. A deterministic provider requested the interactive identity on both runs. The unattended run first received AuthorityDenied when it requested the type effect through the scheduled MCP identity, then successfully called the interactive MCP server, whose adapter origin was fixed to interactive by server configuration; the fake driver recorded the granted type effect. The interactive control run also succeeded.
+
+This is direct runtime evidence that the shared task core does not separate those tool identities based on attended for this composition. It strengthens the source-derived inference above to FAIL_EMPIRICAL_FOR_TESTED_COMPOSITION; it does not establish a failure for all possible Engram setups.
+
+```ini
+DAEMON_RUN_TASK_CORE_TEST = PASS_WITH_SCOPE
+DUAL_IDENTITY_UNATTENDED_INTERACTIVE_SEPARATION = FAIL_EMPIRICAL_FOR_TESTED_COMPOSITION
+RESIDENT_SCHEDULER_TICK = NOT_RUN
+REAL_BROWSER_EFFECT = NOT_RUN
+PRODUCTION_SCHEDULED_TOOLSET_BINDING = STILL_OPEN
+ENGRAM_BROWSER_EFFECT_AUTHORITY = STILL_OPEN
+ENGRAM_CANDIDATE_FAIL = NOT_CLAIMED
+CURRENT_PIN_QUALIFIED = 0
+```
+
+The reproducible patch, runner, and raw log are recorded beside the earlier MCP probe assets. The next missing execution is the outer scheduled trigger (--run-due or the resident scheduler tick) with a scheduler-created task. Do not repeat the adapter-only or Agent::run harnesses without a material delta.

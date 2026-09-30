@@ -89,3 +89,38 @@ The next decisive probe is to locate the real scheduler's run construction and s
 The exact-pin source audit found that Agent::run can use distinct adapter registries, but the real daemon builds allowed_tools statically from the assigned AgentDef for both interactive and scheduled runs. The scheduler sets attended=false; the inspected toolset filter does not branch on that value. MCP receives model-authored arguments without trusted run-origin metadata. This leaves the production scheduled-toolset binding unproven and the Engram browser authority residual open.
 
 Source mapping and the bounded inference are recorded in docs/evaluation/naia-engram-scheduler-toolset-source-audit-2026-09-30.md. This is static source evidence, not a scheduler runtime FAIL.
+
+
+## Follow-up — daemon run_task_core runtime probe (2026-09-30)
+
+A temporary test-only patch exercised the exact-pin daemon run_task_core path with a deterministic provider and the same two Atento MCP adapter identities used by the earlier harness. One durable AgentDef allowed both identities. The unattended task call used attended=false; the provider requested the interactive MCP identity. The MCP process supplied its origin from trusted subprocess configuration, and the fake browser driver returned an interactive-grant result. An interactive task using the same AgentDef and adapter identity also completed.
+
+```text
+ENGRAM_PIN = 3a43667deec4a680b42f3e880d7d6bac3baf0746
+TEST = tests::unattended_task_can_invoke_allowed_interactive_mcp_identity
+RESULT = 1 passed; 0 failed
+RUNTIME = 0.15s
+```
+
+The deterministic provider made no external model call. The adapter used a fake reversible driver; no real browser was launched. The test first requested a type effect through the scheduled identity and observed AuthorityDenied, then requested the same effect through the interactive identity and observed successful typing under the interactive-only grant. This is a runtime failure of separation for the tested dual-identity AgentDef composition: run_task_core(... attended=false) did not prevent the interactive adapter identity from being called. It is not a failure classification for all Engram configurations.
+
+Reproduction assets:
+- Test-only daemon patch: evals/probes/engram_browser_authority/engramd-run-task-core-probe.patch
+- Runner: evals/probes/engram_browser_authority/run_engramd_probe.sh
+- Raw log: evals/probes/engram_browser_authority/evidence/engramd-run-task-core-probe-2026-09-30.log
+
+Updated boundary:
+
+```ini
+ENGRAM_DAEMON_RUN_TASK_CORE = PASS_WITH_SCOPE
+DUAL_IDENTITY_UNATTENDED_INTERACTIVE_SEPARATION = FAIL_EMPIRICAL_FOR_TESTED_COMPOSITION
+RESIDENT_SCHEDULER_TICK = NOT_RUN
+REAL_BROWSER_EFFECT = NOT_RUN
+ENGRAM_BROWSER_EFFECT_AUTHORITY = STILL_OPEN
+ENGRAM_CANDIDATE_FAIL = NOT_CLAIMED
+CURRENT_PIN_QUALIFIED = 0
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+The remaining decisive runtime work is the resident scheduler tick (or one-shot --run-due) with a real task created from scheduler payload, plus an interactive run for comparison. This probe already shows that the shared task core accepts the interactive tool; it does not claim the scheduler's outer trigger was executed.
