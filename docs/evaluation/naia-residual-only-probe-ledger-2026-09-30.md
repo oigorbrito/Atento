@@ -525,3 +525,8 @@ CROSS_AGENT_TOPOLOGY = NOT_SELECTED
 ```
 
 The scheduled-only pass trades away interactive-only browser type for this AgentDef. The fail-closed result is limited to the named Atento adapter; neither result changes candidate selection or proves arbitrary Engram browser authority.
+
+
+### Current Engram test scope — narrowed (2026-09-30)
+
+The current gate ends at exact-pin adapter authority integration. The existing evidence is decisive for that gate: dual identity fails empirically for the tested composition; scheduled-only and fail-closed paths pass with scope limits. Do not add real-browser or resident-tick tests unless a concrete NAIA requirement or candidate decision depends on them; neither can change the known dual-identity result. Overall `ENGRAM_BROWSER_EFFECT_AUTHORITY` remains `STILL_OPEN` and candidate qualification remains zero. Further Engram tests are currently `NOT_JUSTIFIED`.

@@ -338,3 +338,26 @@ NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
 CROSS_AGENT_TOPOLOGY = NOT_SELECTED
 ```
+
+
+## 11. Current lean test disposition (2026-09-30)
+
+The user narrowed the current verification scope to avoid expanding tests without a decision need. For this Atento residual, the question is adapter authority integration: whether the exact Engram task path reaches the Atento adapter with trusted origin and fails closed. Existing exact-pin runs already show:
+
+- dual-identity unattended composition: `FAIL_EMPIRICAL_FOR_TESTED_COMPOSITION`;
+- static scheduled-only composition: `PASS_WITH_SCOPE`, with interactive-only browser type unavailable;
+- policy-control unavailable path: `PASS_WITH_SCOPE`, with zero driver effects.
+
+No further test is justified now. A real browser cannot change the observed static dual-identity authority failure, and resident scheduler tick is a separate deployment-lifecycle property. Defer both unless a specific NAIA requirement or candidate decision depends on them. This narrows current test work; it does not convert the adapter result to a general browser pass:
+
+```ini
+CURRENT_GATE = ADAPTER_AUTHORITY_INTEGRATION
+CURRENT_GATE_RESULT = MIXED; composition-specific results above
+ENGRAM_BROWSER_EFFECT_AUTHORITY = STILL_OPEN
+REAL_BROWSER = DEFERRED_NOT_REQUIRED_FOR_CURRENT_GATE
+RESIDENT_SCHEDULER_TICK = DEFERRED_NOT_REQUIRED_FOR_CURRENT_GATE
+NEXT_ENGRAM_TEST = NONE_UNTIL_DECISION_RELEVANT_REQUIREMENT
+CURRENT_PIN_QUALIFIED = 0
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
