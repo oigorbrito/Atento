@@ -134,6 +134,23 @@ Additional rules:
 9. For authority, isolation, durability, and external effects, prefer technical enforcement and fault/runtime evidence over prompt instructions or UI claims.
 10. When no decisive evidence distinguishes two acceptable options, document the tie and allow product preference to operate within that evidence-compatible set.
 
+## Relation to architecture-first chassis screening
+
+The architecture-first chassis screen is an operational selection procedure under this ADR; it is not a competing decision policy.
+
+It is valid because the chassis screen evaluates required structural properties and replacement cost, not architectural aesthetics.
+
+```text
+ARCHITECTURE_FIRST != ARCHITECTURAL_AESTHETICS
+ARCHITECTURE_FIRST != FRAMEWORK_PREFERENCE
+ARCHITECTURE_FIRST = HIGH_REPLACEMENT_COST_PROPERTY_SCREEN
+```
+
+The operational procedure is recorded in:
+`docs/evaluation/naia-architecture-first-chassis-selection-2026-09-30.md`
+
+Its numerical weights are triage heuristics only and cannot override a hard failure of a required property.
+
 ## Relation to candidate selection
 
 This ADR does not select or rank a NAIA base.
