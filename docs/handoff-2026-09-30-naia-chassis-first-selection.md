@@ -440,3 +440,21 @@ BASE = NOT_SELECTED
 ```
 
 Resume only when an executor can materialize an exact pin or materially new exact-pin executed evidence appears.
+
+
+## Composition execution currently blocked by executor infrastructure
+
+Canonical:
+
+`docs/evaluation/naia-gate2-composition-execution-block-2026-09-30.md`
+
+```text
+HARNESS = NAIA-GATE2-COMPOSITION-V1
+EXECUTOR_GITHUB_DNS = BLOCKED
+LOCAL_CANDIDATE_CHECKOUT = ABSENT
+COMPOSITION_EXECUTION = BLOCKED_ENVIRONMENT
+
+NEXT_EXECUTION_TARGET_WHEN_UNBLOCKED = AI Butler
+```
+
+Do not rerun upstream reconciliation. When an executable exact-pin environment exists, resume directly with the common six-assertion composition harness.
