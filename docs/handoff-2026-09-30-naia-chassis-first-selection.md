@@ -458,3 +458,20 @@ NEXT_EXECUTION_TARGET_WHEN_UNBLOCKED = AI Butler
 ```
 
 Do not rerun upstream reconciliation. When an executable exact-pin environment exists, resume directly with the common six-assertion composition harness.
+
+
+## Canonical Gate-2 execution blocker / resume queue
+
+```text
+BLOCKER_ID = NAIA-G2-EXEC-INFRA-2026-09-30-01
+TYPE = executor_network
+COMMON_HARNESS = NAIA-GATE2-COMPOSITION-V1
+FRONTIER_BLOCKED = 12
+CANDIDATE_STATE_CHANGE = NONE
+```
+
+Resume queue:
+
+`docs/evaluation/naia-gate2-composition-execution-queue-v1-2026-09-30.yaml`
+
+When executable exact-pin access returns, resume directly at AI Butler. Do not repeat upstream CI/source reconciliation and do not regenerate the frontier.
