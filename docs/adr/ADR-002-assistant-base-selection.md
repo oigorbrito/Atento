@@ -163,12 +163,12 @@ docs/evaluation/open-assistant-contract-audit-2026-09-29.md
 
 Open Assistant is a comparable persistent-assistant product with real conversation memory, persisted cron scheduling, skill/tool filtering, browser automation, encrypted credential storage and multi-provider support. The exact-pin audit also finds material NAIA hardening gaps: no independent per-action approval/deny boundary, plan-driven expansion to all enabled skills, global-by-service credential scope, no established strict NAIA/Anna isolation and no desktop computer-use surface. Exact-pin hosted execution was not observed.
 
-Its BSL 1.1 license is a separate adoption boundary:
+License is out of scope for the current technical selection protocol.
 
 ~~~text
 OPEN_ASSISTANT_STATIC_RESULT = PASS_WITH_SCOPE
 OPEN_ASSISTANT_CURRENT_PIN_QUALIFIED = NO
-LEGAL_ADOPTION_CLEARED = NO
+LICENSE = OUT_OF_SCOPE_FOR_TECHNICAL_SELECTION
 ~~~
 
 This does not create shortlist status.
@@ -652,11 +652,11 @@ OPENCLAW_GATE2 = NOT_CLOSED
 The next OpenClaw evidence, if executed, is the two-role negative authority/isolation composition test; broad upstream retesting remains unnecessary.
 
 
-## Adoption-funnel update — 2026-09-30
+## Technical-funnel update — 2026-09-30
 
-Open Assistant at `32c55d2643f9fe38777f9212588b2eee45392514` is removed from the current Atento base-adoption funnel under its exact-pin BSL 1.1 terms. This is an `R-LEGAL` elimination, not a technical failure.
+Open Assistant at `32c55d2643f9fe38777f9212588b2eee45392514` is restored to the technical selection funnel. License is not used as an elimination or ranking criterion in the current protocol.
 
-Canonical record:
+Canonical status record:
 
 `docs/evaluation/open-assistant-adoption-elimination-2026-09-30.md`
 
@@ -665,8 +665,9 @@ Current funnel state:
 ```text
 FROZEN_UNIVERSE = 26
 SELFAGENT = ELIMINATED_ARCHITECTURE
-OPEN_ASSISTANT = ELIMINATED_ADOPTION_LICENSE
-CURRENT_ADOPTION_SURVIVORS = 24
+OPEN_ASSISTANT = ACTIVE_TECHNICAL_SURVIVOR
+CURRENT_TECHNICAL_SURVIVORS = 25
+LICENSE = OUT_OF_SCOPE_FOR_TECHNICAL_SELECTION
 NAIA_SHORTLIST = NOT_SELECTED
 NAIA_BASE = NOT_SELECTED
 ```
