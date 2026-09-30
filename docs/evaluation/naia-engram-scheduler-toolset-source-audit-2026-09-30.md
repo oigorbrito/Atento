@@ -48,7 +48,7 @@ Before another execution, freeze a composition that binds trusted run context to
 
 ## Follow-up — bounded daemon task-core runtime probe (2026-09-30)
 
-A test-only patch on the exact Engram pin invoked the daemon's actual run_task_core twice: once with attended=false and once with attended=true. Both tasks used one durable AgentDef whose static allowlist contained the interactive and scheduled MCP identities. A deterministic provider requested the interactive identity on both runs. The unattended run successfully called the interactive MCP server, whose adapter origin was fixed to interactive by server configuration; the fake driver recorded the granted click result. The interactive control run also succeeded.
+A test-only patch on the exact Engram pin invoked the daemon's actual run_task_core twice: once with attended=false and once with attended=true. Both tasks used one durable AgentDef whose static allowlist contained the interactive and scheduled MCP identities. A deterministic provider requested the interactive identity on both runs. The unattended run first received AuthorityDenied when it requested the type effect through the scheduled MCP identity, then successfully called the interactive MCP server, whose adapter origin was fixed to interactive by server configuration; the fake driver recorded the granted type effect. The interactive control run also succeeded.
 
 This is direct runtime evidence that the shared task core does not separate those tool identities based on attended for this composition. It strengthens the source-derived inference above to FAIL_EMPIRICAL_FOR_TESTED_COMPOSITION; it does not establish a failure for all possible Engram setups.
 
