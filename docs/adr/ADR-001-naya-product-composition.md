@@ -173,6 +173,25 @@ runtime capability isolation
 → behavior training/fine-tuning quando necessário
 ```
 
+## Current control-plane candidate evidence — GitAgent / OpenGAP
+
+Current upstream assessment:
+
+`docs/evaluation/gitagent-opengap-control-plane-assessment-2026-09-30.md`
+
+GitAgent / OpenGAP is recorded as a material candidate for git-native identity/rule definition, role/SOD representation, tool-policy surfaces, and audit/telemetry. The upstream model explicitly leaves runtime orchestration, live tool execution, memory I/O, and iterative loops to the underlying runtime/framework.
+
+Therefore this evidence does **not** prove the fixed Atento isolation properties and does not select a cross-agent topology.
+
+```text
+DECLARED_ISOLATION != RUNTIME_ISOLATION
+VALIDATED_CONFIG != ENFORCED_SECURITY_BOUNDARY
+GITAGENT_LOCAL_PROOF = NOT_RUN
+CROSS_AGENT_TOPOLOGY = NOT_SELECTED
+```
+
+The next admissible gate for this hypothesis is a bounded adversarial isolation qualification against exact pinned upstream revisions. Until that gate executes, GitAgent / OpenGAP remains a control-plane candidate only.
+
 ## Decision reset
 
 ```yaml
