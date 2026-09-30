@@ -64,3 +64,29 @@ CURRENT_PIN_QUALIFIED = 0
 ```
 
 The reproducible patch, runner, and raw log are recorded beside the earlier MCP probe assets. The next missing execution is the outer scheduled trigger (--run-due or the resident scheduler tick) with a scheduler-created task. Do not repeat the adapter-only or Agent::run harnesses without a material delta.
+
+
+## Follow-up — real one-shot scheduler entrypoint executed (2026-09-30)
+
+The external one-shot path is now exercised in addition to the earlier run_task_core probe. At the exact Engram pin, a real engramd --run-due subprocess read a persisted due job fixture, passed the payload through production task_from_schedule, created and ran the task, and consumed the one-shot occurrence. A second fresh daemon ran an attended control task through POST /v1/tasks/{id}/run.
+
+Evidence and runner:
+- docs/evaluation/naia-engram-run-due-authority-probe-2026-09-30.md
+- evals/probes/engram_browser_authority/run_real_run_due_probe.py
+- evals/probes/engram_browser_authority/evidence/task-receipts-2026-09-30.json
+
+The unattended receipt shows the scheduled MCP identity denied the type effect, followed by successful execution through the interactive MCP identity whose server-side origin was fixed to interactive. The model-authored origin argument was "scheduled" and did not control the adapter authority. The attended control used the interactive identity and executed the same effect. browser_click and browser_type were absent from the effective provider toolsets.
+
+~~~ini
+REAL_RUN_DUE_ENTRYPOINT = EXECUTED
+SCHEDULER_PAYLOAD_TO_TASK = OBSERVED
+DUAL_IDENTITY_UNATTENDED_SEPARATION = FAIL_EMPIRICAL_FOR_TESTED_COMPOSITION
+ATTENDED_HTTP_CONTROL = PASS_WITH_SCOPE
+RESIDENT_SCHEDULER_TICK = NOT_RUN
+REAL_BROWSER_EFFECT = NOT_RUN
+ENGRAM_BROWSER_EFFECT_AUTHORITY = STILL_OPEN
+ENGRAM_CANDIDATE_FAIL = NOT_CLAIMED
+CURRENT_PIN_QUALIFIED = 0
+~~~
+
+The due job was a valid persisted one-shot fixture read by Engram's real Scheduler and --run-due path; the task itself was produced by task_from_schedule. This does not claim that the UI/API schedule-creation flow was exercised. No live model, paid call, or real browser was used. The resident scheduler tick and real browser remain open.

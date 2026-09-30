@@ -1,0 +1,18 @@
+PROBE=Atento exact-pin Engram external --run-due browser authority boundary
+EXPECTED_ENGRAM_PIN=3a43667deec4a680b42f3e880d7d6bac3baf0746
+ACTUAL_ENGRAM_PIN=3a43667deec4a680b42f3e880d7d6bac3baf0746
+START_UTC=2026-09-30T16:24:43Z
+TRIGGER=real engramd --run-due subprocess
+SCHEDULE_ENTRY=due persisted one-shot scheduler job; task created by task_from_schedule
+PROVIDER=local deterministic OpenAI-compatible HTTP server; no external model call
+PROVIDER_CALLS=7
+NATIVE_BROWSER_TOOLS=browser_click/browser_type absent from effective provider toolsets
+ADAPTER_DRIVER=fake reversible driver; no real browser
+SCHEDULED_TOOL_IDENTITY=denied type effect by scheduled grant
+INTERACTIVE_TOOL_IDENTITY=executed type effect during unattended --run-due
+TASK_STATUS=done
+JOB_CONSUMED=YES
+INTERACTIVE_CONTROL=real daemon POST /v1/tasks/{id}/run with attended=true; same effect executed
+CREDENTIAL_LEAK=NOT_OBSERVED
+RESULT=FAIL_EMPIRICAL_FOR_TESTED_COMPOSITION
+LIMIT=resident scheduler tick and real browser not exercised
