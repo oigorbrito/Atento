@@ -21,6 +21,13 @@ Post-reset re-enumeration is recorded in:
 This record expands/classifies the candidate universe but does not alter this ADR's `NOT_SELECTED` state or create a shortlist.
 
 
+
+Current same-protocol completeness evidence:
+
+`docs/evaluation/naia-candidate-completeness-audit-2026-09-29.md`
+
+This audit establishes comparability/missing evidence only. It does not create a shortlist or alter `NOT_SELECTED`.
+
 ## Decision question
 
 > Qual sistema funcionando chega à Assistente alvo com menor mudança estrutural, preservando a maior quantidade de capacidade já provada?
