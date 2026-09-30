@@ -135,3 +135,14 @@ Observed test and smoke evidence:
 - Docker-image boot smoke asserted the server did not bind a public interface, tested tenant-stack pairing, and checked non-root browser operation.
 
 This is materially relevant upstream evidence for approval, origin, pairing, packaging, and bootstrap controls. It is not evidence that NAIA and Anna have independent memory, credential, tool, or channel authority, nor that cross-role handoff is broker-only.
+
+
+## AI Butler exact-pin sandbox profile review
+
+The CI log for pin `c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c` shows the race-enabled tests for `internal/permissions`, `internal/plugin/sandbox`, and `internal/shell/sandbox` passed. I also fetched those test files at the same pin and checked the actual assertions:
+
+- `DefaultPolicy` is expected to allow network access.
+- `StrictPolicy` is expected to deny network and filesystem access and cap execution at 30 seconds; the test rejects a network-capable plugin manifest under that policy.
+- `ModeOff` wraps a shell command as `sh -lc`; the workspace-only and allowlist modes select OS-specific confinement wrappers.
+
+This narrows the reusable evidence: sandbox mechanisms exist and their configuration contracts have tests, while the default plugin policy is network-permissive and `ModeOff` is not a confinement boundary. An Atento composition would need to choose and verify the strict profiles explicitly. None of these tests assert independent NAIA/Anna memory, credential, or channel authority.
