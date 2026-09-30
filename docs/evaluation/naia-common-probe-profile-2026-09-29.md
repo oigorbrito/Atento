@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Freeze the smallest comparable empirical profile after completion of the already-enumerated candidate static audits.
+Freeze the smallest comparable empirical profile for the later local-delta phase. The candidate universe has since expanded; this profile is retained but local execution is gated by discovery and upstream-evidence reconciliation.
 
 This is not a benchmark leaderboard and does not create a shortlist or winner.
 
@@ -13,6 +13,21 @@ CROSS_AGENT_TOPOLOGY = NOT_SELECTED
 ~~~
 
 Existing sufficient evidence must be reused. Only missing material deltas are executed.
+
+Current phase gate:
+
+~~~text
+CANDIDATE_UNIVERSE_COMPLETE = false
+EXTERNAL_EVIDENCE_PREFLIGHT_REQUIRED = YES
+LOCAL_COMMON_PROBE_PHASE = NOT_STARTED
+~~~
+
+Before any NCP execution, consult:
+
+- `docs/evaluation/naia-persistent-agent-discovery-2026-09-29.md`
+- `docs/evaluation/naia-external-evidence-preflight-2026-09-29.md`
+
+A candidate must have its exact pin, upstream implementation contract, relevant upstream tests/evals, available CI/run evidence and one-sentence Atento delta recorded first.
 
 ## 1. Frozen capability profile
 
@@ -228,29 +243,28 @@ Keep local chassis results separate from Composio/Vercel dependency results.
 
 Static contract audit is complete.
 
-~~~text
-LEGAL_ADOPTION_CLEARED = NO
-~~~
+License/adoption metadata remains separate, but per the current technical-discovery instruction it is not used to exclude or defer technical evidence collection.
 
-Do not spend an adoption-oriented runtime probe until the intended use is legally cleared. If a research-only technical probe is later justified, map it to NCP-01..04 rather than inventing a separate suite.
+If a runtime probe is eventually justified by an unproven material Atento delta, map it to NCP-01..04 rather than inventing a separate suite.
 
 ## 4. Execution order
 
 No candidate ranking is implied.
 
-Run probes in the order that minimizes wasted work:
+Run work in the order that minimizes repetition:
 
 ~~~text
+0. expand the candidate universe and keep CANDIDATE_UNIVERSE_COMPLETE=false until same-protocol admission is sufficient
 1. freeze exact candidate pin/profile
-2. map reusable evidence
-3. execute NCP-02 if authority is still materially unknown
-4. execute NCP-01 only where restart/state evidence is missing
-5. execute NCP-03 where isolation cost is still unknown
-6. collect NCP-04 from the same work rather than as a separate benchmark
-7. compare raw evidence only after all decision-relevant gaps are closed
+2. locate upstream implementation contracts, tests/evals and available run/CI artifacts
+3. classify evidence as UPSTREAM_PROVEN / TRANSFERABLE_WITH_CONSTRAINTS / ATENTO_DELTA / UNPROVEN
+4. state the remaining Atento delta in one sentence
+5. execute NCP-02 only if authority remains materially unproven
+6. execute NCP-01 only where restart/state evidence remains materially unproven
+7. execute NCP-03 only where isolation composition remains materially unproven
+8. collect NCP-04 from real adaptation work rather than a hypothetical patch
+9. compare raw evidence only after decision-relevant gaps are closed
 ~~~
-
-For a candidate with a hard external blocker such as unresolved license/adoption terms, stop before expensive runtime work.
 
 ## 5. Decision rule
 
@@ -264,4 +278,4 @@ VERIFIED != ACCEPTED
 ACCEPTED != PROMOTED
 ~~~
 
-The next executable work item is therefore not a broad benchmark. It is the first missing common probe against an exact candidate pin after evidence reuse.
+The next work item is not a local NCP. It is candidate-universe expansion plus upstream/external evidence reconciliation. NCP execution begins only after a material local delta remains.
