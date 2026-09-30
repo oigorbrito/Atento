@@ -582,3 +582,28 @@ These criteria are preserved as a record of the previous decision process. They 
 - [x] non-selection tests reclassified to their owning blocks instead of duplicated during base selection
 - [ ] same decision protocol applied to all finalists after the material local delta
 - [ ] final base decision recorded
+
+
+## Architecture Gate 1 closure — 2026-09-30
+
+Canonical result:
+
+`docs/evaluation/naia-architecture-gate1-screen-2026-09-30.md`
+
+The frozen V1 universe has now received the architecture-first screen required by the current selection policy.
+
+```text
+ARCHITECTURE_GATE_1 = COMPLETE_V1
+ARCHITECTURE_SCREENED = 26_OF_26
+ARCHITECTURE_SURVIVORS = 25
+COMPLETE_BASE_STOPS = [SelfAgent]
+
+AUTHORITY_ISOLATION_GATE = NEXT
+CURRENT_PIN_QUALIFIED = 0
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+SelfAgent is stopped only as a **complete NAIA base candidate at its frozen pin** because existing exact-pin evidence requires cross-cutting repairs across central action authority, background execution and scheduler lifecycle before the required contract can be represented. It remains usable as reference/donor evidence and may be reconsidered after a material upstream change.
+
+Survival of Gate 1 is not qualification. The remaining 25 candidates proceed only to candidate-specific authority/isolation composition under the residual-only protocol.
