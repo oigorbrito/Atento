@@ -408,6 +408,33 @@ PersonalJarvis:
 
 No generic local probe is justified yet.
 
+## Transfer audit: Rakazo / Gobii
+
+A deeper transferability pass is recorded in:
+
+`docs/evaluation/naia-transfer-audit-rakazo-gobii-2026-09-29.md`
+
+Key residuals found without local execution:
+
+```text
+Rakazo:
+  Space = application privacy boundary in schema/source
+  data-bearing credentials = Space scoped; bot secrets = user+space+bot
+  approval replay = bound to resource/tool/revision/args
+  interrupted external effect = explicit uncertain; no blind replay
+  consequential-action default = permissive unless rules configured
+  Team Computer != security boundary
+
+Gobii:
+  per-agent SQLite recovery + event lock/pending-drain contracts are strong
+  secure credential delegation uses opaque refs into exact child/domain/key
+  contact approval defaults to require_approval
+  email content review is a separate policy and may default to automatic
+  queue serialization != exactly-once external effects
+```
+
+No generic local NCP is justified yet.
+
 ## 10. Cross-candidate conclusion
 
 The expanded universe contains significantly more reusable upstream evidence than the original discovery pool implied.
