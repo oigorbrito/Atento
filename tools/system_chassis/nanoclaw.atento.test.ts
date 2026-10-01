@@ -140,10 +140,10 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
     for (const role of roles) {
       dockerExec(role, ['sh', '-c', `printf 'written:${effectByRole[role]}\\n' >> /workspace/effect.txt`]);
       const own = dockerExec(role, ['cat', '/workspace/effect.txt']).trim();
-      expect(own.split(String.fromCharCode(10))).toEqual([`inert-effect:${effectByRole[role]}`, `written:${role}`]);
+      expect(own.split(String.fromCharCode(10))).toEqual([`inert-effect:${effectByRole[role]}`, `written:${effectByRole[role]}`]);
       expect(readFileSync(join(fixtures.get(role)!, 'effect.txt'), 'utf8')).toContain(`written:${role}`);
       for (const other of roles.filter((candidate) => candidate !== role)) {
-        expect(own).not.toBe(`inert-effect:${other}`);
+        expect(own).not.toBe(`inert-effect:${effectByRole[other]}`);
       }
     }
   });
@@ -157,7 +157,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
       await restarted.start();
       await waitForRunning(restarted);
       expect(dockerExec(role, ['cat', '/workspace/effect.txt']).trim().split(String.fromCharCode(10))).toEqual([
-        `inert-effect:${role}`,
+        `inert-effect:${effectByRole[role]}`,
         `written:${role}`,
       ]);
     }
@@ -195,7 +195,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
           agent_group_id: groupId,
           messaging_group_id: messagingGroupId,
           thread_id: null,
-          agent_provider: null,
+          agent_provider: groupByRole[role].provider,
           status: 'active',
           container_status: 'running',
           last_active: createdAt,
@@ -227,7 +227,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
               },
               {
                 id: sessionIds.get(role)!,
-                agent_group_id: role,
+                agent_group_id: groupByRole[role].agent_group,
                 messaging_group_id: ownMessagingGroup,
                 thread_id: null,
                 agent_provider: null,
@@ -270,7 +270,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
           hostPath: materialPath,
           containerPath: '/run/session/credential.txt',
           mode: 'ro',
-          groupScope: role,
+          groupScope: groupByRole[role].agent_group,
         }],
       });
 
