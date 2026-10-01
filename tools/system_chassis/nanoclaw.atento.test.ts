@@ -128,6 +128,21 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
     }
   });
 
+  it('retains each group state root across a driver stop and prepare cycle', async () => {
+    for (const role of roles) {
+      const previous = handles.get(role)!;
+      await previous.stop('atento state-recovery probe');
+      const restarted = await driver.prepare(makeSpec(role, fixtures.get(role)!));
+      handles.set(role, restarted);
+      await restarted.start();
+      await waitForRunning(restarted);
+      expect(dockerExec(role, ['cat', '/workspace/effect.txt']).trim().split(String.fromCharCode(10))).toEqual([
+        `inert-effect:${role}`,
+        `written:${role}`,
+      ]);
+    }
+  });
+
   it('resolves active chat sessions only inside the owning agent group', async () => {
     const db = await initTestDb();
     await runMigrations(db);
