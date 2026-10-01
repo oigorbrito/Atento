@@ -1,0 +1,48 @@
+{
+  "version": "NAIA-GATE2-LETTA-CODE-COMPOSITION-V1",
+  "candidate": "Letta Code",
+  "upstream_repo": "letta-ai/letta-code",
+  "upstream_sha": "21daa38a8cdd74f2d03b634c8312253080bacfc1",
+  "harness_version": "NAIA-GATE2-COMPOSITION-V1",
+  "composition_profile_hash": "fbc31a03f442eca59a2d3d70cd6dfb0e60eede3abbdf1777d75c39a1ef1d5202",
+  "policy_hash": "40375bc1cfeb8c82ba6cd420df0df8443ed2cb6329e5de30b8d437b9d2b93472",
+  "execution_state": "FROZEN_NOT_EXECUTED",
+  "topology": {
+    "naia": {
+      "runtime": "independent",
+      "storage": "independent",
+      "memory": "independent",
+      "credentials": "independent",
+      "shell": "fs_sandboxed"
+    },
+    "anna": {
+      "runtime": "independent",
+      "storage": "independent",
+      "memory": "independent",
+      "credentials": "independent",
+      "shell": "fs_sandboxed"
+    },
+    "cross_role": {
+      "shared_memory": false,
+      "cross_agent_search": false,
+      "cross_agent_conversation": false,
+      "allowed_path": "explicit_atento_handoff_broker_only"
+    }
+  },
+  "policy": {
+    "permission_mode": "strict",
+    "LETTA_FS_SANDBOX": "1",
+    "shared_memory_attachment": "forbidden_across_roles",
+    "background_rule": "background_authority_subset_of_interactive",
+    "control_failure_rule": "fail_closed"
+  },
+  "required_assertions": [
+    "ISO-1",
+    "ISO-2",
+    "ISO-3",
+    "ISO-4",
+    "ISO-5",
+    "ISO-6",
+    "HARDENED-PERMISSION-PROFILE"
+  ]
+}
