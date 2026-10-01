@@ -149,9 +149,19 @@ Test setup and limits: one Node server on Apple M5/macOS 26.6.1/Node 26.6.0; 1,0
 ```text
 EXTERNAL_TRANSPORT_SIGNAL = SSE_AND_WEBSOCKET_MEASURED; LONG_POLL_MEASURED
 TRANSPORT_SHORTLIST = [REST_PLUS_SSE, WEBSOCKET]
+FIRST_LOCAL_CANDIDATE = REST_PLUS_SSE
 TRANSPORT_DECISION = NOT_SELECTED
 CURRENT_SPIKE_LONG_POLL = FEASIBILITY_REFERENCE_ONLY
 EXTERNAL_BENCHMARK_REPLACES_LOCAL_SECURITY_AND_RECOVERY_TESTS = NO
 ```
 
 External benchmark source: [WebSocket vs SSE vs Long Polling: The Real Cost of 1,000 Events](https://theinfinity.dev/articles/websocket-vs-sse-vs-polling), including test method and limitations (2026-08-12). Its results are used only to prune the initial transport set and define measurements; they do not qualify the Atento integrator.
+
+### Bounded ordering from available evidence
+
+For the NAIA chat shape—client sends a discrete message, assistant emits a server-to-client stream—**REST+SSE is the first candidate to implement and test**, while WebSocket remains the comparator. This is a test order, not a selected production architecture. The external benchmark found near-equal latency at 10 events/s and a measurable long-poll penalty at 50 events/s; SSE also has a standard reconnect mechanism carrying `Last-Event-ID`. The event log/replay itself still has to be implemented and tested by Atento; protocol reconnect alone does not provide durable delivery.
+
+The mobile client must authenticate the stream without placing bearer credentials in a URL. A native SSE implementation that can set the Authorization header (or another reviewed OAuth-compatible credential mechanism) is a hard feasibility check. The browser `EventSource` interface does not expose arbitrary request headers in its constructor, so do not assume the browser API is sufficient for the future app.
+
+Run the same single-client correctness and reconnect/replay gate on REST+SSE first. Add the WebSocket comparator only if SSE fails a hard requirement or a measured workload shows material benefit. If SSE passes the hard gates, do not build a second transport merely for theoretical throughput.
+
