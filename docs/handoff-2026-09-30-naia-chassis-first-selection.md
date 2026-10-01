@@ -533,3 +533,29 @@ NAIA_BASE = NOT_SELECTED
 ```
 
 Treat the five as a prioritized cohort for comparable architecture/chassis cost measurement, not as a measured cheapest-five ranking. Do not alter the existing Gate-2 execution queue: AI Butler remains first when exact-pin execution infrastructure is available. Engram remains a component/donor unless separately admitted to a complete-chassis comparison; SelfAgent remains stopped as a complete base at its frozen pin.
+
+
+## Canonical reconciliation — maintenance-cost metric and Top 5 (2026-10-01)
+
+This section supersedes the earlier “Current priority set” of ten candidates and any handoff wording that makes “up to 10 deep empirical evaluations” the current first-selection cohort. Earlier Gate-2 execution records remain valid for their own purpose and are not rewritten by this prioritization.
+
+The first selection metric is the **combined architecture/chassis total adaptation and ongoing-maintenance cost**. Structural change burden, integrations/dependencies, upstream-update friction, deployment/topology and operational upkeep are contributors to this one cost envelope. Authority, isolation, persistence and safety remain hard gates.
+
+Prioritized cohort for the next comparable cost measurement:
+
+```text
+TOP5 = [OpenClaw, AI Butler, NanoClaw, QwenPaw, Letta Code]
+TOP5_ORDERING = NOT_ESTABLISHED
+TOP5_MEANS = PRIORITIZED_MEASUREMENT_COHORT
+TOP5_DOES_NOT_MEAN = CHEAPEST_MEASURED | QUALIFIED_SHORTLIST | SELECTED_BASE
+FULL_COMPARABLE_TOTAL_COST_MEASUREMENTS = 0/26
+OBSERVED_TOTAL_COST_WINNER = NONE
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+NanoClaw alone has partial static touchpoint counts (4–40 copied files depending on profile); these are not observed maintenance cost. Other candidates remain eligible unless separately stopped by a hard gate. The detailed comparison and uncertainties are recorded in `docs/evaluation/naia-architecture-chassis-top5-prioritization-2026-10-01.md` and the consolidated audit in `docs/evaluation/naia-architecture-chassis-maintenance-cost-audit-2026-09-30.md`.
+
+The Top 5 cost-measurement cohort does not supersede Gate-2's execution order. **AI Butler remains the next residual composition target** in the common Gate-2 harness; the recorded executor failed before checkout/steps, so composition and cost measurement were not run. Resume that exact-pin target only when execution infrastructure can materialize the candidate. Capture the same cost fields during each comparable composition, mark blocked candidates `BLOCKED_ENVIRONMENT`, and never convert infrastructure blocks into candidate failures.
+
+For all future handoffs, treat this section as the canonical current summary and follow the source hierarchy above for evidence scope. Do not repeat completed upstream suites or claim a cost ranking until comparable observations exist.
