@@ -18,7 +18,7 @@ import { routeAgentMessage } from './modules/agent-to-agent/agent-route.js';
 import { dispatch } from './cli/dispatch.js';
 import './cli/resources/tasks.js';
 import type { CallerContext } from './cli/frame.js';
-import { sessionDir } from './session-manager.js';
+import { sessionDir, withExistingMailboxSession, writeSessionMessage } from './session-manager.js';
 import type { Session } from './types.js';
 
 const roles = ['naia', 'anna', 'apollo'] as const;
@@ -382,6 +382,158 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
         for (const sessionId of mailboxSessions.get(role) ?? []) {
           rmSync(sessionDir(groupByRole[role].agent_group, sessionId), { recursive: true, force: true });
         }
+      }
+    }
+  });
+
+  it('delivers only a typed brokered handoff and keeps the follow-up action under the recipient role', async () => {
+    const brokerAdapter = process.env.ATENTO_HANDOFF_BROKER_ADAPTER;
+    if (!brokerAdapter) throw new Error('ATENTO_HANDOFF_BROKER_ADAPTER must point to the Atento reference broker adapter');
+    const db = await initTestDb();
+    await runMigrations(db);
+    const createdAt = new Date().toISOString();
+    const sessions = new Map<Role, string>();
+    const taskSessionIds: string[] = [];
+    const profileName: Record<Role, string> = { naia: 'NAIA', anna: 'Anna', apollo: 'Apollo' };
+
+    const brokerEnvelope = (data: Record<string, unknown>) => {
+      const output = execFileSync('python3', [brokerAdapter], { input: JSON.stringify(data), encoding: 'utf8' });
+      const result = JSON.parse(output) as { ok: boolean; envelope: Record<string, string> };
+      if (!result.ok) throw new Error('Atento broker rejected envelope');
+      const envelope = result.envelope;
+      const recipient = roles.find((role) => profileName[role] === envelope.to_role);
+      if (!recipient) throw new Error('broker recipient is not a role in the frozen system profile');
+      const body = JSON.parse(envelope.body) as Record<string, unknown>;
+      const bodyKeys = Object.keys(body).sort();
+      if (
+        bodyKeys.join(',') !== 'action,task_name,type' ||
+        body.type !== 'action_request' ||
+        body.action !== 'create_synthetic_task' ||
+        typeof body.task_name !== 'string'
+      ) {
+        throw new Error('broker body does not match the typed minimal Atento fixture');
+      }
+      return { envelope, recipient };
+    };
+
+    try {
+      for (const role of roles) {
+        const configured = groupByRole[role];
+        const chatSessionId = `${role}-broker-session`;
+        await createAgentGroup({
+          id: configured.agent_group,
+          name: role,
+          folder: configured.agent_group,
+          agent_provider: configured.provider,
+          created_at: createdAt,
+        });
+        await createMessagingGroup({
+          id: configured.channel_instance,
+          channel_type: 'telegram',
+          platform_id: configured.channel_instance,
+          instance: configured.channel_instance,
+          name: null,
+          is_group: 0,
+          unknown_sender_policy: 'public',
+          created_at: createdAt,
+        });
+        await createSession({
+          id: chatSessionId,
+          agent_group_id: configured.agent_group,
+          messaging_group_id: configured.channel_instance,
+          thread_id: null,
+          agent_provider: configured.provider,
+          status: 'active',
+          container_status: 'stopped',
+          last_active: null,
+          created_at: createdAt,
+        });
+        sessions.set(role, chatSessionId);
+      }
+
+      const body = JSON.stringify({
+        type: 'action_request',
+        action: 'create_synthetic_task',
+        task_name: 'anna-broker-reauth',
+      });
+      const validPayload = {
+        from_role: 'NAIA',
+        to_role: 'Anna',
+        kind: 'handoff',
+        body,
+        correlation_id: 'atento-system-probe-handoff-001',
+      };
+      expect(() => brokerEnvelope({ ...validPayload, body: 'untyped free-form text' })).toThrow(/typed minimal/);
+      expect(() => brokerEnvelope({ ...validPayload, to_role: 'UnregisteredRole' })).toThrow(/not a role/);
+      expect(() => execFileSync('python3', [brokerAdapter], {
+        input: JSON.stringify({ ...validPayload, tool_handle: 'synthetic-forbidden-handle' }),
+        encoding: 'utf8',
+      })).toThrow();
+
+      const { envelope, recipient } = brokerEnvelope(validPayload);
+      expect(recipient).toBe('anna');
+      const senderSessionId = sessions.get('naia')!;
+      const receiverSessionId = sessions.get(recipient)!;
+      await writeSessionMessage(groupByRole[recipient].agent_group, receiverSessionId, {
+        id: envelope.correlation_id,
+        kind: 'chat',
+        timestamp: createdAt,
+        platformId: groupByRole.naia.agent_group,
+        channelType: 'agent',
+        content: JSON.stringify({ text: envelope.body }),
+        sourceSessionId: senderSessionId,
+      });
+      const received = await withExistingMailboxSession(
+        groupByRole[recipient].agent_group,
+        receiverSessionId,
+        (mailbox) => mailbox.getInboundHistory(10),
+      );
+      expect(received?.some((message) => message.content.includes('anna-broker-reauth'))).toBe(true);
+
+      const requestedName = 'anna-broker-reauth';
+      const naiaContext: CallerContext = {
+        caller: 'agent',
+        agentGroupId: groupByRole.naia.agent_group,
+        sessionId: senderSessionId,
+        messagingGroupId: groupByRole.naia.channel_instance,
+      };
+      const annaContext: CallerContext = {
+        caller: 'agent',
+        agentGroupId: groupByRole.anna.agent_group,
+        sessionId: receiverSessionId,
+        messagingGroupId: groupByRole.anna.channel_instance,
+      };
+      const unauthorizedAction = await dispatch(
+        {
+          id: 'atento-handoff-unauthorized-action',
+          command: 'tasks-create',
+          args: { name: requestedName, prompt: 'inert receiver-authorized action', process_after: '2999-01-01T00:00:00Z', group: groupByRole.anna.agent_group },
+        },
+        naiaContext,
+      );
+      expect(unauthorizedAction.ok).toBe(false);
+      const authorizedAction = await dispatch(
+        {
+          id: 'atento-handoff-recipient-action',
+          command: 'tasks-create',
+          args: { name: requestedName, prompt: 'inert receiver-authorized action', process_after: '2999-01-01T00:00:00Z', group: groupByRole.anna.agent_group },
+        },
+        annaContext,
+      );
+      expect(authorizedAction.ok).toBe(true);
+      if (authorizedAction.ok) {
+        const result = authorizedAction.data as { session_id: string; agent_group_id: string };
+        expect(result.agent_group_id).toBe(groupByRole.anna.agent_group);
+        taskSessionIds.push(result.session_id);
+      }
+    } finally {
+      await closeDb();
+      for (const role of roles) {
+        const sessionId = sessions.get(role);
+        if (sessionId) rmSync(sessionDir(groupByRole[role].agent_group, sessionId), { recursive: true, force: true });
+      }
+      for (const sessionId of taskSessionIds) {
+        rmSync(sessionDir(groupByRole.anna.agent_group, sessionId), { recursive: true, force: true });
       }
     }
   });
