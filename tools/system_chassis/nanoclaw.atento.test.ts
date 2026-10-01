@@ -407,7 +407,12 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
       if (!['anna', 'apollo'].includes(sender) || recipient !== 'naia' || envelope.kind !== 'handoff') {
         throw new Error('handoff route violates the frozen system profile');
       }
-      const body = JSON.parse(envelope.body) as Record<string, unknown>;
+      let body: Record<string, unknown>;
+      try {
+        body = JSON.parse(envelope.body) as Record<string, unknown>;
+      } catch {
+        throw new Error('broker body does not match the typed minimal Atento fixture');
+      }
       const bodyKeys = Object.keys(body).sort();
       if (
         bodyKeys.join(',') !== 'action,task_name,type' ||
