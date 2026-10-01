@@ -148,11 +148,11 @@ NO_RAW_CROSS_ROLE_CREDENTIAL_DISCLOSURE = OBSERVED
 
 Canonical profile hash:
 
-`d78d6f628f7bd48f645a835ba01cbb394f63864696d2a2dab60abdb5bd12d8ac`
+`81998862f74e523053b12d503374e8fd84164bda43059dfd99d3efa4321b8120`
 
 Canonical policy hash:
 
-`46e5e004177201410ddd56903de3e6d78bfeb3aa14d114c25345967e7fa33579`
+`e4aed8922faf7175e41aedb9d9de2e86b32c84ebab4f34c6b3d625c446463c7c`
 
 These hashes identify the pre-execution composition/policy freeze only. They are not runtime evidence.
 
@@ -187,3 +187,8 @@ Until then, do not:
 - place NAIA and Anna in one shared OpenMausBot data/authority domain merely to obtain a runnable test;
 - convert the infrastructure block into a candidate failure;
 - promote OpenMausBot from frontier to shortlist/base.
+
+
+## Canonical hash correction
+
+The machine-readable freeze was normalized so `topology` and `policy` are the exact hashed objects. The earlier hash literals did not match the serialized freeze and are superseded by the values above. No candidate behavior, policy choice, execution result or decision state changed.
