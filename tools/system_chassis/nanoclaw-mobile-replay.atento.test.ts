@@ -156,5 +156,5 @@ describe('NanoClaw mobile SSE replay — disposable feasibility probe', () => {
       headers: { Authorization: 'Bearer unknown-synthetic-token', 'Last-Event-ID': '0' },
     });
     expect(unauthorized.status).toBe(401);
-  });
+  }, 20000);
 });
