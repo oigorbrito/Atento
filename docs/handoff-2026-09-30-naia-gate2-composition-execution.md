@@ -322,3 +322,34 @@ Continue autonomously to substantive gates.
 - Do not use artificial “blocks” as progress units.
 - Keep summaries compact to preserve context.
 - Skip environment/human blockers and continue to the next candidate when possible.
+
+
+## Update — hosted AI Butler failure attributed
+
+Canonical:
+
+`docs/evaluation/naia-gate2-hosted-runner-execution-block-2026-09-30.md`
+
+Both workflow attempts failed before any step executed:
+
+```text
+attempt 1: runner_id=0, steps=[]
+attempt 2: runner_id=0, steps=[]
+```
+
+Therefore:
+
+```text
+HOSTED_RUNNER_PROVISIONING = BLOCKED
+AI_BUTLER_COMPOSITION = BLOCKED_ENVIRONMENT
+AI_BUTLER_FAIL = NOT_CLAIMED
+```
+
+Do not debug the AI Butler Go assertions from these runs; they never executed.
+
+Common Gate-2 result validation is now implemented in:
+
+- `evals/atentoeval/gate2_composition.py`
+- `evals/tests/test_gate2_composition.py`
+
+Next real empirical step remains AI Butler once a runner is actually assigned. If hosted runners remain unavailable, continue only non-redundant harness/infrastructure work or move execution to another authorized environment with exact-pin access.
