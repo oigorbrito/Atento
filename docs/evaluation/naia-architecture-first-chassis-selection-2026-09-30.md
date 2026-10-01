@@ -308,3 +308,15 @@ Architecture and chassis are one candidate-level evaluation object. Estimate or 
 The five named candidates are prioritized for the next comparable cost measurement based on current static signals and NanoClaw's partial static touchpoint counts. They are not claimed to be the five cheapest, are not ordered by cost, and are not a qualified shortlist. The other survivors are not eliminated by this prioritization. The detailed rationale and uncertainty are in `docs/evaluation/naia-architecture-chassis-top5-prioritization-2026-10-01.md`.
 
 The Top 5 cohort does not replace the blocked Gate-2 execution queue. AI Butler remains the next residual composition target under that queue; execution is still blocked before checkout by executor infrastructure. When execution is restored, collect comparable maintenance-cost observations during the same frozen composition protocol, without treating a blocked run as candidate failure.
+
+
+## Scope boundary after the system-level rescreen (2026-09-30)
+
+This procedure and its completed Gate-1 screen evaluate **candidate bases for the NAIA role**. They are not the full Atento system-chassis decision and cannot establish that one candidate supports NAIA, Anna, and Apollo as an integrated product.
+
+The system-level architecture/chassis comparison is governed by `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md` and the product-composition ADR. Reuse NAIA findings only for the exact properties/pins they cover. The former NAIA Top 5 remains a role-specific measurement cohort and does not define the product-wide Top 5.
+
+```text
+THIS_POLICY_SCOPE = NAIA_ROLE_BASE_ONLY
+FULL_ATENTO_SYSTEM_CHASSIS = NOT_SELECTED
+```
