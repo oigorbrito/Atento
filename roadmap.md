@@ -2026,11 +2026,13 @@ O Atento será arquiteturalmente bem-sucedido quando conseguir demonstrar, com a
 > **PROJECT PROGRESS: 3/100 (3%)**
 >
 > Este número é a soma dos Project Points marcados `[x]` no ledger da seção 5.0. Ele representa o projeto inteiro.
+>
+> Atualização 2026-10-01: para a experiência móvel provisória da NAIA, o registro de avaliação seleciona REST+SSE como transporte do MVP com base em benchmark comparativo externo e teste local de replay. Isso não implementa a API, não qualifica o runtime e não seleciona a topologia sistêmica dos três agentes; nenhum Project Point foi ganho. Provenance do benchmark: `SRC-NAIA-TRANSPORT-BENCH`.
 
 | Bloco | Pontos do projeto | Pontos ganhos | Estado | Bloco concluído? | Evidência atual |
 |---|---:|---:|---|---|---|
 | A — Fundação | 3 | 1 | IN_PROGRESS | [ ] | roadmap, AGENTS, ADR/provenance/documentation governance |
-| B — API/Sessão | 4 | 0 | NOT_STARTED | [ ] | — |
+| B — API/Sessão | 4 | 0 | NOT_STARTED | [ ] | proposta REST+SSE NAIA em `docs/evaluation/nanoclaw-next-step-runtime-seam-audit-2026-10-01.md`; runtime não existe, 0 pontos ganhos |
 | C — Model Gateway | 4 | 0 | NOT_STARTED | [ ] | — |
 | D — State & Belief | 7 | 0 | NOT_STARTED | [ ] | — |
 | E — Memória | 7 | 0 | NOT_STARTED | [ ] | — |
