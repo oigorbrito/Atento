@@ -1,0 +1,50 @@
+{
+  "version": "NAIA-GATE2-OPENMAUSBOT-COMPOSITION-V1",
+  "candidate": "OpenMausBot",
+  "upstream_repo": "milind-soni/OpenMausBot",
+  "upstream_sha": "6005b1bf5883a7ffa639c07e729321f89b9532e1",
+  "harness_version": "NAIA-GATE2-COMPOSITION-V1",
+  "composition_profile_hash": "d78d6f628f7bd48f645a835ba01cbb394f63864696d2a2dab60abdb5bd12d8ac",
+  "policy_hash": "46e5e004177201410ddd56903de3e6d78bfeb3aa14d114c25345967e7fa33579",
+  "execution_state": "FROZEN_NOT_EXECUTED",
+  "topology": {
+    "naia": {
+      "runtime": "independent_process",
+      "home": "independent",
+      "omb_data_dir": "independent",
+      "server_port": "independent",
+      "session_registry": "independent",
+      "credentials": "independent",
+      "bot_set": "NAIA_only"
+    },
+    "anna": {
+      "runtime": "independent_process",
+      "home": "independent",
+      "omb_data_dir": "independent",
+      "server_port": "independent",
+      "session_registry": "independent",
+      "credentials": "independent",
+      "bot_set": "Anna_only"
+    },
+    "cross_role": {
+      "shared_omb_data_dir": false,
+      "shared_session_registry": false,
+      "shared_credentials": false,
+      "native_peer_membership": false,
+      "native_ask_bot": false,
+      "native_delegation": false,
+      "allowed_path": "explicit_atento_handoff_broker_only"
+    }
+  },
+  "required_assertions": [
+    "ISO-1",
+    "ISO-2",
+    "ISO-3",
+    "ISO-4",
+    "ISO-5",
+    "ISO-6",
+    "SAME-OWNER-ROLE-BOUNDARY"
+  ],
+  "background_authority_rule": "background_or_routine_authority_must_not_exceed_interactive_role_authority",
+  "fail_closed_rule": "authority_control_failure_must_deny"
+}
