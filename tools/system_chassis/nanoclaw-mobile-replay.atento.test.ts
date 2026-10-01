@@ -86,9 +86,9 @@ async function fetchEvents(token: string, lastEventId: number): Promise<Array<{ 
   expect(response.headers.get('content-type')).toContain('text/event-stream');
   const body = await response.text();
   const parsed: Array<{ id: number; role: string; payload: string }> = [];
-  const blocks = body.trim().split(/\\n\\n/).filter(Boolean);
+  const blocks = body.trim().split(/\n\n/).filter(Boolean);
   for (const block of blocks) {
-    const id = Number(/^id: (\\d+)$/m.exec(block)?.[1]);
+    const id = Number(/^id: (\d+)$/m.exec(block)?.[1]);
     const data = /^data: (.+)$/m.exec(block)?.[1];
     if (id && data) parsed.push({ id, ...JSON.parse(data) as { role: string; payload: string } });
   }
