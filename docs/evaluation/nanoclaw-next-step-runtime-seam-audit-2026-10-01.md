@@ -104,4 +104,29 @@ ATENTO_PRODUCT_INTEGRATION = NOT_PRESENT
 NANOCLAW_COMPOSITION_GATE = NOT_PASSED
 ```
 
-The spike reduces uncertainty about whether NanoClaw's channel seam can carry a basic authenticated HTTP mobile path: it can. It does not qualify NanoClaw for the product. The next decision-relevant step is to move this narrow adapter behind Atento's actual user/session and credential boundary, add durable response delivery, then run the hosted integration test including one process restart.
+The spike reduces uncertainty about whether NanoClaw's channel seam can carry a basic authenticated HTTP mobile path: it can. It does not qualify NanoClaw for the product and its handwritten transport/auth shape is not an approved architecture. The next decision-relevant step is to select an integration pattern with traceable empirical evidence or an applicable established standard, implement only the minimum adapter behind Atento's real user/session and credential boundary, then run a falsifiable hosted integration test including delivery and one process restart.
+
+
+## User-directed evidence requirement for the integrator
+
+The integration layer is a separate decision from the provisional NanoClaw chassis. Do not select the hand-written spike merely because it passed its narrow feasibility tests. The integrator must meet one of these evidence routes before it is accepted:
+
+1. **Benchmark-backed model:** identify a version-pinned, comparable implementation/pattern with a benchmark whose workload actually covers the relevant property. Record source, benchmark protocol, raw result, applicability, and known gaps.
+2. **Established standard plus local empirical qualification:** use a published standard for the relevant boundary, then prove Atento's required behavior with predeclared, falsifiable tests. A standard is design evidence, not a benchmark score or a pass for Atento.
+
+For a native mobile client, OAuth for native apps (RFC 8252) and current OAuth security BCP (RFC 9700) are relevant starting points; OWASP MASVS supplies mobile authentication, authorization, and network-security verification controls. These sources do not benchmark a particular Atento adapter and do not establish that NanoClaw or the spike passes them. OpenAPI may make the HTTP contract explicit, but it also does not prove security or runtime behavior.
+
+For the Atento boundary, local acceptance evidence must at minimum cover: user/session-to-NAIA binding on the server; denial of caller-selected role/group; cross-role isolation; authorization on every request; response delivery after client reconnect; idempotent inbound retry; and task/message recovery after one host restart. Use synthetic identities and provider credentials in the test environment. Keep the benchmark signal separate from these local proof results.
+
+```text
+INTEGRATOR_SELECTION = NOT_SELECTED
+SPIKE_TRANSPORT_AND_AUTH_SHAPE = EXPLORATORY_ONLY
+EVIDENCE_ROUTE_REQUIRED = APPLICABLE_STANDARD_PLUS_LOCAL_TESTS OR DIRECTLY_RELEVANT_BENCHMARK_PLUS_LOCAL_GAP_TESTS
+NANOCLAW_CHASSIS_BENCHMARK = DOES_NOT_QUALIFY_INTEGRATOR
+```
+
+Sources:
+- [RFC 8252 — OAuth 2.0 for Native Apps](https://www.rfc-editor.org/rfc/rfc8252.html)
+- [RFC 9700 — OAuth 2.0 Security Best Current Practice](https://www.rfc-editor.org/rfc/rfc9700.html)
+- [OWASP MASVS](https://mas.owasp.org/MASVS/)
+- [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
