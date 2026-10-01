@@ -19,6 +19,10 @@ import type { Session } from './types.js';
 
 const roles = ['naia', 'anna', 'apollo'] as const;
 type Role = (typeof roles)[number];
+type RoleProfile = { agent_group: string; channel_instance: string; provider: string };
+
+let groupByRole: Record<Role, RoleProfile>;
+let effectByRole: Record<Role, string>;
 
 let root: string;
 let policy: MountPolicy;
@@ -29,8 +33,8 @@ const credentialFixtures = new Map<Role, { spec: SessionSpec; handle: SessionHan
 
 function makeSpec(role: Role, stateRoot: string): SessionSpec {
   return {
-    key: { installSlug: 'atento-system-probe', agentGroupId: role, sessionId: `${role}-session` },
-    labels: { 'nanoclaw-group-folder': role },
+    key: { installSlug: 'atento-system-probe', agentGroupId: groupByRole[role].agent_group, sessionId: `${role}-session` },
+    labels: { 'nanoclaw-group-folder': groupByRole[role].agent_group },
     containers: [{
       role: 'agent',
       image: 'node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1',
@@ -42,7 +46,7 @@ function makeSpec(role: Role, stateRoot: string): SessionSpec {
         hostPath: stateRoot,
         containerPath: '/workspace',
         mode: 'rw',
-        groupScope: role,
+        groupScope: groupByRole[role].agent_group,
       }],
     }],
     network: 'none',
@@ -80,6 +84,20 @@ function dockerExec(role: Role, command: string[]): string {
 describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
   beforeAll(async () => {
     execFileSync('docker', ['info'], { stdio: 'ignore' });
+    const profilePath = process.env.ATENTO_SYSTEM_PROFILE;
+    if (!profilePath) throw new Error('ATENTO_SYSTEM_PROFILE must point to the frozen Atento system profile');
+    const profile = JSON.parse(readFileSync(profilePath, 'utf8')) as {
+      upstream_repo: string;
+      upstream_sha: string;
+      topology: {
+        roles: { NAIA: RoleProfile; Anna: RoleProfile; Apollo: RoleProfile };
+        role_test_effects: { NAIA: string; Anna: string; Apollo: string };
+      };
+    };
+    expect(profile.upstream_repo).toBe('nanocoai/nanoclaw');
+    expect(profile.upstream_sha).toBe('4c1eabd3ddd74cc3d71b1871da857391a9411c8d');
+    groupByRole = { naia: profile.topology.roles.NAIA, anna: profile.topology.roles.Anna, apollo: profile.topology.roles.Apollo };
+    effectByRole = { naia: profile.topology.role_test_effects.NAIA, anna: profile.topology.role_test_effects.Anna, apollo: profile.topology.role_test_effects.Apollo };
     root = mkdtempSync(join(tmpdir(), 'atento-system-chassis-'));
     policy = {
       groupsRoot: join(root, 'groups'),
@@ -89,9 +107,10 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
       gatewayTrustRoot: join(root, 'gateway-trust'),
     };
     for (const role of roles) {
-      const stateRoot = join(policy.dataRoot, 'v2-sessions', role);
+      const groupId = groupByRole[role].agent_group;
+      const stateRoot = join(policy.dataRoot, 'v2-sessions', groupId);
       mkdirSync(stateRoot, { recursive: true });
-      writeFileSync(join(stateRoot, 'effect.txt'), `inert-effect:${role}\n`, { mode: 0o600 });
+      writeFileSync(join(stateRoot, 'effect.txt'), `inert-effect:${effectByRole[role]}\n`, { mode: 0o600 });
       fixtures.set(role, stateRoot);
     }
     driver = new DockerSessionDriver({
@@ -119,9 +138,9 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
 
   it('keeps role state writable only through that role container mount', () => {
     for (const role of roles) {
-      dockerExec(role, ['sh', '-c', `printf 'written:${role}\\n' >> /workspace/effect.txt`]);
+      dockerExec(role, ['sh', '-c', `printf 'written:${effectByRole[role]}\\n' >> /workspace/effect.txt`]);
       const own = dockerExec(role, ['cat', '/workspace/effect.txt']).trim();
-      expect(own.split(String.fromCharCode(10))).toEqual([`inert-effect:${role}`, `written:${role}`]);
+      expect(own.split(String.fromCharCode(10))).toEqual([`inert-effect:${effectByRole[role]}`, `written:${role}`]);
       expect(readFileSync(join(fixtures.get(role)!, 'effect.txt'), 'utf8')).toContain(`written:${role}`);
       for (const other of roles.filter((candidate) => candidate !== role)) {
         expect(own).not.toBe(`inert-effect:${other}`);
@@ -151,20 +170,21 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
       const createdAt = new Date().toISOString();
       const sessionIds = new Map<Role, string>();
       for (const role of roles) {
-        const messagingGroupId = `channel-${role}`;
+        const groupId = groupByRole[role].agent_group;
+        const messagingGroupId = groupByRole[role].channel_instance;
         const sessionId = `session-${role}`;
         await createAgentGroup({
-          id: role,
+          id: groupId,
           name: role,
-          folder: role,
-          agent_provider: null,
+          folder: groupId,
+          agent_provider: groupByRole[role].provider,
           created_at: createdAt,
         });
         await createMessagingGroup({
           id: messagingGroupId,
           channel_type: 'telegram',
-          platform_id: `atento-${role}-fixture`,
-          instance: `probe-${role}`,
+          platform_id: messagingGroupId,
+          instance: messagingGroupId,
           name: null,
           is_group: 0,
           unknown_sender_policy: 'public',
@@ -172,7 +192,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
         });
         const session: Session = {
           id: sessionId,
-          agent_group_id: role,
+          agent_group_id: groupId,
           messaging_group_id: messagingGroupId,
           thread_id: null,
           agent_provider: null,
@@ -186,13 +206,14 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
       }
 
       for (const role of roles) {
-        const ownMessagingGroup = `channel-${role}`;
-        const own = await findSessionForAgent(role, ownMessagingGroup, null);
+        const groupId = groupByRole[role].agent_group;
+        const ownMessagingGroup = groupByRole[role].channel_instance;
+        const own = await findSessionForAgent(groupId, ownMessagingGroup, null);
         expect(own?.id).toBe(sessionIds.get(role));
-        expect((await getSessionsByAgentGroup(role)).map((session) => session.id)).toEqual([sessionIds.get(role)]);
+        expect((await getSessionsByAgentGroup(groupId)).map((session) => session.id)).toEqual([sessionIds.get(role)]);
 
         for (const other of roles.filter((candidate) => candidate !== role)) {
-          expect(await findSessionForAgent(other, ownMessagingGroup, null)).toBeUndefined();
+          expect(await findSessionForAgent(groupByRole[other].agent_group, ownMessagingGroup, null)).toBeUndefined();
         }
 
         if (role === 'naia') {
@@ -200,7 +221,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
             routeAgentMessage(
               {
                 id: 'atento-unbrokered-native-handoff',
-                platform_id: 'anna',
+                platform_id: groupByRole.anna.agent_group,
                 content: JSON.stringify({ text: 'synthetic cross-role request' }),
                 in_reply_to: null,
               },
@@ -226,10 +247,11 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
 
   it('keeps synthetic identity material in the per-session auxiliary container', async () => {
     for (const role of roles) {
-      const materialDir = join(policy.materialsRoot, role);
+      const groupId = groupByRole[role].agent_group;
+      const materialDir = join(policy.materialsRoot, groupId);
       mkdirSync(materialDir, { recursive: true });
       const materialPath = join(materialDir, 'credential.txt');
-      writeFileSync(materialPath, `synthetic-grant:${role}`, { mode: 0o600 });
+      writeFileSync(materialPath, `synthetic-grant:${effectByRole[role]}`, { mode: 0o600 });
 
       const spec = makeSpec(role, fixtures.get(role)!);
       spec.key = { ...spec.key, sessionId: `${role}-credential-probe` };
