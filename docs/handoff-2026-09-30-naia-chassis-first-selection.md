@@ -31,6 +31,8 @@ Latest policy clarification commit:
 
 ## Governing rule
 
+Architecture and chassis are evaluated together as one object. The selection objective is the lowest defensible total adaptation and ongoing-maintenance cost; architectural repair, chassis integration, dependency/upstream friction, deployment, and upkeep contribute to the same envelope.
+
 The **first selection parameter** is the candidate chassis with the **lowest defensible total adaptation and ongoing maintenance cost** for Atento's required properties. The goal is not a perfect chassis. Compare observed evidence and label estimates/unknowns; do not infer low cost from code size or architectural neatness alone.
 
 Structural screening is prioritized because cross-cutting structural changes can create the largest maintenance and reconstruction burden. This is a cost criterion, not architecture for its own sake.
@@ -506,3 +508,9 @@ Canonical assets:
 - `evals/results/naia_gate2_aibutler_blocked_2026-09-30.json`
 
 Do not treat the existing synthetic `ISO6_explicit_broker_positive_control` helper under `tools/naia_gate2/aibutler` as Gate-2 evidence. The result validator intentionally rejects synthetic broker evidence.
+
+## Maintenance-cost measurement audit
+
+`docs/evaluation/naia-architecture-chassis-maintenance-cost-audit-2026-09-30.md`
+
+Current audit status: 26/26 structurally screened; 0/26 full comparable total-cost measurements; NanoClaw has the only partial static touchpoint count. No total-cost winner is established.
