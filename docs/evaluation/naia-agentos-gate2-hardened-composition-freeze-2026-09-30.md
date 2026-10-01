@@ -169,10 +169,10 @@ This remains bounded to the frozen profile until runtime execution.
 
 ```text
 composition_profile_hash =
-8b9a37d4f1178244b3a7c4768fb4c7f282d53a99e50ef9b195e852cea66a9f6b
+646d485017c3e67f4afef65497cc829afa6de5ba7362af44307dad711d333c14
 
 policy_hash =
-0cba6b4a4f30f620d13ffa2b67fb71d980303adc1d4ccc6ae9ff44105fc1cf55
+570c54576d6db2071c03e9679af671e67cb4eb1798e11af04bc1aa74d0cc8b37
 ```
 
 These hashes identify pre-execution policy/composition state only.
@@ -196,3 +196,8 @@ NAIA_BASE = NOT_SELECTED
 ```
 
 When an executable exact-pin environment exists, execute only ISO-1..ISO-6 plus BROWSER-1 against this frozen identity.
+
+
+## Canonical hash correction
+
+The machine-readable freeze now stores the hardened sandbox/permissions/browser profile inside the exact `policy` object used for hashing. The earlier hash literals are superseded. No runtime evidence or candidate classification changed.
