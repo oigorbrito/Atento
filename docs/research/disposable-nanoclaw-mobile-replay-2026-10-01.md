@@ -81,3 +81,51 @@ NEW_TASK_RETRY_TEST = NOT_RUN
 ```
 
 The smallest next executable probe, once that adapter exists, is one inert NAIA task with synthetic identity and no provider call: persist the due task, terminate the host after claim/before acknowledgment, restart the same runtime, allow one retry, and assert that the task remains NAIA-owned, no Anna/Apollo state or authority is reachable, and the task produces no duplicate terminal delivery after completion. This probe should reuse the upstream recovery checks above rather than copy their internals or rerun their suite.
+
+
+## Follow-up recheck — NAIA task retry after host restart — 2026-10-01
+
+### Recheck result
+
+PR #58 remains open and in draft at head `e948f344b91e20e655399b11300c439228d144ec`. Its current description and the runtime-seam audit still identify no Atento product host runtime or production gateway/provider adapter. The current disposable-branch record also has no intervening implementation of that seam. NanoClaw's raw webhook server and channel adapter are not the Atento host task runtime; the SSE replay probe does not execute scheduled work.
+
+```text
+ATENTO_PRODUCT_HOST_RUNTIME = ABSENT
+PRODUCTION_GATEWAY_PROVIDER_ADAPTER = ABSENT
+NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART = BLOCKED_ADAPTER
+NEW_TASK_RETRY_PROBE = NOT_RUN
+PR_58_MODIFIED = NO
+```
+
+This is an Atento integration blocker, not a NanoClaw failure. The approved SSE replay remains `PASS_WITH_SCOPE`; it is not evidence for scheduled-task retry.
+
+### Preconditions before one probe
+
+Do not implement a product integration solely to unblock this test. Reopen this gate only when the real Atento host runtime seam exists and can be launched in test mode. The seam must:
+
+- accept a persisted due task through the actual Atento-to-NanoClaw scheduling/dispatch path;
+- bind the task to a server-side synthetic NAIA identity and NAIA-owned state, without trusting a client-supplied role;
+- expose the host process lifecycle and a deterministic point after task claim but before terminal acknowledgment;
+- persist claim/retry/terminal-delivery state across a host restart and expose enough evidence to count terminal deliveries;
+- run without a provider call, external side effect, production credential, or parallel task.
+
+The exact-pinned NanoClaw component tests already listed above remain reused evidence. Do not rerun them, the prior Atento 7/7 assertions, the benchmark, or the approved SSE replay.
+
+### Smallest falsifiable probe once prerequisites exist
+
+Run exactly one disposable NAIA task with an inert effect and synthetic identity:
+
+1. Persist one due task through the real host adapter and verify its owner is NAIA before dispatch.
+2. Let the host claim it, then terminate the host process before terminal acknowledgment.
+3. Restart the same host runtime against the same durable task state and permit exactly one retry.
+4. Observe the terminal record and delivery count; verify the task remains NAIA-owned throughout, reaches one terminal outcome, and produces no duplicate terminal delivery.
+
+No Anna or Apollo task is added. The probe must not call a provider or produce an external effect.
+
+### Acceptance and result classification
+
+Accept this probe only if the recorded raw trace proves the same task ID and NAIA owner before claim, after restart, and at terminal completion; the host actually restarted; one retry occurred; and terminal delivery count is exactly one. Missing any of these observations is INVALID/INCONCLUSIVE, not PASS.
+
+Classify a wrong owner, cross-role access, lost task, or duplicate terminal delivery under an otherwise valid harness as a behavior failure of the exercised integration path. Classify failure to start/kill/restart at the declared lifecycle seam, absent event instrumentation, or a broken fixture as HARNESS/INFRA INVALID; do not attribute it to NanoClaw. Any PASS is scoped to this single synthetic task and does not qualify production, provider custody, or the three-agent topology.
+
+Until the prerequisites exist, retain `NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART = BLOCKED_ADAPTER` and do not run a substitute fixture test.
