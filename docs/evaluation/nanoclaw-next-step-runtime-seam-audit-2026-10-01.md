@@ -217,3 +217,35 @@ WEBSOCKET_COMPARATOR = DEFERRED_UNLESS_REQUIREMENT_OR_MEASURED_FAILURE
 PRODUCTION_INTEGRATOR_IMPLEMENTED = NO
 PRODUCTION_INTEGRATOR_SECURITY_AND_RESTART_ACCEPTANCE = PENDING_IMPLEMENTATION
 ```
+
+
+## Minimal API contract for implementation — proposed, not implemented
+
+This is the smallest contract to carry REST+SSE into the Atento host runtime. It is a proposal for the next code change, not a claim that this API or module already exists.
+
+**Authentication and authority**
+
+- Both endpoints require an authenticated access token in the `Authorization: Bearer` header over TLS. The authentication provider is not selected here.
+- The host derives the owner from the validated token. The client cannot submit an agent, group, role, credential, or runtime session selector.
+- The NAIA route maps that authenticated owner to the server-side NAIA session. Do not put tokens in URLs.
+- Any future conversation identifier must be authorized against the authenticated owner on every request.
+
+**Endpoints**
+
+| Operation | Contract |
+|---|---|
+| `POST /v1/naia/messages` | Accept `Idempotency-Key` plus JSON `{"text":"..."}`; return `202` and a server-generated `message_id`. Reject unknown fields and invalid/oversized text. A repeated key for the same authenticated owner must not enqueue a second turn. |
+| `GET /v1/naia/events` | Return `text/event-stream` for the authenticated owner's NAIA session. Each event has a stable `id`, a typed event name, and JSON data. Honor `Last-Event-ID` by replaying subsequent retained events in order. |
+
+The minimal event types are `message.delta`, `message.completed`, and `message.failed`; each carries the server-generated `message_id`. Native SSE client support for an Authorization header is a compatibility check before selecting the app library. A web `EventSource` implementation that cannot set the required header is not sufficient by itself.
+
+**Acceptance checks**
+
+1. Missing/invalid token is rejected; a valid owner receives only that owner's NAIA stream.
+2. Role/group/session injection is rejected or ignored by schema, and cannot change routing.
+3. A repeated idempotency key creates one inbound turn.
+4. Disconnect after event `N`, produce `N+1`, reconnect with `Last-Event-ID: N`, and receive `N+1` in order without duplicate delivery.
+5. Restart the host once, reconnect as the same owner, and recover the outstanding persisted event.
+6. Explicit failure behavior exists for expired/invalid cursors and unavailable storage; it must not silently acknowledge lost data.
+
+The local NanoClaw SSE spike covers a synthetic version of checks 1–4 at the channel seam; it does not cover real token validation, owner mapping, persisted idempotency, storage failure, or check 5. The benchmark informs transport ordering only. No Project Point or production qualification is claimed by this proposed contract.
