@@ -11,6 +11,8 @@ O projeto está reconciliando sua definição em três agentes: **NAIA** (assist
 ## Onde começar
 
 - **Handoff do reset/reconciliação:** [docs/handoff-2026-09-29-product-reset.md](docs/handoff-2026-09-29-product-reset.md)
+- **Handoff do chassi sistêmico:** [docs/handoff-2026-09-30-atento-system-chassis.md](docs/handoff-2026-09-30-atento-system-chassis.md)
+- **Re-screen de arquitetura/chassi do Atento completo:** [docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md](docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md)
 - **Auditoria da reconciliação do remoto:** [docs/reconciliation-2026-09-29.md](docs/reconciliation-2026-09-29.md)
 - **Regras para agentes/contribuidores:** [AGENTS.md](AGENTS.md)
 - **Arquitetura, blocos e progresso global:** [roadmap.md](roadmap.md)
@@ -47,7 +49,7 @@ Mudanças que não conseguem percorrer essa cadeia ainda não são consideradas 
 
 ## Próxima decisão
 
-Antes de novos spikes orientados por candidato, o projeto deve **reenumerar e reclassificar** os chassis comparáveis da NAIA e da Anna, reaproveitando a evidência já medida. Nenhum vencedor ou ordem de execução está selecionado.
+Antes de novos spikes, o projeto está comparando o **chassi do Atento completo** (NAIA, Anna e a fronteira futura do Apollo), reaproveitando evidência por escopo. A antiga triagem e o Top 5 da NAIA são role-specific; nenhum chassi sistêmico ou Top 5 global está selecionado. Apollo permanece adiado como pesquisa funcional.
 
 ## Aviso de escopo
 
