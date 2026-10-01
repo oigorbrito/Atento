@@ -165,3 +165,10 @@ If the disposable workflow run cannot be read from the connected GitHub interfac
 
 
 The workflow trigger was narrowed to `workflow_dispatch` plus the one-shot sentinel path `tools/system_chassis/run-nanoclaw-task-restart-spike.once`; the sentinel has not been created. The connected GitHub interface available in this session can write branch files and inspect PR-triggered runs, but exposes neither workflow dispatch nor a list of push-triggered runs. The private Actions page is not readable in the current browser session. Therefore no hosted result is claimed, and no further trigger was sent. The spike is implemented but execution remains unverified.
+
+
+## Follow-up observability check — 2026-10-01 20:11 America/Sao_Paulo
+
+Read-only commit-status checks returned empty status contexts for the workflow-creation and spike commits `e151a3829fd28801c83fb39e0d5bf65856e29ecc`, `4aeba03cc1ef9bb63ed40e1f5d2d64711dbe495f`, `063cd55efa5924b1b42d66cc02e9f092cfa19c5c`, and current record commit `e3689ee24dc5fc9acb1afad447d684ce2995e0f5`. The only available workflow-run lookup is explicitly limited to pull-request-triggered runs and returned no runs for the workflow commit; this does not enumerate push-triggered runs. Empty commit statuses therefore do **not** establish that Actions did not run or that the test failed to start.
+
+No run ID, job summary, JUnit artifact, or raw execution log is available through the connected GitHub interface. No manual dispatch or sentinel push was performed. Keep `HOSTED_SPIKE_RUN = NOT_VERIFIED`; do not infer a test result.
