@@ -621,6 +621,22 @@ Controles simples podem continuar existindo, e qualquer nova variante deve decla
 
 Toda ablation deve mudar **uma variável arquitetural principal por vez** e só é comparável dentro do mesmo agente/contrato.
 
+### 11.1 System-chassis first sieve: bounded sequential comparison
+
+This protocol applies to the fixed system-level cohort recorded in `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`. It is a screening pass, not full product qualification or a selection decision.
+
+**Comparable unit.** Run the same candidate-neutral profile against each pinned candidate: the eight `SYS-*` assertions above, identical role identities, synthetic fixtures and credentials, policy, handoff payload, restart/failure setup, and observation rules. Candidate-specific adapters may translate invocation and observation mechanics; they may not weaken, replace, or reinterpret an assertion. Record adapter work and mark the candidate `BLOCKED_ADAPTER` if the adapter would require creating an Atento product runtime or broad donor changes.
+
+**Sequence and first measurement.** Test one candidate at a time, in the fixed cohort order; never run candidate tests concurrently. Begin each candidate's first sieve with `TOTAL_ADAPTATION_AND_ONGOING_MAINTENANCE_COST`, the highest-cost/most decision-relevant axis. Capture observed touchpoints/files, dependency and pin delta, runtime/store/control/deployment paths, elapsed engineering and rework, and expected upkeep/operations burden. Keep the cost vector decomposed; do not invent a composite score. Then run the same eight system assertions.
+
+**Bounded effort and status.** Reuse applicable evidence from the exact pinned commit and run only Atento deltas and unresolved blocking invariants. Allow one primary run per candidate and at most one targeted confirmation, only to resolve a suspected infrastructure-invalid run or reproduce a potential hard-gate failure. Use `PASS`, `FAIL` (reproduced hard-gate violation), `BLOCKED` (missing or non-transferable evidence), or `BLOCKED_ADAPTER`. Missing evidence is never a failure. Continue through the full fixed cohort; a pass or failure does not terminate the pass. No open-ended adapter construction or repeated broad upstream-suite reruns.
+
+**Provisional Top 3.** Update the Top 3 only as candidates complete. It may contain only completed, hard-gate-passing candidates with comparable observed cost vectors. Keep ties/unranked candidates where evidence cannot distinguish them; do not force a numeric rank. A candidate with a reproduced hard-gate failure is ineligible. The Top 3 remains provisional until every cohort member reaches a terminal status, and does not itself select or authorize a chassis. No candidate is eliminated for missing evidence.
+
+**GitHub Actions comparison.** GitHub Actions runs independent jobs in parallel by default; a matrix also runs in parallel by default and `fail-fast` defaults to true. That is useful for throughput but conflicts with this protocol's serial, complete-cohort requirement. If implemented as a matrix, set `max-parallel: 1` and `fail-fast: false`; because matrix ordering is not the cohort-order contract, use an ordered runner or explicit sequential `needs` chain as well. Ensure downstream jobs use an appropriate `if` condition so one candidate's failure does not skip later candidates. GitHub documents workflow mechanics; it does not prescribe Atento's evidence policy, cost-first order, or Top 3 rule ([job variations](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/run-job-variations), [using jobs](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-jobs), [workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)).
+
+---
+
 ---
 
 ## 12. Release gates
