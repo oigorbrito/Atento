@@ -16,7 +16,7 @@ Auto-ClawEval v4 uses Claude Haiku 4.5 across its evaluated harnesses. Its Table
 | 2 | CoPaw / QwenPaw lineage | 89.7 | 93.3 | NanoClaw +4.9 full; +5.7 Mini |
 | — | AI Butler | NOT_TESTED | NOT_TESTED | No result |
 
-This is a valid benchmark-specific rank for the historical harness builds evaluated in the paper, not an exact-pin result for the Atento candidates. The paper's CoPaw row predates/does not identify the frozen Atento QwenPaw commit. AI Butler is absent from this benchmark.
+This is a valid benchmark-specific rank for the historical harness builds evaluated in the paper, not an exact-pin result for the Atento candidates. The paper's CoPaw row does not identify the frozen Atento QwenPaw commit. AI Butler is absent from this benchmark.
 
 ## Other external security evidence
 
