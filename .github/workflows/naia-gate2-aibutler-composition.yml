@@ -5,6 +5,8 @@ on:
     paths:
       - ".github/workflows/naia-gate2-aibutler-composition.yml"
       - "tools/naia_gate2/aibutler/**"
+      - "tools/naia_gate2/broker_runtime_adapter.py"
+      - "evals/atentoeval/handoff_broker.py"
   workflow_dispatch:
 
 permissions:
@@ -42,7 +44,10 @@ jobs:
           mkdir -p candidate/internal/atento_gate2
           cp tools/naia_gate2/aibutler/atento_gate2_test.go candidate/internal/atento_gate2/atento_gate2_test.go
 
-      - name: Run six common Gate2 composition assertions
+      - name: Run Gate2 composition assertions with real Atento broker adapter
         working-directory: candidate
+        env:
+          ATENTO_GATE2_BROKER_ADAPTER: ${{ github.workspace }}/tools/naia_gate2/broker_runtime_adapter.py
+          PYTHONPATH: ${{ github.workspace }}
         run: |
           go test ./internal/atento_gate2 -count=1 -v
