@@ -61,3 +61,23 @@ FULL_ATENTO_THREE_ROLE_QUALIFICATION = NOT_PASSED
 The worker, tokens, role map, and SQLite outbox are a disposable Atento-side feasibility fixture. The test proves that NanoClaw's existing raw webhook server can host this fixture's SSE replay route and that the fixture resumes role-filtered events after one abrupt worker-process exit and restart. It does not prove the production Atento identity provider, memory/credential/tool isolation, a real model/provider integration, or scheduled-task recovery.
 
 No prior 7/7 NanoClaw assertions or upstream candidate suite was rerun. This branch is not merged and is not an implementation recommendation.
+
+## Next residual — NAIA scheduled-task recovery
+
+Existing exact-pin evidence was audited and reused; it was not rerun:
+
+- NanoClaw `src/host-sweep.test.ts` tests orphan processing-claim cleanup after a killed container, rescheduling with backoff, and preserving retry state.
+- NanoClaw `src/modules/scheduling/recurrence.test.ts` covers recurrence creation and script-failure backoff.
+- NanoClaw `src/mailbox/sqlite/arm-next-task.test.ts` covers atomic next-occurrence creation and retry after an insertion failure.
+- Atento `tools/system_chassis/nanoclaw.atento.test.ts` verifies role-scoped task creation/list/get and denies cross-group operations; those test tasks are intentionally scheduled in the future and do not fire.
+
+The uncovered NAIA delta is one integrated **Atento host-process** restart after a due task is claimed but before its terminal acknowledgment, followed by one retry. The current Atento worktree has no product host runtime/provider gateway adapter to execute this path, as recorded by the PR #58 runtime-seam audit. Therefore:
+
+```text
+UPSTREAM_TASK_COMPONENT_EVIDENCE = REUSED
+ATENTO_ROLE_SCOPED_TASK_API = PASS_WITH_SCOPE (EXISTING 7/7 PROBE)
+NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART = BLOCKED_ADAPTER
+NEW_TASK_RETRY_TEST = NOT_RUN
+```
+
+The smallest next executable probe, once that adapter exists, is one inert NAIA task with synthetic identity and no provider call: persist the due task, terminate the host after claim/before acknowledgment, restart the same runtime, allow one retry, and assert that the task remains NAIA-owned, no Anna/Apollo state or authority is reachable, and the task produces no duplicate terminal delivery after completion. This probe should reuse the upstream recovery checks above rather than copy their internals or rerun their suite.
