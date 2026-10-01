@@ -84,7 +84,7 @@ Search date: 2026-09-30 local time. This is a discovery and static pre-triage pa
 | [Memoh](https://github.com/felinics/Memoh) — branch README inspected; exact commit not frozen | Self-hosted multi-agent platform; per-agent workspace/computer, filesystem, browser, network and long-term memory; supports separate server/channel deployment and also an all-in-one mode. | Freeze exact commit; prove credential, network, memory, and cross-agent boundaries; determine which components require Docker and the cost of always-on computers. | SYSTEM_CHASSIS_CANDIDATE_FOR_PINNED_SCREEN |
 | [OpenAkita](https://github.com/openakita/openakita/tree/5f5b38da728274f0fd06461a481851be7c0bca6a) `5f5b38da728274f0fd06461a481851be7c0bca6a` | All-in-one assistant with multiple agents, scheduling, tools, browser/computer use, desktop/web/mobile interfaces, and advertised sandbox layers. | Verify per-agent state, secrets, tool authority, handoff semantics, and what the advertised sandbox actually isolates. | SYSTEM_CHASSIS_CANDIDATE_FOR_PINNED_SCREEN |
 | [OpenClaw](https://github.com/openclaw/openclaw) — reuse the frozen Atento candidate pin | Existing NAIA candidate supports multiple agents in one Gateway with per-agent workspace, state and session stores. | Transfer is partial: test three role scopes, shared Gateway blast radius, credential fallback behavior, scheduler, and explicit handoff. Do not treat its NAIA evidence as system evidence. | CARRYOVER_SYSTEM_COMPOSITION_PROBE |
-| [QwenPaw](https://github.com/agentscope-ai/QwenPaw/tree/80e412da9b5505bcac5eec6add271d09fa144c60) `80e412da9b5505bcac5eec6add271d09fa144c60` | Existing NAIA candidate with per-agent resources/governance/sandbox and MCP/A2A/ACP seams in current upstream descriptions. | Transfer exact pin to three role domains, verify sandbox fallback and cron authority, and measure composition/upkeep. | CARRYOVER_SYSTEM_COMPOSITION_PROBE |
+| [QwenPaw](https://github.com/agentscope-ai/QwenPaw/tree/777441721aa72db8e380d90e4d0481b05cbfd4cc) `777441721aa72db8e380d90e4d0481b05cbfd4cc` | Existing NAIA candidate with per-agent resources/governance/sandbox and MCP/A2A/ACP seams in current upstream descriptions. | Transfer exact pin to three role domains, verify sandbox fallback and cron authority, and measure composition/upkeep. | CARRYOVER_SYSTEM_COMPOSITION_PROBE |
 | [Asterism](https://github.com/qmilab/asterism/tree/a8383b45f64a9a9c1923053b0f3894efb4672aba) `a8383b45f64a9a9c1923053b0f3894efb4672aba` | Explicit per-agent memory, secrets, workspace, autonomy and consented one-way agent connections. | Its own documentation says current separation is logical, not hardened containment. Keep as architecture/donor reference unless an external runtime boundary is proven. | ARCHITECTURE_REFERENCE_ONLY_AT_CURRENT_PIN |
 | [AgentSpace](https://github.com/HKUDS/AgentSpace/tree/0f9da1b125def4d5a0d05b34bf7c5cec0686bbf2) `0f9da1b125def4d5a0d05b34bf7c5cec0686bbf2` | Multi-user collaborative workspace, access control, remote daemon and runtime support. | Its README lists multi-agent isolation and sandbox policy as planned, not implemented; do not count it as satisfying the current hard boundary. Keep on watch/reference. | NOT_ADMITTED_AS_CURRENT_SECURITY_CHASSIS |
 
@@ -149,14 +149,53 @@ SYSTEM_CHASSIS_SHORTLIST = NOT_SELECTED
 
 This is a discovery/static evidence pass, not an executed Atento architecture test. No repository claim or source test alone proves separation of Atento chats, memory, tools, credentials, or handoffs.
 
-## Next execution sequence
+## Bounded sequential test model — 2026-10-01
 
-1. Freeze one Atento system-level acceptance profile from ADR-001: three domain identities, private state/tool/credential stores, NAIA operational-executor boundary, explicit minimal handoff, audit/consent, scheduler/recovery parity; retain Apollo's domain now but defer its feature-base search.
-2. Preserve the three topology alternatives above and map the candidate projects onto them. Reconcile the full previous 26-candidate universe against the new system contract; do not just rename the old NAIA Top 5.
-3. Pin exact commits for every admitted candidate, starting with the six new platform candidates plus OpenClaw/QwenPaw carryovers. For each, run the smallest source/test probe that establishes multi-agent state ownership and background/tool authority. Stop only for demonstrated hard failures; record missing/blocked evidence separately.
-4. Build one reproducible three-role negative composition harness. At minimum test cross-role chat/history, memory, secrets, tools, scheduler/recovery, explicit handoff payload limits, and recipient-side authorization.
-5. Capture total adaptation and maintenance cost during equivalent compositions: file changes, dependency/update surface, independent runtime/control paths, deployment requirements, engineering time/rework, and ongoing operations. Do not form a numerical ranking before comparable observations exist.
-6. Only after the system screen closes, define a system-level measurement cohort/Top 5. The prior OpenClaw/AI Butler/NanoClaw/QwenPaw/Letta Code cohort remains NAIA-role-specific.
+The normative method is `docs/evaluation/harness.md#111-system-chassis-first-sieve-bounded-sequential-comparison`. This dated record fixes the cohort/order and reports its execution state; it does not select a candidate.
+
+### Fixed cohort and order
+
+Run one candidate at a time, in this order. The first sieve for **each** candidate starts by measuring `TOTAL_ADAPTATION_AND_ONGOING_MAINTENANCE_COST`, then executes the same eight `SYS-*` assertions in the section above. This order preserves the existing Top 10 evidence-priority queue and carries Letta Code forward from the earlier system screen; it is not a cost ranking.
+
+| Order | Candidate | Commit used for this screen |
+|---:|---|---|
+| 1 | NanoClaw | `nanocoai/nanoclaw@4c1eabd3ddd74cc3d71b1871da857391a9411c8d` |
+| 2 | AI Butler | `LumabyteCo/aibutler@c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c` |
+| 3 | OpenClaw | `openclaw/openclaw@e9571d77e76bd6d35996273d9e8398ad539b26e1` |
+| 4 | QwenPaw | `agentscope-ai/QwenPaw@777441721aa72db8e380d90e4d0481b05cbfd4cc` |
+| 5 | MindRoom | `mindroom-ai/mindroom@4f3bd2d108a6f9be28174e0f66d78eeecddca386` |
+| 6 | Bob Labs | `boblabs-eu/boblabs@a91d6dad098c8ba6d24436a856556078151db45d` |
+| 7 | Ontheia | `Ontheia/ontheia@70802db61eb16533f55efce3d8785d810223d03b` |
+| 8 | OpenAkita | `openakita/openakita@5f5b38da728274f0fd06461a481851be7c0bca6a` |
+| 9 | Clawix | `ClawixAI/clawix@5aee015e0bd793102fba69af486dd6e75df6d802` |
+| 10 | Memoh | Exact commit must be frozen in `docs/third-party.md` before execution; currently `PIN_REQUIRED`. |
+| 11 | Letta Code | `letta-ai/letta-code@21daa38a8cdd74f2d03b634c8312253080bacfc1` |
+
+The cohort is fixed for this pass. Do not silently drop a candidate or expand the cohort mid-run. A pin that cannot be frozen blocks that candidate until resolved; continue with the next candidate, then return to it before closing the cohort.
+
+### Comparison controls and bounded work
+
+- Same candidate-neutral profile, three role identities, synthetic data/credentials, policies, handoff payload, restart/failure conditions, and expected observations for all candidates.
+- Candidate adapters can translate only the mechanics needed to run and inspect those assertions. If a usable adapter would require building product runtime or broad donor changes, record `BLOCKED_ADAPTER` and move on.
+- Reuse exact-pin upstream evidence where applicable; execute only Atento deltas and unresolved blocking invariants. Per candidate: one primary run and at most one targeted confirmation for a suspected infrastructure-invalid run or possible hard-gate failure.
+- Record observed adaptation and upkeep dimensions separately: files/touchpoints, dependencies/pins, runtime/store/control/deployment paths, engineering time/rework, and ongoing operations. No synthetic total-cost score.
+- Statuses: `PASS`, reproduced hard-gate `FAIL`, `BLOCKED` for absent/non-transferable evidence, or `BLOCKED_ADAPTER`. Missing evidence is not failure. Complete the cohort despite earlier pass/fail results; no infinite reruns.
+- Maintain a provisional Top 3 only among completed hard-gate passes with comparable cost evidence. Preserve ties/unranked results where needed. The Top 3 is not a selection; no candidate is eliminated solely for missing evidence.
+
+### GitHub recommendation and this protocol
+
+GitHub Actions defaults independent jobs and matrix variations to parallel execution; matrix `fail-fast` is enabled by default. That default would violate the serial order and could prevent later candidates from running after an early failure. A future workflow should set `max-parallel: 1` and `fail-fast: false`, and enforce cohort order with an ordered runner or explicit `needs` chain (plus an appropriate `if` condition so failures do not skip later candidates). GitHub's documentation describes workflow execution mechanics; it does not define Atento's cost-first method, comparable assertions, or provisional Top 3. See [job variations](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/run-job-variations), [using jobs](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-jobs), and [workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax).
+
+### Current execution state
+
+```text
+COHORT_SIZE = 11
+COMMON_PROFILE = 8_ASSERTIONS_DEFINED; CANDIDATE_NEUTRAL_RUNNER_NOT_IMPLEMENTED
+SEQUENTIAL_CANDIDATE_RUNS = 0
+COMPARABLE_COST_MEASUREMENTS = 0
+PROVISIONAL_TOP_3 = NOT_STARTED
+CANDIDATE_SELECTED = NONE
+```
 
 ## Evidence/source hierarchy
 
