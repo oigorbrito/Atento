@@ -41,6 +41,9 @@ function waitForMarker(child: ChildProcess, marker: string, timeoutMs: number): 
 }
 
 function waitForExit(child: ChildProcess, timeoutMs: number): Promise<{ code: number | null; signal: NodeJS.Signals | null }> {
+  if (child.exitCode !== null || child.signalCode !== null) {
+    return Promise.resolve({ code: child.exitCode, signal: child.signalCode });
+  }
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error('worker process did not exit within bound')), timeoutMs);
     child.once('exit', (code, signal) => {
