@@ -2,7 +2,7 @@
 
 Atento é o repositório canônico de um produto com três agentes especializados: **NAIA** (assistente pessoal persistente), **Anna** (assistente emocional/terapêutica) e **Apollo** (nutrição/fitness, atualmente adiado).
 
-> **Maturidade atual:** reconciliação de produto + pesquisa/arquitetura + scaffold inicial de avaliação. Nenhum chassis está selecionado para NAIA ou Anna; Apollo está adiado.
+> **Maturidade atual:** a direção provisória da base da NAIA é NanoClaw (`4c1eabd`), com qualificação técnica pendente. A base da Anna segue não selecionada; Apollo está adiado. A topologia integrada do Atento ainda não está selecionada.
 
 ## Alinhamento conceitual em reconstrução
 
@@ -18,7 +18,7 @@ O projeto está reconciliando sua definição em três agentes: **NAIA** (assist
 - **Arquitetura, blocos e progresso global:** [roadmap.md](roadmap.md)
 - **Decisão fork vs greenfield:** [docs/adr/ADR-000-fork-vs-greenfield.md](docs/adr/ADR-000-fork-vs-greenfield.md)
 - **Composição dos agentes / isolamento (reaberta):** [docs/adr/ADR-001-naya-product-composition.md](docs/adr/ADR-001-naya-product-composition.md)
-- **Seleção da base da NAIA (decision reset):** [docs/adr/ADR-002-assistant-base-selection.md](docs/adr/ADR-002-assistant-base-selection.md)
+- **Seleção da base da NAIA (direção NanoClaw provisória; qualificação pendente):** [docs/adr/ADR-002-assistant-base-selection.md](docs/adr/ADR-002-assistant-base-selection.md)
 - **Seleção da base da Anna (decision reset):** [docs/adr/ADR-ANNA-001-therapeutic-base-selection.md](docs/adr/ADR-ANNA-001-therapeutic-base-selection.md)
 - **Seleção da base do Apollo (deferred):** [docs/adr/ADR-APOLLO-001-fitness-nutrition-base-selection.md](docs/adr/ADR-APOLLO-001-fitness-nutrition-base-selection.md)
 - **Evaluation harness:** [docs/evaluation/harness.md](docs/evaluation/harness.md)
