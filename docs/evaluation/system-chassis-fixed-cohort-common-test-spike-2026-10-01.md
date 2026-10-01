@@ -21,7 +21,27 @@ COMPARABLE_SYSTEM_COST_MEASUREMENTS = 0
 
 This is a harness/runtime blocker, not a candidate test failure. The workspace available for this spike is not an Atento checkout, and the frozen protocol records no candidate-neutral runner. Existing candidate probes do not launch a complete Atento host/provider composition. Therefore none of the eight common assertions can be truthfully reported as newly executed across this cohort. No candidate was silently dropped, and no previous pass was promoted to a whole-system pass.
 
-## Prior elimination excluded from this run\n\n- **SelfAgent:** excluded because the earlier Gate-1 record stopped it as a complete NAIA base at its frozen pin. This is the prior elimination the current test request must honor. It remains possible to reuse it as donor/component evidence in another composition; no such composition was tested here.\n- **OpenClaw:** retained in the fixed full-system cohort. Its removal from the active mobile-focused view is not a technical elimination from the system comparison.\n\n## Fixed cohort and reusable evidence
+## Prior elimination excluded from this run\n\n- **SelfAgent:** excluded because the earlier Gate-1 record stopped it as a complete NAIA base at its frozen pin. This is the prior elimination the current test request must honor. It remains possible to reuse it as donor/component evidence in another composition; no such composition was tested here.\n- **OpenClaw:** retained in the fixed full-system cohort. Its removal from the active mobile-focused view is not a technical elimination from the system comparison.\n\n## Eliminatory-gate continuation using existing evidence
+
+The prior elimination record is scoped to a candidate role/pin; it must not be generalized across different compositions.
+
+| Subject | Existing gate evidence | Disposition for this test queue |
+|---|---|---|
+| SelfAgent | NAIA Gate 1 stopped its frozen pin as a complete NAIA base due to cross-cutting authority, background-execution, and scheduler-lifecycle repairs. | Excluded from the remaining NAIA-base queue. Not part of the fixed 11 system cohort; may remain a donor/component in another composition. |
+| AI Butler | The scheduled security scan for frozen pin `c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c` recorded seven reachable advisories. | Do not rerun this unchanged pin in the common runtime test. Current pin is security-blocked; the candidate family is not eliminated and may return on a remediated, frozen pin. |
+| QwenPaw | Existing audit identifies a sandbox-unavailable path that may broaden authority and cron/background authority requiring hardening; passing system-level fail-closed evidence is absent. | Hold for a fail-closed profile. This is unresolved, not a demonstrated structural impossibility or candidate elimination. |
+| Remaining system candidates | Existing source/CI/fixture evidence is partial or non-transferable to the full Atento profile; no system-level hard-gate failure is recorded for these candidates in the checked documents. | Retain as unresolved; do not assign PASS or FAIL from missing integration evidence. |
+
+```text
+PRIOR_NAIA_BASE_ELIMINATION = SelfAgent (scope: complete NAIA base at frozen pin)
+CURRENT_PIN_SECURITY_BLOCK = AI_Butler@c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c
+NEW_COMMON_ELIMINATORY_TESTS_EXECUTED = 0
+NEW_SYSTEM_CANDIDATE_ELIMINATIONS = 0
+```
+
+The current common eliminatory test still cannot execute: the Atento host/runtime and candidate-neutral composition runner are absent. Reuse the gates above and proceed only when a runnable seam exists; no upstream suite or approved probe is repeated here.
+
+## Fixed cohort and reusable evidence
 
 The entries below preserve the frozen order. Evidence is reused as documentary or exact-pin evidence only; it does not imply that the common eight-assertion test ran.
 
