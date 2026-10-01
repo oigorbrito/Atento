@@ -36,6 +36,7 @@ MOBILE_ADAPTER_COST = NOT_MEASURED
 This does not establish a structural failure: NanoClaw explicitly supports channel adapters. It does establish that app connectivity is new adapter work, not an existing capability that can be counted as zero-touch. The adapter must be implemented before a mobile-client integration test can exercise the real path.
 
 The local experiment executor has Node.js 24 but no Docker or Podman binary, and the private Atento repository is not available as a local checkout in this workspace. No new test was run. This is not a NanoClaw test failure; the decision-relevant probe remains `BLOCKED_ADAPTER` until the Atento runtime seam exists. The previously passing 7/7 assertions were not repeated.
+
 ## Decision
 
 ```text
