@@ -129,3 +129,36 @@ Accept this probe only if the recorded raw trace proves the same task ID and NAI
 Classify a wrong owner, cross-role access, lost task, or duplicate terminal delivery under an otherwise valid harness as a behavior failure of the exercised integration path. Classify failure to start/kill/restart at the declared lifecycle seam, absent event instrumentation, or a broken fixture as HARNESS/INFRA INVALID; do not attribute it to NanoClaw. Any PASS is scoped to this single synthetic task and does not qualify production, provider custody, or the three-agent topology.
 
 Until the prerequisites exist, retain `NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART = BLOCKED_ADAPTER` and do not run a substitute fixture test.
+
+
+## Disposable task-restart seam spike — 2026-10-01
+
+The user requested a spike. Added a separate one-case workflow and test on this disposable branch only:
+
+- `tools/system_chassis/nanoclaw-task-restart-spike.atento.test.ts`
+- `tools/system_chassis/nanoclaw-task-restart-spike-worker.ts`
+- `.github/workflows/nanoclaw-task-restart-spike.yml`
+
+The spike checks out the same exact NanoClaw pin, creates one due task in a disposable NAIA-named SQLite mailbox, starts a fixture worker, records a processing claim, SIGKILLs that worker before terminal acknowledgment, and restarts a fresh worker on the same mailbox files. The restarted worker calls NanoClaw's exported `_resetStuckProcessingRowsForTesting` helper, waits for its single scheduled backoff retry, applies a synthetic terminal acknowledgment, and records one inert terminal-ledger row. The test is serial and has no provider/channel call, real identity, external effect, Anna/Apollo task, benchmark, or repeated prior suite.
+
+### Scope boundary
+
+This is a **component seam spike**, not the previously blocked Atento host-runtime probe. It does not launch NanoClaw's production `main()`/host sweep, use the actual Atento scheduler/provider adapter, or test real role authorization. NAIA ownership is a synthetic fixture value stored beside the mailbox. The terminal ledger is also fixture code, so its one row does not prove production duplicate suppression. A passing result can only show that the pinned recovery helper can reschedule a persisted orphan claim across a fixture worker-process restart; it cannot change `NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART = BLOCKED_ADAPTER` or qualify NanoClaw.
+
+The original product-level acceptance probe remains unchanged: it requires the actual Atento adapter, one real host-process lifecycle boundary, a real NAIA-bound scheduled task, one post-restart retry, and authoritative terminal-delivery counting.
+
+### Execution state at commit preparation
+
+```text
+SPIKE_IMPLEMENTATION = ADDED_ON_DISPOSABLE_BRANCH
+EXACT_NANOCLAW_PIN = 4c1eabd3ddd74cc3d71b1871da857391a9411c8d
+SPIKE_CASES = 1
+PROVIDER_OR_EXTERNAL_EFFECT = NONE
+UPSTREAM_TESTS_RERUN = NO
+PR_58_MODIFIED = NO
+PRODUCT_HOST_ADAPTER = ABSENT
+PRODUCT_GATE = BLOCKED_ADAPTER
+HOSTED_SPIKE_RUN = NOT_YET_VERIFIED
+```
+
+If the disposable workflow run cannot be read from the connected GitHub interface, preserve that as an observability limitation; do not infer PASS from a commit or workflow dispatch.
