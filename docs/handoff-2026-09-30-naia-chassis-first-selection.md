@@ -598,3 +598,14 @@ The Top 5 is a prioritized measurement cohort, not a cheapest-five finding, rank
 - `docs/evaluation/naia-gate2-common-composition-harness-v1-2026-09-30.md`
 
 This latest handoff section governs chat continuation if older sections contain a conflicting current priority or cohort size.
+
+
+## Scope superseded for product-wide architecture work
+
+Work has expanded from NAIA-only base selection to the complete Atento system architecture/chassis (NAIA + Anna + Apollo domain boundary). This handoff remains the historical/role-specific NAIA record; use `docs/handoff-2026-09-30-atento-system-chassis.md` and `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md` for current system-level continuation.
+
+```text
+NAIA_ROLE_TOP5 = ROLE_SPECIFIC_ONLY
+ATENTO_SYSTEM_CHASSIS = NOT_SELECTED
+ATENTO_SYSTEM_TOP5 = NOT_SET
+```
