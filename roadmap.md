@@ -358,6 +358,7 @@ A regra de engenharia é preservar capacidade funcional comprovada e comparar o 
 
 | Módulo / feature | Donor/Referência primária | Referência secundária | Regra de adoção |
 |---|---|---|---|
+| System-level multi-agent composition / cross-role boundaries | `SRC-ATENTO`, `SRC-SYS-MINDROOM`, `SRC-SYS-ONTHEIA`, `SRC-SYS-BOBLABS`, `SRC-SYS-CLAWIX`, `SRC-SYS-MEMOH`, `SRC-SYS-OPENAKITA` | `SRC-SYS-ASTERISM`, `SRC-SYS-AGENTSPACE` | compare complete role compositions; no source claim equals Atento proof |
 | Session/API | `SRC-ATENTO` | `SRC-PSYCHAT` | donor permitido se reduzir esforço sem degradar contratos |
 | Cross-agent resource authority | `SRC-OPENSEARCH-SEC` | `SRC-ATENTO` | selective-port/pattern donor somente após probes locais de deny-by-default, ownership, grants e restart/recovery |
 | State/Profile | `SRC-CADSS` | `SRC-UKA`, `SRC-MHB` | copiar/adaptar implementação disponível ou construir local |
