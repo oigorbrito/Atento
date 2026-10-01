@@ -1,0 +1,48 @@
+{
+  "version": "NAIA-GATE2-RUSTFOX-COMPOSITION-V1",
+  "candidate": "RustFox",
+  "upstream_repo": "chinkan/RustFox",
+  "upstream_sha": "6e24388d36d1c6fac399039d8cab07cd9cb8264b",
+  "harness_version": "NAIA-GATE2-COMPOSITION-V1",
+  "composition_profile_hash": "3750bae1f639f39d2f687edf3bba4190d16e05fb9c428ef36aef78fa971d389e",
+  "policy_hash": "b3a0ba038e3e7a57ea060badad9d7deb3ab59b4f245cfc806643bf8a2730a2ad",
+  "execution_state": "FROZEN_NOT_EXECUTED",
+  "topology": {
+    "naia": {
+      "runtime": "independent",
+      "user_memory": "independent",
+      "secret_grants": "independent",
+      "peer_grants": "broker_only"
+    },
+    "anna": {
+      "runtime": "independent",
+      "user_memory": "independent",
+      "secret_grants": "independent",
+      "peer_grants": "broker_only"
+    },
+    "cross_role": {
+      "shared_memory": false,
+      "shared_secret_grants": false,
+      "native_peer_invocation": false,
+      "allowed_path": "explicit_atento_handoff_broker_only"
+    }
+  },
+  "policy": {
+    "risk.require_approval_for_medium": true,
+    "risk.auto_execute_only_low": true,
+    "consequential_effect_owner": "supervisor_or_equivalent_hardened_owner",
+    "ordinary_toolregistry_bypass": "forbidden",
+    "scheduled_authority": "subset_of_interactive",
+    "non_idempotent_automatic_replay": "forbidden_or_reconciled",
+    "control_failure_rule": "fail_closed"
+  },
+  "required_assertions": [
+    "ISO-1",
+    "ISO-2",
+    "ISO-3",
+    "ISO-4",
+    "ISO-5",
+    "ISO-6",
+    "UNIVERSAL-EFFECT-OWNER"
+  ]
+}
