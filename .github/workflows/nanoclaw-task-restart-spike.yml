@@ -5,8 +5,7 @@ on:
     branches:
       - codex/disposable-nanoclaw-mobile-replay-20261001
     paths:
-      - ".github/workflows/nanoclaw-task-restart-spike.yml"
-      - "tools/system_chassis/nanoclaw-task-restart-spike*"
+      - "tools/system_chassis/run-nanoclaw-task-restart-spike.once"
   workflow_dispatch:
 
 permissions:
