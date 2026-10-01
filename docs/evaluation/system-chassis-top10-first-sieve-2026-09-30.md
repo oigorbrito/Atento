@@ -55,6 +55,8 @@ Thus this is the ranked queue for applying the first sieve, not ten comparable s
 
 ## Canonical evidence
 
+- Gate 2 continuation and single next-probe disposition (2026-10-01): docs/evaluation/system-chassis-gate2-continuation-2026-10-01.md
+
 - Exact-pin static source and test-definition review of integrated candidates (2026-10-01): docs/evaluation/integrated-chassis-source-verification-2026-10-01.md
 - Whole-product contract and new system candidates: docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md
 - Existing benchmark-to-metric mapping: docs/evaluation/system-chassis-benchmark-crosscheck-2026-09-30.md
