@@ -290,6 +290,70 @@ A regra de engenharia é preservar capacidade funcional comprovada e comparar o 
 - **Tipo:** `ATENTO_NATIVE`.
 - **Usar para:** contratos, integration glue, policy composition, privacy, RBAC, observabilidade, CI/CD, infraestrutura e componentes sem donor superior comprovado.
 
+#### SRC-SYS-MINDROOM — MindRoom
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
+- **Repo:** https://github.com/mindroom-ai/mindroom
+- **Commit inspecionado:** `4f3bd2d108a6f9be28174e0f66d78eeecddca386`.
+- **Candidato para:** multi-agent system composition, Matrix identities, per-agent worker scope, persistent sessions, tools, delegation.
+- **Gaps:** `worker_scope=user` shares runtimes/workspaces; API requester-scoped `user_agent` execution support and Atento handoff/credential boundaries need exact-pin tests.
+- **Estado:** discovery/system-level pre-triage only; not selected or locally qualified. Provenance details: `docs/third-party.md` (`SRC-SYS-MINDROOM`).
+
+#### SRC-SYS-ONTHEIA — Ontheia
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
+- **Repo:** https://github.com/Ontheia/ontheia
+- **Commit inspecionado:** `70802db61eb16533f55efce3d8785d810223d03b`.
+- **Candidato para:** integrated multi-agent platform with per-agent tools/memory/skills, workflow/scheduling, direct delegation, PostgreSQL RLS.
+- **Gaps:** verify RLS and memory isolation at agent/domain level, delegation data minimization, and operational/update cost.
+- **Estado:** discovery/system-level pre-triage only; AGPL-3.0 upstream license; not selected or locally qualified.
+
+#### SRC-SYS-BOBLABS — Bob Labs
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
+- **Repo:** https://github.com/boblabs-eu/boblabs
+- **Commit inspecionado:** `a91d6dad098c8ba6d24436a856556078151db45d`.
+- **Candidato para:** multi-agent labs, per-agent model/memory/tool grants, typed message bus, per-Lab execution sandbox.
+- **Gaps:** test whether each Atento role needs its own Lab, what the shared bus reveals, full trusted boundary, and deployment/upstream maintenance cost.
+- **Estado:** discovery/system-level pre-triage only; not selected or locally qualified.
+
+#### SRC-SYS-CLAWIX — Clawix
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
+- **Repo:** https://github.com/ClawixAI/clawix
+- **Commit inspecionado:** `5aee015e0bd793102fba69af486dd6e75df6d802`.
+- **Candidato para:** multi-agent platform with claimed per-agent Docker containers, scoped memory, approvals, RBAC, audit, and persistent workspaces.
+- **Gaps:** verify the isolation and memory scopes in code/tests; quantify Docker/warm-pool upkeep. README license badge claims MIT; verify the license file at the frozen pin.
+- **Estado:** discovery/system-level pre-triage only; not selected or locally qualified.
+
+#### SRC-SYS-MEMOH — Memoh
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
+- **Repo:** https://github.com/felinics/Memoh
+- **Pin:** exact commit not frozen; README blob inspected: `df463bf149d14483ce388ae89cfcb3b5dde9be90`.
+- **Candidato para:** per-agent workspace/computer, filesystem/browser/network, long-term memory, self-hosted deployment.
+- **Gaps:** freeze commit; test credential, network and cross-agent boundaries; measure always-on computer/deployment cost.
+- **Estado:** discovery only; not selected or locally qualified. README states AGPLv3; verify at frozen commit.
+
+#### SRC-SYS-OPENAKITA — OpenAkita
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
+- **Repo:** https://github.com/openakita/openakita
+- **Commit inspecionado:** `5f5b38da728274f0fd06461a481851be7c0bca6a`.
+- **Candidato para:** multi-agent assistant platform with scheduling, computer/tools, multi-channel UI and advertised sandbox layers.
+- **Gaps:** verify per-agent memory, credentials, tools, handoff semantics, and actual sandbox boundaries.
+- **Estado:** discovery/system-level pre-triage only; not selected or locally qualified; AGPL-3.0 verified at inspected pin.
+
+#### SRC-SYS-ASTERISM — Asterism
+- **Tipo:** `ARCHITECTURE_REFERENCE` + `IMPLEMENTATION_REFERENCE`.
+- **Repo:** https://github.com/qmilab/asterism
+- **Commit inspecionado:** `a8383b45f64a9a9c1923053b0f3894efb4672aba`.
+- **Candidato para:** explicit per-agent state, secrets, autonomy, and controlled one-way handoff.
+- **Gap:** upstream describes current separation as logical, not hardened containment; architecture reference only unless an outer execution boundary is demonstrated.
+- **Estado:** `REFERENCE_ONLY` for current system screen; no selection/qualification.
+
+#### SRC-SYS-AGENTSPACE — AgentSpace
+- **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
+- **Repo:** https://github.com/HKUDS/AgentSpace
+- **Commit inspecionado:** `0f9da1b125def4d5a0d05b34bf7c5cec0686bbf2`.
+- **Candidato para:** collaborative multi-user workspace, access control, remote daemon and control-plane patterns.
+- **Gap:** repository README lists multi-agent isolation and sandbox policy as planned, not implemented at this pin.
+- **Estado:** `REFERENCE_ONLY` / watch; not admitted as current isolation chassis.
+
 ### Matriz de provenance por módulo/feature
 
 | Módulo / feature | Donor/Referência primária | Referência secundária | Regra de adoção |
