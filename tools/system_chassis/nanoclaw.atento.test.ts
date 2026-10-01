@@ -12,6 +12,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { realCli } from './drivers/cli.js';
 import { DockerSessionDriver } from './drivers/docker-driver.js';
 import type { MountPolicy, SessionHandle, SessionSpec } from './drivers/types.js';
+import { closeDb, createAgentGroup, createMessagingGroup, initTestDb } from './db/index.js';
+import { createSession, findSessionForAgent, getSessionsByAgentGroup } from './db/sessions.js';
+import type { Session } from './types.js';
 
 const roles = ['naia', 'anna', 'apollo'] as const;
 type Role = (typeof roles)[number];
@@ -102,6 +105,61 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
       for (const other of roles.filter((candidate) => candidate !== role)) {
         expect(own).not.toBe(`inert-effect:${other}`);
       }
+    }
+  });
+
+  it('resolves active chat sessions only inside the owning agent group', async () => {
+    const db = await initTestDb();
+    try {
+      const createdAt = new Date().toISOString();
+      const sessionIds = new Map<Role, string>();
+      for (const role of roles) {
+        const messagingGroupId = `channel-${role}`;
+        const sessionId = `session-${role}`;
+        await createAgentGroup({
+          id: role,
+          name: role,
+          folder: role,
+          agent_provider: null,
+          created_at: createdAt,
+        });
+        await createMessagingGroup({
+          id: messagingGroupId,
+          channel_type: 'telegram',
+          platform_id: `atento-${role}-fixture`,
+          instance: `probe-${role}`,
+          name: null,
+          is_group: 0,
+          unknown_sender_policy: 'public',
+          created_at: createdAt,
+        });
+        const session: Session = {
+          id: sessionId,
+          agent_group_id: role,
+          messaging_group_id: messagingGroupId,
+          thread_id: null,
+          agent_provider: null,
+          status: 'active',
+          container_status: 'running',
+          last_active: createdAt,
+          created_at: createdAt,
+        };
+        await createSession(session);
+        sessionIds.set(role, sessionId);
+      }
+
+      for (const role of roles) {
+        const ownMessagingGroup = `channel-${role}`;
+        const own = await findSessionForAgent(role, ownMessagingGroup, null);
+        expect(own?.id).toBe(sessionIds.get(role));
+        expect((await getSessionsByAgentGroup(role)).map((session) => session.id)).toEqual([sessionIds.get(role)]);
+
+        for (const other of roles.filter((candidate) => candidate !== role)) {
+          expect(await findSessionForAgent(other, ownMessagingGroup, null)).toBeUndefined();
+        }
+      }
+    } finally {
+      await closeDb();
     }
   });
 
