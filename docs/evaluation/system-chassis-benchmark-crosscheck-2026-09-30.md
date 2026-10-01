@@ -99,7 +99,7 @@ Count failed/blocked infrastructure as `INVALID/BLOCKED` rather than candidate f
 - Current benchmark registry: `evals/config/benchmark_registry.json`.
 - BenchLM LLM agent benchmarks (page data marked verified 2026-09-30): https://benchlm.ai/llm-agent-benchmarks
 - BenchLM methodology: https://benchlm.ai/methodology
-- BenchLM benchmark pages: https://benchlm.ai/terminal-bench-2, https://benchlm.ai/osworld-verified, https://benchlm.ai/browsecomp, https://benchlm.ai/mcp-atlas, https://benchlm.ai/toolathlon, https://benchlm.ai/bfcl-v4
+- BenchLM benchmark pages: https://benchlm.ai/benchmarks/terminal-bench-2, https://benchlm.ai/benchmarks/osworld-verified, https://benchlm.ai/benchmarks/browsecomp, https://benchlm.ai/benchmarks/mcpatlas, https://benchlm.ai/benchmarks/toolathlon, https://benchlm.ai/benchmarks/bfcl-v4
 - Agentic Score weights and source-confidence counts are specific to the BenchLM page snapshot. The displayed model ranks are not independent evidence of chassis fitness; benchmark-specific provider/independent counts and raw scores must be read in their own pages.
 - AgentBalance: https://arxiv.org/abs/2512.11426
 - Efficient Agents: https://arxiv.org/abs/2508.02694
