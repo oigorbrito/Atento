@@ -92,19 +92,21 @@ The independent NAIA candidate Gate-2 queue remains governed by its own frozen o
 
 ## Residual handoff architecture audit — exact NanoClaw pin
 
-Source inspection of the frozen NanoClaw pin identifies its native route at [`src/delivery.ts`](https://github.com/nanocoai/nanoclaw/blob/4c1eabd3ddd74cc3d71b1871da857391a9411c8d/src/delivery.ts) and [`src/modules/agent-to-agent/agent-route.ts`](https://github.com/nanocoai/nanoclaw/blob/4c1eabd3ddd74cc3d71b1871da857391a9411c8d/src/modules/agent-to-agent/agent-route.ts). When an outbound message has `channelType === 'agent'`, the host dispatches directly to `routeAgentMessage`; that route uses the candidate's `agent_destinations` authorization and delivers into a target agent session. The system profile has no native cross-role destination grant, so the tested direct path is denied. Granting such a destination would enable the candidate-native route and would not, by itself, establish the Atento broker contract or receiver-side action reauthorization.
+Source inspection identifies NanoClaw's native route at [`src/delivery.ts`](https://github.com/nanocoai/nanoclaw/blob/4c1eabd3ddd74cc3d71b1871da857391a9411c8d/src/delivery.ts) and [`src/modules/agent-to-agent/agent-route.ts`](https://github.com/nanocoai/nanoclaw/blob/4c1eabd3ddd74cc3d71b1871da857391a9411c8d/src/modules/agent-to-agent/agent-route.ts). The host sends `channelType === 'agent'` directly to `routeAgentMessage`, which checks `agent_destinations` and writes into the target role session. The frozen Atento profile has no native cross-role destination grant, and direct specialist-to-NAIA calls were denied.
 
-The reference broker in `evals/atentoeval/handoff_broker.py` validates a bounded envelope and rejects authority-bearing fields, but it is candidate-agnostic and does not deliver into NanoClaw or authorize the receiving role's action. Its unit contract is not evidence of an integrated NanoClaw handoff. The candidate has a visible host delivery branch and a separate A2A module, which suggests a possible integration seam; the amount of Atento-specific change and its locality have not been measured in an implemented composition.
+The hosted composition probe now connects the Atento reference broker to NanoClaw's real `writeSessionMessage` mailbox API. The injected Atento test adapter validates profile role direction and typed body shape, delivers Anna/Apollo requests into NAIA's actual per-group mailbox, checks source-session correlation, and then exercises NanoClaw's CLI guard under sender and recipient identities. Unbrokered direct A2A stays denied under the frozen no-grant profile. Untyped payload, wrong recipient, and authority-bearing field cases are rejected.
+
+This is a test-harness host adapter, not production Atento wiring. It shows the existing host mailbox API can carry the brokered message without enabling native A2A, and the existing CLI can enforce the subsequent action under NAIA's identity. The provider/model did not make the reauthorization decision; the harness dispatched the action under the receiver identity. No deployment patch or service lifecycle has been qualified, so this is integration compatibility evidence, not product composition acceptance.
 
 ```text
 NATIVE_DIRECT_A2A_WITHOUT_DESTINATION = PASS_WITH_SCOPE (denied)
-BROKER_ENVELOPE_TO_NANOCLAW_RECEIVER = NOT_RUN
-RECEIVER_ACTION_REAUTHORIZATION = NOT_RUN
-BROKER_BYPASS_RESISTANCE = NOT_RUN
-HANDOFF_REPAIR_CLASS = UNRESOLVED (implementation and change locality not measured)
+BROKER_ENVELOPE_TO_NANOCLAW_RECEIVER = PASS_WITH_SCOPE (reference broker -> candidate mailbox API; test adapter only)
+RECEIVER_ACTION_REAUTHORIZATION = PASS_WITH_SCOPE (candidate CLI receiver identity boundary; no model/provider decision)
+BROKER_BYPASS_RESISTANCE = PASS_WITH_SCOPE (native path denied under frozen no-grant profile; altered grant profile not tested)
+HANDOFF_REPAIR_CLASS = HOST_ADAPTER_PROTOTYPED_IN_TEST_HARNESS; PRODUCTION_WIRING_UNQUALIFIED
 ```
 
-The next decisive probe must connect the real Atento broker envelope to a NanoClaw receiver session, demonstrate recipient-side authorization before any action, and show the agent cannot bypass that path through native A2A. It must also capture the Atento-specific patch and classify its change locality. A standalone envelope round-trip or broker unit test cannot close these assertions. No candidate is eliminated based on this source inspection.
+The remaining handoff work is to bind this adapter into the Atento host runtime, capture its actual changed-file/dependency/service footprint, and verify that production configuration cannot add a bypassing native destination. Sensitive-consent positive paths remain out of scope until their contract is decided. No candidate is eliminated based on the current scoped handoff evidence.
 
 ## Reused exact-pin scheduler and recovery evidence
 
