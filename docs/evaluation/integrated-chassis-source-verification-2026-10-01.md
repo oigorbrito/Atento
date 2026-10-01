@@ -18,11 +18,11 @@ The first sieve remains architecture + chassis. Later metrics stay separate; no 
 
 ## Revised first-sieve reading
 
-- **MindRoom:** retain in the queue; mark agent-level filesystem isolation as backend-dependent and explicitly incomplete in the pinned plan.
-- **Bob Labs:** retain; stronger test-source evidence exists for tenant/lab scoping, memory-sharing confirmation, sandbox request authentication, and secret storage. Execution results at this exact pin remain unverified here.
-- **Ontheia:** retain; user-derived namespaces and session RLS are inspectable implementation seams. Deployment/runtime proof and Atento role mapping remain open.
-- **Clawix:** retain; design is relevant, but the reviewed tests do not validate end-to-end security boundaries.
-- **OpenAkita:** retain; orchestration/state contracts exist, but the reviewed evidence does not prove multi-role data isolation.
+- **MindRoom:** retain in the queue; exact-pin pytest, security scan and smoke-stack jobs passed, while the documented agent-level filesystem visibility gap remains unresolved.
+- **Bob Labs:** retain; test-source evidence exists for tenant/lab scoping, memory-sharing confirmation, sandbox request authentication, and secret storage; no hosted CI run was found for this exact pin.
+- **Ontheia:** retain; exact-pin host and WebUI CI jobs passed, and user-derived namespaces/session RLS are inspectable; deployment/runtime proof and Atento role mapping remain open.
+- **Clawix:** retain; exact-pin lint/typecheck/test CI passed, but reviewed tests do not validate end-to-end security boundaries.
+- **OpenAkita:** retain; exact-pin CI build passed, while Python/unit/integration/smoke/E2E jobs were skipped; orchestration/state contracts do not prove multi-role data isolation.
 
 No candidate passes the Atento whole-system chassis gate from this inspection. The Top 10 remains a priority queue, not a cost ranking. No benchmark was run and no score was created.
 
