@@ -14,6 +14,7 @@ import { auxiliaryContainerName, DockerSessionDriver } from './drivers/docker-dr
 import type { MountPolicy, SessionHandle, SessionSpec } from './drivers/types.js';
 import { closeDb, createAgentGroup, createMessagingGroup, initTestDb, runMigrations } from './db/index.js';
 import { createSession, findSessionForAgent, getSessionsByAgentGroup } from './db/sessions.js';
+import { routeAgentMessage } from './modules/agent-to-agent/agent-route.js';
 import type { Session } from './types.js';
 
 const roles = ['naia', 'anna', 'apollo'] as const;
@@ -143,7 +144,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
     }
   });
 
-  it('resolves active chat sessions only inside the owning agent group', async () => {
+  it('resolves role-scoped chat sessions and blocks unregistered native cross-role sends', async () => {
     const db = await initTestDb();
     await runMigrations(db);
     try {
@@ -192,6 +193,30 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
 
         for (const other of roles.filter((candidate) => candidate !== role)) {
           expect(await findSessionForAgent(other, ownMessagingGroup, null)).toBeUndefined();
+        }
+
+        if (role === 'naia') {
+          await expect(
+            routeAgentMessage(
+              {
+                id: 'atento-unbrokered-native-handoff',
+                platform_id: 'anna',
+                content: JSON.stringify({ text: 'synthetic cross-role request' }),
+                in_reply_to: null,
+              },
+              {
+                id: sessionIds.get(role)!,
+                agent_group_id: role,
+                messaging_group_id: ownMessagingGroup,
+                thread_id: null,
+                agent_provider: null,
+                status: 'active',
+                container_status: 'running',
+                last_active: createdAt,
+                created_at: createdAt,
+              },
+            ),
+          ).rejects.toThrow(/unauthorized agent-to-agent/);
         }
       }
     } finally {
