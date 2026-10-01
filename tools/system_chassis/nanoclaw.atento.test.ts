@@ -10,7 +10,7 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { realCli } from './drivers/cli.js';
-import { DockerSessionDriver } from './drivers/docker-driver.js';
+import { auxiliaryContainerName, DockerSessionDriver } from './drivers/docker-driver.js';
 import type { MountPolicy, SessionHandle, SessionSpec } from './drivers/types.js';
 import { closeDb, createAgentGroup, createMessagingGroup, initTestDb, runMigrations } from './db/index.js';
 import { createSession, findSessionForAgent, getSessionsByAgentGroup } from './db/sessions.js';
@@ -20,8 +20,11 @@ const roles = ['naia', 'anna', 'apollo'] as const;
 type Role = (typeof roles)[number];
 
 let root: string;
+let policy: MountPolicy;
+let driver: DockerSessionDriver;
 const handles = new Map<Role, SessionHandle>();
 const fixtures = new Map<Role, string>();
+const credentialFixtures = new Map<Role, { spec: SessionSpec; handle: SessionHandle; materialPath: string }>();
 
 function makeSpec(role: Role, stateRoot: string): SessionSpec {
   return {
@@ -51,18 +54,22 @@ function makeSpec(role: Role, stateRoot: string): SessionSpec {
   };
 }
 
+function dockerExecHandle(handle: SessionHandle, command: string[]): string {
+  const spec = handle.execSpec(command);
+  return execFileSync(spec.bin, spec.argsPlain, { encoding: 'utf8' });
+}
+
 function dockerExec(role: Role, command: string[]): string {
   const handle = handles.get(role);
   if (!handle) throw new Error(`missing handle for ${role}`);
-  const spec = handle.execSpec(command);
-  return execFileSync(spec.bin, spec.argsPlain, { encoding: 'utf8' });
+  return dockerExecHandle(handle, command);
 }
 
 describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
   beforeAll(async () => {
     execFileSync('docker', ['info'], { stdio: 'ignore' });
     root = mkdtempSync(join(tmpdir(), 'atento-system-chassis-'));
-    const policy: MountPolicy = {
+    policy = {
       groupsRoot: join(root, 'groups'),
       dataRoot: join(root, 'data'),
       surfaceRoots: [],
@@ -75,7 +82,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
       writeFileSync(join(stateRoot, 'effect.txt'), `inert-effect:${role}\n`, { mode: 0o600 });
       fixtures.set(role, stateRoot);
     }
-    const driver = new DockerSessionDriver({
+    driver = new DockerSessionDriver({
       ...policy,
       cli: realCli('docker'),
       networkArgsFor: () => ['--network', 'none'],
@@ -90,6 +97,8 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
 
   afterAll(async () => {
     for (const role of roles) {
+      const credential = credentialFixtures.get(role);
+      if (credential) await credential.handle.stop('atento credential-boundary probe cleanup');
       const handle = handles.get(role);
       if (handle) await handle.stop('atento system-chassis probe cleanup');
     }
@@ -161,6 +170,64 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
       }
     } finally {
       await closeDb();
+    }
+  });
+
+  it('keeps synthetic identity material in the per-session auxiliary container', async () => {
+    for (const role of roles) {
+      const materialDir = join(policy.materialsRoot, role);
+      mkdirSync(materialDir, { recursive: true });
+      const materialPath = join(materialDir, 'credential.txt');
+      writeFileSync(materialPath, `synthetic-grant:${role}\\n`, { mode: 0o600 });
+
+      const spec = makeSpec(role, fixtures.get(role)!);
+      spec.key = { ...spec.key, sessionId: `${role}-credential-probe` };
+      spec.networkAccess = {
+        endpoint: 'credential-holder',
+        target: { kind: 'session-container', role: 'credential-holder' },
+      };
+      spec.containers.push({
+        role: 'credential-holder',
+        image: 'node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1',
+        env: {},
+        command: ['/bin/sh'],
+        args: ['-c', 'sleep 600'],
+        mounts: [{
+          class: 'identity-material',
+          hostPath: materialPath,
+          containerPath: '/run/session/credential.txt',
+          mode: 'ro',
+          groupScope: role,
+        }],
+      });
+
+      const handle = await driver.prepare(spec);
+      credentialFixtures.set(role, { spec, handle, materialPath });
+      await handle.start();
+      expect(await handle.status()).toEqual({ phase: 'running' });
+
+      const auxName = auxiliaryContainerName(spec, 'credential-holder');
+      const visibleToHolder = execFileSync(
+        'docker',
+        ['exec', '-i', auxName, 'cat', '/run/session/credential.txt'],
+        { encoding: 'utf8' },
+      ).trim();
+      expect(visibleToHolder).toBe(`synthetic-grant:${role}`);
+      expect(dockerExecHandle(handle, ['sh', '-c', 'test ! -e /run/session/credential.txt && printf absent']).trim())
+        .toBe('absent');
+
+      const agentMounts = JSON.parse(
+        execFileSync('docker', ['inspect', '--format', '{{json .Mounts}}', handle.name], { encoding: 'utf8' }),
+      ) as Array<{ Source: string; Destination: string; RW: boolean }>;
+      expect(agentMounts).toEqual([
+        expect.objectContaining({ Source: fixtures.get(role), Destination: '/workspace', RW: true }),
+      ]);
+      const auxiliaryMounts = JSON.parse(
+        execFileSync('docker', ['inspect', '--format', '{{json .Mounts}}', auxName], { encoding: 'utf8' }),
+      ) as Array<{ Source: string; Destination: string; RW: boolean }>;
+      expect(auxiliaryMounts).toEqual([
+        expect.objectContaining({ Source: materialPath, Destination: '/run/session/credential.txt', RW: false }),
+      ]);
     }
   });
 
