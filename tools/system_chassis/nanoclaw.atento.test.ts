@@ -13,8 +13,12 @@ import { realCli } from './drivers/cli.js';
 import { auxiliaryContainerName, DockerSessionDriver } from './drivers/docker-driver.js';
 import type { MountPolicy, SessionHandle, SessionSpec } from './drivers/types.js';
 import { closeDb, createAgentGroup, createMessagingGroup, initTestDb, runMigrations } from './db/index.js';
-import { createSession, findSessionForAgent, getSessionsByAgentGroup } from './db/sessions.js';
+import { createSession, findSessionForAgent, getSession, getSessionsByAgentGroup, taskThreadId } from './db/sessions.js';
 import { routeAgentMessage } from './modules/agent-to-agent/agent-route.js';
+import { dispatch } from './cli/dispatch.js';
+import './cli/resources/tasks.js';
+import type { CallerContext } from './cli/frame.js';
+import { sessionDir } from './session-manager.js';
 import type { Session } from './types.js';
 
 const roles = ['naia', 'anna', 'apollo'] as const;
@@ -250,6 +254,114 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
       }
     } finally {
       await closeDb();
+    }
+  });
+
+  it('keeps scheduled-task ownership and task-session creation within the profile role', async () => {
+    const db = await initTestDb();
+    await runMigrations(db);
+    const createdAt = new Date().toISOString();
+    const mailboxSessions = new Map<Role, string[]>();
+    const taskRows = new Map<Role, { series_id: string; session_id: string }>();
+    try {
+      for (const role of roles) {
+        const profileRole = groupByRole[role];
+        const chatSessionId = `${role}-task-scope-chat`;
+        await createAgentGroup({
+          id: profileRole.agent_group,
+          name: role,
+          folder: profileRole.agent_group,
+          agent_provider: profileRole.provider,
+          created_at: createdAt,
+        });
+        await createMessagingGroup({
+          id: profileRole.channel_instance,
+          channel_type: 'telegram',
+          platform_id: profileRole.channel_instance,
+          instance: profileRole.channel_instance,
+          name: null,
+          is_group: 0,
+          unknown_sender_policy: 'public',
+          created_at: createdAt,
+        });
+        await createSession({
+          id: chatSessionId,
+          agent_group_id: profileRole.agent_group,
+          messaging_group_id: profileRole.channel_instance,
+          thread_id: null,
+          agent_provider: profileRole.provider,
+          status: 'active',
+          container_status: 'stopped',
+          last_active: null,
+          created_at: createdAt,
+        });
+        mailboxSessions.set(role, [chatSessionId]);
+      }
+
+      for (const role of roles) {
+        const own = groupByRole[role];
+        const other = groupByRole[roles.find((candidate) => candidate !== role)!];
+        const chatSessionId = mailboxSessions.get(role)![0];
+        const ctx: CallerContext = {
+          caller: 'agent',
+          agentGroupId: own.agent_group,
+          sessionId: chatSessionId,
+          messagingGroupId: own.channel_instance,
+        };
+        const response = await dispatch(
+          {
+            id: `atento-${role}-task-create`,
+            command: 'tasks-create',
+            args: {
+              name: `${role}-scope-probe`,
+              prompt: 'inert scheduled-task ownership probe',
+              process_after: '2999-01-01T00:00:00Z',
+              group: other.agent_group,
+            },
+          },
+          ctx,
+        );
+        expect(response.ok).toBe(true);
+        if (!response.ok) throw new Error(response.error.message);
+        const task = response.data as { series_id: string; session_id: string; agent_group_id: string };
+        expect(task.agent_group_id).toBe(own.agent_group);
+        const taskSession = await getSession(task.session_id);
+        expect(taskSession?.agent_group_id).toBe(own.agent_group);
+        expect(taskSession?.thread_id).toBe(taskThreadId(task.series_id));
+        taskRows.set(role, task);
+        mailboxSessions.get(role)!.push(task.session_id);
+      }
+
+      for (const role of roles) {
+        const own = groupByRole[role];
+        const ctx: CallerContext = {
+          caller: 'agent',
+          agentGroupId: own.agent_group,
+          sessionId: mailboxSessions.get(role)![0],
+          messagingGroupId: own.channel_instance,
+        };
+        const otherRole = roles.find((candidate) => candidate !== role)!;
+        const ownList = await dispatch(
+          { id: `atento-${role}-task-list`, command: 'tasks-list', args: { group: groupByRole[otherRole].agent_group } },
+          ctx,
+        );
+        expect(ownList.ok).toBe(true);
+        if (ownList.ok) {
+          expect((ownList.data as Array<{ agent_group_id: string }>).map((task) => task.agent_group_id)).toEqual([own.agent_group]);
+        }
+        const crossRead = await dispatch(
+          { id: `atento-${role}-cross-task-get`, command: 'tasks-get', args: { id: taskRows.get(otherRole)!.series_id } },
+          ctx,
+        );
+        expect(crossRead.ok).toBe(false);
+      }
+    } finally {
+      await closeDb();
+      for (const role of roles) {
+        for (const sessionId of mailboxSessions.get(role) ?? []) {
+          rmSync(sessionDir(groupByRole[role].agent_group, sessionId), { recursive: true, force: true });
+        }
+      }
     }
   });
 
