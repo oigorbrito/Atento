@@ -172,3 +172,20 @@ The workflow trigger was narrowed to `workflow_dispatch` plus the one-shot senti
 Read-only commit-status checks returned empty status contexts for the workflow-creation and spike commits `e151a3829fd28801c83fb39e0d5bf65856e29ecc`, `4aeba03cc1ef9bb63ed40e1f5d2d64711dbe495f`, `063cd55efa5924b1b42d66cc02e9f092cfa19c5c`, and current record commit `e3689ee24dc5fc9acb1afad447d684ce2995e0f5`. The only available workflow-run lookup is explicitly limited to pull-request-triggered runs and returned no runs for the workflow commit; this does not enumerate push-triggered runs. Empty commit statuses therefore do **not** establish that Actions did not run or that the test failed to start.
 
 No run ID, job summary, JUnit artifact, or raw execution log is available through the connected GitHub interface. No manual dispatch or sentinel push was performed. Keep `HOSTED_SPIKE_RUN = NOT_VERIFIED`; do not infer a test result.
+
+
+## One-shot trigger attempt — 2026-10-01 20:14 America/Sao_Paulo
+
+Created the configured sentinel exactly once at commit `ddd45ed4a37a92522a8772a17ef25eb2a141bb1c`. Read-only status checks at approximately 12 seconds and 37 seconds after the commit both returned `statuses = []`. The workflow-run lookup also returned an empty collection, but that endpoint is limited to pull-request-triggered runs and cannot confirm this push-triggered attempt.
+
+```text
+SENTINEL_CREATED_ONCE = YES
+SENTINEL_COMMIT = ddd45ed4a37a92522a8772a17ef25eb2a141bb1c
+COMBINED_COMMIT_STATUSES = EMPTY_AT_12S_AND_37S
+PUSH_WORKFLOW_RUN_LISTING = UNAVAILABLE
+RUN_ID / JOB_LOG / JUNIT_ARTIFACT = NOT_OBTAINED
+HOSTED_SPIKE_RESULT = NOT_VERIFIED
+ADDITIONAL_TRIGGER = NOT_SENT
+```
+
+This retry proves only that the sentinel commit exists. It does not establish that GitHub Actions accepted, started, or completed the workflow. Keep the spike result unclassified until a run ID and raw JUnit evidence are obtained.
