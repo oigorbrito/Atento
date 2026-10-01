@@ -1,0 +1,124 @@
+{
+  "version": "ATENTO-SYSTEM-CHASSIS-NANOCLAW-V1",
+  "candidate": "NanoClaw",
+  "upstream_repo": "nanocoai/nanoclaw",
+  "upstream_sha": "4c1eabd3ddd74cc3d71b1871da857391a9411c8d",
+  "scope": "ATENTO_NAIA_ANNA_APOLLO_SYSTEM",
+  "execution_state": "FROZEN_NOT_EXECUTED",
+  "profile_hash": "c6e815289488daace646e7d9123b2638c6f245eaf4ef4dff357d6b3c50c1d289",
+  "policy_hash": "02de0f5540c1c638c0553dc8261cfd0e53ffb4727a0636a50a4653d2e15a7132",
+  "source_naia_profile": "evals/config/naia_gate2_nanoclaw_v1.json",
+  "topology": {
+    "recipe": {
+      "core_sha": "4c1eabd3ddd74cc3d71b1871da857391a9411c8d",
+      "channels_sha": "3f7e13b591a0c8980242b81ceff4b3f542ef839a",
+      "providers_sha": "3959d1f055cba2320cf843b30834a278250346b8",
+      "channel": {
+        "skill": "add-telegram",
+        "package": "@chat-adapter/telegram",
+        "version": "4.29.0"
+      },
+      "provider": {
+        "skill": "add-codex",
+        "package": "@openai/codex",
+        "version": "0.155.1"
+      },
+      "gateway": {
+        "skill": "add-onecli",
+        "gateway_version": "1.41.0",
+        "cli_version": "2.2.5",
+        "sdk_version": "2.2.1"
+      }
+    },
+    "roles": {
+      "NAIA": {
+        "agent_group": "atento-naia",
+        "domain": "personal_assistant",
+        "runtime": "independent_group_scoped_sessions",
+        "state": "independent",
+        "memory": "group_local",
+        "gateway_identity": "group_bound",
+        "secret_grants": "role_unique_synthetic",
+        "channel_instance": "telegram-naia-test",
+        "provider": "codex"
+      },
+      "Anna": {
+        "agent_group": "atento-anna",
+        "domain": "emotional_therapeutic",
+        "runtime": "independent_group_scoped_sessions",
+        "state": "independent",
+        "memory": "group_local",
+        "gateway_identity": "group_bound",
+        "secret_grants": "role_unique_synthetic",
+        "channel_instance": "telegram-anna-test",
+        "provider": "codex"
+      },
+      "Apollo": {
+        "agent_group": "atento-apollo",
+        "domain": "fitness_nutrition",
+        "runtime": "independent_group_scoped_sessions",
+        "state": "independent",
+        "memory": "group_local",
+        "gateway_identity": "group_bound",
+        "secret_grants": "role_unique_synthetic",
+        "channel_instance": "telegram-apollo-test",
+        "provider": "codex"
+      }
+    },
+    "role_test_effects": {
+      "NAIA": "naia-canary-effect",
+      "Anna": "anna-canary-effect",
+      "Apollo": "apollo-canary-effect"
+    },
+    "cross_role": {
+      "shared_group_state": false,
+      "cross_group_cli": false,
+      "cross_group_mounts": false,
+      "shared_gateway_secret_grants": false,
+      "shared_channel_instance": false,
+      "native_cross_role_handoff": false,
+      "allowed_path": "explicit_atento_handoff_broker_only",
+      "handoff_payload": "typed_minimal_inert_fixture",
+      "receiver_reauthorization": true
+    }
+  },
+  "policy": {
+    "role_identity_and_session": "isolated_per_role",
+    "private_memory": "deny_cross_role_read_write",
+    "tool_authority": "deny_cross_role_use_except_brokered_reauthorized_action",
+    "credentials": "synthetic_only_role_bound_never_container_readable",
+    "handoff": {
+      "untyped": "deny",
+      "overbroad": "deny",
+      "wrong_recipient": "deny",
+      "typed_minimal": "broker_only",
+      "receiver_reauthorization": "required"
+    },
+    "background_authority": "same_or_narrower_than_interactive",
+    "restart_and_recovery": "preserve_role_scope",
+    "runtime_control_failure": "fail_closed",
+    "network_and_provider": "no_live_api_calls_or_production_secrets",
+    "model_quality": "out_of_scope",
+    "functional_domain_quality": "out_of_scope",
+    "cost_recording": "report_touchpoints_dependencies_runtime_services_and_active_time_separately"
+  },
+  "required_assertions": [
+    "SYS-CHAT-01",
+    "SYS-MEM-01",
+    "SYS-TOOL-01",
+    "SYS-CRED-01",
+    "SYS-HANDOFF-01",
+    "SYS-HANDOFF-02",
+    "SYS-BG-01",
+    "SYS-STATE-01"
+  ],
+  "execution_constraints": {
+    "runtime_required": "docker-capable-container-runtime",
+    "live_provider_calls": false,
+    "real_channel_accounts": false,
+    "production_credentials": false,
+    "test_effects": "inert_local_fixtures_only",
+    "pass_rule": "all_required_assertions_pass_with_scope_recorded",
+    "blocked_rule": "missing_runtime_or_artifact_is_BLOCKED_ENVIRONMENT_not_candidate_failure"
+  }
+}
