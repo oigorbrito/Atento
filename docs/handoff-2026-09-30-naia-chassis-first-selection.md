@@ -559,3 +559,42 @@ NanoClaw alone has partial static touchpoint counts (4–40 copied files dependi
 The Top 5 cost-measurement cohort does not supersede Gate-2's execution order. **AI Butler remains the next residual composition target** in the common Gate-2 harness; the recorded executor failed before checkout/steps, so composition and cost measurement were not run. Resume that exact-pin target only when execution infrastructure can materialize the candidate. Capture the same cost fields during each comparable composition, mark blocked candidates `BLOCKED_ENVIRONMENT`, and never convert infrastructure blocks into candidate failures.
 
 For all future handoffs, treat this section as the canonical current summary and follow the source hierarchy above for evidence scope. Do not repeat completed upstream suites or claim a cost ranking until comparable observations exist.
+
+
+## Chat handoff — 2026-09-30 (latest)
+
+### Objective
+
+Select the NAIA base by the lowest defensible **combined architecture/chassis total adaptation and ongoing-maintenance cost**, while preserving hard authority, isolation, persistence, and safety gates. Do not optimize for a perfect chassis or feature count.
+
+### Current candidate work
+
+```text
+TOP5_MEASUREMENT_COHORT = [OpenClaw, AI Butler, NanoClaw, QwenPaw, Letta Code]
+TOP5_COST_ORDER = NOT_ESTABLISHED
+COMPARABLE_OBSERVED_COST_MEASUREMENTS = 0
+NANOCLAW = PARTIAL_STATIC_TOUCHPOINT_COUNTS_ONLY
+AI_BUTLER_COMPOSITION = BLOCKED_BEFORE_CHECKOUT
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+The Top 5 is a prioritized measurement cohort, not a cheapest-five finding, ranking, qualified shortlist, or elimination of other survivors. SelfAgent remains stopped as a complete base at its evaluated pin. Do not repeat completed Gate-1, Gate-2 static screens, or broad upstream test suites.
+
+### Next actions
+
+1. Continue only with non-redundant, exact-pin evidence reconciliation for the five prioritized candidates. Extract existing measurements relevant to the common cost envelope (changed/copied files, dependency/pin surface, independent control paths, deployment/topology, update friction, and observed time/rework). Clearly distinguish observed data, partial static measurement, structural signals, and unknowns.
+2. Do not combine incomparable signals into a numeric score or claim a winner. Record any gaps where the exact source/pin or comparable measurement is absent.
+3. Keep the Gate-2 execution order: AI Butler remains the next residual two-role composition target. Its last executor attempt failed before checkout and ran no composition assertions; this is an infrastructure block, not a candidate failure.
+4. Resume the frozen common composition harness only when an executor can materialize exact pins. Capture cost fields in the same run as authority/isolation checks; continue to the next candidate on environment blocks without changing candidate status.
+5. Make no shortlist or base selection until comparable cost evidence and all hard gates support the decision.
+
+### Canonical records
+
+- `docs/evaluation/naia-architecture-chassis-top5-prioritization-2026-10-01.md`
+- `docs/evaluation/naia-architecture-chassis-maintenance-cost-audit-2026-09-30.md`
+- `docs/evaluation/naia-architecture-first-chassis-selection-2026-09-30.md`
+- `docs/evaluation/naia-gate2-composition-execution-block-2026-09-30.md`
+- `docs/evaluation/naia-gate2-common-composition-harness-v1-2026-09-30.md`
+
+This latest handoff section governs chat continuation if older sections contain a conflicting current priority or cohort size.
