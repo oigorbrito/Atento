@@ -1,60 +1,55 @@
 # System chassis Top 10 — first sieve — 2026-09-30
 
-## Result type
+## Result and ordering rule
 
-This is a ranked measurement-priority queue for the first stage (architecture + chassis), using existing Atento notes and static source evidence. It is not a Top 10 of lowest-cost candidates and not a selection result.
+This is a ranked measurement-priority queue for the first stage (architecture + chassis), updated from existing Atento reports. It is not a Top 10 of lowest-cost candidates and not a selection result.
+
+Ordering uses transferability of existing architecture/chassis evidence, amount of observed evidence, direct relevance to the three-agent system, and pin readiness. It does not rank by price, safety, or overall quality. No benchmark was rerun and no value was recalculated.
 
 ORDERING = FIRST_SIEVE_MEASUREMENT_PRIORITY
-BASIS = SYSTEM_BOUNDARY_RELEVANCE + EXISTING_EVIDENCE_MATURITY + PIN_READINESS
 CFS_COMPARABLE_TOP10 = 0/10
 COMPARABLE_THREE_ROLE_TOTAL_COST = 0/10
 SYSTEM_DENOMINATOR = NOT_YET_FORMED
 WINNER = NONE
 
-No benchmark was rerun and no values below were recalculated. “Not measured” is a real result state. Existing values retain their original candidate scope and protocol.
+## Ranked first-sieve table
 
-## Ranked measurement-priority table
-
-| Priority | Candidate / composition source | Existing architecture/chassis result or note | Mapping to Atento first-stage metrics | Main unresolved item before it can enter a comparable denominator |
+| Priority | Candidate | Existing result / note | First-stage architecture + chassis interpretation | Later gate / missing comparable metric |
 |---:|---|---|---|---|
-| 1 | MindRoom, integrated multi-agent platform | Exact discovery pin recorded. Agent identities/teams, durable sessions, tools, memory, delegation, and worker scopes are documented. Its user worker scope shares workspaces; user_agent/dedicated workers are the relevant isolation option. | Strong direct system-architecture relevance; per-agent worker isolation seam identified. CFS: ND. Change surface: ND. Total cost: ND. | Verify identity/state/credential/tool boundaries at the pinned code/test level; test delegated handoff and background authority; measure deployment and adaptation surface. |
-| 2 | Bob Labs, integrated multi-agent labs | Exact pin recorded. Per-agent model/memory/tool grants, typed event bus, per-Lab sandbox and self-hosted services are documented; release notes include security fixes. | Direct system-level grants/handoff signal. CFS: ND. Change surface: ND. Total cost: ND. | Test actual boundary enforcement, what crosses the event bus, role separation within/across Labs, and service/upgrade burden. |
-| 3 | Ontheia, integrated multi-agent platform | Exact pin recorded. Per-agent tools/memory/skills, scheduling, direct delegation, RBAC and PostgreSQL RLS are documented. | Direct role topology and delegation signal. CFS: ND. Change surface: ND. Total cost: ND. | Prove RLS/memory separation at agent/domain scope and minimal handoff; measure deployment/update surface. |
-| 4 | OpenClaw, multi-agent Gateway composition | Existing NAIA candidate evidence describes per-agent workspace, state and session stores in one Gateway. | Reusable role-runtime evidence; potential shared-control-plane composition. System CFS: ND. System change surface/cost: ND. | Reuse only the exact frozen Atento pin; test three-role isolation, shared Gateway blast radius, credential fallback, scheduler/recovery, and explicit handoff. |
-| 5 | QwenPaw, multi-agent assistant composition | Existing NAIA evidence describes per-agent resources/governance/sandbox and MCP/A2A/ACP seams. | Reusable per-agent control signal. System CFS: ND. System change surface/cost: ND. | Resolve the canonical qualification pin; transfer the evidence to three role domains; test sandbox fallback, cron authority, and deployment burden. |
-| 6 | AI Butler, persistent-agent composition | Existing audit records per-bank memory, fail-closed shell, credential broker and scheduler as usable seams. | Relevant authority and background-execution architecture signal. System CFS: ND. System change surface/cost: ND. | Compose role/bank boundaries and execute scheduler/recovery under the same grants; count adaptation and upkeep. |
-| 7 | NanoClaw, group/container assistant composition | Existing static recipes: WhatsApp 4 files / 1 import-index touchpoint / 4 dependencies; OneCLI 8 / 1 / 1 SDK; OpenCode 40 / 5 / 1 SDK plus manifest/build touchpoints. | Only existing quantified partial change-surface data among these role-oriented carryovers. It is profile-dependent and NAIA-scoped. CFS: ND. Total cost: not measured. | Freeze one complete three-role profile; test cross-role isolation and credential gateway; do not treat file counts as hours or maintenance cost. |
-| 8 | OpenAkita, integrated multi-agent assistant | Exact pin recorded. Multiple agents, scheduling, tools, computer use and advertised sandbox layers are documented. | System-level platform signal. CFS: ND. Change surface: ND. Total cost: ND. | Verify per-agent state, secrets, tool grants, handoff and sandbox behavior; measure operational/update footprint. |
-| 9 | Clawix, containerized multi-agent orchestration | Exact pin recorded. Upstream claims per-agent Docker containers, scoped memory, RBAC, approvals, workspaces and audit. | System-level isolation claims with container boundary. CFS: ND. Change surface: ND. Total cost: ND. | Prove claims in code/tests; resolve private vs group/org memory scope; measure Docker/warm-pool and update burden. |
-| 10 | Memoh, self-hosted multi-agent platform | README-level evidence describes per-agent workspace/computer/filesystem/browser/network/long-term memory and separate or all-in-one deployments; exact commit is not frozen. | Potentially broad per-agent runtime boundary. CFS: ND. Change surface: ND. Total cost: ND. | Freeze exact commit first; then test credential/network/memory boundaries and deployment cost. Until pinned, it is not executable comparison evidence. |
+| 1 | NanoClaw | Exact-pin core CI: 513 pass / 0 fail per Node matrix (3 skipped); Node 22/24 and Iron front race gate passed. Run-backed group control-plane and state-mount isolation, credential-config guards: PASS_WITH_SCOPE. Partial static recipes: WhatsApp 4 files / 1 import touchpoint / 4 deps; OneCLI 8 / 1 / 1 SDK; OpenCode 40 / 5 / 1 SDK plus manifest/build. | Strongest combined evidence here for a small-group/container architecture and profile-specific change surface. Change cost is demonstrably profile-dependent. CFS: ND. Full adaptation/maintenance cost: NOT_MEASURED. | These upstream tests do not prove a three-role Atento composition. Atento cross-role composition and real gateway non-disclosure remain NOT_RUN. |
+| 2 | AI Butler | Exact-pin functional/race/security-integration CI and run-backed bank-isolation/scheduler tests exist. Accepted Atento Gate-2 result: 6/6 common assertions PASS_WITH_SCOPE. Frozen pin later has a current scheduled security scan FAIL with seven reachable advisories; no repaired pin/regression run exists. | Best existing role-bank and capability-scoped scheduler evidence. This is a bounded runtime composition result, not total-cost evidence. CFS: ND. Adaptation/maintenance cost: NOT_MEASURED. | Security is a separate later gate and currently blocks this pin. Atento full NAIA/Anna/Apollo composition remains NOT_RUN; exact-pin identity-to-bank binding needs proof. |
+| 3 | OpenClaw | Exact-pin source/tests support strong per-agent core-state isolation and mature Gateway/runtime mechanisms. The audit says cross-agent session isolation is not default and strict Therapy separation requires a separate runtime/Gateway. Hosted CI at the inspected qualification pin was not observable. | Viable separate-runtime architecture signal; shared-Gateway agent count alone does not satisfy the strict role boundary. No comparable profile change-surface or total-cost value. | Compose separate role runtimes/stores and test credential, tool, scheduler/recovery, and handoff boundaries. |
+| 4 | QwenPaw | Exact-pin static audit: per-agent memory/policy isolation is strong; session authority fails closed. Sandbox-unavailable fallback can fail open; cron authority needs hardening. At the pin, E2E smoke, frontend and pre-commit jobs succeeded; main Tests was waiting and Full Tests Nightly failed. | Strong state/policy primitives but hardening/configuration is part of the chassis adaptation. No comparable system change-surface or total-cost value. | Prove sandbox-unavailable denial and background authority; transfer only after exact frozen pin and test profile are reconciled. |
+| 5 | MindRoom | Pinned documentation describes agent identities/teams, durable sessions, tools, memory and delegation. user worker scope shares workspaces; user_agent/dedicated worker is the stated per-agent filesystem seam. The inspected API plan lacks requester-scoped user/user_agent execution for current OpenAI-compatible requests. | Direct integrated-platform signal with a material isolation/integration seam already identified. CFS, Atento source tests, change surface and total cost: ND. | Validate exact-pin implementation, API path, delegated handoff, background authority and deployment burden. |
+| 6 | Bob Labs | Pinned docs describe per-agent model/memory/tool grants, typed event bus and per-Lab sandbox; release notes include sandbox/security fixes. | Direct system-level architecture signal, but source/release notes are not independent enforcement tests. CFS, Atento tests, change surface and total cost: ND. | Probe bus payload boundaries, role isolation within/across Labs, and service/update burden. |
+| 7 | Ontheia | Pinned docs describe per-agent tools/memory/skills, scheduling, delegation, RBAC and PostgreSQL RLS. | Direct system-level role topology signal; RLS/memory claims are not yet shown at Atento domain scope. CFS, Atento tests, change surface and total cost: ND. | Test agent/domain-level RLS, delegation minimization, background authority, and operational/update burden. |
+| 8 | OpenAkita | Exact pin and license recorded. Upstream documents multi-agent use, scheduling, tools/computer and advertised sandbox layers. | Integrated-platform signal, with isolation still a source claim. CFS, Atento tests, change surface and total cost: ND. | Verify per-agent state/secrets/tools, handoff and actual sandbox boundary. |
+| 9 | Clawix | Exact pin recorded. README claims per-agent Docker containers, scoped memory, RBAC, approvals, persistent workspaces and audit; MIT badge was not independently confirmed by the LICENSE path at the pin. | Container isolation claim is relevant, but implementation and terms evidence remain incomplete. CFS, Atento tests, change surface and total cost: ND. | Verify code/tests, private versus group/org memory, and Docker/warm-pool/update burden. |
+| 10 | Memoh | README-level claims cover per-agent workspace/computer/filesystem/browser/network/memory and separate or all-in-one deployments. Exact commit is not frozen. | Potentially broad role runtime surface, currently discovery-only. CFS, Atento tests, change surface and total cost: ND. | Freeze exact commit before it can enter a pinned comparison; then inspect authority boundaries and deployment surface. |
 
-## Existing numeric notes outside this Top 10
+## Existing numeric notes outside the ranked ten
 
-These are preserved as component/control evidence, not silently inserted into the system ranking:
-
-| Existing source result | Original metric | Correct use in the first sieve |
+| Source result | Existing metric | Transfer limit |
 |---|---|---|
-| PsyChat upstream | CFS 10/100; routing boundary only; explicit extension seams 0/5; 3 donor files for provider/lifecycle, 4 for full current correction; 1,410/1,600 lines retained (88.125%). | Anna/RAG-specific structural adaptation evidence. Not a system platform CFS, not a three-agent isolation score, and not total cost. |
-| Letta prototype | 0 core imports and host-core files changed; bounded general/therapeutic policy isolation, RAG outage, and removal passed; 7 sequential mutations; final regression passed. | Historical adapter/evolvability control. Useful method evidence, not a complete multi-agent system candidate measurement. |
-| LibreChat control prototype | 0 core imports; bounded WhatsApp adapter, memory/policy isolation and outage tests passed; 8 mutations; final regression passed. | Historical control for extension and bounded isolation. Not a whole Atento role/credential/handoff result. |
+| PsyChat upstream | CFS 10/100; routing boundary only; explicit extension seams 0/5; 3 donor files for provider/lifecycle and 4 for the full correction; 1,410/1,600 lines retained (88.125%). | Anna/RAG-specific structural adaptation evidence, not a system-platform score. |
+| Letta prototype | 0 core imports/host-core changes; bounded general/therapeutic policy isolation, RAG outage and removal passed; 7 sequential mutations; final regression passed. | Historical isolated overlay fixture, not complete Atento role/credential/handoff qualification. |
+| LibreChat control | 0 core imports; bounded WhatsApp/memory/policy/outage checks passed; 8 mutations; final regression passed. | Historical adapter control, not a whole-system result. |
 
-## What the ordering means
+## Current first-stage conclusion
 
-- Ranks 1–3 are integrated platforms with explicit multi-agent and per-agent architecture signals.
-- Ranks 4–7 reuse already-screened assistant candidates where Atento has role-specific evidence; that evidence still needs system transfer.
-- Ranks 8–10 complete the new system-platform discovery set. Memoh is last in execution priority only because its exact pin is unresolved, not because a failure was found.
-- The ordering is for efficient evidence acquisition and first-stage comparison. It does not imply that rank 1 is cheaper, safer, or selected.
+The strongest existing architecture/chassis evidence among the ten is for specific mechanisms: NanoClaw's group/container and credential guard paths; AI Butler's bank isolation and scoped scheduler; and OpenClaw's per-agent runtime state plus separate-Gateway route. Their limits differ, so they do not yet share one complete-system denominator.
 
-## Current first-stage measurement outcome
+The numerical data are partial: NanoClaw touchpoints count files/dependencies for different recipes, while the Letta/LibreChat numbers count mutations in separate prototypes. PsyChat's CFS is Anna/RAG-scoped. None is a comparable total adaptation-and-maintenance cost for the complete Atento architecture. AI Butler's Gate-2 PASS_WITH_SCOPE is retained, alongside its separate current security failure; the pass does not override that later gate.
 
-The only defensible quantitative findings relevant to the first stage are partial and scoped to other tasks: PsyChat's Anna/RAG structural audit, NanoClaw's NAIA recipe touchpoints, and Letta/LibreChat prototype change/evolution notes. The six newly discovered system platforms have no Atento CFS, change-surface measurement, or total-cost measurement in the existing records. The other role-candidate signals are static source findings.
-
-Therefore the current Top 10 is a ranked queue for applying the first sieve, not ten comparable scores. The complete-product common denominator remains empty until comparable architecture/chassis evidence is available. Candidates with missing evidence remain unresolved, not eliminated.
+Thus this is the ranked queue for applying the first sieve, not ten comparable scores or a low-cost ranking. Missing evidence remains unresolved; no system candidate is eliminated by this table.
 
 ## Canonical evidence
 
-- Whole-product contract and discovery pins: docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md
-- Existing numeric and qualitative result mapping: docs/evaluation/system-chassis-benchmark-crosscheck-2026-09-30.md
-- NAIA static cost audit: docs/evaluation/naia-architecture-chassis-maintenance-cost-audit-2026-09-30.md
-- NanoClaw change-surface results: docs/evaluation/nanoclaw-change-surface-audit-2026-09-29.md
-- PsyChat/Letta/LibreChat historical evidence: docs/evaluation/donor-candidate-comparison-research-2026-09-29.md and docs/evaluation/chassis-selection-research-2026-09-29.md
+- Whole-product contract and new system candidates: docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md
+- Existing benchmark-to-metric mapping: docs/evaluation/system-chassis-benchmark-crosscheck-2026-09-30.md
+- NAIA Gate-1 source screen: docs/evaluation/naia-architecture-gate1-screen-2026-09-30.md
+- AI Butler exact-pin evidence: docs/evaluation/aibutler-exhaustive-verification-2026-09-30.md and docs/evaluation/naia-gate2-chat-results-2026-10-01.md
+- NanoClaw exact-pin evidence: docs/evaluation/nanoclaw-exhaustive-verification-2026-09-30.md and docs/evaluation/nanoclaw-change-surface-audit-2026-09-29.md
+- OpenClaw evidence: docs/evaluation/openclaw-qualification-2026-09-29.md
+- QwenPaw evidence: docs/evaluation/qwenpaw-contract-audit-2026-09-29.md
+- Historical PsyChat/Letta/LibreChat measurements: docs/evaluation/donor-candidate-comparison-research-2026-09-29.md and docs/evaluation/chassis-selection-research-2026-09-29.md
