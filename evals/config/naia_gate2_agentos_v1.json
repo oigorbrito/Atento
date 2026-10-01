@@ -1,0 +1,69 @@
+{
+  "version": "NAIA-GATE2-AGENTOS-COMPOSITION-V1",
+  "candidate": "AgentOS",
+  "upstream_repo": "use-agent-os/agent-os",
+  "upstream_sha": "226c906291fc68f3c4517623446bdaec1b48a82d",
+  "harness_version": "NAIA-GATE2-COMPOSITION-V1",
+  "composition_profile_hash": "8b9a37d4f1178244b3a7c4768fb4c7f282d53a99e50ef9b195e852cea66a9f6b",
+  "policy_hash": "0cba6b4a4f30f620d13ffa2b67fb71d980303adc1d4ccc6ae9ff44105fc1cf55",
+  "execution_state": "FROZEN_NOT_EXECUTED",
+  "topology": {
+    "naia": {
+      "runtime": "independent_process",
+      "workspace_dir": "independent",
+      "state_dir": "independent",
+      "gateway_auth": "independent_token",
+      "credentials": "independent",
+      "channels": "independent"
+    },
+    "anna": {
+      "runtime": "independent_process",
+      "workspace_dir": "independent",
+      "state_dir": "independent",
+      "gateway_auth": "independent_token",
+      "credentials": "independent",
+      "channels": "independent"
+    },
+    "cross_role": {
+      "shared_state_dir": false,
+      "shared_workspace_dir": false,
+      "shared_gateway_token": false,
+      "shared_credentials": false,
+      "native_cross_role_invocation": false,
+      "allowed_path": "explicit_atento_handoff_broker_only"
+    }
+  },
+  "hardened_profile": {
+    "sandbox": {
+      "sandbox": true,
+      "security_grading": true
+    },
+    "permissions": {
+      "default_mode": "off",
+      "cron_default_mode": "off"
+    },
+    "browser": {
+      "enabled": true,
+      "headless": true,
+      "cdp_port": 0,
+      "attach_confirmed": false,
+      "allowed_domains": [
+        "example.com"
+      ],
+      "persist_profile": false,
+      "dialog_policy": "must_respond",
+      "restrict_evaluate": true
+    }
+  },
+  "required_assertions": [
+    "ISO-1",
+    "ISO-2",
+    "ISO-3",
+    "ISO-4",
+    "ISO-5",
+    "ISO-6",
+    "BROWSER-1"
+  ],
+  "background_authority_rule": "permissions.cron_default_mode=off and background_authority<=interactive_authority",
+  "fail_closed_rule": "authority_control_failure_must_deny"
+}
