@@ -176,9 +176,10 @@ The cohort is fixed for this pass. Do not silently drop a candidate or expand th
 ### Comparison controls and bounded work
 
 - Same candidate-neutral profile, three role identities, synthetic data/credentials, policies, handoff payload, restart/failure conditions, and expected observations for all candidates.
-- Candidate adapters can translate only the mechanics needed to run and inspect those assertions. If a usable adapter would require building product runtime or broad donor changes, record `BLOCKED_ADAPTER` and move on.
-- Reuse exact-pin upstream evidence where applicable; execute only Atento deltas and unresolved blocking invariants. Per candidate: one primary run and at most one targeted confirmation for a suspected infrastructure-invalid run or possible hard-gate failure.
-- Record observed adaptation and upkeep dimensions separately: files/touchpoints, dependencies/pins, runtime/store/control/deployment paths, engineering time/rework, and ongoing operations. No synthetic total-cost score.
+- Before execution, map existing test/CI/probe evidence to each candidate and each assertion. Reuse a result when its exact pin, setup, tested property, outcome, and provenance are applicable; capture evidence level and limitations. Do not rerun equivalent tests to normalize commands or names.
+- Candidate adapters can translate only the mechanics needed to run and inspect assertions. If a usable adapter would require building product runtime or broad donor changes, record `BLOCKED_ADAPTER` and move on.
+- Run only uncovered assertions or Atento-specific deltas. At most one new primary run per candidate and one targeted confirmation for suspected infrastructure invalidity or possible hard-gate failure; no duplicate runs or broad upstream suite reruns.
+- Start cost assessment with existing measured adaptation/maintenance evidence; collect only missing marginal dimensions. Separate measured historical evidence from newly measured and non-comparable estimates. Record files/touchpoints, dependencies/pins, runtime/store/control/deployment paths, engineering time/rework, and ongoing operations. No synthetic total-cost score.
 - Statuses: `PASS`, reproduced hard-gate `FAIL`, `BLOCKED` for absent/non-transferable evidence, or `BLOCKED_ADAPTER`. Missing evidence is not failure. Complete the cohort despite earlier pass/fail results; no infinite reruns.
 - Maintain a provisional Top 3 only among completed hard-gate passes with comparable cost evidence. Preserve ties/unranked results where needed. The Top 3 is not a selection; no candidate is eliminated solely for missing evidence.
 
@@ -191,6 +192,7 @@ GitHub Actions defaults independent jobs and matrix variations to parallel execu
 ```text
 COHORT_SIZE = 11
 COMMON_PROFILE = 8_ASSERTIONS_DEFINED; CANDIDATE_NEUTRAL_RUNNER_NOT_IMPLEMENTED
+EXISTING_EVIDENCE_REUSE = REQUIRED_BEFORE_ANY_RERUN
 SEQUENTIAL_CANDIDATE_RUNS = 0
 COMPARABLE_COST_MEASUREMENTS = 0
 PROVISIONAL_TOP_3 = NOT_STARTED
