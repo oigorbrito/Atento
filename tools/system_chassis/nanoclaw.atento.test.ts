@@ -141,7 +141,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
       dockerExec(role, ['sh', '-c', `printf 'written:${effectByRole[role]}\\n' >> /workspace/effect.txt`]);
       const own = dockerExec(role, ['cat', '/workspace/effect.txt']).trim();
       expect(own.split(String.fromCharCode(10))).toEqual([`inert-effect:${effectByRole[role]}`, `written:${effectByRole[role]}`]);
-      expect(readFileSync(join(fixtures.get(role)!, 'effect.txt'), 'utf8')).toContain(`written:${role}`);
+      expect(readFileSync(join(fixtures.get(role)!, 'effect.txt'), 'utf8')).toContain(`written:${effectByRole[role]}`);
       for (const other of roles.filter((candidate) => candidate !== role)) {
         expect(own).not.toBe(`inert-effect:${effectByRole[other]}`);
       }
@@ -158,7 +158,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
       await waitForRunning(restarted);
       expect(dockerExec(role, ['cat', '/workspace/effect.txt']).trim().split(String.fromCharCode(10))).toEqual([
         `inert-effect:${effectByRole[role]}`,
-        `written:${role}`,
+        `written:${effectByRole[role]}`,
       ]);
     }
   });
@@ -285,7 +285,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
         ['exec', '-i', auxName, 'cat', '/run/session/credential.txt'],
         { encoding: 'utf8' },
       ).trim();
-      expect(visibleToHolder).toBe(`synthetic-grant:${role}`);
+      expect(visibleToHolder).toBe(`synthetic-grant:${effectByRole[role]}`);
       expect(dockerExecHandle(handle, ['sh', '-c', 'test ! -e /run/session/credential.txt && printf absent']).trim())
         .toBe('absent');
 
