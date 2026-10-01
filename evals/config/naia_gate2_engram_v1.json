@@ -1,0 +1,81 @@
+{
+  "version": "NAIA-GATE2-ENGRAM-COMPOSITION-V1",
+  "candidate": "Engram",
+  "upstream_repo": "radotsvetkov/engram",
+  "upstream_sha": "3a43667deec4a680b42f3e880d7d6bac3baf0746",
+  "harness_version": "NAIA-GATE2-COMPOSITION-V1",
+  "composition_profile_hash": "80229489a0766fdeb0135263de1c32db4ed878bc900010b47b5b566cbff6b4fb",
+  "policy_hash": "1b2a1f0b0ee7d8a7cb48b3f247cf7cfc47b91a90f2f08d15b67f0c619472d55d",
+  "execution_state": "FROZEN_NOT_EXECUTED",
+  "topology": {
+    "role_domains": {
+      "naia": {
+        "runtime_process": "independent",
+        "engram_home": "independent",
+        "os_service_identity": "independent",
+        "provider_browser_credentials": "independent",
+        "memory_stores": "independent",
+        "cross_role_native_invocation": false
+      },
+      "anna": {
+        "runtime_process": "independent",
+        "engram_home": "independent",
+        "os_service_identity": "independent",
+        "provider_browser_credentials": "independent",
+        "memory_stores": "independent",
+        "cross_role_native_invocation": false
+      }
+    },
+    "naia_agentdefs": {
+      "interactive": {
+        "agent_id": "atento-naia-interactive",
+        "allowed_tools": [
+          "mcp_atento_browser_interactive_effect"
+        ],
+        "entrypoint_binding": "manual_task_assigned_via_v1_tasks_id_agent"
+      },
+      "scheduled": {
+        "agent_id": "atento-naia-scheduled",
+        "allowed_tools": [
+          "mcp_atento_browser_scheduled_effect"
+        ],
+        "entrypoint_binding": "schedule_job_first_class_agent_id"
+      }
+    },
+    "browser_surface": {
+      "native_browser_click": "disabled",
+      "native_browser_type": "disabled",
+      "effect_owner": "atento_mcp_adapter"
+    },
+    "cross_role": {
+      "direct_memory_access": false,
+      "direct_credential_sharing": false,
+      "direct_tool_invocation": false,
+      "direct_agent_invocation": false,
+      "allowed_path": "explicit_atento_handoff_broker_only"
+    }
+  },
+  "policy": {
+    "interactive_effect_identity": "mcp_atento_browser_interactive_effect",
+    "scheduled_effect_identity": "mcp_atento_browser_scheduled_effect",
+    "scheduled_tools_subset_of_interactive_authority": true,
+    "scheduled_job_agent_id_required": true,
+    "missing_or_unknown_scheduled_agent_binding": "invalid_or_deny_for_qualification",
+    "model_supplied_origin_is_authoritative": false,
+    "trusted_adapter_origin_is_authoritative": true,
+    "policy_control_failure": "fail_closed",
+    "native_browser_effect_tools": "disabled",
+    "autonomy_policy": "signed_and_scope_bound_if_present",
+    "cross_role": "broker_only"
+  },
+  "required_assertions": [
+    "ISO-1",
+    "ISO-2",
+    "ISO-3",
+    "ISO-4",
+    "ISO-5",
+    "ISO-6",
+    "BROWSER-1",
+    "TRUSTED-RUN-EFFECT"
+  ]
+}
