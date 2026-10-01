@@ -55,26 +55,34 @@ The machine-readable **system-level three-role** profile is now frozen at `evals
 
 Acceptance requires every non-negotiable assertion to pass. Any blocker must be classified as localized repair, replaceable component, or cross-cutting chassis rewrite. If NanoClaw fails structurally or exceeds the declared replacement threshold, resume with the unresolved cohort in existing priority order; do not treat a missing result as failure.
 
-## Execution state — rechecked 2026-10-01
+## Execution state — hosted runtime probe — 2026-10-01
 
-The exact public NanoClaw pin was acquired into the scratch workspace and verified at:
-`nanocoai/nanoclaw@4c1eabd3ddd74cc3d71b1871da857391a9411c8d`.
-A fresh `git ls-remote` now succeeds, so the earlier DNS-only block is no longer the current blocker. The private Atento repository is still not checked out locally. This executor has Node 24 but neither Docker nor Podman; NanoClaw's tested isolation boundary depends on its container runtime. No candidate runtime or Atento assertion was executed. The frozen profile passed a local integrity preflight: profile version and exact pin, checked-out NanoClaw HEAD, canonical topology/policy hashes, three distinct role/group/channel IDs, required assertion list, and no-live-call/no-production-secret constraints all matched.
+The exact NanoClaw pin ran on the GitHub-hosted Docker runner at nanocoai/nanoclaw@4c1eabd3ddd74cc3d71b1871da857391a9411c8d. The Atento test harness injected two targeted tests into that checkout and drove NanoClaw's real DockerSessionDriver with three inert role fixtures. The run used the frozen three-role profile and a digest-pinned utility image (node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1), no live providers/channels, and no credentials.
 
-The existing frozen NAIA recipe is explicitly two-role (NAIA + Anna); it is not the required product-wide NAIA + Anna + Apollo profile. The current system-level run now needs only an executable container runtime and a local Atento checkout or equivalent reproducible harness material before launch.
+Run [36812039115](https://github.com/oigorbrito/Atento/actions/runs/36812039115) completed successfully; the JUnit artifact records 2 tests, 2 passed, 0 failed. It exercised (a) each role reading and writing only its unique group-state fixture through its container workspace and (b) the realized Docker mounts, which contained exactly that role's state root and no credential material. This is a bounded runtime result for the mount boundary, not a full application composition result. Earlier attempts only exposed test-fixture ownership mismatches and were corrected; they are not candidate failures.
 
-```text
+SYS-MEM-01 = PASS_WITH_SCOPE (driver-realized isolated group-state mounts)
+SYS-CHAT-01 = NOT_RUN
+SYS-TOOL-01 = NOT_RUN
+SYS-CRED-01 = NOT_RUN (no credential grant or provider path was exercised)
+SYS-HANDOFF-01 = NOT_RUN
+SYS-HANDOFF-02 = NOT_RUN
+SYS-BG-01 = NOT_RUN
+SYS-STATE-01 = NOT_RUN
+SYSTEM_PROFILE_GATE = NOT_PASSED (required assertions remain open)
+SYSTEM_COMPOSITION_EXECUTION = PARTIAL_PASS_WITH_SCOPE
+
+The local scratch executor still has no Docker/Podman and no local checkout of the private Atento repo. Hosted Actions now supplies the exact-pin runtime and checked-out Atento test harness, so those local conditions are not blockers for this bounded probe. The legacy NAIA frozen recipe remains two-role; the separate system profile is three-role. Apollo was exercised only as a role-isolation fixture: this does not start Apollo product research or select an Apollo base.
+
 NANOCLAW_EXACT_PIN_ACQUIRED = YES
 DIRECT_GITHUB_ACCESS = AVAILABLE
-LOCAL_ATENTO_CHECKOUT = ABSENT
-CONTAINER_RUNTIME = UNAVAILABLE (docker, podman)
-NAIA_NANOCLAW_PROFILE = FROZEN_TWO_ROLE
+HOSTED_DOCKER_RUNNER = AVAILABLE
 SYSTEM_NANOCLAW_THREE_ROLE_PROFILE = FROZEN_V1
 SYSTEM_PROFILE_PIN_AND_HASH_PREFLIGHT = PASS
-SYSTEM_COMPOSITION_EXECUTION = BLOCKED_ENVIRONMENT
+SYSTEM_MOUNT_BOUNDARY_PROBE = PASS_WITH_SCOPE (2/2)
+SYSTEM_PROFILE_GATE = NOT_PASSED
 NEW_BENCHMARKS = NONE
 UNIQUE_FINAL_CHASSIS = NOT_ESTABLISHED
-```
 
 The independent NAIA candidate Gate-2 queue remains governed by its own frozen order (AI Butler first); this product-wide system-chassis probe is a separate decision path.
 
