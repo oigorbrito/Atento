@@ -59,16 +59,16 @@ Acceptance requires every non-negotiable assertion to pass. Any blocker must be 
 
 The exact NanoClaw pin ran on the GitHub-hosted Docker runner at nanocoai/nanoclaw@4c1eabd3ddd74cc3d71b1871da857391a9411c8d. The Atento test harness injected two targeted tests into that checkout and drove NanoClaw's real DockerSessionDriver with three inert role fixtures. The run used the frozen three-role profile and a digest-pinned utility image (node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1), no live providers/channels, and no credentials.
 
-Run [36812454480](https://github.com/oigorbrito/Atento/actions/runs/36812454480) completed successfully at Atento harness commit 8ec6143a59c5cd80af968b21af6b2fba898e4386; its JUnit artifact records 3 tests, 3 passed, 0 failed. It exercised (a) each role reading/writing its distinct group-state fixture through the real DockerSessionDriver, (b) the exact per-container Docker mounts, with one group-state source and no secret mounts, and (c) real migrated NanoClaw SQLite group/session rows with role-scoped active-session lookup and negative cross-group lookup. The database test calls the candidate's findSessionForAgent API; it does not invoke a real channel adapter or the full inbound router. This is a bounded runtime result, not a full application composition result. Earlier attempts exposed fixture-owner and test-DB migration setup issues and were corrected; they are not candidate failures.
+Run [36812993996](https://github.com/oigorbrito/Atento/actions/runs/36812993996) completed successfully at Atento harness commit 8f4ba5767bbec7ac9454fdc2af7dff8e91b3a0b8; its JUnit artifact records 5 tests, 5 passed, 0 failed. It exercised (a) each role reading/writing its distinct group-state fixture through the real DockerSessionDriver, (b) role state surviving a driver-managed stop/prepare cycle, (c) migrated NanoClaw SQLite group/session rows with role-scoped active-session lookup and negative cross-group lookup, (d) synthetic identity material mounted read-only into a per-session auxiliary container but absent from the agent container, and (e) the realized per-container Docker mounts. The database test calls the candidate's findSessionForAgent API; it does not invoke a real channel adapter or the full inbound router. The identity-material check proves the pinned driver's custody mechanism, not integration with the pinned OneCLI/provider/gateway path. The stop/prepare cycle does not simulate a host-process restart. This remains a bounded runtime result, not a full application composition result. Earlier attempts exposed fixture-owner, test-DB migration, and status-poll timing setup issues and were corrected; they are not candidate failures.
 
 SYS-MEM-01 = PASS_WITH_SCOPE (driver-realized isolated group-state mounts)
 SYS-CHAT-01 = PASS_WITH_SCOPE (migrated DB group/session ownership and scoped lookup)
 SYS-TOOL-01 = NOT_RUN
-SYS-CRED-01 = NOT_RUN (no credential grant or provider path was exercised)
+SYS-CRED-01 = PASS_WITH_SCOPE (synthetic grant isolated to read-only per-session auxiliary)
 SYS-HANDOFF-01 = NOT_RUN
 SYS-HANDOFF-02 = NOT_RUN
 SYS-BG-01 = NOT_RUN
-SYS-STATE-01 = NOT_RUN
+SYS-STATE-01 = PASS_WITH_SCOPE (state survives driver-managed stop/prepare; host restart not simulated)
 SYSTEM_PROFILE_GATE = NOT_PASSED (required assertions remain open)
 SYSTEM_COMPOSITION_EXECUTION = PARTIAL_PASS_WITH_SCOPE
 
@@ -79,7 +79,7 @@ DIRECT_GITHUB_ACCESS = AVAILABLE
 HOSTED_DOCKER_RUNNER = AVAILABLE
 SYSTEM_NANOCLAW_THREE_ROLE_PROFILE = FROZEN_V1
 SYSTEM_PROFILE_PIN_AND_HASH_PREFLIGHT = PASS
-SYSTEM_RUNTIME_AND_SESSION_PROBE = PASS_WITH_SCOPE (3/3)
+SYSTEM_RUNTIME_AND_SESSION_PROBE = PASS_WITH_SCOPE (5/5)
 SYSTEM_PROFILE_GATE = NOT_PASSED
 NEW_BENCHMARKS = NONE
 UNIQUE_FINAL_CHASSIS = NOT_ESTABLISHED
@@ -95,5 +95,5 @@ The independent NAIA candidate Gate-2 queue remains governed by its own frozen o
 - [Integrated candidates exact-pin source and CI verification](integrated-chassis-source-verification-2026-10-01.md)
 - AI Butler scoped exact-pin Gate-2 workflow runs: [push 36801774567](https://github.com/oigorbrito/Atento/actions/runs/36801774567), [pull request 36801793397 with result artifact](https://github.com/oigorbrito/Atento/actions/runs/36801793397); [injected test source at d15e07a](https://github.com/oigorbrito/Atento/blob/d15e07a984cadd319a2810c388ebb8df7d063696/tools/naia_gate2/aibutler/atento_gate2_test.go). Candidate pin remains `c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c`; its [scheduled security run 36426287353](https://github.com/LumabyteCo/aibutler/actions/runs/36426287353) still fails.
 - [NanoClaw three-role probe source](../../tools/system_chassis/nanoclaw.atento.test.ts)
-- [NanoClaw three-role hosted run 36812454480 and artifact](https://github.com/oigorbrito/Atento/actions/runs/36812454480)
+- [NanoClaw three-role hosted run 36812993996 and 5/5 artifact](https://github.com/oigorbrito/Atento/actions/runs/36812993996)
 - [External benchmark cross-check: OrchBench and BenchLM](system-chassis-benchmark-crosscheck-2026-09-30.md)
