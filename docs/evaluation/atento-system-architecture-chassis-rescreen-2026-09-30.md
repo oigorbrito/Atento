@@ -20,7 +20,7 @@ The old 26-candidate screen remains valid for its documented NAIA scope and as c
 
 ## Product-level architecture contract to screen
 
-The comparison must cover a composition that can host the product's three independent domains. A platform need not use one agent runtime for all three; the architecture may use a shared platform, separate specialist chassis, or a hybrid.
+The comparison must cover a composition that can host the product's three independent domains. A platform need not use one agent runtime for all three; the architecture may use a shared platform, separate specialist chassis, or a hybrid. This is an architecture trade-off evaluation against named product qualities, consistent with the SEI ATAM method; it does not assume a universal winner among shared and distributed styles.
 
 Required invariants:
 
@@ -56,7 +56,7 @@ Search date: 2026-09-30 local time. This is a discovery and static pre-triage pa
 
 | Repository / inspected pin | System-level signal | Main unresolved architecture/cost question | Preliminary class |
 |---|---|---|---|
-| [MindRoom](https://github.com/mindroom-ai/mindroom/tree/4f3bd2d108a6f9be28174e0f66d78eeecddca386) `4f3bd2d108a6f9be28174e0f66d78eeecddca386` | Multi-agent Matrix runtime; agent accounts, teams, durable sessions, tools, memory and explicit delegation. Its docs define `user_agent` worker scope for per-agent filesystem isolation and describe dedicated Docker/Kubernetes workers. | The `user` worker scope intentionally shares a runtime/workspaces across that user's agents; select and test `user_agent`/dedicated workers. Matrix and worker deployment/operations may add cost. Delegation and credentials need Atento-specific tests. | SYSTEM_CHASSIS_CANDIDATE_FOR_PINNED_SCREEN |
+| [MindRoom](https://github.com/mindroom-ai/mindroom/tree/4f3bd2d108a6f9be28174e0f66d78eeecddca386) `4f3bd2d108a6f9be28174e0f66d78eeecddca386` | Multi-agent Matrix runtime; agent accounts, teams, durable sessions, tools, memory and explicit delegation. Its docs define `user_agent` worker scope for per-agent filesystem isolation and describe dedicated Docker/Kubernetes workers. | The `user` worker scope intentionally shares a runtime/workspaces across that user's agents; select and test `user_agent`/dedicated workers. An inspected worker-runtime plan also says current OpenAI-compatible `/v1` requests do not yet support requester-scoped `user`/`user_agent` execution, which may constrain an Atento API integration. Matrix and worker deployment/operations may add cost. Delegation and credentials need Atento-specific tests. | SYSTEM_CHASSIS_CANDIDATE_FOR_PINNED_SCREEN |
 | [Ontheia](https://github.com/Ontheia/ontheia/tree/70802db61eb16533f55efce3d8785d810223d03b) `70802db61eb16533f55efce3d8785d810223d03b` | Self-hosted platform with specialist agents, per-agent tools/memory/skills, workflows, scheduling, direct agent delegation, RBAC and PostgreSQL RLS. | RLS and memory namespaces must be checked at agent/domain scope, not inferred from user tenancy. Test direct delegation payload and credentials, update and deployment burden. | SYSTEM_CHASSIS_CANDIDATE_FOR_PINNED_SCREEN |
 | [Bob Labs](https://github.com/boblabs-eu/boblabs/tree/a91d6dad098c8ba6d24436a856556078151db45d) `a91d6dad098c8ba6d24436a856556078151db45d` | Persistent multi-agent labs; each agent has model/memory/tool grants; typed event bus; per-Lab sandbox and self-hosted services. The inspected release notes include fixes to fail-closed sandbox HMAC and shell allow-list handling. | Determine whether role domains require separate Labs, how the bus shares data, what remains trusted inside a Lab, and whether its service/GPU stack raises total upkeep. Release-note fixes are not independent proof. | SYSTEM_CHASSIS_CANDIDATE_FOR_PINNED_SCREEN |
 | [Clawix](https://github.com/ClawixAI/clawix/tree/5aee015e0bd793102fba69af486dd6e75df6d802) `5aee015e0bd793102fba69af486dd6e75df6d802` | Multi-agent orchestration claims per-agent Docker containers, scoped memory, RBAC, approvals, persistent workspaces, audit, and provider flexibility. | Verify isolation in code/tests; distinguish private per-agent memory from group/org sharing; measure Docker and warm-pool operations and Atento handoff adaptation. | SYSTEM_CHASSIS_CANDIDATE_FOR_PINNED_SCREEN |
@@ -104,7 +104,7 @@ This is a discovery/static evidence pass, not an executed Atento architecture te
 
 ## Primary GitHub sources
 
-- MindRoom: `https://github.com/mindroom-ai/mindroom/tree/4f3bd2d108a6f9be28174e0f66d78eeecddca386/docs/configuration/agents.md`; `.../docs/deployment/sandbox-proxy.md`; `.../docs/dev/persistent-worker-runtime-plan.md`.
+- MindRoom: `https://github.com/mindroom-ai/mindroom/blob/4f3bd2d108a6f9be28174e0f66d78eeecddca386/docs/configuration/agents.md`; `https://github.com/mindroom-ai/mindroom/blob/4f3bd2d108a6f9be28174e0f66d78eeecddca386/docs/deployment/sandbox-proxy.md`; `https://github.com/mindroom-ai/mindroom/blob/4f3bd2d108a6f9be28174e0f66d78eeecddca386/docs/dev/persistent-worker-runtime-plan.md`.
 - Ontheia: `https://github.com/Ontheia/ontheia/tree/70802db61eb16533f55efce3d8785d810223d03b`.
 - Bob Labs: `https://github.com/boblabs-eu/boblabs/tree/a91d6dad098c8ba6d24436a856556078151db45d`.
 - Clawix: `https://github.com/ClawixAI/clawix/tree/5aee015e0bd793102fba69af486dd6e75df6d802`.
@@ -112,4 +112,5 @@ This is a discovery/static evidence pass, not an executed Atento architecture te
 - OpenAkita: `https://github.com/openakita/openakita/tree/5f5b38da728274f0fd06461a481851be7c0bca6a`.
 - Asterism: `https://github.com/qmilab/asterism/tree/a8383b45f64a9a9c1923053b0f3894efb4672aba`.
 - AgentSpace: `https://github.com/HKUDS/AgentSpace/tree/0f9da1b125def4d5a0d05b34bf7c5cec0686bbf2`.
+- Architecture-analysis basis: [SEI ATAM](https://www.sei.cmu.edu/library/the-architecture-tradeoff-analysis-method/) evaluates architectural tradeoffs against quality-attribute goals; [NIST SP 800-207](https://doi.org/10.6028/NIST.SP.800-207) informs identity- and policy-based resource-access requirements. Neither source selects a chassis for Atento.
 - OpenClaw and QwenPaw: exact candidate pins are in the existing Atento NAIA evidence records; retain those pins rather than current branch heads.
