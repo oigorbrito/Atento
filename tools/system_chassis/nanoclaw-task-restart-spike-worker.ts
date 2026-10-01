@@ -70,18 +70,9 @@ if (mode === 'claim') {
   outboundRaw
     .prepare('INSERT INTO processing_ack (message_id, status, status_changed) VALUES (?, ?, ?)')
     .run(taskId, 'processing', new Date().toISOString());
-  const deliveries = new Database(inboundPath);
-  deliveries.exec(`
-    CREATE TABLE IF NOT EXISTS spike_terminal_delivery (
-      task_id TEXT PRIMARY KEY,
-      role TEXT NOT NULL,
-      attempt INTEGER NOT NULL
-    )
-  `);
-  deliveries
+  inboundRaw
     .prepare('INSERT OR IGNORE INTO spike_terminal_delivery (task_id, role, attempt) VALUES (?, ?, ?)')
     .run(taskId, role.role, row.tries + 1);
-  deliveries.close();
   outboundRaw
     .prepare('UPDATE processing_ack SET status = ?, status_changed = ? WHERE message_id = ?')
     .run('completed', new Date().toISOString(), taskId);
