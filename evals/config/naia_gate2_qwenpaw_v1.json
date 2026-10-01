@@ -1,0 +1,48 @@
+{
+  "version": "NAIA-GATE2-QWENPAW-COMPOSITION-V1",
+  "candidate": "QwenPaw",
+  "upstream_repo": "agentscope-ai/QwenPaw",
+  "upstream_sha": "777441721aa72db8e380d90e4d0481b05cbfd4cc",
+  "harness_version": "NAIA-GATE2-COMPOSITION-V1",
+  "composition_profile_hash": "640e8a2ebef817037e4392a74647fc9b67cabc5c9e0816700d3139dbc6da5f4a",
+  "policy_hash": "b671ded09fc82028b1cfba146acfac4c06e7d3e891e0a3bb7c2c9a34dcd1ab7a",
+  "execution_state": "FROZEN_NOT_EXECUTED",
+  "topology": {
+    "naia": {
+      "runtime": "python3.11",
+      "store": "independent",
+      "credentials": "independent",
+      "sandbox_domain": "independent"
+    },
+    "anna": {
+      "runtime": "python3.11",
+      "store": "independent",
+      "credentials": "independent",
+      "sandbox_domain": "independent"
+    },
+    "cross_role": {
+      "shared_store": false,
+      "shared_credentials": false,
+      "native_cross_role_invocation": false,
+      "allowed_path": "explicit_atento_handoff_broker_only"
+    }
+  },
+  "policy": {
+    "sandbox_unavailable": "deny",
+    "unsandboxed_fallback": false,
+    "cron_authority": "subset_of_interactive",
+    "target_runtime": "python3.11",
+    "python3.13_pty": "excluded_unresolved",
+    "control_failure_rule": "fail_closed"
+  },
+  "required_assertions": [
+    "ISO-1",
+    "ISO-2",
+    "ISO-3",
+    "ISO-4",
+    "ISO-5",
+    "ISO-6",
+    "SANDBOX-UNAVAILABLE",
+    "CRON-AUTHORITY"
+  ]
+}
