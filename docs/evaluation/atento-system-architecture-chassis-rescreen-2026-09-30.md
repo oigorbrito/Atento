@@ -50,6 +50,16 @@ These are test alternatives, not a decision that one style is inherently cheaper
 - Run no redundant broad upstream suites. For each exact pin, inspect only missing system-level seams: identity/state ownership, handoff mediation, credential/tool grants, background authority, recovery, and expected integration/update burden.
 - Distinguish source claims, source tests, executed tests, and Atento composition evidence. Repository marketing text is discovery signal, not proof.
 
+## Proactive horizon discovery policy
+
+The search should actively look beyond repositories already present in Atento's candidate registry. The user explicitly prioritizes proactive discovery beyond the currently known horizon because an overlooked integrated platform or reusable architecture may reduce total adaptation and maintenance work. This is a search hypothesis, not a claim that GitHub discovery is inherently cheaper or that a newly found project is preferable.
+
+For each system-level screen, search by architecture capability and operational seam (multi-agent identity, isolated memory/state, tool and credential grants, explicit handoff/delegation, background execution, recovery, deployment/update model), not only by known project names. Record query/date, repositories considered, exact pins where available, provenance, and the reason each source is admitted, retained as reference, or set aside. Prefer primary repository docs/code and freeze an exact commit before qualification.
+
+Use a bounded funnel: discover broadly; statically pre-triage against the Atento hard boundaries; probe only missing evidence at exact pins; then compare complete Atento compositions under the same negative assertions and cost envelope. Discovery can save effort by finding a closer-fitting platform before adapting components, but it can also add evaluation and operational burden. Therefore include search/triage effort in engineering adaptation cost, and count runtime, deployment, upgrade, and maintenance burden in the same total-cost comparison.
+
+Do not treat repository popularity, README claims, feature count, or upstream tests as proof of Atento isolation. Do not eliminate a candidate for missing evidence alone; mark it unresolved until a bounded probe or explicit hard failure supports a decision. Re-run horizon discovery only when a material gap remains, a new architecture seam appears, or the current cohort fails/has excessive measured cost; avoid unbounded search that delays the comparable composition gate.
+
 ## GitHub discovery sweep — preliminary candidates
 
 Search date: 2026-09-30 local time. This is a discovery and static pre-triage pass. Items below are not benchmarked, installed, or accepted. Pins are recorded where the GitHub commit search returned one; where only a branch README was retrieved, the exact commit remains to be frozen before testing.
