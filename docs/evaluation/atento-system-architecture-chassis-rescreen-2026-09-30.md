@@ -20,7 +20,7 @@ The old 26-candidate screen remains valid for its documented NAIA scope and as c
 
 ## Product-level architecture contract to screen
 
-The comparison must cover a composition that can host the product's three independent domains. A platform need not use one agent runtime for all three; the architecture may use a shared platform, separate specialist chassis, or a hybrid. This is an architecture trade-off evaluation against named product qualities, consistent with the SEI ATAM method; it does not assume a universal winner among shared and distributed styles.
+The comparison unit is an **Atento composition**: platform/control plane + role-specific runtimes + state/credential/tool boundaries + handoff mechanism + deployment/update model. A GitHub repository is a source/component candidate, not automatically a complete system candidate. A platform need not use one agent runtime for all three; the architecture may use a shared platform, separate specialist chassis, or a hybrid. This is an architecture trade-off evaluation against named product qualities, consistent with the SEI ATAM method; it does not assume a universal winner among shared and distributed styles.
 
 Required invariants:
 
@@ -67,15 +67,16 @@ Search date: 2026-09-30 local time. This is a discovery and static pre-triage pa
 | [Asterism](https://github.com/qmilab/asterism/tree/a8383b45f64a9a9c1923053b0f3894efb4672aba) `a8383b45f64a9a9c1923053b0f3894efb4672aba` | Explicit per-agent memory, secrets, workspace, autonomy and consented one-way agent connections. | Its own documentation says current separation is logical, not hardened containment. Keep as architecture/donor reference unless an external runtime boundary is proven. | ARCHITECTURE_REFERENCE_ONLY_AT_CURRENT_PIN |
 | [AgentSpace](https://github.com/HKUDS/AgentSpace/tree/0f9da1b125def4d5a0d05b34bf7c5cec0686bbf2) `0f9da1b125def4d5a0d05b34bf7c5cec0686bbf2` | Multi-user collaborative workspace, access control, remote daemon and runtime support. | Its README lists multi-agent isolation and sandbox policy as planned, not implemented; do not count it as satisfying the current hard boundary. Keep on watch/reference. | NOT_ADMITTED_AS_CURRENT_SECURITY_CHASSIS |
 
-This list expands the horizon; it is not an ordered Top 5. Other members of the prior 26-candidate NAIA universe remain uneliminated from system-level consideration until re-screened or stopped by exact evidence.
+This list expands the horizon; it is not an ordered Top 5. The discovery pass adds six possible integrated-system platforms to the prior 26 role-oriented sources. This is not a 32-item ranking: the selection unit is a concrete Atento composition, and one repository may be a whole platform, a role runtime, or only a donor. The former 26 remain available as role-runtime/composition sources with their original NAIA results preserved; none gains a system-level pass by carryover.
 
 ## Preliminary screen result
 
 ```text
 OLD_NAIA_GATE1 = VALID_FOR_NAIA_SCOPE_ONLY
+OLD_NAIA_UNIVERSE = 26_ROLE_ORIENTED_SOURCES
 OLD_NAIA_GATE1_SYSTEM_LEVEL_PASSES = 0_CLAIMED
 NEW_SYSTEM_PLATFORM_DISCOVERY_CANDIDATES = [MindRoom, Ontheia, Bob Labs, Clawix, Memoh, OpenAkita]
-CARRYOVER_COMPOSITION_PROBES = [OpenClaw, QwenPaw]
+CARRYOVER_ROLE_COMPOSITION_SOURCES = [OpenClaw, QwenPaw, AI Butler, NanoClaw, Letta Code]
 ARCHITECTURE_REFERENCES = [Asterism, AgentSpace]
 NEW_TECHNICAL_ELIMINATIONS = 0
 FULL_ATENTO_SYSTEM_COMPOSITION_TESTS = 0
