@@ -1,0 +1,45 @@
+{
+  "version": "NAIA-GATE2-RAKAZO-COMPOSITION-V1",
+  "candidate": "Rakazo",
+  "upstream_repo": "elie222/rakazo",
+  "upstream_sha": "f4583525d632fcd8643fd6e24c7f51e3e04cb990",
+  "harness_version": "NAIA-GATE2-COMPOSITION-V1",
+  "composition_profile_hash": "fda374348c1c3d94ee6d69562c3fa126365b9f8505c332c9433e7af511d1eecd",
+  "policy_hash": "e906351046e89545b8dd49f36e609f499b3994a981ee9185221cda1ecaef87ec",
+  "execution_state": "FROZEN_NOT_EXECUTED",
+  "topology": {
+    "naia": {
+      "space": "atento-naia",
+      "computer": "private",
+      "credentials": "space_local",
+      "memory": "space_local"
+    },
+    "anna": {
+      "space": "atento-anna",
+      "computer": "private",
+      "credentials": "space_local",
+      "memory": "space_local"
+    },
+    "cross_role": {
+      "shared_space": false,
+      "team_computer_as_security_boundary": false,
+      "allowed_path": "explicit_atento_handoff_broker_only"
+    }
+  },
+  "policy": {
+    "consequential_actions": "explicit_confirmation_required",
+    "default_run_without_confirmation": "forbidden",
+    "background_rule": "background_authority_subset_of_interactive",
+    "uncertain_effect_rule": "no_blind_replay",
+    "control_failure_rule": "fail_closed"
+  },
+  "required_assertions": [
+    "ISO-1",
+    "ISO-2",
+    "ISO-3",
+    "ISO-4",
+    "ISO-5",
+    "ISO-6",
+    "CONSEQUENTIAL-RULES"
+  ]
+}
