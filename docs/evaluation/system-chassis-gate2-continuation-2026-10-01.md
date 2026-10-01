@@ -38,7 +38,7 @@ NanoClaw is the only Top-10 pin whose current record combines exact-pin upstream
 
 ## Why the comparison is not yet down to a final winner
 
-The current evidence has different scopes: some results test user/tenant separation, some test agent-local memory/state, and some test a bounded runtime mechanism. None records all Atento role boundaries together. OrchBench provides external signal about orchestration-plan quality and information transfer, but it is a simulation benchmark and does not test identity authorization, credential secrecy, or role isolation.
+The current evidence has different scopes: some results test user/tenant separation, some test agent-local memory/state, and some test a bounded runtime mechanism. None records all Atento role boundaries together. OrchBench provides external signal about orchestration-plan quality and information transfer, but it is a simulation benchmark and does not test identity authorization, credential secrecy, or role isolation. BenchLM provides model/agent capability results (including tool-use benchmarks), but those model-level scores also do not test chassis fit, Atento role boundaries, or three-role composition.
 
 Therefore, declaring a final winner now would turn missing system evidence into an unsupported pass. The defensible narrowing is one candidate for the **next probe** plus a parked unresolved cohort, not a final selection.
 
@@ -66,4 +66,4 @@ This session had read-only access to repository/source and hosted CI evidence; i
 - [NanoClaw exact-pin verification](nanoclaw-exhaustive-verification-2026-09-30.md)
 - [AI Butler exact-pin verification](aibutler-exhaustive-verification-2026-09-30.md)
 - [Integrated candidates exact-pin source and CI verification](integrated-chassis-source-verification-2026-10-01.md)
-- [OrchBench metric cross-check](system-chassis-benchmark-crosscheck-2026-09-30.md)
+- [External benchmark cross-check: OrchBench and BenchLM](system-chassis-benchmark-crosscheck-2026-09-30.md)
