@@ -308,6 +308,22 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
           sessionId: chatSessionId,
           messagingGroupId: own.channel_instance,
         };
+        const forbiddenCreate = await dispatch(
+          {
+            id: `atento-${role}-cross-task-create`,
+            command: 'tasks-create',
+            args: {
+              name: `${role}-cross-scope-probe`,
+              prompt: 'inert cross-role scheduled-task attempt',
+              process_after: '2999-01-01T00:00:00Z',
+              group: other.agent_group,
+            },
+          },
+          ctx,
+        );
+        expect(forbiddenCreate.ok).toBe(false);
+        if (!forbiddenCreate.ok) expect(forbiddenCreate.error.message).toMatch(/scoped to this agent group/);
+
         const response = await dispatch(
           {
             id: `atento-${role}-task-create`,
@@ -316,7 +332,6 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
               name: `${role}-scope-probe`,
               prompt: 'inert scheduled-task ownership probe',
               process_after: '2999-01-01T00:00:00Z',
-              group: other.agent_group,
             },
           },
           ctx,
@@ -341,8 +356,14 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
           messagingGroupId: own.channel_instance,
         };
         const otherRole = roles.find((candidate) => candidate !== role)!;
+        const crossList = await dispatch(
+          { id: `atento-${role}-cross-task-list`, command: 'tasks-list', args: { group: groupByRole[otherRole].agent_group } },
+          ctx,
+        );
+        expect(crossList.ok).toBe(false);
+
         const ownList = await dispatch(
-          { id: `atento-${role}-task-list`, command: 'tasks-list', args: { group: groupByRole[otherRole].agent_group } },
+          { id: `atento-${role}-task-list`, command: 'tasks-list', args: {} },
           ctx,
         );
         expect(ownList.ok).toBe(true);
