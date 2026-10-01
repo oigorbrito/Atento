@@ -44,7 +44,7 @@ Therefore, declaring a final winner now would turn missing system evidence into 
 
 ## Next decisive probe — NanoClaw only
 
-Before execution, freeze a machine-readable **system-level three-role** NanoClaw profile from the Atento product contract. The existing `NAIA-GATE2-NANOCLAW-COMPOSITION-V1` profile (`evals/config/naia_gate2_nanoclaw_v1.json`) covers only NAIA and Anna and cannot establish Apollo or complete-system qualification. Reuse its exact NanoClaw/channel/provider/gateway pins and applicable two-role evidence; add an independent Apollo group/state/identity and preserve the same strict authority boundaries. Then run the three-role system assertions, reusing upstream results and testing only the remaining transfer boundary:
+The machine-readable **system-level three-role** profile is now frozen at `evals/config/system_chassis_nanoclaw_v1.json` (topology SHA-256 `c6e815289488daace646e7d9123b2638c6f245eaf4ef4dff357d6b3c50c1d289`; policy SHA-256 `02de0f5540c1c638c0553dc8261cfd0e53ffb4727a0636a50a4653d2e15a7132`). The earlier `NAIA-GATE2-NANOCLAW-COMPOSITION-V1` profile (`evals/config/naia_gate2_nanoclaw_v1.json`) covers only NAIA and Anna; it cannot establish Apollo or complete-system qualification. The new profile reuses the exact NanoClaw/channel/provider/gateway pins, adds an independent Apollo group/state/identity, requires role-unique synthetic grants and inert effects, and prohibits live provider calls, real channel accounts, and production credentials. Reuse applicable two-role evidence, then run the three-role system assertions against the remaining transfer boundary:
 
 1. Bind three independent identities to NAIA, Anna, and Apollo runtime/state roots.
 2. Exercise SYS-CHAT-01 and SYS-MEM-01 negative cases, including restart and retrieval/traces.
@@ -61,7 +61,7 @@ The exact public NanoClaw pin was acquired into the scratch workspace and verifi
 `nanocoai/nanoclaw@4c1eabd3ddd74cc3d71b1871da857391a9411c8d`.
 A fresh `git ls-remote` now succeeds, so the earlier DNS-only block is no longer the current blocker. The private Atento repository is still not checked out locally. This executor has Node 24 but neither Docker nor Podman; NanoClaw's tested isolation boundary depends on its container runtime. No candidate runtime or Atento assertion was executed.
 
-The existing frozen NAIA recipe is explicitly two-role (NAIA + Anna); it is not the required product-wide NAIA + Anna + Apollo profile. The current system-level run therefore needs that three-role profile frozen and an executable container runtime before launch.
+The existing frozen NAIA recipe is explicitly two-role (NAIA + Anna); it is not the required product-wide NAIA + Anna + Apollo profile. The current system-level run now needs only an executable container runtime and a local Atento checkout or equivalent reproducible harness material before launch.
 
 ```text
 NANOCLAW_EXACT_PIN_ACQUIRED = YES
@@ -69,7 +69,7 @@ DIRECT_GITHUB_ACCESS = AVAILABLE
 LOCAL_ATENTO_CHECKOUT = ABSENT
 CONTAINER_RUNTIME = UNAVAILABLE (docker, podman)
 NAIA_NANOCLAW_PROFILE = FROZEN_TWO_ROLE
-SYSTEM_NANOCLAW_THREE_ROLE_PROFILE = NOT_FROZEN
+SYSTEM_NANOCLAW_THREE_ROLE_PROFILE = FROZEN_V1_NOT_EXECUTED
 SYSTEM_COMPOSITION_EXECUTION = BLOCKED_ENVIRONMENT
 NEW_BENCHMARKS = NONE
 UNIQUE_FINAL_CHASSIS = NOT_ESTABLISHED
