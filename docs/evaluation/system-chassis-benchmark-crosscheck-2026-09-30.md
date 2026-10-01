@@ -73,7 +73,9 @@ Count failed/blocked infrastructure as `INVALID/BLOCKED` rather than candidate f
 ## Sources
 
 - Atento current composition contract and system discovery: `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`.
-- Historical chassis benchmark: `docs/evaluation/chassis-selection-research-2026-09-29.md`.
+- Historical multi-donor chassis benchmark: `docs/evaluation/chassis-selection-research-2026-09-29.md`.
+- Existing PsyChat CFS/fork-surface results: `docs/evaluation/donor-candidate-comparison-research-2026-09-29.md`.
+- NanoClaw partial surface results: `docs/evaluation/nanoclaw-change-surface-audit-2026-09-29.md`.
 - Current cost audit: `docs/evaluation/naia-architecture-chassis-maintenance-cost-audit-2026-09-30.md`.
 - Harness and CFS: `docs/evaluation/harness.md`.
 - Current benchmark registry: `evals/config/benchmark_registry.json`.
