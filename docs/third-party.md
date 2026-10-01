@@ -221,3 +221,14 @@ These repositories were inspected at README/documentation level during the whole
 | SRC-SYS-OPENAKITA | OpenAkita — system-chassis discovery | https://github.com/openakita/openakita | `5f5b38da728274f0fd06461a481851be7c0bca6a` | AGPL-3.0 verified in LICENSE at pin | REFERENCE_ONLY | multi-agent assistant, scheduler, computer tools, advertised sandbox; role-boundary probe |
 | SRC-SYS-ASTERISM | Asterism — system-architecture reference | https://github.com/qmilab/asterism | `a8383b45f64a9a9c1923053b0f3894efb4672aba` | Apache-2.0 per upstream README; verify before adoption | REFERENCE_ONLY | explicit per-agent state/autonomy and one-way handoff design; current isolation described as logical |
 | SRC-SYS-AGENTSPACE | AgentSpace — system-platform watch/reference | https://github.com/HKUDS/AgentSpace | `0f9da1b125def4d5a0d05b34bf7c5cec0686bbf2` | Apache-2.0 per upstream README; verify before adoption | REFERENCE_ONLY | multi-user workspace/control-plane design; sandbox/isolation feature was listed as planned |
+
+
+## Benchmark references for the system-chassis cross-check — 2026-09-30
+
+These references are evidence about inference-time cost/quality measurement, not Atento chassis selection or lifecycle cost. Full applicability analysis: `docs/evaluation/system-chassis-benchmark-crosscheck-2026-09-30.md`.
+
+| ID | Work | Source / version | Terms/status | Intended use |
+|---|---|---|---|---|
+| SRC-SYS-AGENTBALANCE | AgentBalance: Backbone-then-Topology Design for Cost-Effective Multi-Agent Systems under Budget Constraints | https://arxiv.org/abs/2512.11426 (arXiv submission 2025-12-12) | Research reference; benchmark claims are external and not Atento proof | Inform matched-budget task-quality, token-cost, and latency measurements; no transfer of reported percentages |
+| SRC-SYS-EFFICIENTAGENTS | Efficient Agents: Building Effective Agents While Reducing Cost | https://arxiv.org/abs/2508.02694 (v1, 2025-07-24) | arXiv work in progress per authors' record; reference only | Inform cost-of-pass analysis against task quality; operational model cost is not integration or maintenance cost |
+
