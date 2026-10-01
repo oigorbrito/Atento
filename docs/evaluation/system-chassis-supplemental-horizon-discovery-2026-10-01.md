@@ -26,6 +26,16 @@ The first three below are prioritized for a pinned static screen because their d
 
 The exact pins above are the latest default-branch commit SHAs returned during this search where available; the repositories must be re-frozen before any later execution. A SHA records identity, not quality.
 
+## Common pinned static screen — results
+
+| Candidate | Session / memory boundary | Tools / credentials | Inter-agent and background surface | Static gate |
+|---|---|---|---|---|
+| HybridClaw | Canonical sessions are agent-addressed; default channel-peer scope; workspace defaults to agent ID. Cross-session memory is keyed by agent and user. Explicitly shared workspace or linked identities can widen scope. | Per-agent tools are supported, but an omitted allowlist is unrestricted. Credential references and delegated A2A tokens are present; these need explicit per-role configuration. | Explicit addressed A2A handoff; JWT delegation tokens are scoped and expiring. | **Advance to bounded spike.** Test omitted/empty allowlist behavior, shared-workspace denial, and handoff scope. |
+| OpenLegion | Separate agent containers and private workspaces/memory. Shared `TEAM.md` is readable by team members and must not carry private role context. | Default-deny permissions, explicit message ACLs, host-side credential vault. The mesh host is trusted and holds credentials; any-auth endpoints need deployment scoping. | Browser service is shared but per-agent; schedules exist. MicroVM init can fall back to Docker, so do not count microVM isolation without observing runtime mode. | **Advance to bounded spike.** Test role-to-role message denial, shared-file leakage, credential proxy scope, and fallback mode. |
+| Hivekeep | Per-agent persistent sessions and private profile/archive by default. Shared memories are searchable by all agents; contact records/notes are instance-wide. API supports agent-scoped clients and isolated conversations. | Toolboxes grant tools per agent; no configured toolbox resolves to core tools at the inspected pin. API keys can be scoped to an agent and allowed conversation modes. | Explicit inter-agent messaging and subagents; cron/webhooks feed agent queues. | **Advance to bounded spike.** Test shared-memory opt-in, global contact-note leakage, toolbox defaults, API-key cross-agent denial, and isolated conversation ownership. |
+
+These are source observations at the pins, not executed test results. The bounded spike should implement the same negative probes against each candidate in sequence, stop a candidate on a reproduced hard-boundary failure, and cap effort before full integration. No cost/latency score or total adaptation estimate is inferred from repository size or feature count.
+
 ## Existing benchmark coverage
 
 A bounded search for external numeric results did not identify a common independent chassis benchmark for HybridClaw, OpenLegion, Hivekeep, OpenVole, or Open Pincery. HybridClaw documents local evaluation tooling; that is not an independent published comparative score. OpenFang has the separate Agent Reality Index result noted above, which cannot be combined with Atento candidate scores or used as evidence of isolation.
@@ -34,7 +44,7 @@ Do not repeat an external benchmark for a matching release/configuration if one 
 
 ## Bounded next gate
 
-Completed the same exact-pin static screen serially for HybridClaw, OpenLegion, and Hivekeep. HybridClaw and OpenLegion advance to a narrow adapter/boundary spike; Hivekeep remains watchlisted pending a check of session transcript scoping and administrative/tool authority. This is a source plausibility gate, not execution proof: do not build a full adapter until each remaining candidate passes a bounded negative-boundary probe. The user directed that licenses be ignored as a screening criterion; no candidate is gated or removed on license grounds. Keep license facts out of ranking decisions.
+Completed the same exact-pin static screen serially for HybridClaw, OpenLegion, and Hivekeep. HybridClaw and OpenLegion advance to a narrow adapter/boundary spike; Hivekeep also advances to a bounded adapter/boundary spike; its per-agent private memories and toolbox grants are promising, with shared contacts/global notes and API-key scoping as explicit negative checks. This is a source plausibility gate, not execution proof: do not build a full adapter until each remaining candidate passes a bounded negative-boundary probe. The user directed that licenses be ignored as a screening criterion; no candidate is gated or removed on license grounds. Keep license facts out of ranking decisions.
 
 Reuse all existing Atento candidate evidence. Do not repeat prior NanoClaw, QwenPaw, AI Butler, Octop, or benchmark tests. Do not install all candidates or start an open-ended benchmark loop. OpenVole and Open Pincery remain outside this first three unless the first gate exposes a material gap they uniquely address.
 
@@ -43,7 +53,7 @@ NEW_REPOSITORIES_DISCOVERED = 8
 PRIOR_ATENTO_CANDIDATES_DUPLICATED = [Octop]
 NEW_TESTS_OR_BENCHMARKS_RUN = 0
 NEW_COMMON_EXTERNAL_CHASSIS_SCORES = 0
-NEW_CANDIDATE_QUALIFICATIONS = 0\nSTATIC_PINS_SCREENED = 3\nADVANCE_TO_BOUNDED_SPIKE = [HybridClaw, OpenLegion]\nWATCHLIST_AFTER_STATIC_SCREEN = [Hivekeep]
+NEW_CANDIDATE_QUALIFICATIONS = 0\nSTATIC_PINS_SCREENED = 3\nADVANCE_TO_BOUNDED_SPIKE = [HybridClaw, OpenLegion, Hivekeep]\nWATCHLIST_AFTER_STATIC_SCREEN = []
 FIRST_STATIC_SCREEN_PRIORITY = [HybridClaw, OpenLegion, Hivekeep]
 OVERALL_THREE_ROLE_CHASSIS_WINNER = NOT_SELECTED
 ```
