@@ -10,6 +10,15 @@ on:
       - "evals/atentoeval/composition.py"
       - "evals/config/naia_gate2_aibutler_v1.json"
       - "evals/config/naia_gate2_composition_v1.json"
+  pull_request:
+    paths:
+      - ".github/workflows/naia-gate2-aibutler-composition.yml"
+      - "tools/naia_gate2/aibutler/**"
+      - "tools/naia_gate2/broker_runtime_adapter.py"
+      - "evals/atentoeval/handoff_broker.py"
+      - "evals/atentoeval/composition.py"
+      - "evals/config/naia_gate2_aibutler_v1.json"
+      - "evals/config/naia_gate2_composition_v1.json"
   workflow_dispatch:
 
 permissions:
