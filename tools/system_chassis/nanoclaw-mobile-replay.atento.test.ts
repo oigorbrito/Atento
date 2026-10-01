@@ -78,6 +78,24 @@ async function stopWorker(): Promise<void> {
   worker = undefined;
 }
 
+async function crashWorker(): Promise<void> {
+  if (!worker || worker.exitCode !== null) return;
+  const child = worker;
+  await new Promise<void>((resolve, reject) => {
+    const timeout = setTimeout(() => reject(new Error('worker did not terminate after SIGKILL')), 5000);
+    child.once('exit', (code, signal) => {
+      clearTimeout(timeout);
+      if (code !== null || signal !== 'SIGKILL') {
+        reject(new Error(`expected SIGKILL exit, got code=${code}, signal=${signal}`));
+      } else {
+        resolve();
+      }
+    });
+    child.kill('SIGKILL');
+  });
+  worker = undefined;
+}
+
 async function fetchEvents(token: string, lastEventId: number): Promise<Array<{ id: number; role: string; payload: string }>> {
   const response = await fetch(`http://127.0.0.1:${port}/webhook/atento-mobile/events`, {
     headers: { Authorization: `Bearer ${token}`, 'Last-Event-ID': String(lastEventId) },
@@ -123,7 +141,7 @@ describe('NanoClaw mobile SSE replay — disposable feasibility probe', () => {
     }
 
     for (const role of roles) db.prepare('INSERT INTO outbox (role, payload) VALUES (?, ?)').run(role.name, `${role.name}-reply-2`);
-    await stopWorker();
+    await crashWorker();
     await waitReady(startWorker());
 
     for (const role of roles) {
