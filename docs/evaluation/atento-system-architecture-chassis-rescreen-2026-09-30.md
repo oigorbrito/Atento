@@ -42,6 +42,17 @@ Required invariants:
 
 These are test alternatives, not a decision that one style is inherently cheaper or safer.
 
+## Ordered screening and common denominator
+
+Selection is staged, with architecture and chassis assessed together first:
+
+1. **Architecture + chassis:** screen structural fit against the Atento role boundaries, then measure the combined adaptation and ongoing-maintenance cost for a fixed capability profile. Keep structural signals (such as CFS, touchpoints, and change locality) distinct from observed engineering time and lifecycle expense.
+2. **Other metric families:** apply declared metrics in sequence to the remaining comparable candidates: functional quality, safety, isolation, reliability/recovery, latency, and operational cost as applicable.
+3. **Common denominator:** carry forward only candidates with an equivalent declared scope/profile and comparable evidence for each metric required at the current stage, while meeting hard gates. Track missing/blocked evidence as unresolved, not failed.
+4. **Selection:** compare the surviving set on the predeclared objective. Do not combine unlike stage notes into a synthetic aggregate.
+
+The benchmark cross-check maps existing results to this first sieve only where their original scope transfers. Those results do not yet form a comparable denominator for the complete NAIA–Anna–Apollo system.
+
 ## Reused evidence versus new screening
 
 - Reuse the NAIA Gate-1 exact-pin findings only for the properties and candidate pins they actually inspected.
