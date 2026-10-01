@@ -130,3 +130,28 @@ Sources:
 - [RFC 9700 — OAuth 2.0 Security Best Current Practice](https://www.rfc-editor.org/rfc/rfc9700.html)
 - [OWASP MASVS](https://mas.owasp.org/MASVS/)
 - [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
+
+
+## External transport benchmark triage — 2026-10-01
+
+A directly comparable external benchmark was located for the response transport only: one Node server sent the same event stream through WebSocket, SSE, and long polling. The report includes benchmark code and a reported independent byte-count rerun within 0.1%; it is an author-run benchmark, not a peer-reviewed or mobile-device benchmark.
+
+| Transport | External result in that benchmark | Fit to NAIA mobile chat | Evidence status |
+|---|---|---|---|
+| REST input + SSE response | For 1,000 ~117-byte events: 131,596 wire bytes; at 10 events/s and simulated 50 ms RTT, mean delivery 26.52 ms. Automatic reconnect/resume is available when the server honors event IDs. | Strong candidate for one-way streamed assistant output; user messages can remain ordinary authenticated HTTP requests. | Benchmark signal only; not tested against Atento or mobile radio networks. |
+| WebSocket | For the same events: 119,692 bytes; at 10 events/s, mean 26.46 ms. At 50 events/s, mean 26.16 ms. Lowest idle server memory in that specific Node run. | Candidate if the app requires true bidirectional streaming/presence. More connection/reconnect state must be qualified. | Benchmark signal only; no Atento integration proof. |
+| REST input + long-poll response | 884,698 bytes over HTTP/1.1 or 182,475 over HTTP/2 for the same events. At 10 events/s, mean 26.75 ms; at 50 events/s, mean 52.44 ms and p95 76.96 ms. | Viable low-rate fallback, but not the leading candidate for token-by-token streamed answers. | Benchmark signal only; the existing spike's two tests prove only basic feasibility. |
+
+Test setup and limits: one Node server on Apple M5/macOS 26.6.1/Node 26.6.0; 1,000 JSON events; a fixed simulated 50 ms RTT; 500 idle connections for memory; no real WAN jitter/loss, TLS cost, mobile-radio wakeups, or Atento auth, persistence, or restart path. HTTP/2 materially reduces long-poll header bytes. The results cannot be generalized as a universal ranking.
+
+**Bounded next measurement:** carry forward only two transport candidates—REST+SSE and WebSocket—because the product chat may stream output and an external measured comparison exists. Keep long polling as a fallback/reference, not a third implementation to build now. Reuse one synthetic NAIA chat workload, event sizes, event IDs, auth boundary, concurrency, and process-restart scenario for both finalists. Record p50/p95 first-token latency, delivered/duplicate/missing events after reconnect, wire bytes, server RSS/CPU, and recovery after one restart. Security/isolation and durable replay are hard pass/fail gates; performance cannot compensate for failing them.
+
+```text
+EXTERNAL_TRANSPORT_SIGNAL = SSE_AND_WEBSOCKET_MEASURED; LONG_POLL_MEASURED
+TRANSPORT_SHORTLIST = [REST_PLUS_SSE, WEBSOCKET]
+TRANSPORT_DECISION = NOT_SELECTED
+CURRENT_SPIKE_LONG_POLL = FEASIBILITY_REFERENCE_ONLY
+EXTERNAL_BENCHMARK_REPLACES_LOCAL_SECURITY_AND_RECOVERY_TESTS = NO
+```
+
+External benchmark source: [WebSocket vs SSE vs Long Polling: The Real Cost of 1,000 Events](https://theinfinity.dev/articles/websocket-vs-sse-vs-polling), including test method and limitations (2026-08-12). Its results are used only to prune the initial transport set and define measurements; they do not qualify the Atento integrator.
