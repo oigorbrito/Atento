@@ -22,7 +22,7 @@ OVERALL_CHASSIS_RANK = NOT_ESTABLISHED
 |---|---|---|
 | NanoClaw | Auto-ClawEval, using Claude Haiku 4.5 for all harnesses: full suite mean score **63.7** (safety 94.6, completion 60.1, robustness 100.0); 104-task Auto-ClawEval-Mini mean **67.8** (99.0 / 60.8 / 100.0). | Same-run comparison with OpenClaw below. Paper does not pin this result to Atento's exact NanoClaw SHA. Capability/safety/robustness signal only; not Atento isolation acceptance or chassis cost. |
 | AI Butler | No third-party candidate score found in the sources checked. Its own built-in live eval is **4/7** on its exact Atento pin. | The 4/7 is a first-party result on a distinct seven-task suite, not an external benchmark and not comparable with the other rows. Keep it in a separate evidence column. |
-| OpenClaw | Auto-ClawEval with Claude Haiku 4.5: full suite **64.2** (93.8 / 61.3 / 100.0); Mini **64.2** (96.2 / 59.9 / 100.0). PawBench v1.0 mean **72.1**; ClawProBench: GLM-5.2 on OpenClaw v3.2.6 scored **80.05** on the 102-scenario open dataset and **56.1** on the 68-scenario closed dataset. | Auto-ClawEval is directly comparable to NanoClaw only within that benchmark. PawBench comparison is with QwenPaw only within PawBench. ClawProBench is a different model, runtime version, dataset, and scale; none is a three-role Atento chassis or lifecycle-cost score. |
+| OpenClaw | Auto-ClawEval with Claude Haiku 4.5: full suite **64.2** (93.8 / 61.3 / 100.0); Mini **64.2** (96.2 / 59.9 / 100.0). PawBench v1.0 mean **72.1**; ClawProBench: GLM-5.2 on OpenClaw v3.2.6 scored **80.05** on the 102-scenario open dataset and **56.1** on the 68-scenario closed dataset. | Auto-ClawEval is directly comparable to NanoClaw only within that benchmark. PawBench comparison is with QwenPaw only within PawBench. ClawProBench is a different model, runtime version, dataset, and scale; none is a three-role Atento chassis or lifecycle-cost score. OpenClaw is now eliminated from the active mobile-chassis comparison by explicit user decision; retain these scores only as historical benchmark evidence. |
 | QwenPaw | PawBench v1.0 mean **73.7** across 9 models and 150 tasks. | Directly comparable with OpenClaw's 72.1 only within PawBench's published model × harness matrix. Benchmark harness release predates the Atento frozen pin; not a three-role system result. |
 | MindRoom | No external candidate-specific numeric benchmark result found in the sources checked. | Source/test evidence remains as recorded in the system screen; no external benchmark rank. |
 | Bob Labs | No external candidate-specific numeric benchmark result found in the sources checked. | Test definitions and source review are not benchmark outcomes; no external benchmark rank. |
@@ -51,6 +51,22 @@ The live matrix's mean row differs from a separate summary paragraph in the repo
 - AI Butler's 4/7 remains first-party evidence, not an external result.
 
 No aggregate across benchmark suites is valid here.
+
+## Decision update — 2026-10-01
+
+The user explicitly eliminated OpenClaw from the active mobile-chassis comparison, describing its chassis as too large for the mobile target.
+
+```text
+OPENCLAW_DISPOSITION = ELIMINATED_FROM_ACTIVE_MOBILE_CHASSIS_COMPARISON
+ELIMINATION_CLASS = USER_DIRECTED_PRODUCT_FIT
+BENCHMARK_FAILURE = NO
+ORIGINAL_DISCOVERY_COHORT = 11 (historical)
+ACTIVE_MOBILE_COMPARISON_COHORT = 10
+OPENCLAW_FUTURE_MOBILE_TESTS = DO_NOT_RUN
+OPENCLAW_PUBLISHED_SCORES = RETAIN_AS_HISTORICAL_ONLY
+```
+
+The size judgment is a user-supplied fit decision; this record does not claim a measured proportional footprint. This disposition does not alter historical score tables or claim that OpenClaw failed a benchmark.
 
 ## What the external results can and cannot replace
 
