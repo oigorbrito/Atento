@@ -85,4 +85,5 @@ The independent NAIA candidate Gate-2 queue remains governed by its own frozen o
 - [NanoClaw exact-pin verification](nanoclaw-exhaustive-verification-2026-09-30.md)
 - [AI Butler exact-pin verification](aibutler-exhaustive-verification-2026-09-30.md)
 - [Integrated candidates exact-pin source and CI verification](integrated-chassis-source-verification-2026-10-01.md)
+- AI Butler scoped exact-pin Gate-2 workflow runs: [push 36801774567](https://github.com/oigorbrito/Atento/actions/runs/36801774567), [pull request 36801793397 with result artifact](https://github.com/oigorbrito/Atento/actions/runs/36801793397); [injected test source at d15e07a](https://github.com/oigorbrito/Atento/blob/d15e07a984cadd319a2810c388ebb8df7d063696/tools/naia_gate2/aibutler/atento_gate2_test.go). Candidate pin remains `c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c`; its [scheduled security run 36426287353](https://github.com/LumabyteCo/aibutler/actions/runs/36426287353) still fails.
 - [External benchmark cross-check: OrchBench and BenchLM](system-chassis-benchmark-crosscheck-2026-09-30.md)
