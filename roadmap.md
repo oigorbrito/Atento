@@ -41,6 +41,8 @@ Os agentes devem ter forte isolamento de chat, memória, ferramentas e autoridad
 
 A arquitetura A–S abaixo nasceu principalmente da trilha emocional/terapêutica e continua valiosa como inventário técnico, source mapping e evidência. Ela **não deve ser presumida como decomposição final de todo o produto** até a reconciliação terminar.
 
+**Atualização de escopo — 2026-09-30:** a primeira métrica de seleção é agora avaliada sobre o chassi/arquitetura do Atento completo (NAIA, Anna e fronteira futura do Apollo). As triagens de Gate 1 e Top 5 da NAIA continuam válidas somente por agente. O registro sistêmico e sua nova varredura no GitHub estão em `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`; a topologia integrada ainda não está selecionada.
+
 As decisões de chassis serão refeitas por categorias equivalentes:
 
 ```text
@@ -435,6 +437,8 @@ decision_rationale:
 ---
 
 ## 3. Arquitetura alvo
+
+> **Escopo histórico / não selecionado:** o diagrama abaixo representa o pipeline conversacional originalmente orientado à trilha terapêutica/Anna. Ele não define o chassi global de NAIA + Anna + Apollo. A avaliação de arquitetura/chassi em nível de sistema está em `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`; até uma ADR aceitar a topologia, não interpretar este diagrama como arquitetura sistêmica selecionada.
 
 ```mermaid
 flowchart TD
@@ -1993,15 +1997,16 @@ O Atento será arquiteturalmente bem-sucedido quando conseguir demonstrar, com a
 
 ## Próximo passo
 
-**Reconciliação de produto e candidatos antes de novos spikes.**
+**Re-screen da arquitetura/chassi do Atento completo antes de qualquer seleção sistêmica.**
 
-1. preservar toda evidência já medida;
-2. manter ADR-000/001/002 em `DECISION_RESET`;
-3. reconstruir a lista comparável de chassis persistentes da NAIA;
-4. reconstruir a lista de bases completas da Anna, separando donors/modelos/benchmarks;
-5. reaproveitar benchmarks e testes upstream transferíveis;
-6. executar localmente apenas deltas materiais ou gaps realmente não provados;
-7. só então registrar novas decisões de fork/full donor/selective-port/native/hybrid.
+Registro canônico: `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`.
 
-Nenhum candidato recebe prioridade de execução apenas porque apareceu primeiro na reconciliação anterior.
+1. preservar todas as medições anteriores e aplicar cada resultado somente ao escopo/agente e pin a que pertence;
+2. comparar três alternativas ainda abertas: plataforma multiagente integrada, chassis especializados compostos por um broker/controle do Atento, ou solução híbrida;
+3. reconciliar o universo anterior de bases da NAIA e Anna com a nova varredura de plataformas sistêmicas; Apollo mantém sua fronteira no contrato, mas sua pesquisa funcional continua `DEFERRED`;
+4. pinçar candidatos antes de avaliação; reutilizar testes exatos transferíveis e executar apenas deltas materiais;
+5. testar isolamento entre chats, memória, credenciais, ferramentas, scheduler/recovery e handoffs mínimos entre os três domínios;
+6. medir custo total de adaptação e manutenção em composições comparáveis antes de qualquer Top 5, shortlist ou escolha de base.
+
+A varredura de discovery não cria Project Points de implementação e não altera o progresso `3/100`. Nenhum chassi sistêmico recebe prioridade, seleção ou promoção sem evidência comparável e gates aprovados.
 
