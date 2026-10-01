@@ -1,0 +1,69 @@
+# Gate 2 continuation — authority and isolation — 2026-10-01
+
+## Decision question
+
+The user directed the comparison to continue until one chassis/composition remains. This gate advances candidates using existing exact-pin evidence only. It does not rerun benchmarks or create an aggregate score.
+
+Selection requirements are the Atento product contract: separate chat/session identity, memory, tools, credentials, persistent state, and role-preserving background work for NAIA, Anna, and Apollo; cross-role work uses an explicit minimal auditable handoff and recipient-side authorization.
+
+## Current gate outcome
+
+```text
+UNIQUE_FINAL_CHASSIS = NOT_ESTABLISHED
+SINGLE_CANDIDATE_ADVANCED_TO_NEXT_RESIDUAL_PROBE = NanoClaw@4c1eabd3ddd74cc3d71b1871da857391a9411c8d
+OTHER_CANDIDATES = UNRESOLVED_OR_PIN_BLOCKED; NOT_ALL_ELIMINATED
+ATENTO_SYSTEM_ASSERTION_EXECUTION = NOT_RUN
+NEW_BENCHMARKS = NONE
+SYNTHETIC_SCORE = NONE
+```
+
+NanoClaw is the only Top-10 pin whose current record combines exact-pin upstream CI with run-backed isolation mechanisms and is explicitly eligible for a next-stage Atento composition probe. That makes it the **only immediate advance**, not the winning chassis. Its credential gateway non-disclosure and the full three-role composition remain unproven.
+
+## Candidate dispositions at this gate
+
+| Candidate | Existing evidence relevant to authority/isolation | Gate 2 disposition |
+|---|---|---|
+| NanoClaw | Exact-pin core/registry CI passes; group control-plane and state-mount isolation plus credential configuration guards are PASS_WITH_SCOPE. Real gateway credential non-disclosure and Atento cross-role composition are NOT_RUN. | **ADVANCE_TO_ONE_RESIDUAL_COMPOSITION_PROBE** |
+| AI Butler | Atento Gate-2 assertions passed 6/6 with scope; bank isolation and capability-scoped scheduling are run-backed. The same frozen pin currently fails its scheduled security workflow with seven reachable advisories. | **BLOCK_CURRENT_PIN_ON_SECURITY**; a repaired, refrozen pin would require requalification. |
+| OpenClaw | Strong per-agent core-state and policy mechanisms. Cross-agent session isolation is not default; strict therapy boundary requires separate runtime/Gateway. | **HOLD_AS_SEPARATE-RUNTIME COMPOSITION**; one shared Gateway is insufficient. |
+| QwenPaw | Strong static per-agent memory/policy seams; sandbox-unavailable fallback can broaden to unsandboxed ALLOW and cron controls need hardening. Exact-pin hosted test state includes a failed nightly and no completed passing main Tests result. | **HOLD_FOR_FAIL-CLOSED PROFILE**; current posture does not pass the required default authority. |
+| MindRoom | Agent scopes and persistent roots are configurable, but the pinned plan explicitly records incomplete agent-isolated filesystem visibility in shared-runner/local paths; a narrower dedicated-worker seam exists. | **HOLD_FOR_BACKEND-SPECIFIC ISOLATION PROOF**. |
+| Bob Labs | Test definitions cover lab scoping, explicit memory-sharing confirmation, sandbox HMAC and secret encryption, but no hosted Actions run was found for this exact pin. | **UNRESOLVED**; source test definitions are not run evidence. |
+| Ontheia | Exact-pin host and WebUI CI pass; namespace tests and session RLS policies exist. The inspected evidence does not prove Atento agent/domain isolation. | **UNRESOLVED**; role mapping and negative cross-role assertions absent. |
+| OpenAkita | Exact-pin build passed; Python/unit/integration/smoke/E2E jobs were skipped. The inspected state/blackboard tests do not prove private role separation. | **UNRESOLVED**. |
+| Clawix | Exact-pin lint/typecheck/test CI passed. The inspected multi-user repository tests use mocks and do not demonstrate end-to-end role authorization or isolation. | **UNRESOLVED**. |
+| Memoh | Exact commit not frozen. | **PIN_REQUIRED**; not eligible for this gate yet. |
+
+“Hold” and “unresolved” do not mean candidate failure. The only pin explicitly blocked by a current upstream hard-gate failure here is AI Butler. The others remain in the cohort unless a structural contradiction is demonstrated.
+
+## Why the comparison is not yet down to a final winner
+
+The current evidence has different scopes: some results test user/tenant separation, some test agent-local memory/state, and some test a bounded runtime mechanism. None records all Atento role boundaries together. OrchBench provides external signal about orchestration-plan quality and information transfer, but it is a simulation benchmark and does not test identity authorization, credential secrecy, or role isolation.
+
+Therefore, declaring a final winner now would turn missing system evidence into an unsupported pass. The defensible narrowing is one candidate for the **next probe** plus a parked unresolved cohort, not a final selection.
+
+## Next decisive probe — NanoClaw only
+
+Run the existing Atento system assertion profile against the frozen NanoClaw composition, reusing its upstream results and testing only the missing transfer boundary:
+
+1. Bind three independent identities to NAIA, Anna, and Apollo runtime/state roots.
+2. Exercise SYS-CHAT-01 and SYS-MEM-01 negative cases, including restart and retrieval/traces.
+3. Exercise SYS-TOOL-01 and SYS-CRED-01 across roles; verify no credential or tool authority crosses by ambient environment, files, process args, logs, or model-visible context.
+4. Route an explicit typed handoff through the proposed Atento broker; deny untyped, overbroad, and wrong-recipient transfers; reauthorize the action at the receiving role.
+5. Exercise SYS-BG-01 for scheduled/retry/recovery work and verify grants remain equal or narrower.
+6. Record the same run's changes, dependencies, runtime/store boundaries, deployment services, and active engineering effort separately; do not turn these into an overall score.
+
+Acceptance requires every non-negotiable assertion to pass. Any blocker must be classified as localized repair, replaceable component, or cross-cutting chassis rewrite. If NanoClaw fails structurally or exceeds the declared replacement threshold, resume with the unresolved cohort in existing priority order; do not treat a missing result as failure.
+
+## Execution state
+
+This session had read-only access to repository/source and hosted CI evidence; it did not have a local Atento checkout/runtime in the workspace. Thus the next Atento composition probe is **NOT_RUN** and the final unique chassis is still **NOT_ESTABLISHED**. No benchmark was initiated.
+
+## Evidence
+
+- [Top 10 first-sieve queue](system-chassis-top10-first-sieve-2026-09-30.md)
+- [System architecture/chassis contract and assertions](atento-system-architecture-chassis-rescreen-2026-09-30.md)
+- [NanoClaw exact-pin verification](nanoclaw-exhaustive-verification-2026-09-30.md)
+- [AI Butler exact-pin verification](aibutler-exhaustive-verification-2026-09-30.md)
+- [Integrated candidates exact-pin source and CI verification](integrated-chassis-source-verification-2026-10-01.md)
+- [OrchBench metric cross-check](system-chassis-benchmark-crosscheck-2026-09-30.md)
