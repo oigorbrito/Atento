@@ -102,6 +102,21 @@ SYSTEM_ASSERTION_EXECUTION = NOT_RUN
 COST_MEASUREMENTS = NONE
 ```
 
+## Benchmark cross-check
+
+The detailed benchmark reconciliation is in `docs/evaluation/system-chassis-benchmark-crosscheck-2026-09-30.md`. It cross-checks Atento's historical chassis/evolvability probes, current CFS and benchmark registry, the NAIA cost audit, and two external cost-efficiency studies.
+
+The historical Atento chassis run provides reusable extension/replacement probes and observed prototype results for Letta and a LibreChat control, but used a different candidate set and did not measure comparable lifecycle cost for NAIA + Anna + Apollo. Current CFS is a static architecture screen, not effort or system qualification. The current benchmark registry is primarily Anna-oriented, largely planned, and does not benchmark system integration/maintenance cost. The NAIA audit records 0/26 comparable total-cost measurements; its NanoClaw touchpoint range is partial static evidence only.
+
+External research supports measuring task performance together with inference token-cost/latency or cost per successful task. It does not validate GitHub discovery as cost-saving, Atento's hard isolation boundaries, or software lifecycle cost. Its quantitative results are not transferred into Atento.
+
+```text
+SYSTEM_BENCHMARK_CROSSCHECK = COMPLETED_DOCUMENTARY
+SYSTEM_COMPARABLE_THREE_ROLE_COST_RUNS = 0
+SYSTEM_CHASSIS_BENCHMARK_QUALIFICATION = NOT_ESTABLISHED
+GITHUB_DISCOVERY_COST_SAVING = HYPOTHESIS_NOT_MEASURED
+```
+
 ## Preliminary screen result
 
 ```text
