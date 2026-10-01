@@ -1,6 +1,7 @@
 import Database from 'better-sqlite3';
 import { registerWebhookHandler, getWebhookStatus, stopWebhookServer } from './webhook-server.js';
 
+// Disposable test fixture; never wired into Atento production.
 const db = new Database(process.env.ATENTO_TEST_DB);
 db.exec(`
   CREATE TABLE IF NOT EXISTS outbox (
