@@ -59,7 +59,7 @@ Acceptance requires every non-negotiable assertion to pass. Any blocker must be 
 
 The exact public NanoClaw pin was acquired into the scratch workspace and verified at:
 `nanocoai/nanoclaw@4c1eabd3ddd74cc3d71b1871da857391a9411c8d`.
-A fresh `git ls-remote` now succeeds, so the earlier DNS-only block is no longer the current blocker. The private Atento repository is still not checked out locally. This executor has Node 24 but neither Docker nor Podman; NanoClaw's tested isolation boundary depends on its container runtime. No candidate runtime or Atento assertion was executed.
+A fresh `git ls-remote` now succeeds, so the earlier DNS-only block is no longer the current blocker. The private Atento repository is still not checked out locally. This executor has Node 24 but neither Docker nor Podman; NanoClaw's tested isolation boundary depends on its container runtime. No candidate runtime or Atento assertion was executed. The frozen profile passed a local integrity preflight: profile version and exact pin, checked-out NanoClaw HEAD, canonical topology/policy hashes, three distinct role/group/channel IDs, required assertion list, and no-live-call/no-production-secret constraints all matched.
 
 The existing frozen NAIA recipe is explicitly two-role (NAIA + Anna); it is not the required product-wide NAIA + Anna + Apollo profile. The current system-level run now needs only an executable container runtime and a local Atento checkout or equivalent reproducible harness material before launch.
 
@@ -69,7 +69,8 @@ DIRECT_GITHUB_ACCESS = AVAILABLE
 LOCAL_ATENTO_CHECKOUT = ABSENT
 CONTAINER_RUNTIME = UNAVAILABLE (docker, podman)
 NAIA_NANOCLAW_PROFILE = FROZEN_TWO_ROLE
-SYSTEM_NANOCLAW_THREE_ROLE_PROFILE = FROZEN_V1_NOT_EXECUTED
+SYSTEM_NANOCLAW_THREE_ROLE_PROFILE = FROZEN_V1
+SYSTEM_PROFILE_PIN_AND_HASH_PREFLIGHT = PASS
 SYSTEM_COMPOSITION_EXECUTION = BLOCKED_ENVIRONMENT
 NEW_BENCHMARKS = NONE
 UNIQUE_FINAL_CHASSIS = NOT_ESTABLISHED
