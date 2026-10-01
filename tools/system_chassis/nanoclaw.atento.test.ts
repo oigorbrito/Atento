@@ -178,7 +178,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
       const materialDir = join(policy.materialsRoot, role);
       mkdirSync(materialDir, { recursive: true });
       const materialPath = join(materialDir, 'credential.txt');
-      writeFileSync(materialPath, `synthetic-grant:${role}\\n`, { mode: 0o600 });
+      writeFileSync(materialPath, `synthetic-grant:${role}`, { mode: 0o600 });
 
       const spec = makeSpec(role, fixtures.get(role)!);
       spec.key = { ...spec.key, sessionId: `${role}-credential-probe` };
