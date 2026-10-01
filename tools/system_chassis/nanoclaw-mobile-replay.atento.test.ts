@@ -67,7 +67,7 @@ async function waitReady(child: ChildProcess): Promise<void> {
 }
 
 function startWorker(): ChildProcess {
-  const child = spawn(process.execPath, ['node_modules/tsx/dist/cli.mjs', 'src/system-chassis-mobile-replay-worker.ts'], {
+  const child = spawn(process.execPath, ['--import', 'tsx', 'src/system-chassis-mobile-replay-worker.ts'], {
     cwd: process.cwd(),
     env: { ...process.env, WEBHOOK_PORT: String(port), ATENTO_TEST_DB: dbPath },
     stdio: ['ignore', 'pipe', 'pipe'],
