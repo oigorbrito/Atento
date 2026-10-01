@@ -56,7 +56,7 @@ The entries below preserve the frozen order. Evidence is reused as documentary o
 | 7 | Ontheia — `Ontheia/ontheia@70802db61eb16533f55efce3d8785d810223d03b` | Exact-pin namespace/RLS source and CI evidence already recorded. | `BLOCKED_ADAPTER`; agent/domain authority and full handoff still need Atento composition evidence. |
 | 8 | OpenAkita — `openakita/openakita@5f5b38da728274f0fd06461a481851be7c0bca6a` | Exact-pin build pass and source/state-test review; Python/unit/integration/smoke/E2E jobs were skipped in the recorded evidence. | `BLOCKED_ADAPTER`; no role-private isolation result inferred. |
 | 9 | Clawix — `ClawixAI/clawix@5aee015e0bd793102fba69af486dd6e75df6d802` | Exact-pin lint/typecheck/test CI; reviewed multi-user tests use mocks. | `BLOCKED_ADAPTER`; no end-to-end role authorization/container-boundary result inferred. |
-| 10 | Memoh — exact pin not frozen (`PIN_REQUIRED`) | README-level discovery only. | `BLOCKED_BEFORE_EXECUTION: PIN_REQUIRED`; freeze an immutable pin before any candidate test. |
+| 10 | Memoh — `felinics/Memoh@3d60a08aa42fdcddb218401699822741b51b52ad` (main head observed 2026-10-01) | Exact-pin license declaration now verified as AGPL-3.0; other prior discovery evidence remains scoped. | Common system run remains `BLOCKED_ADAPTER`; pin requirement is resolved, but no Atento runtime test was run. |
 | 11 | Letta Code — `letta-ai/letta-code@21daa38a8cdd74f2d03b634c8312253080bacfc1` | Historical overlay fixture at a different SHA passed bounded policy/RAG/removal checks; historical Terminal-Bench scores remain benchmark-specific. | `BLOCKED_ADAPTER`; historical fixture and external score do not transfer to the current three-role composition. |
 
 ## Smallest falsifiable test once the seam exists
@@ -65,7 +65,7 @@ Prerequisites for the common cohort run:
 
 1. An executable Atento host/runtime boundary that can compose a frozen candidate pin without adding a production integration solely for this test.
 2. One candidate-neutral runner with a narrow adapter per candidate; the runner must accept the same synthetic NAIA, Anna, and Apollo identities, state sentinels, tool/credential grants, handoff payload, restart point, and assertions.
-3. A frozen Memoh commit. Keep its cohort slot blocked until the pin is recorded; then run it in order.
+3. Memoh is now frozen at `3d60a08aa42fdcddb218401699822741b51b52ad` (main head observed 2026-10-01); keep its ordered slot and run only after a candidate adapter is executable.
 4. Observable claim, terminal acknowledgement, and delivery identifiers so the test can distinguish a retry from duplicate terminal delivery.
 
 When those prerequisites exist, run candidates serially in the frozen order. For each candidate, first record the comparable cost dimensions available, then run the same eight `SYS-*` assertions once. Include one inert NAIA scheduled task with a synthetic identity and no provider: persist it as due, terminate the host after claim and before terminal acknowledgement, restart, permit exactly one retry, and assert that the task remains NAIA-owned and terminal delivery is observed exactly once. Record each assertion independently as `PASS`, reproduced hard-gate `FAIL`, `BLOCKED`, or `BLOCKED_ADAPTER`; missing evidence is never a failure. Stop after one primary run per candidate, with only one targeted confirmation for a demonstrably invalid harness or possible hard-gate failure.
