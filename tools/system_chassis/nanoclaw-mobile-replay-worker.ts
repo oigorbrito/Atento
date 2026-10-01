@@ -30,7 +30,7 @@ registerWebhookHandler('atento-mobile', async (req, res) => {
     return;
   }
   const rawCursor = req.headers['last-event-id'] || '0';
-  if (!/^\\d+$/.test(rawCursor)) {
+  if (!/^\d+$/.test(rawCursor)) {
     res.writeHead(400);
     res.end();
     return;
@@ -44,7 +44,7 @@ registerWebhookHandler('atento-mobile', async (req, res) => {
   const rows = db.prepare('SELECT id, role, payload FROM outbox WHERE role = ? AND id > ? ORDER BY id')
     .all(role, cursor) as Array<{ id: number; role: string; payload: string }>;
   for (const row of rows) {
-    res.write(`id: ${row.id}\\nevent: message\\ndata: ${JSON.stringify({ role: row.role, payload: row.payload })}\\n\\n`);
+    res.write(`id: ${row.id}\nevent: message\ndata: ${JSON.stringify({ role: row.role, payload: row.payload })}\n\n`);
   }
   res.end();
 });
