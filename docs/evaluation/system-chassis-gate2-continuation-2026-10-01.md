@@ -88,6 +88,22 @@ UNIQUE_FINAL_CHASSIS = NOT_ESTABLISHED
 
 The independent NAIA candidate Gate-2 queue remains governed by its own frozen order (AI Butler first); this product-wide system-chassis probe is a separate decision path.
 
+## Residual handoff architecture audit — exact NanoClaw pin
+
+Source inspection of the frozen NanoClaw pin identifies its native route at [`src/delivery.ts`](https://github.com/nanocoai/nanoclaw/blob/4c1eabd3ddd74cc3d71b1871da857391a9411c8d/src/delivery.ts) and [`src/modules/agent-to-agent/agent-route.ts`](https://github.com/nanocoai/nanoclaw/blob/4c1eabd3ddd74cc3d71b1871da857391a9411c8d/src/modules/agent-to-agent/agent-route.ts). When an outbound message has `channelType === 'agent'`, the host dispatches directly to `routeAgentMessage`; that route uses the candidate's `agent_destinations` authorization and delivers into a target agent session. The system profile has no native cross-role destination grant, so the tested direct path is denied. Granting such a destination would enable the candidate-native route and would not, by itself, establish the Atento broker contract or receiver-side action reauthorization.
+
+The reference broker in `evals/atentoeval/handoff_broker.py` validates a bounded envelope and rejects authority-bearing fields, but it is candidate-agnostic and does not deliver into NanoClaw or authorize the receiving role's action. Its unit contract is not evidence of an integrated NanoClaw handoff. The candidate has a visible host delivery branch and a separate A2A module, which suggests a possible integration seam; the amount of Atento-specific change and its locality have not been measured in an implemented composition.
+
+```text
+NATIVE_DIRECT_A2A_WITHOUT_DESTINATION = PASS_WITH_SCOPE (denied)
+BROKER_ENVELOPE_TO_NANOCLAW_RECEIVER = NOT_RUN
+RECEIVER_ACTION_REAUTHORIZATION = NOT_RUN
+BROKER_BYPASS_RESISTANCE = NOT_RUN
+HANDOFF_REPAIR_CLASS = UNRESOLVED (implementation and change locality not measured)
+```
+
+The next decisive probe must connect the real Atento broker envelope to a NanoClaw receiver session, demonstrate recipient-side authorization before any action, and show the agent cannot bypass that path through native A2A. It must also capture the Atento-specific patch and classify its change locality. A standalone envelope round-trip or broker unit test cannot close these assertions. No candidate is eliminated based on this source inspection.
+
 ## Evidence
 
 - [Top 10 first-sieve queue](system-chassis-top10-first-sieve-2026-09-30.md)
