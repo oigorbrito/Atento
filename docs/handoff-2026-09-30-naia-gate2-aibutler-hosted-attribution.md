@@ -239,3 +239,83 @@ silent role drift = forbidden
 - continue autonomously to substantive gates;
 - skip environment/human blockers when possible;
 - keep summaries compact.
+
+
+## Continuation update — composition preparation after executor attribution
+
+The hosted AI Butler failure has already been attributed elsewhere to runner provisioning:
+
+```text
+runner_id = 0
+steps = []
+AI_BUTLER_COMPOSITION = BLOCKED_ENVIRONMENT
+AI_BUTLER_FAIL = NOT_CLAIMED
+```
+
+Do not repeat that hosted path until a runner is actually assignable.
+
+Because blocked candidates are skipped for non-redundant work, composition preparation continued.
+
+### OpenMausBot
+
+Canonical freeze:
+
+- `evals/config/naia_gate2_openmausbot_v1.json`
+- `docs/evaluation/naia-openmausbot-gate2-hardened-composition-freeze-2026-09-30.md`
+
+```text
+OPENMAUSBOT_COMPOSITION = FROZEN_V1
+topology = two independent runtimes / HOME / OMB_DATA_DIR / session+credential domains
+native cross-role peer/ask_bot/delegation = forbidden
+cross-role path = explicit Atento broker only
+REPAIR_CLASS = LOCALIZED_REPAIR
+EXECUTION = BLOCKED_ENVIRONMENT
+```
+
+The shared single-runtime/same-authority-domain topology is rejected as the Atento test topology; this is not a candidate failure.
+
+### NanoClaw
+
+Do not fabricate a recipe merely to advance the queue.
+
+Current exact-pin evidence says the SUT identity depends on the installed channel/gateway/provider recipe. Until one representative Atento qualification recipe is selected and frozen, its `RECIPE-FREEZE` add-on remains unresolved.
+
+```text
+NANOCLAW_RECIPE = NOT_FROZEN
+NANOCLAW_FAIL = NOT_CLAIMED
+```
+
+### AgentOS
+
+Canonical freeze:
+
+- `evals/config/naia_gate2_agentos_v1.json`
+- `docs/evaluation/naia-agentos-gate2-hardened-composition-freeze-2026-09-30.md`
+
+```text
+AGENTOS_COMPOSITION = FROZEN_V1
+permissions.default_mode = off
+permissions.cron_default_mode = off
+sandbox = on
+browser = managed/headless, attach disabled, restricted qualification domain
+topology = independent runtime/workspace/state/auth/credential/channel domains
+cross-role path = explicit Atento broker only
+REPAIR_CLASS = LOCALIZED_REPAIR
+EXECUTION = BLOCKED_ENVIRONMENT
+```
+
+### Current substantive gate
+
+```text
+COMMON_GATE2_EXECUTOR = BLOCKED_ENVIRONMENT
+AI_BUTLER = execution blocked, not failed
+OPENMAUSBOT = composition frozen, execution blocked
+NANOCLAW = recipe identity not frozen, candidate not failed
+AGENTOS = composition frozen, execution blocked
+
+AUTHORITY_ISOLATION_EMPIRICAL_PASS = 0
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+Execution resume order remains the frozen common-harness order when infrastructure is available. Static preparation may continue past blocked entries, but it must not alter that execution order or convert preparation into qualification.
