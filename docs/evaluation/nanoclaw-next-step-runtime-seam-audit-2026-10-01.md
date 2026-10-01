@@ -200,3 +200,20 @@ ATENTO_PRODUCT_RUNTIME_GATE = BLOCKED
 ```
 
 This supports proceeding with REST+SSE as the first integration candidate, based on an external transport benchmark plus local protocol replay tests. It is not sufficient to select or qualify the production integrator. Next gate is to place the event log behind the actual Atento authenticated session boundary and prove recovery across one real host-process restart; only build the WebSocket comparator if that path fails or the product requires bidirectional high-rate traffic.
+
+
+## Bounded transport decision — 2026-10-01
+
+**Decision: use REST for mobile-to-assistant messages and SSE for assistant-to-mobile responses for the NAIA MVP.** This is a proportionate, empirically defensible choice based on the external same-workload transport benchmark and the local NanoClaw-seam test that verified authenticated streaming, event replay after reconnect, and no duplicate on the next resume.
+
+Do not build a WebSocket comparator unless the product adds a concrete requirement that SSE cannot meet or production measurements show a material problem. The benchmark does not need to be repeated to make this bounded transport choice.
+
+This selects the transport pattern; it does not claim the production Atento integrator is implemented or security-qualified. Complete the ordinary implementation checks for real user/session authorization, TLS, bounded persistent event replay, and one restart recovery test when the Atento host runtime exists. Keep those as delivery acceptance criteria, not reasons to reopen the transport comparison by default.
+
+```text
+NAIA_MVP_MOBILE_TRANSPORT = REST_PLUS_SSE_SELECTED
+SELECTION_BASIS = EXTERNAL_COMPARATIVE_BENCHMARK + LOCAL_RECONNECT_REPLAY_TEST
+WEBSOCKET_COMPARATOR = DEFERRED_UNLESS_REQUIREMENT_OR_MEASURED_FAILURE
+PRODUCTION_INTEGRATOR_IMPLEMENTED = NO
+PRODUCTION_INTEGRATOR_SECURITY_AND_RESTART_ACCEPTANCE = PENDING_IMPLEMENTATION
+```
