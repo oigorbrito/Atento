@@ -4,8 +4,8 @@
   "upstream_repo": "use-agent-os/agent-os",
   "upstream_sha": "226c906291fc68f3c4517623446bdaec1b48a82d",
   "harness_version": "NAIA-GATE2-COMPOSITION-V1",
-  "composition_profile_hash": "8b9a37d4f1178244b3a7c4768fb4c7f282d53a99e50ef9b195e852cea66a9f6b",
-  "policy_hash": "0cba6b4a4f30f620d13ffa2b67fb71d980303adc1d4ccc6ae9ff44105fc1cf55",
+  "composition_profile_hash": "646d485017c3e67f4afef65497cc829afa6de5ba7362af44307dad711d333c14",
+  "policy_hash": "570c54576d6db2071c03e9679af671e67cb4eb1798e11af04bc1aa74d0cc8b37",
   "execution_state": "FROZEN_NOT_EXECUTED",
   "topology": {
     "naia": {
@@ -33,7 +33,7 @@
       "allowed_path": "explicit_atento_handoff_broker_only"
     }
   },
-  "hardened_profile": {
+  "policy": {
     "sandbox": {
       "sandbox": true,
       "security_grading": true
@@ -53,7 +53,9 @@
       "persist_profile": false,
       "dialog_policy": "must_respond",
       "restrict_evaluate": true
-    }
+    },
+    "background_authority_rule": "permissions.cron_default_mode=off and background_authority<=interactive_authority",
+    "fail_closed_rule": "authority_control_failure_must_deny"
   },
   "required_assertions": [
     "ISO-1",
@@ -63,7 +65,5 @@
     "ISO-5",
     "ISO-6",
     "BROWSER-1"
-  ],
-  "background_authority_rule": "permissions.cron_default_mode=off and background_authority<=interactive_authority",
-  "fail_closed_rule": "authority_control_failure_must_deny"
+  ]
 }
