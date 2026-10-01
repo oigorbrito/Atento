@@ -18,14 +18,14 @@ It injected one test into that checkout and exercised NanoClaw's real `registerW
 
 ## Test
 
-The original graceful-restart case is being strengthened with one abrupt-crash condition; no prior candidate suite or 7/7 Atento assertions are rerun. The hosted result for this revision is pending.
+One role-scoped replay case now covers an abrupt worker crash. No prior candidate suite or 7/7 Atento assertions are rerun.
 
 One role-scoped SSE replay case:
 
 1. Seed one reply for each NAIA, Anna, and Apollo fixture in a temporary SQLite outbox.
 2. Read each role's first event with a synthetic bearer token.
 3. Add one subsequent reply per role.
-4. Terminate the worker with `SIGKILL` (no shutdown handler or SQLite close), then start a new process over the same SQLite file.
+4. Terminate the directly spawned Node worker with `SIGKILL` (no shutdown handler or SQLite close); poll for the fixed port to become bindable, with a 5-second limit, then restart over the same SQLite file.
 5. Reconnect with each role's prior `Last-Event-ID`.
 6. Assert that each role receives only its own next event and that an unknown token receives HTTP 401.
 
@@ -44,12 +44,12 @@ A second identical CI pass occurred at run `36934690875` after a workflow-trigge
 
 ## Interpretation and limits
 
-SIGKILL harness diagnostics: run `36936155950` timed out under Vitest's default 5-second deadline; run `36936315900` reported `EADDRINUSE`; a 1-second delayed retry (`36936452447`) also reported `EADDRINUSE`. A port-bind probe then showed the port still unavailable for 5 seconds after the test's `SIGKILL` (`36936877058`; artifact SHA-256 `f11e88101d690c4df5889585ee53a72bc6d931e0b449dab6dcfd2f4d76aa032f`). Because the fixture launched through the `tsx` CLI and killed only its direct child, an orphaned launcher descendant remains a plausible harness confound; this is not yet proven. Therefore classify abrupt-crash recovery as `INCONCLUSIVE_HARNESS`, not candidate failure, until one bounded rerun launches TypeScript in the directly signaled Node process. The source audit still shows no application-level bind retry, but that static observation does not resolve this runtime failure. Previous graceful-restart PASS does not transfer to abrupt-crash recovery.
+SIGKILL diagnostic and controlled rerun: run `36936155950` hit the default 5-second Vitest limit. Runs `36936315900` and `36936452447` reported `EADDRINUSE`; run `36936877058` did not observe the port becoming bindable within 5 seconds. Those runs used the `tsx` CLI and killed only its direct child, so they are retained as harness-diagnostic failures rather than candidate failures. The fixture was corrected to start the TypeScript worker in the directly signaled Node process (`node --import tsx`). On exact NanoClaw pin `4c1eabd3ddd74cc3d71b1871da857391a9411c8d`, run `36936998880` then passed 1/1 test (test duration 0.625 s): after `SIGKILL`, the fixed port became bindable within the 5-second bound; a new worker restarted against the same SQLite file; each role received only its next SSE event using its prior `Last-Event-ID`; unknown synthetic bearer token received HTTP 401. JUnit artifact `disposable-nanoclaw-mobile-replay-36936998880` has SHA-256 `8af735a73aa7d55e53ba9ee10e7cbd650b97ff41886fdb8298bf085593904bb3`. The exact port-release latency was not preserved as a separate metric. Classify abrupt same-port replay as `PASS_WITH_SCOPE` for this one crash/restart and synthetic fixture only. This does not prove production Atento authentication, provider custody, task retry/recovery, or complete three-role qualification.
 
 ```text
 NANOCLAW_WEBHOOK_SERVER_SEAM = EXERCISED
 SSE_LAST_EVENT_ID_REPLAY_AFTER_GRACEFUL_TEST_WORKER_RESTART = PASS_WITH_SCOPE
-SSE_LAST_EVENT_ID_REPLAY_AFTER_SIGKILL_SAME_PORT_RESTART = INCONCLUSIVE_HARNESS
+SSE_LAST_EVENT_ID_REPLAY_AFTER_SIGKILL_SAME_PORT_RESTART = PASS_WITH_SCOPE
 SYNTHETIC_ROLE_SCOPED_OUTBOX = PASS_WITH_SCOPE
 PRODUCTION_ATENTO_GATEWAY_OR_AUTH = NOT_TESTED
 REAL_MODEL_OR_PROVIDER_CALL = NOT_TESTED
@@ -58,6 +58,6 @@ SCHEDULED_TASK_RESTART_AND_RETRY = STILL_PENDING
 FULL_ATENTO_THREE_ROLE_QUALIFICATION = NOT_PASSED
 ```
 
-The worker, tokens, role map, and SQLite outbox are a disposable Atento-side feasibility fixture. The test proves that NanoClaw's existing raw webhook server can host this fixture's SSE replay route and that the fixture resumes role-filtered events after a process restart. It does not prove the production Atento identity provider, memory/credential/tool isolation, a real model/provider integration, or scheduled-task recovery.
+The worker, tokens, role map, and SQLite outbox are a disposable Atento-side feasibility fixture. The test proves that NanoClaw's existing raw webhook server can host this fixture's SSE replay route and that the fixture resumes role-filtered events after one abrupt worker-process exit and restart. It does not prove the production Atento identity provider, memory/credential/tool isolation, a real model/provider integration, or scheduled-task recovery.
 
 No prior 7/7 NanoClaw assertions or upstream candidate suite was rerun. This branch is not merged and is not an implementation recommendation.
