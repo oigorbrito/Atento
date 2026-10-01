@@ -1,0 +1,83 @@
+{
+  "version": "NAIA-GATE2-NANOCLAW-COMPOSITION-V1",
+  "candidate": "NanoClaw",
+  "upstream_repo": "nanocoai/nanoclaw",
+  "upstream_sha": "4c1eabd3ddd74cc3d71b1871da857391a9411c8d",
+  "harness_version": "NAIA-GATE2-COMPOSITION-V1",
+  "composition_profile_hash": "1b1bfa822a4dc1154a4e78b059f01bdfc22c7bcabbfeea095d4bd8985dd2c875",
+  "policy_hash": "29d441dd951db8308af0ed7056e4ad585bee909678a8adcd26cf39f8e44d31b6",
+  "execution_state": "FROZEN_NOT_EXECUTED",
+  "topology": {
+    "recipe": {
+      "core_sha": "4c1eabd3ddd74cc3d71b1871da857391a9411c8d",
+      "channels_sha": "3f7e13b591a0c8980242b81ceff4b3f542ef839a",
+      "providers_sha": "3959d1f055cba2320cf843b30834a278250346b8",
+      "channel": {
+        "skill": "add-telegram",
+        "package": "@chat-adapter/telegram",
+        "version": "4.29.0"
+      },
+      "provider": {
+        "skill": "add-codex",
+        "package": "@openai/codex",
+        "version": "0.155.1"
+      },
+      "gateway": {
+        "skill": "add-onecli",
+        "gateway_version": "1.41.0",
+        "cli_version": "2.2.5",
+        "sdk_version": "2.2.1"
+      }
+    },
+    "naia": {
+      "agent_group": "atento-naia",
+      "runtime_container": "independent",
+      "group_state": "independent",
+      "memory": "group_local",
+      "gateway_agent": "group_bound",
+      "gateway_secret_grants": "independent",
+      "channel_instance": "independent",
+      "provider": "codex"
+    },
+    "anna": {
+      "agent_group": "atento-anna",
+      "runtime_container": "independent",
+      "group_state": "independent",
+      "memory": "group_local",
+      "gateway_agent": "group_bound",
+      "gateway_secret_grants": "independent",
+      "channel_instance": "independent",
+      "provider": "codex"
+    },
+    "cross_role": {
+      "shared_group_state": false,
+      "cross_group_cli": false,
+      "cross_group_mount": false,
+      "shared_gateway_secret_grants": false,
+      "shared_channel_instance": false,
+      "native_cross_role_handoff": false,
+      "allowed_path": "explicit_atento_handoff_broker_only"
+    }
+  },
+  "policy": {
+    "gateway_provider": "onecli",
+    "gateway_ownership_scope": "agent_group",
+    "gateway_approval_translation_error": "deny",
+    "gateway_ownership_unavailable": "no_decision_no_effect",
+    "gateway_unavailable": "fail_closed",
+    "credentials_in_container": "forbidden",
+    "scheduled_authority": "subset_of_interactive",
+    "cli_scope_escalation": "deny",
+    "apply_reapply_update_must_preserve_isolation": true,
+    "control_failure_rule": "fail_closed"
+  },
+  "required_assertions": [
+    "ISO-1",
+    "ISO-2",
+    "ISO-3",
+    "ISO-4",
+    "ISO-5",
+    "ISO-6",
+    "RECIPE-FREEZE"
+  ]
+}
