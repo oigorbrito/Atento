@@ -440,3 +440,74 @@ Resume empirical execution in the existing frozen order when a usable executor e
 ```
 
 Do not restart Gate 1, static Gate 2, frontier discovery, broad upstream suites or composition-definition work without a material source/policy delta.
+
+
+## 2026-10-01 chat-results consolidation
+
+Canonical consolidated record:
+
+`docs/evaluation/naia-gate2-chat-results-2026-10-01.md`
+
+The decisive state change from this chat is:
+
+```text
+GATE2_STATIC_COMPOSITION_PREPARATION = COMPLETE_V1
+FROZEN_COMPOSITION_IDENTITIES = 12_OF_12
+FROZEN_CONFIG_INTEGRITY = PASS
+
+AI_BUTLER_GATE2_COMPOSITION = PASS_WITH_SCOPE
+AI_BUTLER_COMMON_ASSERTIONS = 6_OF_6_PASS
+AI_BUTLER_ISO6 = PASS_RUNTIME_BROKER
+AI_BUTLER_EVIDENCE_VALIDATOR = PASS
+AI_BUTLER_ARTIFACT_PRESERVED = YES
+
+GATE2_EMPIRICAL_PASS = 1
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+Accepted AI Butler evidence:
+
+- run `36801793397`
+- job `110177534395`
+- artifact `11136566058`
+- artifact zip SHA-256 `a9d13826c34b0e51c847e3a81226a14b57a21943f4362c7d069ed13c1421dae1`
+- preserved result `evals/results/naia_gate2_aibutler_runtime_2026-10-01.json`
+- result record `docs/evaluation/naia-aibutler-gate2-empirical-result-2026-10-01.md`
+
+The old synthetic ISO-6 run is not accepted evidence. The accepted run exercised the real Atento `ExplicitHandoffBroker` path and passed the canonical result validator.
+
+PR #56 was an evidence-observability probe only and was closed without merge.
+
+### Current resume point
+
+The frozen queue now advances to:
+
+```text
+2 OpenMausBot
+```
+
+OpenMausBot runtime harness mapping has started:
+
+- exact pin inspected;
+- isolated HOME / `OMB_DATA_DIR` test infrastructure identified;
+- real server e2e harness identified;
+- peer visibility, delegation and routine authority surfaces identified.
+
+No OpenMausBot common Gate-2 runtime result exists yet.
+
+Resume by building/running the minimum exact-pin **two independent OpenMausBot authority-domain** composition for:
+
+```text
+ISO-1
+ISO-2
+ISO-3
+ISO-4
+ISO-5
+ISO-6
+SAME-OWNER-ROLE-BOUNDARY
+```
+
+Then preserve the canonical result before advancing to NanoClaw.
+
+Do not repeat AI Butler common Gate-2 execution unless its frozen identity changes materially.
