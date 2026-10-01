@@ -89,6 +89,8 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
     const profile = JSON.parse(readFileSync(profilePath, 'utf8')) as {
       upstream_repo: string;
       upstream_sha: string;
+      profile_hash: string;
+      policy_hash: string;
       topology: {
         roles: { NAIA: RoleProfile; Anna: RoleProfile; Apollo: RoleProfile };
         role_test_effects: { NAIA: string; Anna: string; Apollo: string };
@@ -96,6 +98,11 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
     };
     expect(profile.upstream_repo).toBe('nanocoai/nanoclaw');
     expect(profile.upstream_sha).toBe('4c1eabd3ddd74cc3d71b1871da857391a9411c8d');
+    expect(profile.profile_hash).toBe('c6e815289488daace646e7d9123b2638c6f245eaf4ef4dff357d6b3c50c1d289');
+    expect(profile.policy_hash).toBe('02de0f5540c1c638c0553dc8261cfd0e53ffb4727a0636a50a4653d2e15a7132');
+    expect(profile.topology.roles.NAIA.agent_group).toBe('atento-naia');
+    expect(profile.topology.roles.Anna.agent_group).toBe('atento-anna');
+    expect(profile.topology.roles.Apollo.agent_group).toBe('atento-apollo');
     groupByRole = { naia: profile.topology.roles.NAIA, anna: profile.topology.roles.Anna, apollo: profile.topology.roles.Apollo };
     effectByRole = { naia: profile.topology.role_test_effects.NAIA, anna: profile.topology.role_test_effects.Anna, apollo: profile.topology.role_test_effects.Apollo };
     root = mkdtempSync(join(tmpdir(), 'atento-system-chassis-'));
@@ -210,6 +217,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
         const ownMessagingGroup = groupByRole[role].channel_instance;
         const own = await findSessionForAgent(groupId, ownMessagingGroup, null);
         expect(own?.id).toBe(sessionIds.get(role));
+        expect(own?.agent_provider).toBe(groupByRole[role].provider);
         expect((await getSessionsByAgentGroup(groupId)).map((session) => session.id)).toEqual([sessionIds.get(role)]);
 
         for (const other of roles.filter((candidate) => candidate !== role)) {
@@ -230,7 +238,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
                 agent_group_id: groupByRole[role].agent_group,
                 messaging_group_id: ownMessagingGroup,
                 thread_id: null,
-                agent_provider: null,
+                agent_provider: groupByRole[role].provider,
                 status: 'active',
                 container_status: 'running',
                 last_active: createdAt,
