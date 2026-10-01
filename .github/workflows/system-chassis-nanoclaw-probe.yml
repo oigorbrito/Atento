@@ -65,6 +65,8 @@ jobs:
 
       - name: Run three-role runtime and session assertions
         working-directory: candidate
+        env:
+          ATENTO_SYSTEM_PROFILE: ${{ github.workspace }}/evals/config/system_chassis_nanoclaw_v1.json
         run: pnpm exec vitest run src/system-chassis.atento.test.ts --reporter=junit --outputFile=/tmp/nanoclaw-system-chassis-junit.xml
 
       - name: Upload raw probe result
