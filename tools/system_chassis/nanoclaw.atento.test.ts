@@ -321,8 +321,8 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
           },
           ctx,
         );
+        if (!response.ok) throw new Error(`profile task creation rejected for ${role}: ${response.error.message}`);
         expect(response.ok).toBe(true);
-        if (!response.ok) throw new Error(response.error.message);
         const task = response.data as { series_id: string; session_id: string; agent_group_id: string };
         expect(task.agent_group_id).toBe(own.agent_group);
         const taskSession = await getSession(task.session_id);
