@@ -35,6 +35,10 @@ Repository README/docs were inspected; no candidate was cloned or executed in th
 - Former NAIA-only measurement cohort: `docs/evaluation/naia-architecture-chassis-top5-prioritization-2026-10-01.md`
 - Former NAIA-only policy now explicitly scope-bounded: `docs/evaluation/naia-architecture-first-chassis-selection-2026-09-30.md`
 
+## Selection order
+
+Run the decision as a staged sieve: first assess architecture + chassis together, including structural boundary fit and adaptation/maintenance cost; then apply the next declared metric family to the surviving comparable candidates. Keep missing evidence unresolved, apply hard gates at each stage, and define the final common denominator only from candidates with equivalent scope and comparable evidence. Do not combine unlike stage scores into one synthetic grade.
+
 ## Search strategy
 
 Continue proactive GitHub horizon discovery by capability and architecture seams, beyond the known candidate list. Treat it as a cost-saving hypothesis: include discovery effort and operational/update burden in the same full-composition cost comparison. Keep broad discovery bounded by the hard gates and exact-pin probes; missing evidence stays unresolved until tested, and repeated searches should answer a concrete remaining gap.
