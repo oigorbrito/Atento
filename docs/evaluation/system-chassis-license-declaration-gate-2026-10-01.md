@@ -19,7 +19,7 @@ SelfAgent is excluded because the earlier Gate 1 stopped it as a complete NAIA b
 | Ontheia | `Ontheia/ontheia@70802db61eb16533f55efce3d8785d810223d03b` | FOUND | AGPL-3.0 |
 | OpenAkita | `openakita/openakita@5f5b38da728274f0fd06461a481851be7c0bca6a` | FOUND | AGPL-3.0 |
 | Clawix | `ClawixAI/clawix@5aee015e0bd793102fba69af486dd6e75df6d802` | NOT_FOUND | `LICENSE`, `LICENSE.md`, `LICENSE.txt`, `COPYING`, and `COPYING.md` were not retrievable at this pin. |
-| Memoh | Pin required | NOT_RUN | No immutable pin is recorded for this cohort entry; do not use a floating branch for this result. |
+| Memoh | `felinics/Memoh@3d60a08aa42fdcddb218401699822741b51b52ad` (main head observed 2026-10-01) | FOUND | AGPL-3.0 |
 | Letta Code | `letta-ai/letta-code@21daa38a8cdd74f2d03b634c8312253080bacfc1` | FOUND | Apache-2.0 |
 
 ```text
@@ -32,7 +32,7 @@ LEGAL_COMPATIBILITY_DECISION = NOT_MADE
 
 ## Gate result and limits
 
-The gate passes only for the narrow property “a license declaration file exists at the frozen source pin.” Clawix is blocked for license review until the exact pin's repository terms are identified; this is not an elimination. Memoh remains blocked until its pin is frozen. AGPL-3.0 observations are flagged for a project-specific compatibility review, not treated as incompatible or as candidate failures. No legal or product distribution requirements were supplied for this screen.
+The gate passes only for the narrow property “a license declaration file exists at the frozen source pin.” Clawix is blocked for license review until the exact pin's repository terms are identified; this is not an elimination. Memoh's pin is now frozen and its AGPL-3.0 file is verified. AGPL-3.0 observations are flagged for a project-specific compatibility review, not treated as incompatible or as candidate failures. No legal or product distribution requirements were supplied for this screen.
 
 A future legal-compatibility gate needs a declared deployment/distribution model, whether Atento modifies or redistributes candidate code, and dependency-level license inventory. Do not infer a legal outcome from the short license identifier alone.
 
@@ -47,7 +47,7 @@ The source was read through GitHub Contents API at each exact commit. Blob SHAs 
 - MindRoom and Bob Labs: `d645695673349e3947e8e5ae42332d0ac3164cd7`
 - Ontheia: `be3f7b28e564e7dd05eaf59d64adba1a4065ac0e`
 - OpenAkita: `db1f8c1094da032bcf1ae8d4a2552b02b062418b`
-- Letta Code: `e72f5de5dd5610ee3fee7feb791ebff246cc931e`
+- Memoh: `0ad25db4bd1d86c452db3f9602ccdbe172438f52`\n- Letta Code: `e72f5de5dd5610ee3fee7feb791ebff246cc931e`
 - Clawix alternate-file probes at the same pin: all 404.
 
 This preflight does not change the frozen system-test sequence or the provisional NanoClaw direction. The restart/retry gate remains pending and `BLOCKED_ADAPTER`; no tests were run against PR #58.
