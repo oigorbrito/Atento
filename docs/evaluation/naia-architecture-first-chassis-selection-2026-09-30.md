@@ -15,6 +15,14 @@ Current authority:
 
 ## 1. Core decision principle
 
+### First selection parameter: lowest total maintenance cost
+
+The first selection parameter is **the candidate chassis with the lowest defensible total cost of adaptation and ongoing maintenance for Atento's required properties**. The target is not a perfect chassis. No candidate is presumed to satisfy every requirement out of the box, and “most complete” or “most elegant” is not the objective.
+
+Compare the work needed to adapt and keep each candidate operating: cross-cutting changes, integration and dependency burden, replacement boundaries, operational complexity, and expected maintenance. Use observed evidence where available; mark unmeasured cost as an estimate or unknown rather than treating it as fact. A small core or attractive architecture alone does not prove lower total cost.
+
+This parameter governs the first candidate-selection gap. Structural properties matter because failures there can create expensive maintenance and reconstruction, not because architecture is an end in itself. Benchmarks and other evidence remain inputs where they measure relevant behavior or cost under a comparable workload; they do not substitute for the total maintenance-cost comparison or prove unmeasured properties.
+
 The Atento candidate-selection problem is not equivalent to choosing the candidate with the highest feature count or the highest behavioral benchmark score.
 
 The primary question is: **which existing system provides the required structural properties with the lowest expected cross-cutting reconstruction cost?**
