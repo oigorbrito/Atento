@@ -30,12 +30,12 @@ Classification:
 NANOCLAW_CHANNEL_EXTENSION_SEAM = PRESENT_STATIC
 GENERIC_MOBILE_CHAT_API_AT_PIN = NOT_FOUND
 MOBILE_AUTH_AND_NAIA_SESSION_BINDING = NOT_IMPLEMENTED_IN_ATENTO
-MOBILE_ADAPTER_COST = NOT_MEASURED
+MOBILE_ADAPTER_COST = 209_LINE_LOCAL_SPIKE (131 TEST LINES)
 ```
 
 This does not establish a structural failure: NanoClaw explicitly supports channel adapters. It does establish that app connectivity is new adapter work, not an existing capability that can be counted as zero-touch. The adapter must be implemented before a mobile-client integration test can exercise the real path.
 
-The local experiment executor has Node.js 24 but no Docker or Podman binary, and the private Atento repository is not available as a local checkout in this workspace. No new test was run. This is not a NanoClaw test failure; the decision-relevant probe remains `BLOCKED_ADAPTER` until the Atento runtime seam exists. The previously passing 7/7 assertions were not repeated.
+The local experiment executor has Node.js 24 but no Docker or Podman binary, and the private Atento repository is not available as a local checkout in this workspace. A disposable local NanoClaw worktree was used for the bounded channel spike below. This did not rerun or alter the prior hosted 7/7 chassi assertions and did not exercise the Atento product runtime.
 
 ## Decision
 
@@ -45,7 +45,9 @@ ATENTO_PRODUCT_RUNTIME_PRESENT_IN_BRANCH = NO
 REAL_GATEWAY_PROVIDER_CUSTODY_SEAM = ABSENT
 HOST_PROCESS_RESTART_SEAM = ABSENT
 ROLE_BOUND_TASK_FIRE_RETRY_RECOVERY_SEAM = ABSENT
-NEW_TESTS_RUN = 0
+NEW_TESTS_RUN = 2/2 LOCAL ADAPTER TESTS PASS
+BUILD = PASS
+LINT = PASS
 PREVIOUS_7_ASSERTIONS_REPEATED = 0
 NEXT_INTEGRATED_PROBE = BLOCKED_ADAPTER
 ```
@@ -71,3 +73,35 @@ This prerequisite is product runtime implementation work; the current comparison
 - Frozen three-role profile: [system_chassis_nanoclaw_v1.json](../../evals/config/system_chassis_nanoclaw_v1.json)
 - Existing 7/7 hosted evidence and scope: [Gate 2 continuation](system-chassis-gate2-continuation-2026-10-01.md)
 - User-directed provisional selection: [provisional NanoClaw chassis direction](../decisions/provisional-system-chassis-nanoclaw-2026-10-01.md)
+
+
+## Bounded local mobile-adapter spike — 2026-10-01
+
+On the pinned NanoClaw checkout, a disposable local-only spike registered an opt-in `atento-mobile` ChannelAdapter and exercised it through NanoClaw's real webhook server and channel-delivery registry. The spike contains 209 implementation lines, 131 test lines, and one import line in the channel barrel (340 added lines total). It is not committed to NanoClaw or Atento and is not a production integration.
+
+Results:
+
+- Focused Vitest: 2/2 passed. It verified bearer-token rejection, server-fixed owner identity, rejection of client-supplied role/group selection, inbound message routing, and a simulated agent response returned to an open long-poll request.
+- `pnpm run build`: passed.
+- ESLint on the changed files: passed.
+- During initialization, the unrelated CLI adapter logged `listen EPERM` when attempting to bind its Unix socket in this sandbox. The HTTP webhook and mobile adapter still started, and both focused tests passed.
+
+Scope limits:
+
+- The bearer secret was synthetic and shared; no user/account authentication or production credential custody was tested.
+- The “agent” response was a test callback using NanoClaw's real delivery registry, not a model/provider invocation.
+- Pending responses live only in process memory and require an open poll. There is no durable queue, reconnect delivery, mobile session binding, host-restart recovery, or hosted Docker run.
+- Docker and Podman are absent in this executor. The PR's existing hosted 7/7 chassi evidence was not repeated.
+
+Updated classification:
+
+```text
+MOBILE_ADAPTER_SEAM = PROTOTYPE_LOCAL_PASS
+MOBILE_ADAPTER_COST = 209_IMPLEMENTATION_LINES + 131_TEST_LINES + 1_REGISTRATION_LINE
+MOBILE_PRODUCTION_AUTH_AND_SESSION_BINDING = NOT_TESTED
+MOBILE_DURABLE_DELIVERY_AND_RESTART_RECOVERY = NOT_IMPLEMENTED
+ATENTO_PRODUCT_INTEGRATION = NOT_PRESENT
+NANOCLAW_COMPOSITION_GATE = NOT_PASSED
+```
+
+The spike reduces uncertainty about whether NanoClaw's channel seam can carry a basic authenticated HTTP mobile path: it can. It does not qualify NanoClaw for the product. The next decision-relevant step is to move this narrow adapter behind Atento's actual user/session and credential boundary, add durable response delivery, then run the hosted integration test including one process restart.
