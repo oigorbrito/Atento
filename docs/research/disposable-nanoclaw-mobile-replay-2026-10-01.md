@@ -44,11 +44,12 @@ A second identical CI pass occurred at run `36934690875` after a workflow-trigge
 
 ## Interpretation and limits
 
-The first SIGKILL run (`36936155950`) failed to rebind the same port immediately (`EADDRINUSE`) after the killed worker exited. The candidate webhook server calls `listen(port, '0.0.0.0')` without an application-level bind retry. This is not yet classified as a candidate hard failure: one bounded rerun adds a 1-second socket-release delay to distinguish a transient OS release race from a persistent restart issue. The first run's test timeout was also corrected from the Vitest 5-second default to a bounded 20 seconds. Previous graceful-restart PASS does not transfer to abrupt-crash recovery.
+The SIGKILL diagnostic is now complete. Run `36936155950` timed out under Vitest's default 5-second test deadline; its JUnit artifact was inconclusive about the cause. After setting a bounded 20-second test timeout, run `36936315900` exposed the second worker's `EADDRINUSE` on the same port. One bounded rerun with a 1-second socket-release delay, run `36936452447`, reproduced `EADDRINUSE`; its JUnit artifact SHA-256 is `696c5f66cf29e62406081da5fa88ac57b58fe6d21a1bea98b57f8f49f38a79f0`. The exact-pin webhook server binds with `listen(port, '0.0.0.0')`; the inspected `ensureServer` path logs bind errors and clears the singleton, but does not retry the bind. Classify only this immediate same-port crash-restart scenario as `FAIL_WITH_SCOPE`. It does not establish failure of graceful shutdown/restart, all supervisor policies, production Atento, or NanoClaw overall. Previous graceful-restart PASS does not transfer to abrupt-crash recovery.
 
 ```text
 NANOCLAW_WEBHOOK_SERVER_SEAM = EXERCISED
-SSE_LAST_EVENT_ID_REPLAY_AFTER_TEST_WORKER_RESTART = PASS_WITH_SCOPE
+SSE_LAST_EVENT_ID_REPLAY_AFTER_GRACEFUL_TEST_WORKER_RESTART = PASS_WITH_SCOPE
+SSE_LAST_EVENT_ID_REPLAY_AFTER_SIGKILL_SAME_PORT_RESTART_WITH_1S_DELAY = FAIL_WITH_SCOPE
 SYNTHETIC_ROLE_SCOPED_OUTBOX = PASS_WITH_SCOPE
 PRODUCTION_ATENTO_GATEWAY_OR_AUTH = NOT_TESTED
 REAL_MODEL_OR_PROVIDER_CALL = NOT_TESTED
