@@ -189,3 +189,31 @@ ADDITIONAL_TRIGGER = NOT_SENT
 ```
 
 This retry proves only that the sentinel commit exists. It does not establish that GitHub Actions accepted, started, or completed the workflow. Keep the spike result unclassified until a run ID and raw JUnit evidence are obtained.
+
+
+## Segundo probe distinto — marcador delivered após reabertura do SQLite — 2026-10-01
+
+A auditoria do pin encontrou `src/delivery.test.ts` cobrindo sobreposição concorrente dos polls e uma segunda chamada após envio bem-sucedido no mesmo processo. Ela não cobre reabrir o arquivo SQLite entre a marcação `delivered` e uma nova consulta. Para preencher apenas esse gap de componente, foi adicionado um teste descartável separado:
+
+- `tools/system_chassis/nanoclaw-delivery-ledger-reopen.atento.test.ts`
+- `.github/workflows/nanoclaw-delivery-ledger-reopen-spike.yml`
+- sentinela de execução `tools/system_chassis/run-nanoclaw-delivery-ledger-reopen-spike.once`
+
+O caso cria um único `inbound.db` temporário, chama `markDelivered`, fecha e reabre o banco, confirma que `getDeliveredIds` reteve o ID e tenta gravar o mesmo ID outra vez com um platform-message ID diferente. O critério é preservar o primeiro registro e manter uma única linha. Não há adapter de canal, host Atento, provider, efeito externo nem tarefa em paralelo. Isto testa persistência/idempotência do ledger SQLite; não prova que o loop de entrega de produção não duplica chamadas ao canal após restart.
+
+A cobertura upstream existente foi lida, não rerodada. O novo workflow fixa o mesmo pin e contém apenas esse caso, em execução sequencial.
+
+### Estado da execução
+
+```text
+SECOND_SPIKE_CASE = IMPLEMENTED
+SENTINEL_COMMIT = 8934dd5664041c79c7dc9536cfa9a3b84ec441c3
+COMBINED_COMMIT_STATUS = EMPTY_AT_20S_AND_45S
+PUSH_WORKFLOW_RUN_LISTING = UNAVAILABLE
+RUN_ID / JOB_LOG / JUNIT_ARTIFACT = NOT_OBTAINED
+SECOND_SPIKE_RESULT = NOT_VERIFIED
+PRODUCT_HOST_ADAPTER = ABSENT
+PRODUCT_GATE = BLOCKED_ADAPTER
+```
+
+A ausência de status não distingue workflow não disparada de execução ainda invisível ao connector. Não declarar PASS/FAIL, não rerodar o caso e não alterar a PR #58 sem evidência de execução ou instrução nova.
