@@ -142,6 +142,8 @@ describe('NanoClaw mobile SSE replay — disposable feasibility probe', () => {
 
     for (const role of roles) db.prepare('INSERT INTO outbox (role, payload) VALUES (?, ?)').run(role.name, `${role.name}-reply-2`);
     await crashWorker();
+    // Give the OS a bounded socket-release window before the supervisor-like restart.
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     await waitReady(startWorker());
 
     for (const role of roles) {
