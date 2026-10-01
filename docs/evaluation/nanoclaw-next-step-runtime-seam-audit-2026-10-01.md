@@ -14,6 +14,28 @@ Can the next bounded NanoClaw follow-up directly test Atento's real provider/gat
 - Its state recovery check stops candidate-managed test containers and calls the DockerSessionDriver prepare/start path. It does not terminate/restart an Atento host application process.
 - The scheduled-task assertion validates task creation, ownership, scoped reads, and denials. It does not fire the task, retry it, or recover it after host restart.
 
+## NanoClaw mobile-client seam — exact pin source review
+
+A follow-up read-only inspection of NanoClaw `4c1eabd3ddd74cc3d71b1871da857391a9411c8d` found:
+
+- `src/channels/adapter.ts` defines a host-side `ChannelAdapter` contract for inbound messages, outbound delivery, setup/teardown, and connection status.
+- `src/webhook-server.ts` routes installed Chat SDK adapters and separately registered raw webhooks.
+- `docs/api-details.md` describes adding channels through the adapter contract and installed channel contributions.
+
+These are extensibility seams, not a ready mobile-app API. The inspected pin does not expose a generic authenticated mobile chat endpoint, account/session binding contract, or mobile response-stream contract. A mobile client therefore needs a new Atento-owned adapter/API that authenticates the user, fixes the NAIA role/session server-side, submits inbound messages, and returns or streams outbound replies. Client-provided role or agent-group identifiers must not select authority.
+
+Classification:
+
+```text
+NANOCLAW_CHANNEL_EXTENSION_SEAM = PRESENT_STATIC
+GENERIC_MOBILE_CHAT_API_AT_PIN = NOT_FOUND
+MOBILE_AUTH_AND_NAIA_SESSION_BINDING = NOT_IMPLEMENTED_IN_ATENTO
+MOBILE_ADAPTER_COST = NOT_MEASURED
+```
+
+This does not establish a structural failure: NanoClaw explicitly supports channel adapters. It does establish that app connectivity is new adapter work, not an existing capability that can be counted as zero-touch. The adapter must be implemented before a mobile-client integration test can exercise the real path.
+
+The local experiment executor has Node.js 24 but no Docker or Podman binary, and the private Atento repository is not available as a local checkout in this workspace. No new test was run. This is not a NanoClaw test failure; the decision-relevant probe remains `BLOCKED_ADAPTER` until the Atento runtime seam exists. The previously passing 7/7 assertions were not repeated.
 ## Decision
 
 ```text
