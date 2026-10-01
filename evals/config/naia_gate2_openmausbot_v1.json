@@ -4,8 +4,8 @@
   "upstream_repo": "milind-soni/OpenMausBot",
   "upstream_sha": "6005b1bf5883a7ffa639c07e729321f89b9532e1",
   "harness_version": "NAIA-GATE2-COMPOSITION-V1",
-  "composition_profile_hash": "d78d6f628f7bd48f645a835ba01cbb394f63864696d2a2dab60abdb5bd12d8ac",
-  "policy_hash": "46e5e004177201410ddd56903de3e6d78bfeb3aa14d114c25345967e7fa33579",
+  "composition_profile_hash": "81998862f74e523053b12d503374e8fd84164bda43059dfd99d3efa4321b8120",
+  "policy_hash": "e4aed8922faf7175e41aedb9d9de2e86b32c84ebab4f34c6b3d625c446463c7c",
   "execution_state": "FROZEN_NOT_EXECUTED",
   "topology": {
     "naia": {
@@ -36,6 +36,10 @@
       "allowed_path": "explicit_atento_handoff_broker_only"
     }
   },
+  "policy": {
+    "background_authority_rule": "background_or_routine_authority_must_not_exceed_interactive_role_authority",
+    "fail_closed_rule": "authority_control_failure_must_deny"
+  },
   "required_assertions": [
     "ISO-1",
     "ISO-2",
@@ -44,7 +48,5 @@
     "ISO-5",
     "ISO-6",
     "SAME-OWNER-ROLE-BOUNDARY"
-  ],
-  "background_authority_rule": "background_or_routine_authority_must_not_exceed_interactive_role_authority",
-  "fail_closed_rule": "authority_control_failure_must_deny"
+  ]
 }
