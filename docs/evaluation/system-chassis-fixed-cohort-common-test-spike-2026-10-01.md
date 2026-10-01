@@ -2,7 +2,7 @@
 
 ## Request and decision boundary
 
-This spike applies the frozen system-composition protocol to every candidate in its 11-member cohort that has not been technically eliminated. The source record says no candidate was newly eliminated by the system-scope reset. OpenClaw's exclusion from the mobile-focused view is a product-fit scope choice, not removal from this fixed system cohort. AI Butler's security block, QwenPaw's hold, and missing pins/evidence are gates or blockers, not technical eliminations.
+This spike applies the frozen system-composition protocol to every candidate in its 11-member system cohort that has not been technically eliminated. SelfAgent was already stopped at the earlier NAIA Gate 1 as a complete NAIA base at its frozen pin, so it is excluded from this remaining candidate test queue; that stop does not eliminate SelfAgent as a donor or component in a different composition. SelfAgent is not one of the fixed 11 system candidates. OpenClaw remains in the system cohort: its recorded exclusion is only from the mobile-focused view, as a product-fit scope choice. AI Butler's security block, QwenPaw's hold, and missing pins/evidence are gates or blockers, not technical eliminations.
 
 The common profile is the same eight negative assertions for every concrete Atento composition: `SYS-CHAT-01`, `SYS-MEM-01`, `SYS-TOOL-01`, `SYS-CRED-01`, `SYS-HANDOFF-01`, `SYS-HANDOFF-02`, `SYS-BG-01`, and `SYS-STATE-01`, as defined in `atento-system-architecture-chassis-rescreen-2026-09-30.md`. The frozen sequence also measures total adaptation and ongoing maintenance cost first. Reuse applies only when exact pin, setup, property, outcome, and provenance match.
 
@@ -10,7 +10,7 @@ The common profile is the same eight negative assertions for every concrete Aten
 
 ```text
 FIXED_COHORT_SIZE = 11
-TECHNICALLY_ELIMINATED_FROM_THIS_COHORT = 0
+PREVIOUS_NAIA_BASE_ELIMINATION_EXCLUDED = SelfAgent\nTECHNICALLY_ELIMINATED_FROM_FIXED_SYSTEM_COHORT = 0
 NEW_COMMON_PROFILE_RUNS = 0
 EQUIVALENT_UPSTREAM_TESTS_OR_BENCHMARKS_REPEATED = 0
 LOCAL_ATENTO_PRODUCT_RUNTIME = ABSENT
@@ -21,7 +21,7 @@ COMPARABLE_SYSTEM_COST_MEASUREMENTS = 0
 
 This is a harness/runtime blocker, not a candidate test failure. The workspace available for this spike is not an Atento checkout, and the frozen protocol records no candidate-neutral runner. Existing candidate probes do not launch a complete Atento host/provider composition. Therefore none of the eight common assertions can be truthfully reported as newly executed across this cohort. No candidate was silently dropped, and no previous pass was promoted to a whole-system pass.
 
-## Fixed cohort and reusable evidence
+## Prior elimination excluded from this run\n\n- **SelfAgent:** excluded because the earlier Gate-1 record stopped it as a complete NAIA base at its frozen pin. This is the prior elimination the current test request must honor. It remains possible to reuse it as donor/component evidence in another composition; no such composition was tested here.\n- **OpenClaw:** retained in the fixed full-system cohort. Its removal from the active mobile-focused view is not a technical elimination from the system comparison.\n\n## Fixed cohort and reusable evidence
 
 The entries below preserve the frozen order. Evidence is reused as documentary or exact-pin evidence only; it does not imply that the common eight-assertion test ran.
 
