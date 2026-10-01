@@ -112,6 +112,10 @@ The remaining handoff work is to bind this adapter into the Atento host runtime,
 
 NanoClaw's existing upstream CI run [36624644303](https://github.com/nanocoai/nanoclaw/actions/runs/36624644303) is for the exact frozen commit `4c1eabd3ddd74cc3d71b1871da857391a9411c8d` and completed successfully. Its full unit job recorded 513 passed, 3 skipped, and 0 failed across 58 files. The same run explicitly passed `src/cli/resources/tasks.test.ts` (31 tests), `src/host-sweep.test.ts` (21 tests), `src/mailbox/sqlite/tasks.test.ts` (13 tests), and `src/modules/scheduling/recurrence.test.ts` (9 tests). Reuse these as exact-pin task CRUD, recurrence/backoff, and host-sweep/recovery evidence; they do not establish three-role Atento task execution, recipient/provider behavior, or recovery across a full Atento process restart.
 
+
+
+The same exact-pin upstream CI also includes the agent-runner pre-task-script suite at `container/agent-runner/src/scheduling/task-script.test.ts` (11 test cases in the pinned source). It checks deliberate `wakeAgent=false`, `wakeAgent=true` data enrichment, error acknowledgements, timeout handling, and killing script descendants. This strengthens component-level execution and failure evidence for SYS-BG-01; the tests run against the runner module and do not execute a scheduled occurrence through each of the three Atento role sessions or simulate a full host restart.
+
 ## Evidence
 
 - [Top 10 first-sieve queue](system-chassis-top10-first-sieve-2026-09-30.md)
