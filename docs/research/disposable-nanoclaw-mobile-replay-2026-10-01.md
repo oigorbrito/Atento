@@ -44,7 +44,7 @@ A second identical CI pass occurred at run `36934690875` after a workflow-trigge
 
 ## Interpretation and limits
 
-The SIGKILL revision is not yet verified until its GitHub Actions run completes. The previous graceful restart PASS does not transfer to this stronger condition.
+The first SIGKILL run (`36936155950`) failed to rebind the same port immediately (`EADDRINUSE`) after the killed worker exited. The candidate webhook server calls `listen(port, '0.0.0.0')` without an application-level bind retry. This is not yet classified as a candidate hard failure: one bounded rerun adds a 1-second socket-release delay to distinguish a transient OS release race from a persistent restart issue. The first run's test timeout was also corrected from the Vitest 5-second default to a bounded 20 seconds. Previous graceful-restart PASS does not transfer to abrupt-crash recovery.
 
 ```text
 NANOCLAW_WEBHOOK_SERVER_SEAM = EXERCISED
