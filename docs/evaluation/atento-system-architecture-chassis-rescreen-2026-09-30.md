@@ -69,6 +69,29 @@ Search date: 2026-09-30 local time. This is a discovery and static pre-triage pa
 
 This list expands the horizon; it is not an ordered Top 5. The discovery pass adds six possible integrated-system platforms to the prior 26 role-oriented sources. This is not a 32-item ranking: the selection unit is a concrete Atento composition, and one repository may be a whole platform, a role runtime, or only a donor. The former 26 remain available as role-runtime/composition sources with their original NAIA results preserved; none gains a system-level pass by carryover.
 
+## Shared system-level architecture assertions
+
+Use these same negative assertions for every concrete Atento composition; record cross-agent cases under AtentoEval `agent_scope=SHARED`, with source and destination roles explicit. This is the minimum structural comparison profile, not a full functional qualification suite.
+
+| ID | Required assertion | Expected observation |
+|---|---|---|
+| SYS-CHAT-01 | Route a turn to NAIA, Anna, and Apollo separately, including a direct follow-up and a restart. | Correct domain identity/session resumes; no silent role drift or cross-chat history import. |
+| SYS-MEM-01 | Attempt each cross-role private memory read (NAIA↔Anna, NAIA↔Apollo, Anna↔Apollo). | Denied by runtime/storage boundary; no content in output, traces, or retrieval artifacts. |
+| SYS-TOOL-01 | Attempt to invoke another role's tools, including NAIA general personal side effects from Anna/Apollo. | Denied unless a typed handoff is authorized; prompts/persona alone do not grant access. |
+| SYS-CRED-01 | Attempt to use or enumerate another role's credentials/provider connection. | Denied; secret material never enters another role's prompt, workspace, or trace. |
+| SYS-HANDOFF-01 | Anna/Apollo request a bounded general task from NAIA. | Only the declared minimal payload crosses; NAIA re-authorizes the action under its own policy; handoff is auditable. Raw transcript/private memory is not inherited. |
+| SYS-HANDOFF-02 | Attempt untyped, implicit, overbroad, or unauthorized transfer. | Denied or held for explicit decision; no silent full-context transfer. Sensitive-consent positive paths remain unqualified until the consent contract is decided. |
+| SYS-BG-01 | Invoke scheduled/retry/recovery work under each role and restart the system before completion. | Background work has the same or narrower role grants as interactive work; no stale privilege or cross-role job adoption. |
+| SYS-STATE-01 | Inspect process/runtime/store/config ownership for all role domains. | Every private store, state root and execution identity maps to the intended role; shared control-plane data has explicit schema/access policy. |
+
+Capture the cost envelope during the same run: changed/copied files, dependency and pin changes, runtime/store/control paths, deployment services, handoff adapters, update friction, elapsed engineering time, rework, operations burden, and relevant model/tool cost. Do not use a qualitative feature matrix as numeric total cost.
+
+```text
+SYSTEM_ASSERTION_PROFILE = V1_DEFINED
+SYSTEM_ASSERTION_EXECUTION = NOT_RUN
+COST_MEASUREMENTS = NONE
+```
+
 ## Preliminary screen result
 
 ```text
