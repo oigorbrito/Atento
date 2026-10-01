@@ -27,6 +27,7 @@ Repository README/docs were inspected; no candidate was cloned or executed in th
 
 ## Canonical records
 
+- First-stage architecture + chassis measurement-priority Top 10: `docs/evaluation/system-chassis-top10-first-sieve-2026-09-30.md` (ordered evaluation queue, not a cost ranking).
 - Benchmark cross-check for total system cost: `docs/evaluation/system-chassis-benchmark-crosscheck-2026-09-30.md` (documentary review complete; no comparable three-role cost run exists).
 - System-level rescreen and initial GitHub discovery: `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`
 - Product composition ADR and current boundaries: `docs/adr/ADR-001-naya-product-composition.md`
