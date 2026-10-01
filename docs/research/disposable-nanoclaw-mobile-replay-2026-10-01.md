@@ -162,3 +162,6 @@ HOSTED_SPIKE_RUN = NOT_YET_VERIFIED
 ```
 
 If the disposable workflow run cannot be read from the connected GitHub interface, preserve that as an observability limitation; do not infer PASS from a commit or workflow dispatch.
+
+
+The workflow trigger was narrowed to `workflow_dispatch` plus the one-shot sentinel path `tools/system_chassis/run-nanoclaw-task-restart-spike.once`; the sentinel has not been created. The connected GitHub interface available in this session can write branch files and inspect PR-triggered runs, but exposes neither workflow dispatch nor a list of push-triggered runs. The private Actions page is not readable in the current browser session. Therefore no hosted result is claimed, and no further trigger was sent. The spike is implemented but execution remains unverified.
