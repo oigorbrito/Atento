@@ -12,7 +12,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { realCli } from './drivers/cli.js';
 import { DockerSessionDriver } from './drivers/docker-driver.js';
 import type { MountPolicy, SessionHandle, SessionSpec } from './drivers/types.js';
-import { closeDb, createAgentGroup, createMessagingGroup, initTestDb } from './db/index.js';
+import { closeDb, createAgentGroup, createMessagingGroup, initTestDb, runMigrations } from './db/index.js';
 import { createSession, findSessionForAgent, getSessionsByAgentGroup } from './db/sessions.js';
 import type { Session } from './types.js';
 
@@ -110,6 +110,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
 
   it('resolves active chat sessions only inside the owning agent group', async () => {
     const db = await initTestDb();
+    await runMigrations(db);
     try {
       const createdAt = new Date().toISOString();
       const sessionIds = new Map<Role, string>();
