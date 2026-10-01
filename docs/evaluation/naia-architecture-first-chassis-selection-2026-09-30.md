@@ -17,6 +17,8 @@ Current authority:
 
 ### First selection parameter: lowest total maintenance cost
 
+Architecture and chassis are one evaluation object in this decision: architecture is the change structure embodied by the candidate's foundational system. Do not score them as competing dimensions. Measure their combined adaptation and ongoing-maintenance envelope.
+
 The first selection parameter is **the candidate chassis with the lowest defensible total cost of adaptation and ongoing maintenance for Atento's required properties**. The target is not a perfect chassis. No candidate is presumed to satisfy every requirement out of the box, and “most complete” or “most elegant” is not the objective.
 
 Compare the work needed to adapt and keep each candidate operating: cross-cutting changes, integration and dependency burden, replacement boundaries, operational complexity, and expected maintenance. Use observed evidence where available; mark unmeasured cost as an estimate or unknown rather than treating it as fact. A small core or attractive architecture alone does not prove lower total cost.
