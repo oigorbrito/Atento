@@ -1,0 +1,49 @@
+{
+  "version": "NAIA-GATE2-SUNA-COMPOSITION-V1",
+  "candidate": "Suna",
+  "upstream_repo": "kortix-ai/suna",
+  "upstream_sha": "270c4a57c8ae5ffb85eff6d5b9700c5713612f28",
+  "harness_version": "NAIA-GATE2-COMPOSITION-V1",
+  "composition_profile_hash": "a3eacedf6db39103805e5033ad1586fd54eacd176c5d75926d73e7bb79b536a4",
+  "policy_hash": "f927e119bcf47180461d590450fd72f1e22202435e833782fa7360ce9f1cfe1b",
+  "execution_state": "FROZEN_NOT_EXECUTED",
+  "topology": {
+    "naia": {
+      "project": "atento-naia",
+      "repository": "independent",
+      "grants": "independent",
+      "memory": "project_local",
+      "credentials": "project_local"
+    },
+    "anna": {
+      "project": "atento-anna",
+      "repository": "independent",
+      "grants": "independent",
+      "memory": "project_local",
+      "credentials": "project_local"
+    },
+    "cross_role": {
+      "shared_project": false,
+      "shared_repository": false,
+      "shared_grants": false,
+      "shared_project_brain": false,
+      "allowed_path": "explicit_atento_handoff_broker_only"
+    }
+  },
+  "policy": {
+    "default_mode": "risk",
+    "v2_omitted_grants": "none",
+    "consequential_tool_rule": "explicit_block_or_approval_required",
+    "background_rule": "background_grants_subset_of_interactive",
+    "control_failure_rule": "fail_closed"
+  },
+  "required_assertions": [
+    "ISO-1",
+    "ISO-2",
+    "ISO-3",
+    "ISO-4",
+    "ISO-5",
+    "ISO-6",
+    "CONNECTOR-POLICY"
+  ]
+}
