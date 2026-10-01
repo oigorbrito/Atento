@@ -43,6 +43,7 @@ function makeSpec(role: Role, stateRoot: string): SessionSpec {
     hardening: 'standard',
     resources: { pidsLimit: 256 },
     runtimeTier: 'container',
+    runAs: { uid: process.getuid(), gid: process.getgid() },
     stopGraceSeconds: 1,
   };
 }
@@ -69,7 +70,6 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
       const stateRoot = join(policy.dataRoot, 'v2-sessions', role);
       mkdirSync(stateRoot, { recursive: true });
       writeFileSync(join(stateRoot, 'effect.txt'), `inert-effect:${role}\n`, { mode: 0o600 });
-      execFileSync('chown', ['-R', '1000:1000', stateRoot]);
       fixtures.set(role, stateRoot);
     }
     const driver = new DockerSessionDriver({
