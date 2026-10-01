@@ -54,3 +54,13 @@ A execução comparativa depende de executor capaz de materializar os pins exato
 - `docs/evaluation/naia-gate2-composition-execution-block-2026-09-30.md`
 - `docs/evaluation/nanoclaw-change-surface-audit-2026-09-29.md`
 - `docs/handoff-2026-09-30-naia-chassis-first-selection.md`
+
+
+## Scope clarification — product-wide chassis reset (2026-09-30)
+
+This Top 5 applies only to **NAIA's role-specific chassis measurement**. It is not the Top 5 for the complete Atento product, does not cover Anna/Apollo integration, and does not establish a system-level candidate ranking. The complete-product comparison is reopened and recorded in `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`.
+
+```text
+NAIA_ROLE_TOP5 = [OpenClaw, AI Butler, NanoClaw, QwenPaw, Letta Code]
+ATENTO_SYSTEM_TOP5 = NOT_SET
+```
