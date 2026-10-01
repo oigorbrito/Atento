@@ -1,0 +1,79 @@
+{
+  "candidate": "AI Butler",
+  "harness_version": "NAIA-GATE2-COMPOSITION-V1",
+  "upstream_repo": "LumabyteCo/aibutler",
+  "upstream_sha": "c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c",
+  "state": "PASS_WITH_SCOPE",
+  "composition_profile": {
+    "memory": {
+      "naia_bank": "naia",
+      "anna_bank": "anna",
+      "cross_bank_access": "deny"
+    },
+    "credentials": {
+      "naia_vault": "independent",
+      "anna_vault": "independent",
+      "cross_vault_access": "deny"
+    },
+    "tools_channels": {
+      "naia_capability_set": "role_scoped",
+      "anna_capability_set": "role_scoped",
+      "agent_delegate": "not_granted"
+    },
+    "cross_role": {
+      "native_delegation": false,
+      "allowed_path": "explicit_atento_handoff_broker_only"
+    }
+  },
+  "composition_profile_hash": "d79deed3c708bbb5b8136c526ff1bc7436a8c5838c5d50025b718d2c32f1f579",
+  "policy": {
+    "memory_authority": "bank_scoped",
+    "credential_authority": "separate_vaults",
+    "tool_channel_authority": "capability_scoped",
+    "silent_role_invocation": "deny",
+    "broker_adapter": "tools/naia_gate2/broker_runtime_adapter.py",
+    "broker_forbidden_authority_fields": "reject",
+    "control_failure_rule": "fail_closed"
+  },
+  "policy_hash": "f4697f0db81984e54be06b0b33b91c70ca565155feced3b4762e511504a6be16",
+  "assertions": [
+    {
+      "id": "ISO-1",
+      "state": "PASS",
+      "evidence_kind": "runtime_candidate",
+      "detail": "AI Butler bank-scoped memory cross-read denied in exact-pin injected runtime test"
+    },
+    {
+      "id": "ISO-2",
+      "state": "PASS",
+      "evidence_kind": "runtime_candidate",
+      "detail": "AI Butler bank-scoped ID-addressed cross-memory mutation denied"
+    },
+    {
+      "id": "ISO-3",
+      "state": "PASS",
+      "evidence_kind": "runtime_candidate",
+      "detail": "independent AI Butler vault cannot retrieve opposite-role credential"
+    },
+    {
+      "id": "ISO-4",
+      "state": "PASS",
+      "evidence_kind": "runtime_candidate",
+      "detail": "role capability set denies opposite-role channel"
+    },
+    {
+      "id": "ISO-5",
+      "state": "PASS",
+      "evidence_kind": "runtime_candidate",
+      "detail": "agent.delegate is absent from both role capability sets"
+    },
+    {
+      "id": "ISO-6",
+      "state": "PASS",
+      "evidence_kind": "runtime_broker",
+      "detail": "injected composition called the Atento ExplicitHandoffBroker runtime adapter; authority-bearing field was rejected",
+      "broker_endpoint_or_adapter": "tools/naia_gate2/broker_runtime_adapter.py"
+    }
+  ],
+  "add_ons": []
+}
