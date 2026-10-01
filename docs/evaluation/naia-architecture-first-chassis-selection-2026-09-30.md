@@ -288,3 +288,23 @@ The selection process should therefore minimize expected structural change while
 > **Primeiro selecione pelo menor custo total defensável de adaptação e manutenção. Use a análise do chassi e das propriedades estruturais para estimar esse custo; não presuma um chassi perfeito nem confunda arquitetura elegante com manutenção barata.**
 
 This is the governing screening principle for the next NAIA candidate reduction.
+
+## Reconciliation — first metric and top-five cohort (2026-10-01)
+
+This clarification supersedes any earlier wording in this policy that could make the structural screen or an architecture-heavy score appear to be the first selection metric.
+
+```text
+FIRST_SELECTION_METRIC = COMBINED_ARCHITECTURE_CHASSIS_TOTAL_ADAPTATION_AND_MAINTENANCE_COST
+TOP5_PRIORITY_COHORT = [OpenClaw, AI Butler, NanoClaw, QwenPaw, Letta Code]
+TOP5_COST_RANKING = NOT_ESTABLISHED
+FULL_COMPARABLE_COST_MEASUREMENTS = 0/26
+OBSERVED_COST_WINNER = NONE
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+Architecture and chassis are one candidate-level evaluation object. Estimate or measure their combined cost to adapt the candidate to the Atento contract and maintain it over time. Structural replacement burden, integration/dependency work, upstream-update friction, deployment/topology and operational upkeep are components of that metric; structural screening remains a hard-gate/risk analysis, not a competing first metric. Keep authority, isolation, persistence and safety requirements as hard gates.
+
+The five named candidates are prioritized for the next comparable cost measurement based on current static signals and NanoClaw's partial static touchpoint counts. They are not claimed to be the five cheapest, are not ordered by cost, and are not a qualified shortlist. The other survivors are not eliminated by this prioritization. The detailed rationale and uncertainty are in `docs/evaluation/naia-architecture-chassis-top5-prioritization-2026-10-01.md`.
+
+The Top 5 cohort does not replace the blocked Gate-2 execution queue. AI Butler remains the next residual composition target under that queue; execution is still blocked before checkout by executor infrastructure. When execution is restored, collect comparable maintenance-cost observations during the same frozen composition protocol, without treating a blocked run as candidate failure.
