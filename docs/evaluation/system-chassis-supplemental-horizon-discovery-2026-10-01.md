@@ -59,7 +59,7 @@ HybridClaw, Hivekeep, OpenVole and OpenEnsemble remain documented alternates, no
 
 ## Existing benchmark coverage
 
-A bounded search did not identify a common independent chassis benchmark for the screened projects. Moltis has the separate Harness-Bench result documented above; OpenFang has the Agent Reality Index result. Neither directly measures the Atento role-boundary requirement. HybridClaw documents local evaluation tooling; that is not an independent published comparative score. OpenFang has the separate Agent Reality Index result noted above, which cannot be combined with Atento candidate scores or used as evidence of isolation.
+A bounded search did not identify a common independent chassis benchmark for the screened projects. Moltis has the separate Harness-Bench result documented above; OpenFang has the Agent Reality Index result. Neither directly measures the Atento role-boundary requirement. HybridClaw documents local evaluation tooling; that is not an independent published comparative score.
 
 Do not repeat an external benchmark for a matching release/configuration if one is later found. Do not transfer a model score or a different runtime release to these pins. Any external capability score remains separate from adaptation cost, role isolation, credential custody, handoff, and recovery.
 
