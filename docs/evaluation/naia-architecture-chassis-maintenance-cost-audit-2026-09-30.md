@@ -129,3 +129,21 @@ Therefore there is **no defensible measured winner on total maintenance cost yet
 - `docs/evaluation/naia-residual-only-probe-ledger-2026-09-30.md`
 - `docs/evaluation/nanoclaw-change-surface-audit-2026-09-29.md`
 - `docs/evaluation/naia-gate2-empirical-execution-infrastructure-block-2026-09-30.md`
+
+## Top-five prioritization update (2026-10-01)
+
+The first selection metric remains combined architecture/chassis total adaptation and ongoing-maintenance cost. The prioritization record is:
+
+`docs/evaluation/naia-architecture-chassis-top5-prioritization-2026-10-01.md`
+
+```text
+TOP5 = [OpenClaw, AI Butler, NanoClaw, QwenPaw, Letta Code]
+TOP5_ORDERING = NOT_ESTABLISHED
+TOP5_BASIS = STATIC_STRUCTURAL_SIGNALS + NanoClaw_PARTIAL_STATIC_MEASUREMENT
+FULL_COMPARABLE_TOTAL_COST_MEASUREMENTS = 0/26
+OBSERVED_TOTAL_COST_WINNER = NONE
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+This is a prioritized cohort for the next comparable measurement, not a finding that these are already the cheapest or a qualified shortlist. The earlier Gate-2 execution queue still starts with AI Butler when exact-pin execution infrastructure is available. Engram remains a component/donor candidate rather than a complete-chassis comparison in this cohort. SelfAgent remains stopped as a complete base at its frozen pin. No other survivor is eliminated by this prioritization.
