@@ -46,6 +46,17 @@ This is a documentary reuse of results already present in Atento. No score was r
 
 **Metric note:** preserve each score and pass/fail exactly as its source records it. Do not convert CFS, mutation counts, source-file counts, behavioral benchmark scores, and model dollars into one aggregate “chassis note.” The Atento harness explicitly keeps these axes separate; any final decision must show the profile and its hard-boundary results.
 
+## Sequential screening and common denominator
+
+The decision proceeds in ordered stages rather than asking one score to represent every concern:
+
+1. **Architecture + chassis stage:** assess whether each complete Atento composition can provide the required role boundaries and what it takes to adapt and maintain that structure. Keep CFS/change-surface observations separate from measured engineering and lifecycle cost.
+2. **Subsequent metric stages:** apply one declared metric family at a time to the candidates that remain comparable, such as functional quality, safety, isolation assertions, reliability/recovery, latency, and operational cost.
+3. **Common denominator:** retain the set of candidates that have the same declared scope/profile and comparable evidence for every metric required at that stage, while passing the non-negotiable gates. Report unresolved or blocked candidates separately; missing data is not a failure.
+4. **Decision:** compare the survivors on the requested objective using the stage-specific evidence. Do not average unlike benchmark notes or use an overall score to hide a failed hard boundary.
+
+Thus the current reused benchmark notes inform only the first architecture/chassis sieve where their scope transfers. They do not yet create a three-role denominator: the evidence is drawn from different candidate populations, profiles, and protocols.
+
 ## Defensible conclusion
 
 The benchmark evidence supports being proactive about **testing alternatives** and measuring a cost-quality frontier. It does not prove that a wider GitHub search itself reduces cost. Discovery may find a closer-fitting integrated platform, while the search, qualification, integration, deployment, and update burden may offset that gain.
