@@ -4,7 +4,7 @@
   "upstream_repo": "nanocoai/nanoclaw",
   "upstream_sha": "4c1eabd3ddd74cc3d71b1871da857391a9411c8d",
   "scope": "ATENTO_NAIA_ANNA_APOLLO_SYSTEM",
-  "execution_state": "FROZEN_NOT_EXECUTED",
+  "execution_state": "PARTIAL_RUN_WITH_SCOPE",
   "profile_hash": "c6e815289488daace646e7d9123b2638c6f245eaf4ef4dff357d6b3c50c1d289",
   "policy_hash": "02de0f5540c1c638c0553dc8261cfd0e53ffb4727a0636a50a4653d2e15a7132",
   "source_naia_profile": "evals/config/naia_gate2_nanoclaw_v1.json",
