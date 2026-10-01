@@ -514,3 +514,22 @@ Do not treat the existing synthetic `ISO6_explicit_broker_positive_control` help
 `docs/evaluation/naia-architecture-chassis-maintenance-cost-audit-2026-09-30.md`
 
 Current audit status: 26/26 structurally screened; 0/26 full comparable total-cost measurements; NanoClaw has the only partial static touchpoint count. No total-cost winner is established.
+
+
+
+## First-metric top-five cohort (2026-10-01)
+
+Prioritization record:
+`docs/evaluation/naia-architecture-chassis-top5-prioritization-2026-10-01.md`
+
+```text
+TOP5 = [OpenClaw, AI Butler, NanoClaw, QwenPaw, Letta Code]
+TOP5_ORDERING = NOT_ESTABLISHED
+TOP5_IS_QUALIFIED_SHORTLIST = NO
+FULL_COMPARABLE_TOTAL_COST_MEASUREMENTS = 0/26
+OBSERVED_TOTAL_COST_WINNER = NONE
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+Treat the five as a prioritized cohort for comparable architecture/chassis cost measurement, not as a measured cheapest-five ranking. Do not alter the existing Gate-2 execution queue: AI Butler remains first when exact-pin execution infrastructure is available. Engram remains a component/donor unless separately admitted to a complete-chassis comparison; SelfAgent remains stopped as a complete base at its frozen pin.
