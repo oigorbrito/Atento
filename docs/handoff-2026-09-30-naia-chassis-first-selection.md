@@ -27,7 +27,7 @@ Latest architecture-selection policy:
 
 Latest policy clarification commit:
 
-`61ad369ffa7c7e10e81cb6e2934fad1a5e77a262`
+`d3f3eaff6b6971ef6213764b0598870ccad2c79e`
 
 ## Governing rule
 
