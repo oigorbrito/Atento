@@ -27,6 +27,16 @@ WINNER = NONE
 | 9 | Clawix | Exact pin recorded. README claims per-agent Docker containers, scoped memory, RBAC, approvals, persistent workspaces and audit; MIT badge was not independently confirmed by the LICENSE path at the pin. | Container isolation claim is relevant, but implementation and terms evidence remain incomplete. CFS, Atento tests, change surface and total cost: ND. | Verify code/tests, private versus group/org memory, and Docker/warm-pool/update burden. |
 | 10 | Memoh | README-level claims cover per-agent workspace/computer/filesystem/browser/network/memory and separate or all-in-one deployments. Exact commit is not frozen. | Potentially broad role runtime surface, currently discovery-only. CFS, Atento tests, change surface and total cost: ND. | Freeze exact commit before it can enter a pinned comparison; then inspect authority boundaries and deployment surface. |
 
+## Applied first-sieve status from existing Atento evidence
+
+| Candidate group | First-sieve disposition | Why |
+|---|---|---|
+| NanoClaw, AI Butler, OpenClaw, QwenPaw | ADVANCE_WITH_SCOPE for their prior NAIA chassis screen; not a system-level pass. | Existing exact-pin structural and/or runtime evidence can be reused only for the inspected mechanisms. Three-role composition cost and all system assertions remain open. |
+| MindRoom, Bob Labs, Ontheia, OpenAkita, Clawix | DISCOVERY_ONLY; eligible for exact-pin architecture/chassis screening. | The Atento record contains repository/pin claims and unresolved questions, but no Atento CFS, change-surface measurement, or composition test. |
+| Memoh | PIN_REQUIRED before first-sieve qualification. | The inspected README is not tied to a frozen commit. |
+
+Later-gate evidence must remain visible without changing the first-sieve label: AI Butler's six common Gate-2 assertions passed with scope, but its frozen pin has a current scheduled security failure; QwenPaw has an unresolved fail-open sandbox fallback path; OpenClaw requires separate runtime/Gateway boundaries for strict NAIA/Anna separation. NanoClaw's upstream gates and isolation mechanisms pass with scope, but the Atento cross-role composition is not run.
+
 ## Existing numeric notes outside the ranked ten
 
 | Source result | Existing metric | Transfer limit |
