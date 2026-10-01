@@ -59,6 +59,17 @@ function dockerExecHandle(handle: SessionHandle, command: string[]): string {
   return execFileSync(spec.bin, spec.argsPlain, { encoding: 'utf8' });
 }
 
+async function waitForRunning(handle: SessionHandle): Promise<void> {
+  const deadline = Date.now() + 15_000;
+  while (Date.now() < deadline) {
+    const status = await handle.status();
+    if (status.phase === 'running') return;
+    if (status.phase === 'failed') throw new Error(`container failed before running: ${JSON.stringify(status.failure)}`);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  throw new Error(`container did not reach running state: ${handle.name}`);
+}
+
 function dockerExec(role: Role, command: string[]): string {
   const handle = handles.get(role);
   if (!handle) throw new Error(`missing handle for ${role}`);
@@ -204,7 +215,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
       const handle = await driver.prepare(spec);
       credentialFixtures.set(role, { spec, handle, materialPath });
       await handle.start();
-      expect(await handle.status()).toEqual({ phase: 'running' });
+      await waitForRunning(handle);
 
       const auxName = auxiliaryContainerName(spec, 'credential-holder');
       const visibleToHolder = execFileSync(
