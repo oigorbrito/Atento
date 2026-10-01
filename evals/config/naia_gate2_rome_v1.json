@@ -1,0 +1,56 @@
+{
+  "version": "NAIA-GATE2-ROME-COMPOSITION-V1",
+  "candidate": "Rome",
+  "upstream_repo": "rome-os/rome",
+  "upstream_sha": "ef523c4659149e2711744deb04ec42c3be339907",
+  "harness_version": "NAIA-GATE2-COMPOSITION-V1",
+  "composition_profile_hash": "68c71e0cd2b62ffd091d7db3455b4c05ee30e0fd211a3971de78c6d76747bde8",
+  "policy_hash": "c3405841927529c8df624134afea123f0ca2ce7de44dd72e220d5a4b5002c96b",
+  "execution_state": "FROZEN_NOT_EXECUTED",
+  "topology": {
+    "naia": {
+      "rome_profile": "atento-naia",
+      "process": "independent",
+      "database": "profile_local",
+      "memory": "profile_local",
+      "apps": "profile_local",
+      "auth_state": "profile_local",
+      "channels": "profile_local"
+    },
+    "anna": {
+      "rome_profile": "atento-anna",
+      "process": "independent",
+      "database": "profile_local",
+      "memory": "profile_local",
+      "apps": "profile_local",
+      "auth_state": "profile_local",
+      "channels": "profile_local"
+    },
+    "cross_role": {
+      "shared_profile": false,
+      "shared_auth_state": false,
+      "shared_app_data": false,
+      "native_cross_role_invocation": false,
+      "allowed_path": "explicit_atento_handoff_broker_only"
+    }
+  },
+  "policy": {
+    "AUTO_APPROVE_SKILLS": false,
+    "AUTO_APPROVE_TOOLS": false,
+    "AUTO_APPROVE_WORKFLOWS": false,
+    "action_rule": "all_consequential_selected_naia_actions_require_approval",
+    "provider_rule": "provider_native_execution_must_not_bypass_rome_owned_action_gate",
+    "background_rule": "background_authority_must_not_exceed_interactive_authority",
+    "control_failure_rule": "fail_closed"
+  },
+  "required_assertions": [
+    "ISO-1",
+    "ISO-2",
+    "ISO-3",
+    "ISO-4",
+    "ISO-5",
+    "ISO-6",
+    "ACTION-COVERAGE",
+    "PROVIDER-BYPASS"
+  ]
+}
