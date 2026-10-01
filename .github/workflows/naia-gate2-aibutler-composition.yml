@@ -1,4 +1,5 @@
 name: NAIA Gate2 AI Butler Composition
+# Evidence-observability probe: no harness logic change.
 
 on:
   push:
