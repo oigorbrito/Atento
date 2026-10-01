@@ -147,3 +147,15 @@ NAIA_BASE = NOT_SELECTED
 ```
 
 This is a prioritized cohort for the next comparable measurement, not a finding that these are already the cheapest or a qualified shortlist. The earlier Gate-2 execution queue still starts with AI Butler when exact-pin execution infrastructure is available. Engram remains a component/donor candidate rather than a complete-chassis comparison in this cohort. SelfAgent remains stopped as a complete base at its frozen pin. No other survivor is eliminated by this prioritization.
+
+
+## Scope boundary — product-wide system decision (2026-09-30)
+
+This audit measures and screens **NAIA-role candidate sources only**. Its 26-candidate rows, SelfAgent stop, and NanoClaw static touchpoint counts are not a comparative test of the complete Atento composition and do not establish cost for integrating NAIA + Anna + Apollo. The prior Top 5 is likewise role-specific.
+
+The current system-level architecture/chassis sweep, broader GitHub discovery, and system-composition cost metric are recorded separately at `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`. Reuse the observations in this audit only where the exact source property transfers to a system composition; do not claim an Atento-wide cost winner from this role-level data.
+
+```text
+THIS_AUDIT_SCOPE = NAIA_ROLE_CANDIDATES
+COMPARABLE_FULL_ATENTO_SYSTEM_COST_MEASUREMENTS = 0
+```
