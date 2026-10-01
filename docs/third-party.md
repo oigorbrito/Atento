@@ -232,3 +232,10 @@ These references are evidence about inference-time cost/quality measurement, not
 | SRC-SYS-AGENTBALANCE | AgentBalance: Backbone-then-Topology Design for Cost-Effective Multi-Agent Systems under Budget Constraints | https://arxiv.org/abs/2512.11426 (arXiv submission 2025-12-12) | Research reference; benchmark claims are external and not Atento proof | Inform matched-budget task-quality, token-cost, and latency measurements; no transfer of reported percentages |
 | SRC-SYS-EFFICIENTAGENTS | Efficient Agents: Building Effective Agents While Reducing Cost | https://arxiv.org/abs/2508.02694 (v1, 2025-07-24) | arXiv work in progress per authors' record; reference only | Inform cost-of-pass analysis against task quality; operational model cost is not integration or maintenance cost |
 
+
+
+## NAIA mobile transport benchmark reference — 2026-10-01
+
+| ID | Work | Source/version | Terms/adoption | Intended use |
+|---|---|---|---|---|
+| SRC-NAIA-TRANSPORT-BENCH | WebSocket vs SSE vs Long Polling: The Real Cost of 1,000 Events | https://theinfinity.dev/articles/websocket-vs-sse-vs-polling (published 2026-08-12; benchmark author/run and code described in article) | REFERENCE_ONLY; no external code copied; not peer-reviewed; measured setup and limitations retained in the evaluation record | Order the NAIA MVP's one-way response transport candidates and seed comparable metrics; does not prove Atento auth, isolation, durable replay, or mobile-network behavior |
