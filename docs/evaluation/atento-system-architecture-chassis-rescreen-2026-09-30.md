@@ -115,6 +115,9 @@ COST_MEASUREMENTS = NONE
 
 ## Benchmark cross-check
 
+- Ranked first-sieve measurement queue (Top 10; priority order, not cost rank): `docs/evaluation/system-chassis-top10-first-sieve-2026-09-30.md`.
+
+
 The detailed benchmark reconciliation is in `docs/evaluation/system-chassis-benchmark-crosscheck-2026-09-30.md`. It cross-checks Atento's historical chassis/evolvability probes, current CFS and benchmark registry, the NAIA cost audit, and two external cost-efficiency studies.
 
 The historical Atento chassis run provides reusable extension/replacement probes and observed prototype results for Letta and a LibreChat control, but used a different candidate set and did not measure comparable lifecycle cost for NAIA + Anna + Apollo. Existing PsyChat upstream static CFS is 10/100 (routing boundary only); its 0/5 explicit seams, donor-file counts, and line-retention result are Anna/RAG-specific partial adaptation evidence. Current CFS is a static architecture screen, not effort or system qualification. The current benchmark registry is primarily Anna-oriented, largely planned, and does not benchmark system integration/maintenance cost. The NAIA audit records 0/26 comparable total-cost measurements; its NanoClaw touchpoint range is partial static evidence only.
