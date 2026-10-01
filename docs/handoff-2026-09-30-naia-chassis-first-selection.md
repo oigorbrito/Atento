@@ -31,6 +31,10 @@ Latest policy clarification commit:
 
 ## Governing rule
 
+The **first selection parameter** is the candidate chassis with the **lowest defensible total adaptation and ongoing maintenance cost** for Atento's required properties. The goal is not a perfect chassis. Compare observed evidence and label estimates/unknowns; do not infer low cost from code size or architectural neatness alone.
+
+Structural screening is prioritized because cross-cutting structural changes can create the largest maintenance and reconstruction burden. This is a cost criterion, not architecture for its own sake.
+
 Selection is based first on **high-replacement-cost structural properties**, not feature count or benchmark score.
 
 ```text
