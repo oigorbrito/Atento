@@ -25,7 +25,7 @@ This parameter governs the first candidate-selection gap. Structural properties 
 
 The Atento candidate-selection problem is not equivalent to choosing the candidate with the highest feature count or the highest behavioral benchmark score.
 
-The primary question is: **which existing system provides the required structural properties with the lowest expected cross-cutting reconstruction cost?**
+The primary question is: **which candidate can meet Atento's required properties with the lowest defensible total adaptation and ongoing maintenance cost?** Structural reconstruction cost is one major contributor to that total, not a substitute for the total-cost criterion.
 
 The automotive analogy is useful as a cost-of-change model: chassis defects propagate across the system, while many peripheral components can be replaced through stable interfaces. The analogy is not a claim that architecture is intrinsically superior to measured behavior.
 
@@ -163,23 +163,22 @@ Separate three categories:
 
 A component donor should not be rejected merely because it is not a complete product. Conversely, a component donor must not be scored as though it were a complete chassis.
 
-## 7. Architecture-first scoring
+## 7. First-parameter comparison and hard gates
 
-When a numerical triage score is useful, it must be architecture-heavy.
+The first comparison dimension is **total adaptation and ongoing maintenance cost**. Do not use the former architecture-heavy weighted score as the selection rule: it could rank architectural neatness above the cost criterion the selection is meant to optimize.
 
-| Dimension | Weight |
-|---|---:|
-| Chassis / architecture quality and suitability | 40% |
-| Authority / isolation architecture | 25% |
-| Persistent runtime / recovery | 15% |
-| External empirical evidence | 10% |
-| Adaptability / component replacement cost | 10% |
+For each candidate, record the evidence-backed or explicitly estimated burden for:
 
-The score is a triage instrument, not a qualification score or final selection. It must not average away a hard failure of a required property. A candidate that cannot technically enforce required isolation/authority is not rescued by a higher benchmark or architecture score.
+- adaptation and cross-cutting changes needed to meet Atento requirements;
+- integration and dependency maintenance;
+- operational complexity and ongoing support;
+- replacement boundaries and expected future change cost.
 
-A missing benchmark does not automatically mean poor architecture.
+Keep measured observations, estimates, and unknowns distinct. Do not create a precise numeric total when inputs are not comparable or measured. If a qualitative ordering is all the evidence supports, record the ordering and its basis.
 
-A strong benchmark does not compensate for an architecturally unsuitable chassis.
+Required authority, isolation, persistence, and safety properties remain hard gates: a low estimated maintenance cost cannot average away a demonstrated failure. Benchmarks contribute only where their workload and metric inform a comparable behavior or cost question; they do not prove unmeasured properties or replace the total-cost comparison.
+
+A missing benchmark does not automatically imply high maintenance cost. A strong benchmark does not by itself establish low total maintenance cost.
 
 ## 8. Replacement-cost test
 
@@ -284,6 +283,6 @@ The selection process should therefore minimize expected structural change while
 
 ## Final rule
 
-> **Primeiro filtre pelo que é caro de reconstruir: o chassi e as propriedades estruturais. Depois compare o que é mensurável e substituível: componentes, integrações e detalhes.**
+> **Primeiro selecione pelo menor custo total defensável de adaptação e manutenção. Use a análise do chassi e das propriedades estruturais para estimar esse custo; não presuma um chassi perfeito nem confunda arquitetura elegante com manutenção barata.**
 
 This is the governing screening principle for the next NAIA candidate reduction.
