@@ -195,3 +195,26 @@ handoff_mechanism: TBD
 - [ ] explicit-consent test for sensitive handoff
 - [ ] restart/recovery authority test
 - [ ] role-drift adversarial suite
+
+
+## System-level architecture/chassis re-screen — 2026-09-30
+
+The product composition decision remains `NOT_SELECTED`, but the current evaluation scope is broader than the old NAIA base screen. The system-level re-screen compares the total Atento composition for NAIA, Anna, and future Apollo. Apollo's domain boundary must be supported now; Apollo-specific functional chassis research remains `DEFERRED`.
+
+Canonical evidence/method record:
+
+`docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`
+
+The metric is the lowest defensible total adaptation and ongoing-maintenance cost for the complete product composition. The alternatives remain open: one multi-agent platform, separate specialist chassis behind explicit Atento control/handoff, or a hybrid. No topology is accepted by this note.
+
+The former NAIA Gate-1 and Top 5 remain valid only as NAIA-role evidence. They do not qualify or rank the overall Atento system. The earlier two-agent diagram in this ADR is historical/incomplete because it omits Apollo; it is not the current target architecture.
+
+System-level hard requirements include separate role chat/session, memory, credentials, tool authority and background authority; explicit minimal/auditable handoffs; and receiver-side authorization. Shared infrastructure does not imply shared private data.
+
+```yaml
+system_chassis_decision: NOT_SELECTED
+system_chassis_shortlist: NOT_SELECTED
+first_metric: total_adaptation_and_ongoing_maintenance_cost
+architecture_alternatives: [integrated_multi_agent, composed_specialist_chassis, hybrid]
+apollo_functional_chassis_research: DEFERRED
+```
