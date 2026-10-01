@@ -30,7 +30,7 @@ Classification:
 NANOCLAW_CHANNEL_EXTENSION_SEAM = PRESENT_STATIC
 GENERIC_MOBILE_CHAT_API_AT_PIN = NOT_FOUND
 MOBILE_AUTH_AND_NAIA_SESSION_BINDING = NOT_IMPLEMENTED_IN_ATENTO
-MOBILE_ADAPTER_COST = 209_LINE_LOCAL_SPIKE (131 TEST LINES)
+INITIAL_LONG_POLL_SPIKE_COST = 209_IMPLEMENTATION_LINES (131 TEST LINES)
 ```
 
 This does not establish a structural failure: NanoClaw explicitly supports channel adapters. It does establish that app connectivity is new adapter work, not an existing capability that can be counted as zero-touch. The adapter must be implemented before a mobile-client integration test can exercise the real path.
@@ -97,7 +97,7 @@ Updated classification:
 
 ```text
 MOBILE_ADAPTER_SEAM = PROTOTYPE_LOCAL_PASS
-MOBILE_ADAPTER_COST = 209_IMPLEMENTATION_LINES + 131_TEST_LINES + 1_REGISTRATION_LINE
+INITIAL_LONG_POLL_SPIKE_COST = 209_IMPLEMENTATION_LINES + 131_TEST_LINES + 1_REGISTRATION_LINE
 MOBILE_PRODUCTION_AUTH_AND_SESSION_BINDING = NOT_TESTED
 MOBILE_DURABLE_DELIVERY_AND_RESTART_RECOVERY = NOT_IMPLEMENTED
 ATENTO_PRODUCT_INTEGRATION = NOT_PRESENT
@@ -165,3 +165,38 @@ The mobile client must authenticate the stream without placing bearer credential
 
 Run the same single-client correctness and reconnect/replay gate on REST+SSE first. Add the WebSocket comparator only if SSE fails a hard requirement or a measured workload shows material benefit. If SSE passes the hard gates, do not build a second transport merely for theoretical throughput.
 
+
+
+## Follow-up local SSE protocol test — 2026-10-01
+
+The disposable NanoClaw worktree was updated from the initial long-poll sketch to test the benchmark-prioritized REST+SSE path through the same real NanoClaw webhook server and channel-delivery registry. Current experimental footprint is 223 adapter lines + 193 test lines + 1 channel-barrel registration line (417 lines total). This supersedes the initial worktree source; it does not change the initial long-poll result recorded above.
+
+Results:
+
+- Focused Vitest: 2/2 passed.
+- `pnpm run build`: passed.
+- ESLint on changed files: passed.
+- `git diff --check`: passed.
+- The SSE test authenticated with a bearer header and confirmed the URL had no query string; client-selected role/group fields remained rejected.
+- It delivered one reply on an open stream, disconnected, delivered another reply during the gap, reconnected with `Last-Event-ID`, received only the missing second event, then reconnected at the latest ID and confirmed no duplicate event.
+
+Limits:
+
+- This is a protocol-level local test on NanoClaw's seam, not the actual Atento host runtime or a real mobile app/client library.
+- Auth is a shared synthetic token; no OAuth user/session identity, token lifecycle, provider credentials, or account isolation was tested.
+- The 256-event replay queue is in process memory. Restart recovery is not implemented; event IDs reset on process restart. Durable outbox and host-restart proof remain blockers.
+- No WebSocket prototype was built. External benchmark results prioritize REST+SSE for the next test, while WebSocket remains conditional.
+- The CLI adapter still logs sandbox `EPERM` while binding its unrelated Unix socket; the SSE adapter starts and focused tests pass.
+
+Updated status:
+
+```text
+REST_PLUS_SSE = LOCAL_PROTOCOL_REPLAY_PASS
+WEB_SOCKET = NOT_IMPLEMENTED
+SSE_DURABLE_REPLAY = NOT_IMPLEMENTED
+MOBILE_CLIENT_AUTH_COMPATIBILITY = NOT_TESTED
+MOBILE_APP_INTEGRATOR = NOT_SELECTED
+ATENTO_PRODUCT_RUNTIME_GATE = BLOCKED
+```
+
+This supports proceeding with REST+SSE as the first integration candidate, based on an external transport benchmark plus local protocol replay tests. It is not sufficient to select or qualify the production integrator. Next gate is to place the event log behind the actual Atento authenticated session boundary and prove recovery across one real host-process restart; only build the WebSocket comparator if that path fails or the product requires bidirectional high-rate traffic.
