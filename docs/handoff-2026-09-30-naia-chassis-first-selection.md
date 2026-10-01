@@ -27,13 +27,15 @@ Latest architecture-selection policy:
 
 Latest policy clarification commit:
 
-`9e7f19e5edde1c315ca63bba34af3b66db0c0ecd`
+`61ad369ffa7c7e10e81cb6e2934fad1a5e77a262`
 
 ## Governing rule
 
 The **first selection parameter** is the candidate chassis with the **lowest defensible total adaptation and ongoing maintenance cost** for Atento's required properties. The goal is not a perfect chassis. Compare observed evidence and label estimates/unknowns; do not infer low cost from code size or architectural neatness alone.
 
 Structural screening is prioritized because cross-cutting structural changes can create the largest maintenance and reconstruction burden. This is a cost criterion, not architecture for its own sake.
+
+The policy's previous architecture-heavy weighted scoring table has been superseded. Compare the defensible total adaptation/maintenance burden first; preserve hard authority, isolation, persistence, and safety gates. Do not manufacture a precise total from unmeasured inputs.
 
 Selection is based first on **high-replacement-cost structural properties**, not feature count or benchmark score.
 
