@@ -116,11 +116,15 @@ The integration layer is a separate decision from the provisional NanoClaw chass
 
 For a native mobile client, OAuth for native apps (RFC 8252) and current OAuth security BCP (RFC 9700) are relevant starting points; OWASP MASVS supplies mobile authentication, authorization, and network-security verification controls. These sources do not benchmark a particular Atento adapter and do not establish that NanoClaw or the spike passes them. OpenAPI may make the HTTP contract explicit, but it also does not prove security or runtime behavior.
 
-For the Atento boundary, local acceptance evidence must at minimum cover: user/session-to-NAIA binding on the server; denial of caller-selected role/group; cross-role isolation; authorization on every request; response delivery after client reconnect; idempotent inbound retry; and task/message recovery after one host restart. Use synthetic identities and provider credentials in the test environment. Keep the benchmark signal separate from these local proof results.
+For the Atento boundary, local acceptance evidence must cover user-to-agent/session binding; authorization on every route; server-side agent dispatch; cross-agent isolation; reconnect replay; idempotent inbound retry; and message recovery after one host restart. Use synthetic identities and provider credentials in the test environment. Keep transport benchmark signal separate from local authority/recovery proof.
 
 ```text
-INTEGRATOR_SELECTION = NOT_SELECTED
-SPIKE_TRANSPORT_AND_AUTH_SHAPE = EXPLORATORY_ONLY
+MOBILE_API_CONTRACT = SHARED_REST_SSE_FOR_THREE_AGENTS
+PRODUCTION_AGENT_ADAPTERS = NOT_IMPLEMENTED
+NAIA_ADAPTER = LOCAL_PROTOTYPE_ONLY
+ANNA_ADAPTER = BASE_NOT_SELECTED
+APOLLO_ADAPTER = DEFERRED
+PRODUCTION_QUALIFICATION = NOT_PASSED
 EVIDENCE_ROUTE_REQUIRED = APPLICABLE_STANDARD_PLUS_LOCAL_TESTS OR DIRECTLY_RELEVANT_BENCHMARK_PLUS_LOCAL_GAP_TESTS
 NANOCLAW_CHASSIS_BENCHMARK = DOES_NOT_QUALIFY_INTEGRATOR
 ```
@@ -136,7 +140,7 @@ Sources:
 
 A directly comparable external benchmark was located for the response transport only: one Node server sent the same event stream through WebSocket, SSE, and long polling. The report includes benchmark code and a reported independent byte-count rerun within 0.1%; it is an author-run benchmark, not a peer-reviewed or mobile-device benchmark.
 
-| Transport | External result in that benchmark | Fit to NAIA mobile chat | Evidence status |
+| Transport | External result in that benchmark | Fit to Atento mobile chat | Evidence status |
 |---|---|---|---|
 | REST input + SSE response | For 1,000 ~117-byte events: 131,596 wire bytes; at 10 events/s and simulated 50 ms RTT, mean delivery 26.52 ms. Automatic reconnect/resume is available when the server honors event IDs. | Strong candidate for one-way streamed assistant output; user messages can remain ordinary authenticated HTTP requests. | Benchmark signal only; not tested against Atento or mobile radio networks. |
 | WebSocket | For the same events: 119,692 bytes; at 10 events/s, mean 26.46 ms. At 50 events/s, mean 26.16 ms. Lowest idle server memory in that specific Node run. | Candidate if the app requires true bidirectional streaming/presence. More connection/reconnect state must be qualified. | Benchmark signal only; no Atento integration proof. |
@@ -195,7 +199,7 @@ REST_PLUS_SSE = LOCAL_PROTOCOL_REPLAY_PASS
 WEB_SOCKET = NOT_IMPLEMENTED
 SSE_DURABLE_REPLAY = NOT_IMPLEMENTED
 MOBILE_CLIENT_AUTH_COMPATIBILITY = NOT_TESTED
-MOBILE_APP_INTEGRATOR = NOT_SELECTED
+MOBILE_APP_INTEGRATOR_IMPLEMENTATION = NOT_PRESENT
 ATENTO_PRODUCT_RUNTIME_GATE = BLOCKED
 ```
 
