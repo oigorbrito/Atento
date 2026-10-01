@@ -134,3 +134,20 @@ OVERALL_THREE_ROLE_CHASSIS_WINNER = NOT_SELECTED
 - MIRA README: https://github.com/Vexillon-ai/MIRA
 - Moltis README: https://github.com/moltis-org/moltis
 - Kora README: https://github.com/era3000/kora
+
+
+## Existing CI log audit — test execution details (reused, not rerun)
+
+The successful exact-pin jobs above were inspected beyond their green check summaries. This improves evidence about what actually ran, but does not change the Atento qualification status.
+
+| Candidate | Exact-pin job evidence from decoded GitHub Actions logs | What this strengthens | What it still does not establish |
+|---|---|---|---|
+| Open Pincery | [cargo test job](https://github.com/RCSnyder/open-pincery/actions/runs/31919350786/job/95096541459): `cargo test --all -- --test-threads=1` completed successfully with PostgreSQL 16 service configured. The main library test binary reported 188 tests; subsequent integration binaries also reported passing suites. | Confirms the all-target Rust test command and database-backed test setup actually executed at this pin. Source-audited cases include workspace API denial, capability gates/nonces, vault behavior, and lifecycle. | The all-target green result does not mean every test covers adversarial three-role isolation. In particular, workspace-scoped credentials still require role-separated workspaces or a broker. The real bubblewrap smoke is a separate job and does not test Atento's Android/API boundary. |
+| OpenLegion | [Python 3.11 shard 1](https://github.com/openlegion-ai/openlegion/actions/runs/32638650769/job/97192167948): `pytest tests/` with E2E files explicitly excluded for that matrix step; the shard summary reports 3,145 passed, 31 skipped, 1,960 warnings in 111.64 seconds. Separate E2E jobs exist in the same run and were already recorded as successful. | Gives concrete breadth for the exact-pin unit/service suite rather than only a green matrix check. | This shard result does not itself include the excluded E2E files, and a passing project suite is not a three-role Atento test. We still need to establish actual isolation backend/fallback, shared-file policy, ACLs and credential proxy scope in one common canary. |
+| Moltis | [Rust CI test job](https://github.com/moltis-org/moltis/actions/runs/36850825432/job/110332006744): `cargo nextest run --all-features --profile ci` completed and uploaded JUnit test results. The run provisions build dependencies, web assets and the full-feature Rust configuration. | Confirms the all-feature Rust test command completed at the inspected pin; complements the separately recorded E2E, sandbox E2E, coverage and iOS checks. | The decoded log did not expose a reliable aggregate test count in the inspected excerpt. None of these checks proves cross-persona transcript, vault, API-session, or restart ownership boundaries for Atento. |
+
+OpenLegion's skipped count is preserved as reported by the job; it is not assumed to indicate failures. Open Pincery's “188 tests” is the main library binary count, not a claimed total across all integration binaries. Moltis's JUnit artifact is an upstream test report, not an Atento canary result.
+
+### Evidence adjustment
+
+The top-three structural order remains **Open Pincery → OpenLegion → Moltis**. This log audit does not justify resequencing: it improves confidence that their pinned upstream suites ran, while the deciding Atento-specific uncertainty remains untested for all three. No tests were newly executed by this evaluation, no external benchmark was rerun, and no candidate was eliminated.
