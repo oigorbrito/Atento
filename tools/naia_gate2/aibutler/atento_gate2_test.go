@@ -2,7 +2,11 @@ package atento_gate2_test
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"os"
+	"os/exec"
+	"strings"
 	"testing"
 
 	"github.com/LumabyteCo/aibutler/internal/capability"
@@ -11,17 +15,6 @@ import (
 	"github.com/LumabyteCo/aibutler/internal/vault"
 	"github.com/LumabyteCo/aibutler/testutil"
 )
-
-type brokerPayload struct {
-	From string
-	To   string
-	Kind string
-	Body string
-}
-
-func brokerHandoff(in brokerPayload) brokerPayload {
-	return brokerPayload{From: in.From, To: in.To, Kind: in.Kind, Body: in.Body}
-}
 
 func TestAtentoGate2Composition(t *testing.T) {
 	t.Run("ISO1_cross_memory_read_denied", func(t *testing.T) {
@@ -145,12 +138,55 @@ func TestAtentoGate2Composition(t *testing.T) {
 	})
 
 	t.Run("ISO6_explicit_broker_positive_control", func(t *testing.T) {
-		in := brokerPayload{From: "NAIA", To: "Anna", Kind: "handoff", Body: "bounded payload"}
-		out := brokerHandoff(in)
-		if out != in {
-			t.Fatalf("broker changed declared payload: %#v", out)
+		adapter := os.Getenv("ATENTO_GATE2_BROKER_ADAPTER")
+		if adapter == "" {
+			t.Fatal("ATENTO_GATE2_BROKER_ADAPTER is required")
 		}
-		// The broker contract has no memory, credential, capability-set, or channel-authority fields.
-		// Cross-role authority therefore is not implicitly transferred by this positive control.
+
+		payload := map[string]string{
+			"from_role":      "NAIA",
+			"to_role":        "Anna",
+			"kind":           "handoff",
+			"body":           "bounded payload",
+			"correlation_id": "gate2-aibutler-iso6",
+		}
+		encoded, err := json.Marshal(payload)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		cmd := exec.Command("python3", adapter)
+		cmd.Stdin = strings.NewReader(string(encoded))
+		raw, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatalf("Atento broker adapter rejected valid handoff: %v: %s", err, raw)
+		}
+
+		var response struct {
+			OK       bool              `json:"ok"`
+			Envelope map[string]string `json:"envelope"`
+		}
+		if err := json.Unmarshal(raw, &response); err != nil {
+			t.Fatalf("invalid broker response: %v: %s", err, raw)
+		}
+		if !response.OK {
+			t.Fatalf("broker did not report success: %s", raw)
+		}
+		for key, want := range payload {
+			if got := response.Envelope[key]; got != want {
+				t.Fatalf("broker envelope %s=%q, want %q", key, got, want)
+			}
+		}
+
+		forbidden := `{"from_role":"NAIA","to_role":"Anna","kind":"handoff","body":"bounded payload","correlation_id":"gate2-aibutler-iso6-negative","credential":"DO_NOT_LEAK"}`
+		denied := exec.Command("python3", adapter)
+		denied.Stdin = strings.NewReader(forbidden)
+		deniedRaw, deniedErr := denied.CombinedOutput()
+		if deniedErr == nil {
+			t.Fatalf("broker accepted authority-bearing field: %s", deniedRaw)
+		}
+		if strings.Contains(string(deniedRaw), "DO_NOT_LEAK") {
+			t.Fatalf("broker leaked forbidden credential value: %s", deniedRaw)
+		}
 	})
 }
