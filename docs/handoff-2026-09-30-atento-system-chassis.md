@@ -27,6 +27,7 @@ Repository README/docs were inspected; no candidate was cloned or executed in th
 
 ## Canonical records
 
+- Benchmark cross-check for total system cost: `docs/evaluation/system-chassis-benchmark-crosscheck-2026-09-30.md` (documentary review complete; no comparable three-role cost run exists).
 - System-level rescreen and initial GitHub discovery: `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`
 - Product composition ADR and current boundaries: `docs/adr/ADR-001-naya-product-composition.md`
 - External source/provenance entries: `docs/third-party.md`
