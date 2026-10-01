@@ -18,18 +18,20 @@ It injected one test into that checkout and exercised NanoClaw's real `registerW
 
 ## Test
 
+The original graceful-restart case is being strengthened with one abrupt-crash condition; no prior candidate suite or 7/7 Atento assertions are rerun. The hosted result for this revision is pending.
+
 One role-scoped SSE replay case:
 
 1. Seed one reply for each NAIA, Anna, and Apollo fixture in a temporary SQLite outbox.
 2. Read each role's first event with a synthetic bearer token.
 3. Add one subsequent reply per role.
-4. Stop the worker process and start a new process over the same SQLite file.
+4. Terminate the worker with `SIGKILL` (no shutdown handler or SQLite close), then start a new process over the same SQLite file.
 5. Reconnect with each role's prior `Last-Event-ID`.
 6. Assert that each role receives only its own next event and that an unknown token receives HTTP 401.
 
 ## Result
 
-Canonical corrected run:
+Previous graceful-restart baseline (separate evidence):
 
 - GitHub Actions run `36934662391`, commit `b05f450c2d45f9265acd12c3a9967f39b9a0862a`
 - exact candidate-pin check: PASS
@@ -41,6 +43,8 @@ Canonical corrected run:
 A second identical CI pass occurred at run `36934690875` after a workflow-trigger adjustment. It adds no new evidence. Two earlier runs failed because of escaping/framing defects in the new test fixture; the candidate-pin check passed in both. Those failures are classified as harness defects, not NanoClaw failures.
 
 ## Interpretation and limits
+
+The SIGKILL revision is not yet verified until its GitHub Actions run completes. The previous graceful restart PASS does not transfer to this stronger condition.
 
 ```text
 NANOCLAW_WEBHOOK_SERVER_SEAM = EXERCISED
