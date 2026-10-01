@@ -1,0 +1,61 @@
+name: Disposable NanoClaw mobile SSE replay probe
+
+on:
+  push:
+    branches:
+      - codex/disposable-nanoclaw-mobile-replay-20261001
+    paths:
+      - ".github/workflows/nanoclaw-mobile-replay-probe.yml"
+      - "tools/system_chassis/nanoclaw-mobile-replay-*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  replay-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout disposable Atento experiment
+        uses: actions/checkout@v4
+      - name: Checkout exact NanoClaw pin
+        uses: actions/checkout@v4
+        with:
+          repository: nanocoai/nanoclaw
+          ref: 4c1eabd3ddd74cc3d71b1871da857391a9411c8d
+          path: candidate
+          persist-credentials: false
+      - name: Verify candidate pin
+        working-directory: candidate
+        run: test "$(git rev-parse HEAD)" = "4c1eabd3ddd74cc3d71b1871da857391a9411c8d"
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: pnpm
+          cache-dependency-path: candidate/pnpm-lock.yaml
+      - name: Install pinned dependencies
+        working-directory: candidate
+        run: pnpm install --frozen-lockfile
+      - name: Build SQLite test dependency
+        working-directory: candidate
+        run: pnpm rebuild better-sqlite3
+      - name: Inject only new replay probe
+        run: |
+          cp tools/system_chassis/nanoclaw-mobile-replay-worker.ts candidate/src/system-chassis-mobile-replay-worker.ts
+          cp tools/system_chassis/nanoclaw-mobile-replay.atento.test.ts candidate/src/system-chassis-mobile-replay.atento.test.ts
+      - name: Execute replay probe
+        working-directory: candidate
+        run: pnpm exec vitest run src/system-chassis-mobile-replay.atento.test.ts --reporter=junit --outputFile=/tmp/nanoclaw-mobile-replay.xml
+      - name: Preserve raw test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: disposable-nanoclaw-mobile-replay-${{ github.run_id }}
+          path: /tmp/nanoclaw-mobile-replay.xml
+          if-no-files-found: warn
