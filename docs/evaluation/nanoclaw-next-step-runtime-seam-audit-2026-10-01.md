@@ -144,26 +144,26 @@ A directly comparable external benchmark was located for the response transport 
 
 Test setup and limits: one Node server on Apple M5/macOS 26.6.1/Node 26.6.0; 1,000 JSON events; a fixed simulated 50 ms RTT; 500 idle connections for memory; no real WAN jitter/loss, TLS cost, mobile-radio wakeups, or Atento auth, persistence, or restart path. HTTP/2 materially reduces long-poll header bytes. The results cannot be generalized as a universal ranking.
 
-**Bounded next measurement:** carry forward only two transport candidates—REST+SSE and WebSocket—because the product chat may stream output and an external measured comparison exists. Keep long polling as a fallback/reference, not a third implementation to build now. Reuse one synthetic NAIA chat workload, event sizes, event IDs, auth boundary, concurrency, and process-restart scenario for both finalists. Record p50/p95 first-token latency, delivered/duplicate/missing events after reconnect, wire bytes, server RSS/CPU, and recovery after one restart. Security/isolation and durable replay are hard pass/fail gates; performance cannot compensate for failing them.
+**Bounded next implementation:** use the selected REST+SSE contract for all three app destinations, with per-agent adapters and isolation. Do not build a WebSocket comparator absent a concrete requirement or measured failure. First adapt the already selected NanoClaw path for NAIA; keep Anna and Apollo adapter slots explicit but disabled until their base/status decisions permit implementation. Test the common gateway with inert fixtures for all three agent namespaces before connecting any additional live runtime.
 
 ```text
 EXTERNAL_TRANSPORT_SIGNAL = SSE_AND_WEBSOCKET_MEASURED; LONG_POLL_MEASURED
 TRANSPORT_SHORTLIST = [REST_PLUS_SSE, WEBSOCKET]
-FIRST_LOCAL_CANDIDATE = REST_PLUS_SSE
-TRANSPORT_DECISION = NOT_SELECTED
-CURRENT_SPIKE_LONG_POLL = FEASIBILITY_REFERENCE_ONLY
+FIRST_LOCAL_IMPLEMENTATION = REST_PLUS_SSE_COMMON_GATEWAY_CONTRACT
+TRANSPORT_DECISION = REST_PLUS_SSE_SELECTED_FOR_ALL_THREE_AGENT_ROUTES
+CURRENT_SPIKE_SCOPE = NAIA_ONLY; SHARED_TRANSPORT_MECHANICS_PROTOTYPED
 EXTERNAL_BENCHMARK_REPLACES_LOCAL_SECURITY_AND_RECOVERY_TESTS = NO
 ```
 
 External benchmark source: [WebSocket vs SSE vs Long Polling: The Real Cost of 1,000 Events](https://theinfinity.dev/articles/websocket-vs-sse-vs-polling), including test method and limitations (2026-08-12). Its results are used only to prune the initial transport set and define measurements; they do not qualify the Atento integrator.
 
-### Bounded ordering from available evidence
+### Bounded integration ordering from available evidence
 
-For the NAIA chat shape—client sends a discrete message, assistant emits a server-to-client stream—**REST+SSE is the first candidate to implement and test**, while WebSocket remains the comparator. This is a test order, not a selected production architecture. The external benchmark found near-equal latency at 10 events/s and a measurable long-poll penalty at 50 events/s; SSE also has a standard reconnect mechanism carrying `Last-Event-ID`. The event log/replay itself still has to be implemented and tested by Atento; protocol reconnect alone does not provide durable delivery.
+**REST+SSE is the selected mobile transport pattern for all three agent routes.** The external benchmark applies to the shared one-way assistant-output transport; the local NanoClaw test is only a NAIA-seam feasibility check. This does not select NanoClaw for Anna or Apollo. The external benchmark found near-equal latency at 10 events/s and a measurable long-poll penalty at 50 events/s; SSE also has a standard reconnect mechanism carrying `Last-Event-ID`. The event log/replay itself still has to be implemented and tested by Atento; protocol reconnect alone does not provide durable delivery.
 
 The mobile client must authenticate the stream without placing bearer credentials in a URL. A native SSE implementation that can set the Authorization header (or another reviewed OAuth-compatible credential mechanism) is a hard feasibility check. The browser `EventSource` interface does not expose arbitrary request headers in its constructor, so do not assume the browser API is sufficient for the future app.
 
-Run the same single-client correctness and reconnect/replay gate on REST+SSE first. Add the WebSocket comparator only if SSE fails a hard requirement or a measured workload shows material benefit. If SSE passes the hard gates, do not build a second transport merely for theoretical throughput.
+Implement the shared gateway contract once, then test isolation across three inert agent adapters using distinct state sentinels and the same requests. Keep the WebSocket comparator deferred. Apply full persistence/restart acceptance when the Atento host runtime exists.
 
 
 
@@ -204,14 +204,14 @@ This supports proceeding with REST+SSE as the first integration candidate, based
 
 ## Bounded transport decision — 2026-10-01
 
-**Decision: use REST for mobile-to-assistant messages and SSE for assistant-to-mobile responses for the NAIA MVP.** This is a proportionate, empirically defensible choice based on the external same-workload transport benchmark and the local NanoClaw-seam test that verified authenticated streaming, event replay after reconnect, and no duplicate on the next resume.
+**Decision: use REST for app-to-assistant messages and SSE for assistant-to-app responses across the Atento mobile app for NAIA, Anna, and Apollo.** The transport is shared; each agent must have a separate registered adapter and isolated identity, session, memory, and tool authority. The external same-workload benchmark supports the transport choice. The local NanoClaw-seam test proves only a synthetic NAIA path, not all three agent boundaries.
 
 Do not build a WebSocket comparator unless the product adds a concrete requirement that SSE cannot meet or production measurements show a material problem. The benchmark does not need to be repeated to make this bounded transport choice.
 
 This selects the transport pattern; it does not claim the production Atento integrator is implemented or security-qualified. Complete the ordinary implementation checks for real user/session authorization, TLS, bounded persistent event replay, and one restart recovery test when the Atento host runtime exists. Keep those as delivery acceptance criteria, not reasons to reopen the transport comparison by default.
 
 ```text
-NAIA_MVP_MOBILE_TRANSPORT = REST_PLUS_SSE_SELECTED
+ATENTO_MOBILE_APP_TRANSPORT = REST_PLUS_SSE_SELECTED_FOR_ALL_THREE_AGENTS
 SELECTION_BASIS = EXTERNAL_COMPARATIVE_BENCHMARK + LOCAL_RECONNECT_REPLAY_TEST
 WEBSOCKET_COMPARATOR = DEFERRED_UNLESS_REQUIREMENT_OR_MEASURED_FAILURE
 PRODUCTION_INTEGRATOR_IMPLEMENTED = NO
@@ -221,31 +221,35 @@ PRODUCTION_INTEGRATOR_SECURITY_AND_RESTART_ACCEPTANCE = PENDING_IMPLEMENTATION
 
 ## Minimal API contract for implementation — proposed, not implemented
 
-This is the smallest contract to carry REST+SSE into the Atento host runtime. It is a proposal for the next code change, not a claim that this API or module already exists.
+This proposed app-facing contract covers all three product agents. It does not imply that all three runtime adapters exist or are qualified.
 
 **Authentication and authority**
 
 - Both endpoints require an authenticated access token in the `Authorization: Bearer` header over TLS. The authentication provider is not selected here.
-- The host derives the owner from the validated token. The client cannot submit an agent, group, role, credential, or runtime session selector.
-- The NAIA route maps that authenticated owner to the server-side NAIA session. Do not put tokens in URLs.
-- Any future conversation identifier must be authorized against the authenticated owner on every request.
+- The host derives the owner from the validated token. The app may request one canonical agent slug (`naia`, `anna`, or `apollo`) as its destination; the server checks that agent's registry state and the owner's authorization before routing. The slug grants no authority by itself. Unknown, disabled, or unqualified adapters fail closed; they are never silently routed to another agent.
+- Do not accept group, role, credential, or runtime-session authority from the client. Do not put tokens in URLs.
+- Bind each authenticated owner to separate agent-specific session, memory, and tool-authority namespaces. Authorize every message and stream request against that mapping.
 
 **Endpoints**
 
 | Operation | Contract |
 |---|---|
-| `POST /v1/naia/messages` | Accept `Idempotency-Key` plus JSON `{"text":"..."}`; return `202` and a server-generated `message_id`. Reject unknown fields and invalid/oversized text. A repeated key for the same authenticated owner must not enqueue a second turn. |
-| `GET /v1/naia/events` | Return `text/event-stream` for the authenticated owner's NAIA session. Each event has a stable `id`, a typed event name, and JSON data. Honor `Last-Event-ID` by replaying subsequent retained events in order. |
+| `POST /v1/agents/{agent_id}/messages` | `agent_id` is one of `naia`, `anna`, or `apollo`. Accept `Idempotency-Key` plus JSON `{"text":"..."}`; return `202` and a server-generated `message_id`. Reject unknown fields and invalid/oversized text. Scope idempotency to authenticated owner + agent. |
+| `GET /v1/agents/{agent_id}/events` | Return `text/event-stream` only for the authenticated owner's selected agent session. Each event has a stable `id`, typed event name, and JSON data. Honor `Last-Event-ID` and replay retained events in order within that agent's stream only. |
 
-The minimal event types are `message.delta`, `message.completed`, and `message.failed`; each carries the server-generated `message_id`. Native SSE client support for an Authorization header is a compatibility check before selecting the app library. A web `EventSource` implementation that cannot set the required header is not sufficient by itself.
+The minimal event types are `message.delta`, `message.completed`, and `message.failed`; each carries the server-generated `message_id` and canonical `agent_id`. Native SSE client support for an Authorization header is a compatibility check before selecting the app library. A web `EventSource` implementation that cannot set the required header is not sufficient by itself.
+
+Current adapter readiness is per agent: NAIA → NanoClaw provisional, qualification pending; Anna → base not selected; Apollo → deferred. The app contract covers all three now, while unconfigured routes return `agent_unavailable` until that agent's adapter is selected and passes its own gates.
 
 **Acceptance checks**
 
-1. Missing/invalid token is rejected; a valid owner receives only that owner's NAIA stream.
-2. Role/group/session injection is rejected or ignored by schema, and cannot change routing.
-3. A repeated idempotency key creates one inbound turn.
-4. Disconnect after event `N`, produce `N+1`, reconnect with `Last-Event-ID: N`, and receive `N+1` in order without duplicate delivery.
-5. Restart the host once, reconnect as the same owner, and recover the outstanding persisted event.
-6. Explicit failure behavior exists for expired/invalid cursors and unavailable storage; it must not silently acknowledge lost data.
+1. Missing/invalid token is rejected; a valid owner reaches only adapters authorized for that account.
+2. The app can request each canonical agent, but unknown/disabled adapters fail closed and never fall back to NAIA.
+3. Role/group/credential/session injection is rejected or ignored by schema and cannot alter server-side routing.
+4. Inert NAIA/Anna/Apollo fixtures use distinct sentinel state; a request or event for one agent cannot read or enter another agent's session, memory, or tools.
+5. A repeated idempotency key creates one inbound turn within the same owner + agent scope.
+6. Disconnect after event `N`, produce `N+1`, reconnect with `Last-Event-ID: N`, and receive `N+1` in order without duplicate delivery within that agent stream.
+7. Restart the host once, reconnect as the same owner and agent, and recover the outstanding persisted event.
+8. Explicit failure behavior exists for expired/invalid cursors and unavailable storage; it must not silently acknowledge lost data.
 
-The local NanoClaw SSE spike covers a synthetic version of checks 1–4 at the channel seam; it does not cover real token validation, owner mapping, persisted idempotency, storage failure, or check 5. The benchmark informs transport ordering only. No Project Point or production qualification is claimed by this proposed contract.
+The local NanoClaw SSE spike covers only a synthetic NAIA version of streaming/reconnect checks at the channel seam. It does not cover Anna/Apollo dispatch, cross-agent isolation, real token validation, owner mapping, persisted idempotency, storage failure, or host restart. The benchmark informs transport ordering, not authority. No Project Point or production qualification is claimed by this proposed contract.
