@@ -7,6 +7,9 @@ on:
       - "tools/naia_gate2/aibutler/**"
       - "tools/naia_gate2/broker_runtime_adapter.py"
       - "evals/atentoeval/handoff_broker.py"
+      - "evals/atentoeval/composition.py"
+      - "evals/config/naia_gate2_aibutler_v1.json"
+      - "evals/config/naia_gate2_composition_v1.json"
   workflow_dispatch:
 
 permissions:
@@ -51,3 +54,22 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}
         run: |
           go test ./internal/atento_gate2 -count=1 -v
+
+      - name: Build canonical Gate2 evidence result
+        run: |
+          python3 tools/naia_gate2/aibutler/build_result.py \
+            --config evals/config/naia_gate2_aibutler_v1.json \
+            --output evals/results/naia_gate2_aibutler_runtime.json
+
+      - name: Validate Gate2 evidence result
+        run: |
+          python3 -m evals.atentoeval.composition validate-result \
+            --matrix evals/config/naia_gate2_composition_v1.json \
+            --result evals/results/naia_gate2_aibutler_runtime.json
+
+      - name: Upload Gate2 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: naia-gate2-aibutler-${{ github.sha }}
+          path: evals/results/naia_gate2_aibutler_runtime.json
+          if-no-files-found: error
