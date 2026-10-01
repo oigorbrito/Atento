@@ -1,0 +1,49 @@
+{
+  "version": "NAIA-GATE2-OCTOP-COMPOSITION-V1",
+  "candidate": "Octop",
+  "upstream_repo": "TencentCloud/Octop",
+  "upstream_sha": "e473dd3c4a4741618ffde1a42a3492341a189e8e",
+  "harness_version": "NAIA-GATE2-COMPOSITION-V1",
+  "composition_profile_hash": "d31edd8cc866502e3bff1c5371303c85e16553462a869e553e97bf065b69c49d",
+  "policy_hash": "54db0851876df4097a981a8de0833650c6696be97e8fbcdbbc74c2e5b8c66369",
+  "execution_state": "FROZEN_NOT_EXECUTED",
+  "topology": {
+    "naia": {
+      "runtime": "independent",
+      "workspace": "independent",
+      "credentials": "independent",
+      "connectors": "explicit"
+    },
+    "anna": {
+      "runtime": "independent",
+      "workspace": "independent",
+      "credentials": "independent",
+      "connectors": "explicit"
+    },
+    "cross_role": {
+      "direct_bridge": false,
+      "shared_workspace": false,
+      "allowed_path": "explicit_atento_handoff_broker_only"
+    }
+  },
+  "policy": {
+    "hitl_enabled": true,
+    "tool_guard_enabled": true,
+    "tool_guard_mode": "require_approval",
+    "cron_connectors": "explicit_picks_only",
+    "default_open_reliance": false,
+    "bridge_agent_mutation_authority": false,
+    "background_rule": "cron_authority_subset_of_interactive",
+    "control_failure_rule": "fail_closed"
+  },
+  "required_assertions": [
+    "ISO-1",
+    "ISO-2",
+    "ISO-3",
+    "ISO-4",
+    "ISO-5",
+    "ISO-6",
+    "AUTH-FAIL-CLOSED",
+    "CRON-CONNECTOR"
+  ]
+}
