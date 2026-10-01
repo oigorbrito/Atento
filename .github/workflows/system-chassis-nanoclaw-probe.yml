@@ -1,0 +1,72 @@
+name: System chassis NanoClaw mount probe
+
+on:
+  push:
+    paths:
+      - ".github/workflows/system-chassis-nanoclaw-probe.yml"
+      - "tools/system_chassis/nanoclaw.atento.test.ts"
+      - "evals/config/system_chassis_nanoclaw_v1.json"
+  pull_request:
+    paths:
+      - ".github/workflows/system-chassis-nanoclaw-probe.yml"
+      - "tools/system_chassis/nanoclaw.atento.test.ts"
+      - "evals/config/system_chassis_nanoclaw_v1.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mount-boundary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout Atento harness
+        uses: actions/checkout@v4
+
+      - name: Checkout exact NanoClaw pin
+        uses: actions/checkout@v4
+        with:
+          repository: nanocoai/nanoclaw
+          ref: 4c1eabd3ddd74cc3d71b1871da857391a9411c8d
+          path: candidate
+          persist-credentials: false
+
+      - name: Verify exact pin
+        working-directory: candidate
+        run: |
+          test "$(git rev-parse HEAD)" = "4c1eabd3ddd74cc3d71b1871da857391a9411c8d"
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: pnpm
+          cache-dependency-path: candidate/pnpm-lock.yaml
+
+      - name: Install exact candidate dependencies
+        working-directory: candidate
+        run: pnpm install --frozen-lockfile
+
+      - name: Prepare inert test image
+        run: docker pull node:24-alpine
+
+      - name: Inject bounded Atento probe
+        run: cp tools/system_chassis/nanoclaw.atento.test.ts candidate/src/system-chassis.atento.test.ts
+
+      - name: Run three-role Docker mount assertions
+        working-directory: candidate
+        run: pnpm exec vitest run src/system-chassis.atento.test.ts --reporter=junit --outputFile=/tmp/nanoclaw-system-chassis-junit.xml
+
+      - name: Upload raw probe result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nanoclaw-system-chassis-mount-probe-${{ github.run_id }}
+          path: /tmp/nanoclaw-system-chassis-junit.xml
+          if-no-files-found: warn
