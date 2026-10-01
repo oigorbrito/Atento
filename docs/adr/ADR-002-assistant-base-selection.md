@@ -1,6 +1,6 @@
 # ADR-002 — Seleção do sistema-base da NAIA
 
-> **DECISION RESET — 2026-09-29:** preservar todos os pins, achados estáticos, testes upstream, gaps e medições abaixo. Não preservar como decisão a shortlist, a ordem de execução, a prioridade de OpenClaw ou qualquer caracterização de candidato como finalista até a categoria de agentes persistentes ser reenumerada.
+> **Atualização de decisão — 2026-10-01:** os registros do `DECISION_RESET` abaixo preservam o estado histórico e a evidência sem alteração. A direção atual desta ADR está em **Current user-directed direction**: NanoClaw foi escolhido provisoriamente para avançar como base da NAIA. Isso não qualifica o pin nem seleciona a topologia sistêmica NAIA/Anna/Apollo.
 
 ## Document contract
 
@@ -8,9 +8,27 @@ Esta ADR compara sistemas completos/persistentes candidatos a base da Assistente
 
 Frameworks de orquestração, durable runtimes e componentes isolados não entram como se fossem produtos equivalentes.
 
-- **Status:** Reopened — `DECISION_RESET`
-- **Date:** 2026-09-29
-- **Decision:** NOT_SELECTED / shortlist reset
+- **Status:** Provisional selection to advance — qualification pending
+- **Date:** 2026-10-01
+- **Decision:** NanoClaw `4c1eabd3ddd74cc3d71b1871da857391a9411c8d` — provisional NAIA base direction
+
+## Current user-directed direction — 2026-10-01
+
+At the user's direction, **NanoClaw** is selected provisionally to advance as the NAIA base, at `nanocoai/nanoclaw@4c1eabd3ddd74cc3d71b1871da857391a9411c8d`. This records project direction; it is not a comparative proof that NanoClaw has the lowest total adaptation/maintenance cost.
+
+The decision reuses the exact-pin upstream and Atento evidence already recorded in `docs/evaluation/system-chassis-gate2-continuation-2026-10-01.md` and `docs/decisions/provisional-system-chassis-nanoclaw-2026-10-01.md`. The scoped Atento probe passed 7/7 assertions, but its full system gate remains open. No completed passing assertions are converted into broader claims, and no prior test or benchmark is rerun by this update.
+
+The next integration/recovery delta is `BLOCKED_ADAPTER`: the current Atento branch has no product host runtime or production provider/gateway adapter to exercise. Implementation of that seam and its focused restart/recovery probe are required before qualification. NanoClaw is not production-qualified; Anna's base remains unselected; the complete cross-agent topology remains unselected; Apollo functional research remains deferred. Other candidate evidence and historical reset records remain preserved.
+
+```text
+NAIA_BASE_DIRECTION = NanoClaw@4c1eabd3ddd74cc3d71b1871da857391a9411c8d
+SELECTION_TYPE = USER_DIRECTED_PROVISIONAL_ADVANCE
+NAIA_CURRENT_PIN_QUALIFIED = NO
+NAIA_PRODUCTION_QUALIFICATION = NOT_ESTABLISHED
+FULL_ATENTO_SYSTEM_TOPOLOGY = NOT_SELECTED
+TOTAL_ADAPTATION_MAINTENANCE_COST_WINNER = NOT_ESTABLISHED
+NEXT_INTEGRATED_PROBE = BLOCKED_ADAPTER
+```
 
 ## Current candidate-universe evidence
 
@@ -18,7 +36,7 @@ Post-reset re-enumeration is recorded in:
 
 `docs/evaluation/candidate-reenumeration-2026-09-29.md`
 
-This record expands/classifies the candidate universe but does not alter this ADR's `NOT_SELECTED` state or create a shortlist.
+This record expands/classifies the candidate universe. The current provisional direction and its limits are recorded below; the dated reset snapshots remain historical evidence.
 
 
 
