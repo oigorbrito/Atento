@@ -4,7 +4,7 @@
  * does not start NanoClaw's provider/channel/application runtime.
  */
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -69,6 +69,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
       const stateRoot = join(policy.dataRoot, 'v2-sessions', role);
       mkdirSync(stateRoot, { recursive: true });
       writeFileSync(join(stateRoot, 'effect.txt'), `inert-effect:${role}\n`, { mode: 0o600 });
+      execFileSync('chown', ['-R', '1000:1000', stateRoot]);
       fixtures.set(role, stateRoot);
     }
     const driver = new DockerSessionDriver({
@@ -94,8 +95,10 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
 
   it('keeps role state writable only through that role container mount', () => {
     for (const role of roles) {
+      dockerExec(role, ['sh', '-c', `printf 'written:${role}\\n' >> /workspace/effect.txt`]);
       const own = dockerExec(role, ['cat', '/workspace/effect.txt']).trim();
-      expect(own).toBe(`inert-effect:${role}`);
+      expect(own).toBe(`inert-effect:${role}\\nwritten:${role}`);
+      expect(readFileSync(join(fixtures.get(role)!, 'effect.txt'), 'utf8')).toContain(`written:${role}`);
       for (const other of roles.filter((candidate) => candidate !== role)) {
         expect(own).not.toBe(`inert-effect:${other}`);
       }
