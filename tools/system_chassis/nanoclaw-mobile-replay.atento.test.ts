@@ -31,6 +31,22 @@ async function unusedPort(): Promise<number> {
   });
 }
 
+async function waitForPortRelease(selectedPort: number, timeoutMs: number): Promise<number> {
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < timeoutMs) {
+    const available = await new Promise<boolean>((resolve, reject) => {
+      const probe = createServer();
+      probe.once('error', () => resolve(false));
+      probe.listen(selectedPort, '0.0.0.0', () => {
+        probe.close((error) => error ? reject(error) : resolve(true));
+      });
+    });
+    if (available) return Date.now() - startedAt;
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  throw new Error(`webhook port ${selectedPort} was not bindable within ${timeoutMs}ms after worker SIGKILL`);
+}
+
 async function waitReady(child: ChildProcess): Promise<void> {
   await new Promise<void>((resolve, reject) => {
     let output = '';
@@ -142,8 +158,9 @@ describe('NanoClaw mobile SSE replay — disposable feasibility probe', () => {
 
     for (const role of roles) db.prepare('INSERT INTO outbox (role, payload) VALUES (?, ?)').run(role.name, `${role.name}-reply-2`);
     await crashWorker();
-    // Give the OS a bounded socket-release window before the supervisor-like restart.
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Measure bounded OS socket release, then restart on the candidate's fixed port.
+    const releaseWaitMs = await waitForPortRelease(port, 5000);
+    expect(releaseWaitMs).toBeLessThan(5000);
     await waitReady(startWorker());
 
     for (const role of roles) {
