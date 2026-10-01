@@ -6,7 +6,7 @@ on:
       - codex/disposable-nanoclaw-mobile-replay-20261001
     paths:
       - ".github/workflows/nanoclaw-mobile-replay-probe.yml"
-      - "tools/system_chassis/nanoclaw-mobile-replay-*"
+      - "tools/system_chassis/nanoclaw-mobile-replay*"
   workflow_dispatch:
 
 permissions:
