@@ -68,7 +68,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
     for (const role of roles) {
       const stateRoot = join(policy.dataRoot, 'v2-sessions', role);
       mkdirSync(stateRoot, { recursive: true });
-      writeFileSync(join(stateRoot, 'effect.txt'), `inert-effect:${role}\\n`, { mode: 0o600 });
+      writeFileSync(join(stateRoot, 'effect.txt'), `inert-effect:${role}\n`, { mode: 0o600 });
       fixtures.set(role, stateRoot);
     }
     const driver = new DockerSessionDriver({
