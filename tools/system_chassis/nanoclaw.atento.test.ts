@@ -97,7 +97,7 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
     for (const role of roles) {
       dockerExec(role, ['sh', '-c', `printf 'written:${role}\\n' >> /workspace/effect.txt`]);
       const own = dockerExec(role, ['cat', '/workspace/effect.txt']).trim();
-      expect(own.split(/\\r?\\n/)).toEqual([`inert-effect:${role}`, `written:${role}`]);
+      expect(own.split(String.fromCharCode(10))).toEqual([`inert-effect:${role}`, `written:${role}`]);
       expect(readFileSync(join(fixtures.get(role)!, 'effect.txt'), 'utf8')).toContain(`written:${role}`);
       for (const other of roles.filter((candidate) => candidate !== role)) {
         expect(own).not.toBe(`inert-effect:${other}`);
