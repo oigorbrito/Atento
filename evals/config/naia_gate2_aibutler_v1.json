@@ -1,0 +1,48 @@
+{
+  "version": "NAIA-GATE2-AI-BUTLER-COMPOSITION-V1",
+  "candidate": "AI Butler",
+  "upstream_repo": "LumabyteCo/aibutler",
+  "upstream_sha": "c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c",
+  "harness_version": "NAIA-GATE2-COMPOSITION-V1",
+  "composition_profile_hash": "d79deed3c708bbb5b8136c526ff1bc7436a8c5838c5d50025b718d2c32f1f579",
+  "policy_hash": "f4697f0db81984e54be06b0b33b91c70ca565155feced3b4762e511504a6be16",
+  "execution_state": "FROZEN_NOT_EXECUTED",
+  "topology": {
+    "memory": {
+      "naia_bank": "naia",
+      "anna_bank": "anna",
+      "cross_bank_access": "deny"
+    },
+    "credentials": {
+      "naia_vault": "independent",
+      "anna_vault": "independent",
+      "cross_vault_access": "deny"
+    },
+    "tools_channels": {
+      "naia_capability_set": "role_scoped",
+      "anna_capability_set": "role_scoped",
+      "agent_delegate": "not_granted"
+    },
+    "cross_role": {
+      "native_delegation": false,
+      "allowed_path": "explicit_atento_handoff_broker_only"
+    }
+  },
+  "policy": {
+    "memory_authority": "bank_scoped",
+    "credential_authority": "separate_vaults",
+    "tool_channel_authority": "capability_scoped",
+    "silent_role_invocation": "deny",
+    "broker_adapter": "tools/naia_gate2/broker_runtime_adapter.py",
+    "broker_forbidden_authority_fields": "reject",
+    "control_failure_rule": "fail_closed"
+  },
+  "required_assertions": [
+    "ISO-1",
+    "ISO-2",
+    "ISO-3",
+    "ISO-4",
+    "ISO-5",
+    "ISO-6"
+  ]
+}
