@@ -211,6 +211,8 @@ These are provenance entries for technical discovery. Terms/license are intentio
 
 These repositories were inspected at README/documentation level during the whole-product chassis rescreen. `REFERENCE_ONLY` means no code was cloned or adopted and grants no candidate status. Verify the exact terms at the frozen pin before any code transfer.
 
+| ID | Projeto | Repo / fonte | Commit / versão | Termos conhecidos | Status inicial | Uso pretendido |
+|---|---|---|---|---|---|---|
 | SRC-SYS-MINDROOM | MindRoom — system-chassis discovery | https://github.com/mindroom-ai/mindroom | `4f3bd2d108a6f9be28174e0f66d78eeecddca386` | Apache-2.0 verified in LICENSE at pin | REFERENCE_ONLY | multi-agent runtime, Matrix identities, worker scopes, delegated sessions; system composition probe only |
 | SRC-SYS-ONTHEIA | Ontheia — system-chassis discovery | https://github.com/Ontheia/ontheia | `70802db61eb16533f55efce3d8785d810223d03b` | AGPL-3.0 LICENSE; upstream also advertises commercial terms | REFERENCE_ONLY | multi-agent platform, RLS/memory namespaces, workflow and handoff probes |
 | SRC-SYS-BOBLABS | Bob Labs — system-chassis discovery | https://github.com/boblabs-eu/boblabs | `a91d6dad098c8ba6d24436a856556078151db45d` | Apache-2.0 verified in LICENSE at pin | REFERENCE_ONLY | multi-agent labs, typed handoff bus, per-agent grants and per-lab sandbox probe |
