@@ -181,7 +181,8 @@ The cohort is fixed for this pass. Do not silently drop a candidate or expand th
 - Run only uncovered assertions or Atento-specific deltas. At most one new primary run per candidate and one targeted confirmation for suspected infrastructure invalidity or possible hard-gate failure; no duplicate runs or broad upstream suite reruns.
 - Start cost assessment with existing measured adaptation/maintenance evidence; collect only missing marginal dimensions. Separate measured historical evidence from newly measured and non-comparable estimates. Record files/touchpoints, dependencies/pins, runtime/store/control/deployment paths, engineering time/rework, and ongoing operations. No synthetic total-cost score.
 - Statuses: `PASS`, reproduced hard-gate `FAIL`, `BLOCKED` for absent/non-transferable evidence, or `BLOCKED_ADAPTER`. Missing evidence is not failure. Complete the cohort despite earlier pass/fail results; no infinite reruns.
-- Maintain a provisional Top 3 only among completed hard-gate passes with comparable cost evidence. Preserve ties/unranked results where needed. The Top 3 is not a selection; no candidate is eliminated solely for missing evidence.
+- In each evidence dossier, include published external benchmark scores when available, with benchmark/version, candidate/model/provider revision, raw score/unit, task/setup/budget, date, source, and owner-reported versus independent status. Reuse scores as published; do not rerun the benchmark merely to align score rows. Record `NOT_FOUND` or `NOT_COMPARABLE` where appropriate. These scores inform only their own comparable quality/capability metric and cannot pass an Atento isolation/authority/handoff gate or be added to chassis/lifecycle cost. Existing sourced scores and transfer limits are in `docs/evaluation/system-chassis-benchmark-crosscheck-2026-09-30.md`.
+- Maintain a provisional Top 3 only among completed hard-gate passes with comparable cost evidence. Show eligible external benchmark scores as a separate axis; do not force an aggregate. Preserve ties/unranked results where needed. The Top 3 is not a selection; no candidate is eliminated solely for missing evidence.
 
 ### GitHub recommendation and this protocol
 
@@ -195,6 +196,7 @@ COMMON_PROFILE = 8_ASSERTIONS_DEFINED; CANDIDATE_NEUTRAL_RUNNER_NOT_IMPLEMENTED
 EXISTING_EVIDENCE_REUSE = REQUIRED_BEFORE_ANY_RERUN
 SEQUENTIAL_CANDIDATE_RUNS = 0
 COMPARABLE_COST_MEASUREMENTS = 0
+EXTERNAL_CANDIDATE_BENCHMARK_SCORES = NOT_RECONCILED_FOR_FIXED_COHORT
 PROVISIONAL_TOP_3 = NOT_STARTED
 CANDIDATE_SELECTED = NONE
 ```
