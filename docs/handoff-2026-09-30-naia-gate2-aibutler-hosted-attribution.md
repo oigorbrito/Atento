@@ -319,3 +319,124 @@ NAIA_BASE = NOT_SELECTED
 ```
 
 Execution resume order remains the frozen common-harness order when infrastructure is available. Static preparation may continue past blocked entries, but it must not alter that execution order or convert preparation into qualification.
+
+
+## Gate-2 static preparation closure update
+
+Canonical closure:
+
+`docs/evaluation/naia-gate2-composition-preparation-frontier-v1-2026-09-30.md`
+
+```text
+GATE2_STATIC_COMPOSITION_PREPARATION = COMPLETE_V1
+FROZEN_COMPOSITION_IDENTITIES = 12_OF_12
+FROZEN_CONFIG_INTEGRITY = PASS
+EXECUTION_ORDER = UNCHANGED
+
+GATE2_EMPIRICAL_PASS = 0
+NEW_TECHNICAL_ELIMINATIONS = 0
+NAIA_SHORTLIST = NOT_SELECTED
+NAIA_BASE = NOT_SELECTED
+```
+
+A dependency-free integrity checker is now versioned at:
+
+`tools/naia_gate2/validate_frozen_configs.py`
+
+It locks exact candidate/repo/SHA/harness identities, canonical topology/policy hashes and the exact assertion/add-on surface for all 12 frontier candidates.
+
+### AI Butler
+
+The pre-existing synthetic ISO-6 helper was removed from the executable evidence path.
+
+The hosted harness now invokes the real Atento `ExplicitHandoffBroker` through:
+
+`tools/naia_gate2/broker_runtime_adapter.py`
+
+and validates/uploads a canonical result after candidate assertions pass.
+
+```text
+AI_BUTLER_REAL_BROKER_PATH = WIRED
+AI_BUTLER_RESULT_VALIDATOR = WIRED
+AI_BUTLER_POST_REPAIR_EXECUTION = NOT_OBSERVED
+```
+
+Do not claim Gate-2 PASS until a runner actually executes the repaired workflow.
+
+### NanoClaw
+
+Recipe ambiguity is closed from exact candidate-owned registry evidence:
+
+```text
+core = 4c1eabd3ddd74cc3d71b1871da857391a9411c8d
+channels = 3f7e13b591a0c8980242b81ceff4b3f542ef839a
+providers = 3959d1f055cba2320cf843b30834a278250346b8
+channel = add-telegram / @chat-adapter/telegram@4.29.0
+provider = add-codex / @openai/codex@0.155.1
+gateway = add-onecli / gateway 1.41.0 / CLI 2.2.5 / SDK 2.2.1
+```
+
+Canonical:
+- `evals/config/naia_gate2_nanoclaw_v1.json`
+- `docs/evaluation/naia-nanoclaw-gate2-exact-recipe-freeze-2026-09-30.md`
+
+Complete recipe runtime remains `NOT_RUN`.
+
+### Engram
+
+The previous one-AgentDef/two-identity composition remains an empirical FAIL for that exact composition.
+
+Exact-pin source confirms:
+
+```text
+Job.agent_id
+ -> task.agent
+ -> AgentDef
+ -> AgentDef.allowed_tools
+ -> run_task_core ToolRegistry filtering
+```
+
+The new frozen composition uses separate interactive and scheduled AgentDefs:
+
+```text
+atento-naia-interactive ->
+  [mcp_atento_browser_interactive_effect]
+
+atento-naia-scheduled ->
+  [mcp_atento_browser_scheduled_effect]
+```
+
+Canonical:
+- `evals/config/naia_gate2_engram_v1.json`
+- `docs/evaluation/naia-engram-gate2-split-agentdef-composition-freeze-2026-09-30.md`
+
+```text
+DUAL_IDENTITY_ONE_AGENTDEF = FAIL_EMPIRICAL_FOR_TESTED_COMPOSITION
+SPLIT_AGENTDEF_COMPOSITION = FROZEN_V1_NOT_RUN
+REPAIR_CLASS = LOCALIZED_REPAIR_PENDING_EXECUTION
+```
+
+Do not reinterpret the prior FAIL as repaired until the split-AgentDef runtime executes.
+
+### Resume rule
+
+Static preparation for the current 12-candidate frontier is now exhausted.
+
+Resume empirical execution in the existing frozen order when a usable executor exists:
+
+```text
+1 AI Butler
+2 OpenMausBot
+3 NanoClaw
+4 AgentOS
+5 Rome
+6 Suna
+7 Rakazo
+8 Letta Code
+9 Octop
+10 QwenPaw
+11 RustFox
+12 Engram
+```
+
+Do not restart Gate 1, static Gate 2, frontier discovery, broad upstream suites or composition-definition work without a material source/policy delta.
