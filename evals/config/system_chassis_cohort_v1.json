@@ -1,0 +1,150 @@
+{
+  "protocol_version": 1,
+  "profile_id": "ATENTO-SYSTEM-CHASSIS-FROZEN-11-V1",
+  "role_ids": ["NAIA", "Anna", "Apollo"],
+  "assertion_ids": [
+    "SYS-CHAT-01",
+    "SYS-MEM-01",
+    "SYS-TOOL-01",
+    "SYS-CRED-01",
+    "SYS-HANDOFF-01",
+    "SYS-HANDOFF-02",
+    "SYS-BG-01",
+    "SYS-STATE-01"
+  ],
+  "execution_policy": {
+    "serial": true,
+    "reuse_equivalent_evidence": true,
+    "live_provider_calls": false,
+    "production_credentials": false,
+    "missing_adapter_status": "BLOCKED_ADAPTER",
+    "missing_runtime_status": "BLOCKED_ENVIRONMENT",
+    "candidate_failure_from_missing_evidence": false
+  },
+  "test_profile": {
+    "network_policy": "DENY",
+    "live_provider_calls": false,
+    "production_credentials": false,
+    "roles": [
+      {
+        "id": "NAIA",
+        "state_marker": "synthetic:naia:state-v1",
+        "synthetic_credential_id": "synthetic:naia:credential-v1",
+        "synthetic_credential_canary": "synthetic-secret-canary:naia:v1"
+      },
+      {
+        "id": "Anna",
+        "state_marker": "synthetic:anna:state-v1",
+        "synthetic_credential_id": "synthetic:anna:credential-v1",
+        "synthetic_credential_canary": "synthetic-secret-canary:anna:v1"
+      },
+      {
+        "id": "Apollo",
+        "state_marker": "synthetic:apollo:state-v1",
+        "synthetic_credential_id": "synthetic:apollo:credential-v1",
+        "synthetic_credential_canary": "synthetic-secret-canary:apollo:v1"
+      }
+    ],
+    "handoff": {
+      "payload_id": "synthetic:handoff:bounded-v1",
+      "allowed_fields": ["request_id", "task", "recipient"],
+      "forbidden_fields": ["transcript", "private_memory", "credential", "authority_override"],
+      "receiver_reauthorization_required": true
+    },
+    "restart_retry": {
+      "crash_point": "after_claim_before_terminal_ack",
+      "max_retries": 1,
+      "max_terminal_deliveries": 1
+    }
+  },
+  "candidates": [
+    {
+      "order": 1,
+      "candidate_id": "nanoclaw",
+      "display_name": "NanoClaw",
+      "repository": "nanocoai/nanoclaw",
+      "upstream_sha": "4c1eabd3ddd74cc3d71b1871da857391a9411c8d",
+      "adapter": null
+    },
+    {
+      "order": 2,
+      "candidate_id": "ai-butler",
+      "display_name": "AI Butler",
+      "repository": "LumabyteCo/aibutler",
+      "upstream_sha": "c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c",
+      "adapter": null
+    },
+    {
+      "order": 3,
+      "candidate_id": "openclaw",
+      "display_name": "OpenClaw",
+      "repository": "openclaw/openclaw",
+      "upstream_sha": "e9571d77e76bd6d35996273d9e8398ad539b26e1",
+      "adapter": null
+    },
+    {
+      "order": 4,
+      "candidate_id": "qwenpaw",
+      "display_name": "QwenPaw",
+      "repository": "agentscope-ai/QwenPaw",
+      "upstream_sha": "777441721aa72db8e380d90e4d0481b05cbfd4cc",
+      "adapter": null
+    },
+    {
+      "order": 5,
+      "candidate_id": "mindroom",
+      "display_name": "MindRoom",
+      "repository": "mindroom-ai/mindroom",
+      "upstream_sha": "4f3bd2d108a6f9be28174e0f66d78eeecddca386",
+      "adapter": null
+    },
+    {
+      "order": 6,
+      "candidate_id": "bob-labs",
+      "display_name": "Bob Labs",
+      "repository": "boblabs-eu/boblabs",
+      "upstream_sha": "a91d6dad098c8ba6d24436a856556078151db45d",
+      "adapter": null
+    },
+    {
+      "order": 7,
+      "candidate_id": "ontheia",
+      "display_name": "Ontheia",
+      "repository": "Ontheia/ontheia",
+      "upstream_sha": "70802db61eb16533f55efce3d8785d810223d03b",
+      "adapter": null
+    },
+    {
+      "order": 8,
+      "candidate_id": "openakita",
+      "display_name": "OpenAkita",
+      "repository": "openakita/openakita",
+      "upstream_sha": "5f5b38da728274f0fd06461a481851be7c0bca6a",
+      "adapter": null
+    },
+    {
+      "order": 9,
+      "candidate_id": "clawix",
+      "display_name": "Clawix",
+      "repository": "ClawixAI/clawix",
+      "upstream_sha": "5aee015e0bd793102fba69af486dd6e75df6d802",
+      "adapter": null
+    },
+    {
+      "order": 10,
+      "candidate_id": "memoh",
+      "display_name": "Memoh",
+      "repository": "felinics/Memoh",
+      "upstream_sha": "3d60a08aa42fdcddb218401699822741b51b52ad",
+      "adapter": null
+    },
+    {
+      "order": 11,
+      "candidate_id": "letta-code",
+      "display_name": "Letta Code",
+      "repository": "letta-ai/letta-code",
+      "upstream_sha": "21daa38a8cdd74f2d03b634c8312253080bacfc1",
+      "adapter": null
+    }
+  ]
+}
