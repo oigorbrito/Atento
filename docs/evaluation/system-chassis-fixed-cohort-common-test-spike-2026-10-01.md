@@ -406,3 +406,36 @@ COMMON_ATENTO_PROFILE = BLOCKED_ADAPTER
 ```
 
 Pré-condições para reabrir os dois casos: disponibilizar os módulos exatos do `go.mod/go.sum` no cache isolado e executar somente esses filtros no mesmo pin. Nenhum resultado destes bloqueios deve ser contado como falha funcional.
+
+
+## Gate eliminatório encontrado — QwenPaw cron padrão desliga aprovação de ferramentas — 2026-10-02
+
+No pin fixo `agentscope-ai/QwenPaw@777441721aa72db8e380d90e4d0481b05cbfd4cc`, foi executada uma sonda mínima e descartável no caminho de criação/executor de tarefa agendada, sem provider nem invocação de ferramenta:
+
+```text
+UV_CACHE_DIR=/tmp/qwenpaw-memory-uv-cache uv run --frozen --extra test -- python - <<'PY'
+# create default agent CronJobSpec, execute through CronExecutor,
+# capture the request at workspace.stream_query, then stop before a provider/tool
+PY
+# observed: default_tool_safety=False; emitted approval_level=off
+```
+
+A sonda usou o builder de job do pin e o `CronExecutor` de produção. No ponto de chamada de `stream_query`, capturou `request_context.approval_level == "off"` para o job sem configuração explícita, antes de qualquer provider ou ferramenta. A asserção foi satisfeita. A inicialização tentou tocar estado em `/root/.qwenpaw`, que é somente leitura; depois de capturar o resultado, o processo Python ficou preso no encerramento de uma thread importada e foi interrompido. Essa limitação afeta a limpeza do harness, não a observação capturada.
+
+Corroboração no mesmo pin: `src/qwenpaw/app/crons/models.py::JobRuntimeSpec.tool_safety` tem default `False` e documenta que OFF executa todas as ferramentas sem checagens de aprovação; `src/qwenpaw/app/crons/executor.py` traduz `False` em `ToolExecutionLevel.OFF`. O teste `tests/integration/test_security_real.py::test_tool_guard_blocks_dangerous_shell_via_agent_run` liga explicitamente `tool_safety=True` e comenta que o default das tarefas cron é OFF.
+
+Isso falha o gate eliminatório de autoridade de tarefa de fundo **na configuração padrão**: uma tarefa agendada recebe modo mais permissivo sem pedido explícito, contrariando o invariante de que execução agendada/retry/recovery deve manter autoridade igual ou mais restrita que a interativa. Classificação: `FAIL_WITH_SCOPE` para `QWENPAW_DEFAULT_CRON_TOOL_AUTHORITY`; não é prova de acesso cross-role nem de exfiltração de credencial.
+
+O modelo permite `tool_safety=True`; portanto o resultado elimina o caminho/configuração padrão, não demonstra impossibilidade estrutural do repositório inteiro. QwenPaw só pode voltar a satisfazer esse gate se o adapter/configuração da composição fixar explicitamente aprovação restritiva e um único reteste demonstrar a política efetiva depois de persistência, execução e restart. Essa configuração e reteste ainda não existem no Atento, cujo host seam segue ausente.
+
+```text
+QWENPAW_DEFAULT_CRON_TOOL_AUTHORITY = FAIL_WITH_SCOPE
+PROBE_PROVIDER_OR_TOOL_CALL = NONE (CAPTURED BEFORE stream_query BODY)
+QWENPAW_EXPLICIT_TOOL_SAFETY_TRUE_PATH = NOT_TESTED_HERE
+QWENPAW_REPOSITORY_FAMILY_ELIMINATED = NO (STRICT OVERRIDE EXISTS; UNVERIFIED IN COMPOSITION)
+QWENPAW_DEFAULT_CRON_PROFILE_ELIMINATED = YES
+COMMON_ATENTO_NAIA_RESTART_RETRY = BLOCKED_ADAPTER
+FINAL_SYSTEM_CHASSIS_SELECTION = NONE
+```
+
+Este achado atualiza os snapshots anteriores que listavam apenas holds e bloqueios sem reprovação funcional nova. A elegibilidade de composição do pin QwenPaw permanece condicional ao fechamento verificável desse gate; a falha de ambiente do Bob Labs e os bloqueios de harness de OpenClaw/Clawix/Memoh continuam sem valor de FAIL.
