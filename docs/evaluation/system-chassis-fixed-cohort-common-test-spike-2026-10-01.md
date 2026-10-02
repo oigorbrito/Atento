@@ -227,3 +227,26 @@ CANDIDATE_ELIMINATION = NONE
 ```
 
 This is scoped ownership evidence only and does not close the NAIA restart/retry gate. Continue to Memoh in frozen order; no final chassis selection is made.
+
+
+## Continuation — Memoh cross-bot memory mutation gate — 2026-10-02
+
+Frozen pin verified: `felinics/Memoh@3d60a08aa42fdcddb218401699822741b51b52ad`. The previously cited builtin adapter scope tests were reused and not repeated. One distinct handler-authorization test was run:
+
+```text
+go test ./internal/handlers \
+  -run '^TestChatDeleteOneRejectsForeignBotMemoryID$' -count=1
+ok github.com/felinics/memoh/internal/handlers
+```
+
+It verifies that a memory ID carrying a different bot ID is rejected before the memory provider's delete method is called. This is a handler-level test with a fake provider; it does not prove database/RLS enforcement, host-process recovery, or Atento role-bound task retry. Go 1.25.7 was run from the local toolchain with build/module caches under `/tmp`; the frozen checkout remained unchanged.
+
+```text
+MEMOH_FOREIGN_BOT_MEMORY_DELETE = PASS_WITH_SCOPE (HANDLER + FAKE PROVIDER)
+MEMOH_DATABASE_RLS_AND_PERSISTED_RESTART_AUTHORITY = NOT_TESTED_BY_THIS_CASE
+ATENTO_NAIA_TASK_RETRY_AND_SINGLE_TERMINAL_DELIVERY = OPEN
+COMMON_ATENTO_PROFILE = BLOCKED_ADAPTER
+CANDIDATE_ELIMINATION = NONE
+```
+
+No builtin adapter memory suite was repeated. Continue to the final fixed-cohort slot, Letta Code; no winner is selected.
