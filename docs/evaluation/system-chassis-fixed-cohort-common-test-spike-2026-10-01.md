@@ -1265,3 +1265,22 @@ TESTS_OR_BENCHMARKS_RERUN = 0
 ```
 
 Next decision-bearing step: keep candidate family/path results and global adapter blocker separate; resume paused directions only under the user's existing catch-up rule. No new candidate or benchmark discovery is justified by this closure alone.
+
+
+## Read-only seam check — adjacent Engram runtime probe does not clear the common adapter blocker — 2026-10-02
+
+A read-only check found an existing Atento evidence log at `evals/probes/engram_browser_authority/evidence/engram-agent-runtime-probe-2026-09-30.log`. It records exact pin `engram@3a43667deec4a680b42f3e880d7d6bac3baf0746` and one Rust test, `engram-agent::atento_mcp_runtime_probe::candidate_agent_routes_both_origins_through_adapter_and_fails_closed`, passing 1/1. The observed property is bounded agent-run routing for both origins through the candidate's adapter with fail-closed behavior.
+
+This is useful adjacent evidence, but it is not a common-cohort Atento host/runtime seam: it is specific to Engram, outside the fixed 11 candidates; the test does not exercise the production Atento host, the frozen eight-assertion profile across the cohort, or restart/retry. The log explicitly states `REAL_DAEMON_SCHEDULER_DISPATCH_NOT_EXERCISED`. Treat it as scoped Engram integration evidence only. Do not rerun it or use it to change any candidate's gate status.
+
+```text
+ENGRAM_AGENT_ADAPTER_TEST = PASS_WITH_SCOPE (1 TEST; EXACT PIN 3a43667...)
+ATENTO_PRODUCTION_HOST_RUNTIME = NOT_ESTABLISHED_BY_THIS_PROBE
+COMMON_CANDIDATE_NEUTRAL_RUNNER = NOT_ESTABLISHED_BY_THIS_PROBE
+NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART = BLOCKED_ADAPTER
+FIXED_COHORT_SIZE = 11
+CANDIDATE_ELIMINATION_OR_SELECTION = NONE
+TESTS_OR_BENCHMARKS_RERUN = 0
+```
+
+Source: `evals/probes/engram_browser_authority/evidence/engram-agent-runtime-probe-2026-09-30.log`. This is a source-record review, not a new execution or a change to the candidate-neutral blocker.
