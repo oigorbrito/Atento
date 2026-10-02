@@ -2,36 +2,40 @@
 
 ## Decision sheet — read this first — 2026-10-02
 
-**Decision:** advance **NanoClaw** as the **provisional general-chassis direction** for the three-role composition, based on the existing exact-profile Atento test below. This is a direction to advance, not production qualification. No other candidate family is eliminated.
+**Governing method:** compare the frozen 11-candidate cohort by the same gate in rounds. Reuse evidence only when pin, setup, property, outcome, and provenance match. Do not choose a general chassis from one isolated test or let candidate-specific probes become substitutes for the common profile.
 
-### Technical rule and executed test
+### Frozen test protocol
 
-- Technical guide: `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md` defines the system gates, including `SYS-BG-01`: background/retry/recovery must preserve the role's authority or narrow it.
-- Executable profile and test record: `docs/evaluation/system-chassis-gate2-continuation-2026-10-01.md`, profile `evals/config/system_chassis_nanoclaw_v1.json`, Atento run [36815873223](https://github.com/oigorbrito/Atento/actions/runs/36815873223).
-- The exact NanoClaw pin `4c1eabd3ddd74cc3d71b1871da857391a9411c8d` passed **7/7** assertions across NAIA, Anna, and Apollo: group/state ownership, negative cross-group access, direct A2A denial, role-specific synthetic identity, bounded broker/mailbox handoff, recipient-side CLI identity, and scheduled-task ownership.
-- This is the only recorded executed three-role Atento-profile run among the 11 candidates. It is the strongest direct composition evidence available and is the basis for advancing NanoClaw.
+1. **Freeze cohort and order:** NanoClaw, AI Butler, OpenClaw, QwenPaw, MindRoom, Bob Labs, Ontheia, OpenAkita, Clawix, Memoh, Letta Code. Preserve exact pins. MindRoom remains paused until the other candidates reach its existing evidence level.
+2. **Reuse first:** map exact-pin upstream suites, Atento runs, and published benchmark scores to the specific property each covers. No equivalent reruns and no benchmark reruns.
+3. **Run one common gate across the cohort before moving to the next:** use the eight assertions `SYS-CHAT-01`, `SYS-MEM-01`, `SYS-TOOL-01`, `SYS-CRED-01`, `SYS-HANDOFF-01`, `SYS-HANDOFF-02`, `SYS-BG-01`, and `SYS-STATE-01` from `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`. Record each as `PASS`, `FAIL_WITH_SCOPE`, `BLOCKED`, `BLOCKED_ADAPTER`, or `NOT_TESTED`.
+4. **Eliminate only on reproduced hard failure:** a failure eliminates the tested pin/path; eliminate a family only if no viable, testable composition remains. Missing tests, unavailable harnesses, and blocked adapters are not failures.
+5. **After the gate rounds:** estimate repair cost for the surviving paths using one rubric; compare benchmark axes separately; select only from the resulting comparable matrix. Do not combine unlike benchmark scores into one total.
 
-### What the result does not prove
+### Current position under that protocol
 
-The adapter and broker checks ran in the test harness, not deployed Atento services. There was no live provider/model, real channel, provider credential-custody test, or host-process restart with scheduled-task retry. Thus `SYS-BG-01` is only partially covered and `NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART = BLOCKED_ADAPTER`. NanoClaw is **not production-qualified**.
+- Cohort/pins, existing probe inventory, and external benchmark reuse are documented.
+- The NanoClaw profile run [36815873223](https://github.com/oigorbrito/Atento/actions/runs/36815873223) is **7/7 `PASS_WITH_SCOPE`** on one exact-pin, three-role test-harness composition. Keep it as one scoped row in the matrix; it does not complete the same gate for the other ten candidates and does not prove production host restart/retry.
+- Candidate-local probes across the document are supporting evidence, not a substitute denominator for the common eight-gate rounds.
+- The common Atento host/runtime seam and candidate-neutral runner are absent. The integrated matrix is therefore not comparable yet; `NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART = BLOCKED_ADAPTER`.
+- NanoClaw remains the provisional NAIA direction recorded in its separate decision trail. **No general three-role chassis is selected by this comparative protocol yet.** The earlier possible-finalist list remains a working queue only; the other candidates are not eliminated.
 
-The earlier three-candidate working shortlist is now the reserve comparison set: QwenPaw and OpenClaw remain alternatives, not eliminated candidates. The PawBench pair still favors QwenPaw over OpenClaw by 1.6 points for the published harness versions, but it does not outweigh or replace the Atento composition gate. Auto-ClawEval remains a separate NanoClaw signal.
+### Anti-loop rule
 
-### Stop random test expansion
-
-Use this specific three-role profile as the decision gate. Do not add unrelated candidate-local probes or rerun its 7/7 checks. Resume only when the real host/runtime seam exists, then run the single residual elimination test: persist one inert NAIA-owned task, observe claim, stop the host before terminal acknowledgement, restart with the same store, allow one bounded retry, and verify NAIA ownership, no grant expansion, and exactly one terminal delivery.
+No more one-off candidate probes or reruns while the current common gate cannot execute. Resume at the first incomplete common gate only when the shared host/runtime seam is available; run candidates serially in frozen order, close that gate across the cohort, then advance to the next. For the restart/retry residual, the predeclared probe is one inert NAIA task: persist, observe claim, stop host before terminal acknowledgement, restart with the same store, allow one bounded retry, and verify role ownership, non-expanded grants, and one terminal delivery. If the seam is still absent, record the blocker once and stop.
 
 ```text
-GENERAL_CHASSIS_DIRECTION = NANOCLAW (PROVISIONAL; ADVANCE)
-BASIS = EXACT_PROFILE_ATENTO_RUN_36815873223 (7/7; PASS_WITH_SCOPE)
-OTHER_CANDIDATE_FAMILIES_ELIMINATED = 0
-PRODUCTION_QUALIFICATION = NO
-NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART = BLOCKED_ADAPTER
-NEXT_ACTION = WAIT_FOR_EXECUTABLE_HOST_RUNTIME_SEAM; THEN RUN ONE RESIDUAL TEST
-EQUIVALENT_TESTS_OR_BENCHMARKS_RERUN = 0
+COHORT = FROZEN_11
+PROTOCOL = SAME_GATE_ACROSS_COHORT_IN_ROUNDS
+MINDROOM = PAUSED_UNTIL_COHORT_CATCHES_UP
+EXISTING_EVIDENCE = REUSE_ONLY_WHEN_PROPERTY_AND_PROVENANCE_MATCH
+GENERAL_CHASSIS_SELECTION = NOT_MADE_BY_THIS_COMPARISON_YET
+NANOCLAW_NAIA_DIRECTION = PROVISIONAL (SEPARATE DECISION)
+COMMON_INTEGRATED_MATRIX = BLOCKED_ADAPTER
+NEW_TESTS_OR_BENCHMARK_RERUNS = 0
 ```
 
-This decision supersedes the earlier provisional shortlist as the active direction while preserving QwenPaw and OpenClaw as uneliminated alternatives. It does not change PR #58 or PR #59.
+PR #58 and PR #59 remain untouched.
 
 ## Request and decision boundary
 
