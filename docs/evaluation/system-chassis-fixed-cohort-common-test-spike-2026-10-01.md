@@ -470,3 +470,32 @@ COMMON_ATENTO_HOST_PROCESS_RESTART_COMPOSITION = BLOCKED_ADAPTER
 Este é um hard-gate failure reproduzido para o caminho interno do scheduler do pin, não uma falha de ambiente nem extrapolação do teste de memória anterior. O repositório ainda pode ser usado como componente somente se a composição impedir a execução quando o perfil persistido não resolver e provar esse fail-closed guard no restart; tal adapter/guard não existe no host Atento auditado. Não tratar um profile ID válido e um profile ID ausente como a mesma condição.
 
 Este achado também atualiza o snapshot anterior de OpenAkita, que continha somente PASS_WITH_SCOPE de memória entre workspaces. Essa aprovação permanece válida para sua propriedade; a nova reprovação cobre uma propriedade independente de scheduler/role identity.
+
+
+## Gate eliminatório com escopo — Clawix sub-agent herda aprovação da sessão pai — 2026-10-02
+
+No pin `ClawixAI/clawix@5aee015e0bd793102fba69af486dd6e75df6d802`, foi executado um caso existente e ainda não coberto: `tool-approval-rendezvous.test.ts::sub-agent honors existing session allow (memory flows via shared sessionId)`.
+
+```text
+./node_modules/.bin/vitest run \
+  --config /tmp/clawix-minimal-vitest.config.mts \
+  packages/api/src/approvals/__tests__/tool-approval-rendezvous.test.ts \
+  -t 'sub-agent honors existing session allow'
+1 passed; 13 sibling cases skipped by name filter
+```
+
+O teste registra autorização de sessão `(session=s1, wiki_delete, page-a)=allow`, então chama o gate com `isSubAgent=true` e o mesmo `sessionId=s1`; o resultado esperado pelo teste é `{allowed: true}`. Não houve provider, ferramenta real ou persistência de sessão; esse é o comportamento exercitado do serviço de aprovação, com repositórios em memória. A identidade consultada pelo gate inclui user e session, mas não uma identidade/domínio de agente na chave da autorização. A worktree do pin ficou limpa; foi necessário compilar somente `@clawix/shared` para `dist/` ignorado e usar config mínima do Vitest para não carregar setup Prisma não necessário a este caso.
+
+Para o contrato Atento, isto reprova **com escopo** a composição de papéis distintos em uma mesma sessão: uma aprovação dada no contexto pai atravessa ao sub-agent, sem novo handoff/autorização de destino. Classificação: `FAIL_WITH_SCOPE` para `CLAWIX_SHARED_SESSION_CROSS_ROLE_APPROVAL`; o fluxo multi-role em sessão compartilhada está eliminado neste pin. Separar sessões por papel pode evitar esta chave compartilhada, mas então handoff mínimo, destinatário e autorização própria ainda precisam de probe; não há composição Atento executável para provar isso.
+
+```text
+CLAWIX_PARENT_SESSION_ALLOW_INHERITED_BY_SUBAGENT = REPRODUCED (1 MOCK-BASED CASE)
+CLAWIX_SHARED_SESSION_CROSS_ROLE_AUTHORITY = FAIL_WITH_SCOPE
+CLAWIX_SHARED_SESSION_MULTI_ROLE_COMPOSITION = ELIMINATED_AT_FROZEN_PIN
+CLAWIX_REPOSITORY_FAMILY_ELIMINATED = NO (SEPARATE-SESSION ARCHITECTURE NOT TESTED)
+CLAWIX_PERSISTED_APPROVAL_OR_REAL_TOOL_EXECUTION = NOT_TESTED
+COMMON_ATENTO_HOST_RESTART_COMPOSITION = BLOCKED_ADAPTER
+FINAL_SYSTEM_CHASSIS_SELECTION = NONE
+```
+
+Este resultado é distinto do teste anteriormente bloqueado do sub-agent sem aprovação prévia e do teste já aprovado de remover tarefa de outro usuário. Os três comportamentos mantêm classificações próprias. A aprovação existente pelo mesmo session ID não foi interpretada como autorização válida entre domínios Atento.
