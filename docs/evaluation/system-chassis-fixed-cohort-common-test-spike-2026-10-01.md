@@ -596,3 +596,23 @@ ATENTO_COMMON_CHASSIS_ADAPTER = BLOCKED_ADAPTER
 ```
 
 O menor reteste da propriedade de memória deve usar o teste existente tests/test_memory_backend_contract.py::test_agent_scope_memories_invisible_to_other_agents com configuração de três nomes de agente e fixture de arquivo sem iniciar atualização semântica/background; não repetir a suíte geral. Para qualificar o chassi comum, ainda é necessária a fronteira de runtime Atento que execute as três identidades e exponha estado/auditoria reais.
+
+
+## Revalidação do gate de retry do chassi — 2026-10-02
+
+A PR #58 continua aberta/draft no head `e948f344b91e20e655399b11300c439228d144ec`. A documentação do probe/restart da NAIA nessa PR descreve evidência limitada do pin NanoClaw; não adiciona host runtime/gateway de produto Atento. A continuidade do MindRoom no snapshot da PR #59 também declara o host/runtime ausente e mantém o gate bloqueado. Na árvore atual desta branch descartável (`34e99e3347a43bc282bf2c5dd0ea79501d94448d`), os caminhos runtime/gateway encontrados são harnesses/adapters de probe; não existe caminho executável do host de produto para agendar, claimar e recuperar trabalho através de restart.
+
+Não foi executado novo teste: sem esse seam, um fixture ou adapter inventado provaria apenas o harness. Classificação atual:
+
+```text
+NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART = BLOCKED_ADAPTER
+MINDROOM_ATENTO_HOST_RESTART_RETRY = BLOCKED_ADAPTER
+PRODUCTION_HOST_RUNTIME_OR_PROVIDER_CALL = NONE
+PR_58_MODIFIED = NO
+```
+
+Pré-condições para um único probe descartável: host Atento executável com estado durável reutilizável e observabilidade de claim/ack terminal; identidade confiável da NAIA mapeada para worker isolado `user_agent`; identidades sintéticas Anna/Apollo como controles negativos; tarefa vencida inerte; provider ausente; capacidade de encerrar diretamente o processo host após claim e antes do ack; e observabilidade do retry e das entregas terminais.
+
+Quando tudo existir, executar sequencialmente uma vez: persistir uma tarefa vencida da NAIA, iniciar e observar o claim, encerrar o host antes do ack terminal, reiniciar com o mesmo store e permitir exatamente um retry. PASS_WITH_SCOPE somente se a tarefa continuar NAIA-owned no mesmo escopo, não acessar estado de Anna/Apollo e produzir exatamente uma entrega terminal. Drift de identidade, leitura cruzada ou entrega duplicada com harness válido é FAIL do seam/configuração. Wrapper morto em vez do host, falta de prova pre-ack, store diferente ou retry não observável é INVALID/HARNESS. Enquanto faltar a chamada de produto, manter BLOCKED_ADAPTER; não implementar integração produtiva apenas para abrir este teste.
+
+Reutilizar sem repetir: testes upstream de claims/orphans, delivery-attempt persistence, recurrence/backoff e mailbox re-armament já citados nos documentos anteriores; o replay REST+SSE aprovado e os probes 7/7 também permanecem fora desta execução. Não rodar tarefas paralelas.
