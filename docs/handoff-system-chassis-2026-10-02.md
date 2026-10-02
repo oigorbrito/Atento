@@ -203,3 +203,10 @@ TESTS_OR_BENCHMARKS_RERUN = 0
 ```
 
 No candidate selection changed. Continue only with the next same-gate evidence that can be run from an existing seam; keep the blocked integrated assertions blocked without an adapter. PRs #58 and #59 remain untouched.
+
+
+## Raw artifact preservation — NanoClaw hosted run 36815873223
+
+Retrieved the existing GitHub Actions artifact (artifact ID `11140824498`) and preserved its original JUnit plus a provenance receipt at [`docs/evaluation/evidence/nanoclaw-hosted-36815873223/`](evaluation/evidence/nanoclaw-hosted-36815873223/). The JUnit records 7 tests, 0 failures, 0 errors, and 0 skipped at the exact NanoClaw pin and Atento profile/policy hashes recorded in the receipt. ZIP SHA-256: `31d445221495a05f1d86699dfd627c1a32e0a02408d3933fe0c235a55bcc98ea`; extracted JUnit SHA-256: `75773862af56f01d22121a9bdd39ec483ef1ae72253bb169eaee9a8b4d37dc74`.
+
+This is evidence preservation and read-only inspection; no test was rerun. Keep the existing `PASS_WITH_SCOPE` for the seven harness assertions. It does not prove production host/provider wiring or role-bound task retry after host-process restart; that gate remains `BLOCKED_ADAPTER`.
