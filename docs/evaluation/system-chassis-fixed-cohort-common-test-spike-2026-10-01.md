@@ -499,3 +499,20 @@ FINAL_SYSTEM_CHASSIS_SELECTION = NONE
 ```
 
 Este resultado é distinto do teste anteriormente bloqueado do sub-agent sem aprovação prévia e do teste já aprovado de remover tarefa de outro usuário. Os três comportamentos mantêm classificações próprias. A aprovação existente pelo mesmo session ID não foi interpretada como autorização válida entre domínios Atento.
+
+
+## Letta Code — probe de rede real bloqueado pelo sandbox do harness — 2026-10-02
+
+No pin `letta-ai/letta-code@21daa38a8cdd74f2d03b634c8312253080bacfc1`, reutilizei sem repetição a evidência anterior de `src/sandbox/bwrap.test.ts`: o teste do pin verifica que o perfil produzido não inclui `--unshare-net`. Para determinar se isso permitia contato com um serviço local, tentei um probe descartável com um listener sintético em `127.0.0.1` e o comando Bubblewrap com mount policy equivalente.
+
+O probe parou antes de executar o Bubblewrap: o sandbox do ambiente negou a própria criação do socket do listener com `PermissionError: [Errno 1] Operation not permitted`. Portanto não houve conexão, tentativa de fuga, execução do subprocesso nem observação de acesso a endpoint. Classificação: `BLOCKED_ENVIRONMENT`, sem PASS/FAIL de rede para Letta. Nenhum arquivo do checkout foi alterado.
+
+```text
+LETTA_BWRAP_ARGUMENTS_OMIT_UNSHARE_NET = PASS_WITH_SCOPE (EXISTING TEST REUSED)
+LETTA_LOCAL_SERVICE_REACHABILITY_FROM_BWRAP = BLOCKED_ENVIRONMENT (HOST LISTENER SOCKET DENIED BEFORE BWRAP)
+LETTA_NETWORK_AUTHORITY_GATE = UNRESOLVED
+CANDIDATE_ELIMINATION = NONE_FROM_THIS_PROBE
+COMMON_ATENTO_RESTART_GATE = BLOCKED_ADAPTER
+```
+
+Para tornar falsificável esse gate, executar o mesmo listener local sintético e o Bubblewrap do pin num ambiente que permita socket local e namespace user/mount; comparar conexão do host com conexão do processo sandbox. Mesmo um resultado positivo provaria apenas acesso a loopback sintético; para demonstrar cross-role, um serviço/credencial Atento real e a política de autorização teriam de estar presentes no adapter executável.
