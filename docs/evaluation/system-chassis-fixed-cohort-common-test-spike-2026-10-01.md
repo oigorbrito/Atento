@@ -637,7 +637,7 @@ A asserção comum deste bloco: no mesmo usuário/sala sintéticos, o agente A g
 | Ontheia 70802db61eb16533f55efce3d8785d810223d03b | Reutilizar os dois testes de namespace anteriores; probe novo do helper agent_id produziu três namespaces distintos e negou as seis leituras cruzadas. | PASS_WITH_SCOPE — policy namespace configurável por papel | Helper de autorização apenas; namespace default segue user-keyed e não houve backend de memória, RLS ou execução de agente. |
 | OpenAkita 5f5b38da728274f0fd06461a481851be7c0bca6a | Suíte focada existente: test_isolated_memory_rebinds_full_chain_and_cannot_read_global, test_create_agent_can_enable_isolated_memory, test_spawn_agent_inherits_isolated_memory: 3 passed. Probe descartável com dois perfis memory_mode=isolated: NAIA recuperou sua sentinela user-scoped e Anna não a recuperou; 1 passed em 0,76 s. | PASS_WITH_SCOPE — perfis de agente e stores privados isolados | Dois objetos/agentes no mesmo processo e bancos temporários; sem host real ou worker de produção. Primeira tentativa usou ranking de injeção como oráculo e não encontrou a sentinela; classificada inválida. O probe corrigido usou busca escopada determinística e passou. |
 | Clawix 5aee015e0bd793102fba69af486dd6e75df6d802 | Reutilizar os 2 guards de traversal/outside-workspace já aprovados; não repetir. | PARTIAL — path guard | Harness de runner/path; não comprova sentinela privada isolada entre dois agentes nem autorização sobre memória persistente. |
-| Memoh | Sem pin exato aceito no registro (PIN_REQUIRED). | NOT_TESTED / PIN_REQUIRED | Não executar contra branch flutuante nem tratar ausência de resultado como zero/falha. |
+| Memoh | Snapshot histórico: o pin ainda não estava reconciliado nesta captura (`PIN_REQUIRED`). | NOT_TESTED naquele momento | **Supersedido:** pin congelado `3d60a08aa42fdcddb218401699822741b51b52ad`; ver evidência posterior de `PASS_WITH_SCOPE` no fechamento SYS-DEC-01. |
 | Letta Code 21daa38a8cdd74f2d03b634c8312253080bacfc1 | Reusar o bloqueio de execução anterior: Bun indisponível no executor para seus testes de confinamento MemFS. | BLOCKED_HARNESS | Sem conclusão funcional neste gate; só retomar se Bun/runner exato ficar disponível. |
 
 Correção de escopo: OpenClaw permanece na coorte sistêmica fixa de 11; sua exclusão por product fit vale apenas para a visão mobile. A linha acima registra SYS-MEM como `NOT_TESTED/UNRESOLVED`, sem inferir falha nem removê-lo da comparação. O perfil de segurança bloqueado do QwenPaw e o bloqueio de segurança do AI Butler continuam separados deste resultado de memória.
@@ -694,9 +694,9 @@ Um toolset atribuído a A não deve vazar para B; uma política negada deve impe
 | Clawix 5aee015e0bd793102fba69af486dd6e75df6d802 | Probe de autorização MCP no agent-runner.service.test.ts parou antes da coleta: import de ../generated/prisma/client.js ausente. | BLOCKED_HARNESS | Nenhum teste executou; não inferir falha do candidato. Geração Prisma não foi feita neste bloco. |
 | Bob Labs a91d6dad098c8ba6d24436a856556078151db45d | Reutilizar bloqueio já registrado: pytest indisponível na tentativa de auditoria de sandbox HMAC. | BLOCKED_HARNESS | Sem resultado de autoridade por papel. |
 | Letta Code 21daa38a8cdd74f2d03b634c8312253080bacfc1 | Runner Bun permanece indisponível para os testes de policy/MemFS. | BLOCKED_HARNESS | Sem inferência funcional. |
-| Memoh | Pin exato segue PIN_REQUIRED. | NOT_TESTED / PIN_REQUIRED | Não executar branch móvel. |
+| Memoh | Snapshot histórico: pin ainda pendente nesta captura (`PIN_REQUIRED`). | NOT_TESTED naquele momento | **Supersedido:** pin congelado `3d60a08aa42fdcddb218401699822741b51b52ad`; ver evidência posterior de `PASS_WITH_SCOPE` no fechamento SYS-DEC-01. |
 
-OpenClaw continua fora da coorte ativa por decisão de product fit. Nenhum resultado deste bloco elimina candidato.
+OpenClaw permanece na coorte sistêmica fixa de 11; product fit o exclui somente da visão mobile. Nenhum resultado deste bloco elimina candidato.
 
 ### Evidência bruta
 
@@ -749,9 +749,9 @@ O contrato final exigido é por papel: credencial/provider grant atribuída a A 
 | OpenAkita 5f5b38da728274f0fd06461a481851be7c0bca6a | test_feedback_sanitized_config_redacts_runtime_state_bot_credentials passou 1/1. | PASS_WITH_SCOPE — redaction de app_secret em export diagnóstico | Não prova isolamento de provider ou secret store entre perfis/agentes. |
 | Clawix 5aee015e0bd793102fba69af486dd6e75df6d802 | A tentativa anterior dos testes de binding MCP não coletou por Prisma Client gerado ausente. | BLOCKED_HARNESS | Sem execução de policy/bindings por agente; não inferir vazamento nem isolamento. |
 | Letta Code 21daa38a8cdd74f2d03b634c8312253080bacfc1 | Bun ausente para execução dos testes de MemFS/policy. | BLOCKED_HARNESS | Sem resultado deste gate. |
-| Memoh | Exact pin continua PIN_REQUIRED. | NOT_TESTED / PIN_REQUIRED | Não executar em branch móvel. |
+| Memoh | Historical snapshot: exact pin was pending at this capture (`PIN_REQUIRED`). | NOT_TESTED at that time | **Superseded:** frozen pin `3d60a08aa42fdcddb218401699822741b51b52ad`; see later `PASS_WITH_SCOPE` evidence in closure SYS-DEC-01. |
 
-OpenClaw continua excluído da coorte ativa por product fit. Bloqueios do AI Butler e do runner não contam como falha funcional de credenciais.
+OpenClaw permanece na coorte sistêmica fixa de 11; product fit o exclui somente da visão mobile. Bloqueios do AI Butler e do runner não contam como falha funcional de credenciais.
 
 ### Evidência bruta
 
@@ -785,7 +785,7 @@ BENCHMARKS_RERUN = 0
 O denominador comum ainda não foi alcançado para isolamento de credenciais por papel: não existe host Atento executável que aceite grants sintéticos separados para A/B e permita observar o conteúdo efetivamente entregue ao provider. Manter esse gate pendente; não adicionar gateway/integração produtiva só para fabricar um teste. Os números de benchmark externos permanecem como evidência separada, sem rerun nem média cruzada.
 
 
-## Consolidação da coorte nos gates já percorridos — 2026-10-02
+## Consolidação da coorte nos gates já percorridos — 2026-10-02 (snapshot reconciliado; 11 candidatos)
 
 Esta tabela fecha o denominador de evidência para os três gates de isolamento que acabamos de avançar. Cada célula é classificada pelo escopo efetivamente observado; BLOCKED, PARTIAL e NOT_TESTED não são zero nem falha do candidato.
 
@@ -793,13 +793,14 @@ Esta tabela fecha o denominador de evidência para os três gates de isolamento 
 |---|---|---|---|---|
 | NanoClaw | 7/7 Atento prova group/state e propriedade com escopo; sem marcador direto NAIA↔Anna | 7/7 nega A2A sem grant e demonstra caminho brokerado limitado | Só identidades/tokens sintéticos; custódia de provider não provada | BLOCKED_ADAPTER para tarefa host após restart |
 | AI Butler | Gate não avançado | Gate não avançado | Gate não avançado | Pin atual bloqueado por security scan |
+| OpenClaw | PASS_WITH_SCOPE: marcador persistente em workspaces distintos | Não testado | Não testado; custódia de provider não provada | PASS_WITH_SCOPE: um replay SSE; retry de tarefa Atento segue BLOCKED_ADAPTER |
 | QwenPaw | PASS_WITH_SCOPE: A grava/recupera; listing de B omite e GET direto de B ao mesmo path retorna 404 | PASS_WITH_SCOPE: toggle de tool em A não muda B | PASS_WITH_SCOPE: seleção personal provider mockada, sem chamada HTTP | HOLD por perfil fail-closed/cron; integração Atento não provada |
 | MindRoom | Mock facade cross-agent e chaves user_agent passam; backend persistente três papéis BLOCKED_HARNESS | API /v1 padrão não executa com user_agent; não confiar requester header | Sem prova | BLOCKED_ADAPTER; MindRoom permanece pausado até catch-up |
 | Bob Labs | BLOCKED_HARNESS anterior | Não avançado | PASS_WITH_SCOPE: 21 HMAC/lab-binding tests de componente, sem middleware/container real | Sem integração Atento executada |
 | Ontheia | PASS_WITH_SCOPE: agent_id policy template cria 3 namespaces distintos e nega cruzamento no helper; default continua user-keyed, sem prova de storage | PASS_WITH_SCOPE para tool filtering via binding | PASS_WITH_SCOPE: segredo ausente excluído e valores mascarados | FAIL_WITH_SCOPE no run_at one-shot após post-claim failure; família não eliminada |
 | OpenAkita | PASS_WITH_SCOPE: dois perfis isolados; A recupera, B não | PASS_WITH_SCOPE: filtros de ferramentas por profile | PASS_WITH_SCOPE: redaction no export diagnóstico | Risco já registrado no scheduler quando perfil é desconhecido; composição Atento ausente |
 | Clawix | PARTIAL: path guards, sem sentinela entre papéis | BLOCKED_HARNESS: Prisma Client ausente antes da coleta | Não demonstrada | Sem restart/retry Atento |
-| Memoh | PIN_REQUIRED | PIN_REQUIRED | PIN_REQUIRED | PIN_REQUIRED |
+| Memoh | PASS_WITH_SCOPE: PostgreSQL cross-bot denial | NOT_TESTED | NOT_TESTED | NOT_TESTED |
 | Letta Code | Runner Bun ausente para provas MemFS | Runner Bun ausente | Runner Bun ausente | Sem composição Atento |
 
 ### Pontuações externas existentes reutilizadas
@@ -817,7 +818,8 @@ Os detalhes e provenance permanecem nos registros de cobertura/ranking de benchm
 
 ### Ponto de convergência
 
-ACTIVE_COHORT = 10
+FIXED_COHORT_SIZE = 11
+OPENCLAW_IN_FIXED_SYSTEM_COHORT = YES (MOBILE_VIEW_EXCLUSION_ONLY)
 CANDIDATE_FULL_THREE_ROLE_PASSES = 0
 DIRECT_MEMORY_MARKER_PASSES = [QwenPaw_API_SCOPE, OpenAkita_ISOLATED_PROFILE_SCOPE]
 TOOL_CONFIG_OR_BINDING_PASSES = [QwenPaw, OpenAkita, Ontheia]
