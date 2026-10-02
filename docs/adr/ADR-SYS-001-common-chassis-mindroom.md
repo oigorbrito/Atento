@@ -79,10 +79,10 @@ Reutilizar, sem repetir, as evidências já registradas: particionamento das tr�
 
 ### Menor teste falsificável quando o seam existir
 
-Persistir uma tarefa NAIA vencida; iniciar o host; observar o claim e encerrá-lo antes do ack terminal; reiniciar com o mesmo store e permitir exatamente um retry. Verificar que a tentativa recuperada continua NAIA-owned, conserva a mesma identidade/escopo `user_agent`, não lê estado das identidades sintéticas Anna/Apollo e produz no máximo uma entrega terminal para o ID da tarefa.
+Persistir uma tarefa NAIA vencida; iniciar o host; observar o claim e encerrá-lo antes do ack terminal; reiniciar com o mesmo store e permitir exatamente um retry. Verificar que a tentativa recuperada continua NAIA-owned, conserva a mesma identidade/escopo `user_agent`, não lê estado das identidades sintéticas Anna/Apollo e produz exatamente uma entrega terminal para o ID da tarefa após o retry.
 
-- **PASS_WITH_SCOPE:** identidade e propriedade NAIA sobrevivem ao restart e retry; estado alheio é inacessível; uma única entrega terminal observada.
-- **FAIL do seam/configuração:** troca de papel, acesso cross-role ou entrega terminal duplicada com o harness válido.
+- **PASS_WITH_SCOPE:** identidade e propriedade NAIA sobrevivem ao restart e retry; estado alheio é inacessível; exatamente uma entrega terminal é observada após o retry.
+- **FAIL do seam/configuração:** troca de papel, acesso cross-role, ausência de entrega terminal após o retry ou entrega terminal duplicada com o harness válido.
 - **INVALID / falha de harness:** SIGKILL atinge wrapper em vez do processo host, não se prova o estado pre-ack, o mesmo store não é reutilizado ou o controle de retry não é observável.
 - **Permanece BLOCKED_ADAPTER:** não existe chamada executável do host Atento; não criar integração de produção só para destravar o teste.
 
