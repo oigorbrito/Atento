@@ -212,9 +212,18 @@ The former NAIA Gate-1 and Top 5 remain valid only as NAIA-role evidence. They d
 System-level hard requirements include separate role chat/session, memory, credentials, tool authority and background authority; explicit minimal/auditable handoffs; and receiver-side authorization. Shared infrastructure does not imply shared private data.
 
 ```yaml
-system_chassis_decision: NOT_SELECTED
-system_chassis_shortlist: NOT_SELECTED
+system_chassis_decision_as_of_2026_09_30: NOT_SELECTED
+system_chassis_implementation_direction_as_of_2026_10_02: MINDROOM (PROVISIONAL; NOT_QUALIFIED)
+architecture_alternative_to_advance: integrated_multi_agent_platform
+naia_role_base_direction: NANOCLAW (PROVISIONAL; NOT_QUALIFIED)
+anna_role_base: NOT_SELECTED
+apollo_role_base_research: DEFERRED
 first_metric: total_adaptation_and_ongoing_maintenance_cost
-architecture_alternatives: [integrated_multi_agent, composed_specialist_chassis, hybrid]
-apollo_functional_chassis_research: DEFERRED
 ```
+
+
+## Current system-chassis decision update — 2026-10-02
+
+The 2026-09-30 re-screen above records the then-current state and remains valid as historical evidence. Its `NOT_SELECTED` status is superseded for implementation direction by [ADR-SYS-001](ADR-SYS-001-common-chassis-mindroom.md): MindRoom at the exact pin `4f3bd2d108a6f9be28174e0f66d78eeecddca386` is selected as the reversible implementation target for the common NAIA/Anna/Apollo chassis. This does not qualify the full topology or release it for production. Preserve separate chat/session, memory, tools, credentials and background authority for every role. The chassi is to advance using `user_agent`/dedicated workers; `user`-shared workers do not satisfy the boundary.
+
+This common-chassis decision does not replace the three independent role-base decisions: NanoClaw remains the provisional NAIA base direction only; Anna remains unselected; Apollo remains deferred. No Project Points are awarded for the decision record, and PR #57/#58 remain untouched.
