@@ -1025,3 +1025,31 @@ CANDIDATES_ELIMINATED_FROM_MISSING_EVIDENCE = 0
 MINDROOM_REMAINS_PAUSED = YES
 ```
 
+
+
+## SYS-TOOL-01 candidate evidence catch-up — 2026-10-02
+
+This block reuses exact-pin evidence already recorded. No candidate suite or benchmark was rerun. The common property is an unauthorized attempt by role A to invoke a tool reserved to role B, with denial unless an explicit, typed, recipient-authorized handoff is present. Candidate-level configuration filters and isolated permission tests are labeled separately from a composed Atento runtime.
+
+| Candidate / exact pin | Reusable tool-authority evidence | Current scoped disposition |
+|---|---|---|
+| NanoClaw — `nanocoai/nanoclaw@4c1eabd3ddd74cc3d71b1871da857391a9411c8d` | Exact-pin Atento 7/7 probe denied native direct A2A without a destination grant; reference-broker typed requests reached the real mailbox API under a test adapter. | `PASS_WITH_SCOPE`; test adapter, no deployed Atento broker/runtime. |
+| AI Butler — `LumabyteCo/aibutler@c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c` | This authority slice was not advanced; current pin is separately security-blocked by the recorded scan. | `BLOCK_CURRENT_PIN_ON_SECURITY`; do not rerun unchanged pin. |
+| OpenClaw — `openclaw/openclaw@e9571d77e76bd6d35996273d9e8398ad539b26e1` | The SYS-MEM manager probe did not exercise exclusive tool grants or A2A authorization. | `NOT_TESTED` for this slice. |
+| QwenPaw — `agentscope-ai/QwenPaw@777441721aa72db8e380d90e4d0481b05cbfd4cc` | Existing exact-pin test shows toggling a tool for agent A does not change agent B's tool configuration. It is a configuration-isolation result, not an unauthorized runtime invocation through Atento. | `PASS_WITH_SCOPE` for per-agent tool configuration only. |
+| MindRoom — `mindroom-ai/mindroom@4f3bd2d108a6f9be28174e0f66d78eeecddca386` | The standard `/v1` path does not execute with `user_agent`; a requester header is not an authority substitute. | `BLOCKED_HARNESS`; MindRoom remains paused. |
+| Bob Labs — `boblabs-eu/boblabs@a91d6dad098c8ba6d24436a856556078151db45d` | Tool-authority execution was not advanced; its required official Docker runner/image is unavailable in this executor. | `NOT_TESTED`; environment block is not failure. |
+| Ontheia — `Ontheia/ontheia@70802db61eb16533f55efce3d8785d810223d03b` | Existing test applies tool filtering through a configured binding. It does not establish the Atento role-to-binding mapping or a complete handoff. | `PASS_WITH_SCOPE` for configured binding only. |
+| OpenAkita — `openakita/openakita@5f5b38da728274f0fd06461a481851be7c0bca6a` | Existing exact-pin checks show tool filtering by profile. Scheduler fallback on an unknown profile remains a separate authority/role-drift issue. | `PASS_WITH_SCOPE` for profile filtering; no Atento dispatch proof. |
+| Clawix — `ClawixAI/clawix@5aee015e0bd793102fba69af486dd6e75df6d802` | Existing exact-pin probe showed an allow approval associated with the parent session accepted by a sub-agent carrying that same session ID. Separate-session composition was not tested. | `FAIL_WITH_SCOPE` for the shared-session path; do not generalize to a separate-session architecture. |
+| Memoh — `felinics/Memoh@3d60a08aa42fdcddb218401699822741b51b52ad` | The SYS-MEM runtime/store tests did not exercise exclusive tools or ACL grants. | `NOT_TESTED` for this slice. |
+| Letta Code — `letta-ai/letta-code@21daa38a8cdd74f2d03b634c8312253080bacfc1` | The 63-test memory guard suite protects cross-agent file reads; it does not test B-exclusive action tools or recipient-authorized handoff. | `NOT_TESTED` for exclusive-tool authority. |
+
+```text
+CANDIDATE_EXACT_PIN_TOOL_SIGNALS = SCOPED_AND_NONCOMPARABLE
+REPRODUCED_FAILURE_SCOPE = CLAWIX_SHARED_SESSION_APPROVAL
+CANDIDATES_ELIMINATED_FROM_MISSING_EVIDENCE = 0
+COMMON_ATENTO_SYS_TOOL_01 = BLOCKED_ADAPTER
+```
+
+The Clawix failure is a concrete negative for the tested shared-session composition. It does not establish that separate-session mode fails. Existing candidate-specific filters are useful signals but do not close a common three-role assertion. The Atento host/runtime adapter needed to make the same A→B denial observable is still absent; do not create it only to unlock this test.
