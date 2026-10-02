@@ -1557,3 +1557,20 @@ TEST_BODIES_EXECUTED_THIS_ATTEMPT = 0
 BLOCKER = NO_LOCAL_GO_TOOLCHAIN_OR_CHECKOUT_AND_NETWORK_PROXY_UNAVAILABLE
 COMMON_ATENTO_RUNNER = BLOCKED_ADAPTER
 ```
+## Executed test — OpenClaw controlled-effect fixture — 2026-10-02
+
+One locally executable test was recovered from the historical Atento OpenClaw qualification artifact at commit `d62626d03685b55ee9110b98c707e797465d4f60`; its PR workflow matrix failed before the candidate jobs ran, so no prior passing execution was found. The test and its adjacent module were materialized only in a temporary directory from that exact artifact revision, then removed after execution.
+
+| Test | Result | Evidence and scope |
+|---|---|---|
+| `node --test evals/chassis/openclaw/naya-effect-plugin/effect-protocol.test.mjs` | **PASS — 1 test, 0 failed** | Simulated crash after the fake provider effect but before local terminal commit; a new adapter instance reconciled by provider readback; replay did not duplicate the provider effect; a second operation completed. Temporary state was cleaned. |
+
+This is a scoped pass for the qualification fixture's persisted controlled-effect adapter using a fake provider and local filesystem. It does not start the OpenClaw Gateway/runtime, exercise the frozen OpenClaw pin `e9571d77e76bd6d35996273d9e8398ad539b26e1`, bind the operation to NAIA/Anna/Apollo roles, or satisfy any full common three-role gate. Keep the OpenClaw integrated row `BLOCKED_ADAPTER`.
+
+```text
+OPENCLAW_CONTROLLED_EFFECT_FIXTURE = PASS_WITH_SCOPE (1/1)
+OPENCLAW_FROZEN_RUNTIME_TESTED = NO
+PROVIDER = FAKE_LOCAL_FIXTURE
+COMMON_THREE_ROLE_GATE = BLOCKED_ADAPTER
+PR_17_OR_OTHER_PR_MODIFIED = NO
+```
