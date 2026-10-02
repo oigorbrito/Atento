@@ -72,3 +72,35 @@ NEXT_ACTION = WAIT_FOR_OR_PROVIDE_EXECUTABLE_HOST_RUNTIME_SEAM
 ```
 
 The frozen candidate queue is exhausted at Letta Code. Do not add an out-of-cohort candidate to this run or repeat scoped tests while the Atento adapter is absent. The falsifiable probe and prerequisites above remain the next gate once an executable seam exists.
+
+
+## Additional eliminatory gate — cross-agent memory access — 2026-10-02
+
+At the user's direction, one different exact-pin gate was tested: whether in-process file and memory tools deny paths owned by a different agent.
+
+Command, run on the frozen checkout with Bun 1.3.14:
+
+```text
+npx --yes bun@1.3.14 test src/permissions/cross-agent-guard.test.ts
+63 pass
+0 fail
+102 expect() calls
+```
+
+The suite exercises self/parent/foreign agent scope; Read, Write, Glob, Grep, LS, NotebookEdit, and ApplyPatch path classification; ancestor-path and symlink escapes; local-backend MemFS; and permission-mode integration. The exact checkout remained at 21daa38a8cdd74f2d03b634c8312253080bacfc1; git status and the tracked-file diff were clean after execution.
+
+Limits observed in the same passing suite:
+
+- The guard is enabled by default, but a parent process can explicitly disable it with the CLI override. Tests confirm the override permits foreign memory in acceptEdits mode. Atento would need to own and pin this configuration; the suite does not prove an external authority boundary.
+- Shell commands are intentionally left to the kernel sandbox. This test file verifies that the in-process guard defers shell access; it does not execute or qualify Letta Code's kernel sandbox.
+- All cases are isolated unit/integration fixtures. They do not exercise Letta Code inside an Atento adapter, real OS identities, or the candidate's deployed runtime.
+
+```text
+CROSS_AGENT_IN_PROCESS_MEMORY_GUARD = PASS_WITH_SCOPE (DEFAULT_CONFIGURATION)
+GUARD_OPERATOR_BYPASS = PRESENT_AND_TESTED
+KERNEL_SANDBOX_BOUNDARY = NOT_TESTED_HERE
+ATENTO_ROLE_MEMORY_ISOLATION = NOT_QUALIFIED
+CANDIDATE_ELIMINATION = NONE
+```
+
+This adds scoped candidate evidence for the memory gate; it does not satisfy the common Atento SYS-MEM-01 composition assertion. No previously recorded NanoClaw, Memoh, 7/7, SSE replay, or Letta cron test was repeated.
