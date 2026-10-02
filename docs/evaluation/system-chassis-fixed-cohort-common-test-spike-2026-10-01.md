@@ -380,7 +380,7 @@ Não encontrei um teste distinto de memória cross-agent para acrescentar sem du
 
 No pin `ClawixAI/clawix@5aee015e0bd793102fba69af486dd6e75df6d802`, foi identificado um caso distinto do teste de remoção cross-user de cron já executado: `tool-approval-rendezvous.test.ts::sub-agent gate auto-denies without prompting and writes no memory`. Ele seria um teste unitário da negação fail-closed para sub-agent e da ausência de prompt/gravação de memória.
 
-A tentativa direta pelo Vitest parou na importação do arquivo, antes da coleta/teste: o módulo `../generated/prisma/client.js` não existe no checkout materializado. O binário Prisma não estava disponível como shim; usei o CLI Prisma 7.4.2 já presente no store pnpm para tentar gerar o cliente. Essa tentativa parou antes de produzir o artefato ao buscar `schema-engine` em `binaries.prisma.sh`: a conexão foi negada pelo ambiente (`EPERM`). Não pedi escalada de rede nem alterei dependências travadas. Nenhum guard foi ignorado. O primeiro comando pelo wrapper pnpm ainda falhou no índice SQLite do store padrão; tentar redirecioná-lo não chegou ao Vitest. Nenhum guard foi ignorado, nenhum arquivo rastreado foi alterado e o corpo do teste não executou.
+A tentativa direta pelo Vitest parou na importação do arquivo, antes da coleta/teste: o módulo `../generated/prisma/client.js` não existe no checkout materializado. O binário Prisma não estava disponível como shim; usei o CLI Prisma 7.4.2 já presente no store pnpm para tentar gerar o cliente. Essa tentativa parou antes de produzir o artefato ao buscar `schema-engine` em `binaries.prisma.sh`: a conexão foi negada pelo ambiente (`EPERM`). Não pedi escalada de rede nem alterei dependências travadas. O primeiro comando pelo wrapper pnpm ainda falhou no índice SQLite do store padrão; tentar redirecioná-lo não chegou ao Vitest. Nenhum guard foi ignorado, nenhum arquivo rastreado foi alterado e o corpo do teste não executou.
 
 ```text
 CLAWIX_SUBAGENT_APPROVAL_FAIL_CLOSED = BLOCKED_ENVIRONMENT/GENERATED_PRISMA_CLIENT_MISSING
@@ -846,3 +846,33 @@ Para fechar a lacuna deixada pelo teste de listagem, executei um segundo probe d
 
 Comando: .venv/bin/pytest -q tests/integration/test_spike_cross_agent_memory_direct_read.py
 Classificação: PASS_WITH_SCOPE para isolamento de API memory-file entre dois agentes. Não prova leitura por caminho absoluto/processo, store criptograficamente separado ou composição Atento.
+
+
+## Supplemental top-three common memory gate — 2026-10-02
+
+PR #58's supplemental horizon record names a separate cost-first probe order: Open Pincery, OpenLegion, then Moltis. These are additions to the evaluation horizon, not replacements for the 11-slot cohort above. Their published benchmark and CI evidence is reused; no benchmark or broad upstream suite was rerun here.
+
+The shared eliminatory property for this block is the private-state negative: write one synthetic marker into role B's private memory/state, attempt to read it as role A through the candidate's normal scoped API/tool, require denial with no marker bytes, and confirm role B still reads it. No provider, model, or real tool is needed. A component's own workspace/agent identity is not automatically equivalent to an Atento role identity; record the mapping and scope.
+
+| Order | Frozen candidate pin | Closest identified seam | Outcome |
+|---:|---|---|---|
+| 1 | Open Pincery — RCSnyder/open-pincery@fc33211c7b04e1a958a340c369cb635f018c13f4 | Existing tests/api_test.rs::test_agent_routes_are_scoped_to_workspace checks authenticated cross-workspace agent API denial. Its fixture calls common::test_pool(), which requires an isolated PostgreSQL test database and runs migrations/truncation. This workspace has no TEST_DATABASE_URL, PostgreSQL client/server, Docker, or Podman. Test body not started: BLOCKED_ENVIRONMENT. The property is workspace API isolation, not a direct role-private-memory read. | Not equivalent result |
+| 2 | OpenLegion — openlegion-ai/openlegion@24efd6e06b28768cbbcd9275f43c479b3df37b18 | Closest existing denial is tests/test_agent_goals_endpoint.py::test_agent_cannot_read_peer_goals; it concerns peer standing-goal state, not private memory. The normal pytest invocation produced no collection/result; the focused invocation with plugin autoload disabled and the repository conftest cut off also remained silent and was interrupted after the bounded wait (exit 130). The pin has no uv.lock; dependencies are ranges in pyproject.toml, so the alternate runner's dependency parity was not established. BLOCKED_HARNESS, no test result. | Not equivalent result |
+| 3 | Moltis — moltis-org/moltis@1f6d28ea750d6654d52d5899b8be67727ebf7a19 | Source exposes is_path_in_agent_memory_scope and agent-scoped memory tools. No existing test in crates/chat/src/memory_tools/tests.rs directly asserts cross-role private-path denial. A disposable five-assertion helper probe was drafted then removed before execution; cargo is absent. BLOCKED_ENVIRONMENT, no test result. | Not executed |
+
+```text
+SUPPLEMENTAL_TOP3_PINS_VERIFIED = 3_OF_3
+COMMON_PRIVATE_STATE_ASSERTION_EXECUTED = 0_OF_3
+OPEN_PINCERY = BLOCKED_ENVIRONMENT (ISOLATED_POSTGRES_ABSENT)
+OPENLEGION = BLOCKED_HARNESS (NO_COLLECTED_TEST_RESULT; EXIT_130_AFTER_INTERRUPT)
+MOLTIS = BLOCKED_ENVIRONMENT (CARGO_ABSENT; TEMP_PROBE_NOT_EXECUTED)
+NEW_CANDIDATE_FAILURES = 0
+COMMON_ATENTO_HOST_GATE = BLOCKED_ADAPTER
+BENCHMARKS_RERUN = 0
+```
+
+The smallest falsifiable candidate-level probe is the same marker read-denial above, adapted only at the published test seam: run Pincery's scoped API test with a fresh isolated PostgreSQL database; run OpenLegion's existing authenticated peer-state denial test in a stable, exact recorded Python environment and separately add no test unless the private-memory surface can be reached; run Moltis's agent-scoped memory search/get path with two synthetic agent IDs and assert the other role's marker is filtered. These component probes can narrow candidate evidence but cannot substitute for the Atento composition test.
+
+The smallest falsifiable common Atento test remains: after an executable Atento host seam exists, assign two synthetic role identities, write a private marker for B, request it as A through the actual role-bound API/tool, assert denial and no marker in response/traces, then verify B's positive read. Do not create a production adapter just to unlock this gate. Until candidate-specific harness prerequisites and the common host seam are available, all three remain unresolved on this property; no comparative score or elimination is supported.
+
+No candidate checkout was left modified. PR #58 was inspected at e948f344b91e20e655399b11300c439228d144ec and not changed. This addendum is only on the disposable branch.
