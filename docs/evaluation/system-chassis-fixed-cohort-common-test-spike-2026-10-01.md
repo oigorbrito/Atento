@@ -898,3 +898,18 @@ BENCHMARKS_RERUN = 0
 ```
 
 These two passes establish scoped component behavior only. They do not close SYS-MEM-01 for a complete Atento composition: the host must bind NAIA/Anna/Apollo identity to each candidate's private key/path and prove denial through the actual role-bound runtime. MindRoom remains paused as directed until comparable component gates have been applied to the active alternatives; NanoClaw's previously approved tests and benchmarks were reused, not repeated.
+
+## OpenClaw SYS-MEM catch-up attempt — 2026-10-02
+
+O pin fixado para a coorte é `openclaw/openclaw@e9571d77e76bd6d35996273d9e8398ad539b26e1`. A inspeção somente leitura no SHA exato encontrou testes de resolução de workspace/agent directory (`src/agents/agent-scope.test.ts`) e identidade de índice de memória (`extensions/memory-core/src/memory/index-identity.test.ts`); nenhum deles estabelece o contrato de sentinela persistente cross-agent deste gate, portanto nenhum resultado foi reaproveitado como PASS.
+
+A tentativa de disponibilizar o checkout focado parou antes de clonar: `git clone --filter=blob:none --no-checkout --depth=20 https://github.com/openclaw/openclaw.git /tmp/atento-openclaw-exactpin` falhou ao conectar ao proxy de rede do executor. Nenhuma dependência foi instalada e nenhum teste foi iniciado.
+
+```text
+OPENCLAW_SYS_MEM_SENTINEL = BLOCKED_ENVIRONMENT (EXACT-PIN CHECKOUT UNAVAILABLE)
+OPENCLAW_CANDIDATE_FAILURE = NOT_ESTABLISHED
+OPENCLAW_FIXED_SYSTEM_COHORT_MEMBERSHIP = RETAINED
+FULL_ATENTO_SYS_MEM = BLOCKED_ADAPTER
+```
+
+Próximo passo falsificável: com o checkout do pin e dependências congeladas disponíveis num runner, executar uma vez o menor caso de gravação/leitura persistente sob agente A e negação de listagem/leitura sob agente B; coletar o transcript bruto e classificar apenas essa propriedade. Não confundir este teste de componente com `SYS-MEM-01` integrado do Atento, que continua bloqueado pelo adapter/runtime de produto ausente.
