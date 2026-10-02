@@ -177,3 +177,10 @@ COMMON_ATENTO_GATES = STILL_BLOCKED_ADAPTER
 ```
 
 No overall candidate rank is defensible yet: the benchmark signals do not cover all 11 and the common system gates remain incomplete/non-comparable. Preserve the fixed cohort, keep MindRoom paused until catch-up is complete, and continue using exact-gate evidence plus existing benchmark lines without reruns.
+
+
+## Clawix SYS-MEM catch-up — 2026-10-02
+
+Exact-pin source inspection resolved the private-memory scope question. Clawix private wiki pages are user-owned, and search authorization is keyed by `userId`, not agent/role; separate sessions do not isolate wiki visibility. This is a `FAIL_WITH_SCOPE` for three Atento roles sharing one Clawix user ID, based on the pinned product contract. It is not a direct runtime marker test and does not eliminate Clawix under a different, untested separate-user-per-role mapping.
+
+No Prisma harness was fabricated, no test was run, and no candidate source was changed. The direct runtime marker probe remains unrun; integrated Atento `SYS-MEM-01` remains `BLOCKED_ADAPTER`. The spike supersedes the prior Clawix `NOT_TESTED` row for this narrow same-user property. MindRoom remains paused and PRs #58/#59 remain untouched.
