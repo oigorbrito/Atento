@@ -81,3 +81,12 @@ Do not repeat NanoClaw's approved SSE replay, the Atento 7/7 probe, upstream tes
 - Reliability evidence reuse and candidate-specific gates: `docs/evaluation/system-chassis-top3-reliability-recovery-2026-10-01.md`
 
 This record is on the disposable branch only. PR #58 was not changed.
+
+
+## User goal clarified — complete comparative eliminatory gates before selection — 2026-10-02
+
+The user has clarified the governing goal: test eliminatory gates across every candidate that has not been technically eliminated, then choose one candidate only after the comparable gate evidence is complete. NanoClaw's prior designation remains a provisional direction and is not a final selection for this comparative decision. PR #58 remains outside this update.
+
+Apply the same frozen eight SYS assertions and any other frozen hard gates to each eligible candidate in the fixed cohort. Reuse existing results only when pin, setup, property, outcome, and provenance match; run each missing test once and in frozen order. Candidate-specific component tests may add scoped evidence, but do not substitute them for an Atento composition assertion. Record hard-gate failure only when reproduced at the pinned setup; an unavailable seam, missing evidence, security block on one pin, or non-equivalent fixture remains blocked/unresolved rather than silently converted to elimination. Do not select a winner until the gate matrix contains enough comparable evidence to rule out each other eligible candidate or record an explicit remaining blocker.
+
+Current progress includes Letta Code's scoped cron tests (99 tests / 238 assertions) and cross-agent memory-guard suite (63 tests / 102 assertions), all on its frozen pin. These do not close the common Atento assertions. Continue through candidates and gate rows serially, reusing prior NanoClaw/AI Butler results within their recorded scopes and preserving all open gates.
