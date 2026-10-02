@@ -37,6 +37,26 @@ NEW_TESTS_OR_BENCHMARK_RERUNS = 0
 
 PR #58 and PR #59 remain untouched.
 
+## Protocol round execution check — shared test availability — 2026-10-02
+
+The requested next step is to run the same common test round across all 11 candidates. A read-only check of the current Atento `main` confirms the required runner is not available:
+
+- The repository root contains `.github/`, `docs/`, `evals/`, `tools/`, `README.md`, `roadmap.md`, and `AGENTS.md`; it has no product host/runtime source tree.
+- `.github/workflows/system-chassis-nanoclaw-probe.yml` checks out and pins only NanoClaw `4c1eabd3ddd74cc3d71b1871da857391a9411c8d`; it does not define a matrix for the fixed 11.
+- `.github/workflows/candidate-eval.yml` is a static donor audit, not the three-role SYS test. Its registry has `candidate_universe_complete=false`, its enabled matrix is not the fixed chassis cohort, and the static candidate job is restricted to `workflow_dispatch`.
+- Therefore the same Atento host/runtime assertions cannot be invoked for the 11 frozen pins from the current repository harness. Candidate-local suites in the evidence register remain reusable supporting evidence; running different suites now would not satisfy the common-gate protocol.
+
+```text
+COMMON_COHORT_ROUND = BLOCKED_ADAPTER_BEFORE_CANDIDATE_EXECUTION
+FIXED_CANDIDATES = 11
+COMMON_TEST_BODIES_EXECUTED_THIS_ROUND = 0
+CANDIDATES_BLOCKED_BY_MISSING_SHARED_RUNNER = 11
+CANDIDATE_FAILURES_INFERRED = 0
+EQUIVALENT_TESTS_OR_BENCHMARKS_RERUN = 0
+```
+
+This records a shared infrastructure blocker, not 11 candidate failures. The round resumes only when one common runner can bind the same frozen roles, sentinels, grants, handoff, and restart/retry assertions to each pin in sequence. Do not substitute the Anna donor static workflow or the NanoClaw-only probe for that runner.
+
 ## Request and decision boundary
 
 This spike applies the frozen system-composition protocol to every candidate in its 11-member system cohort that has not been technically eliminated. SelfAgent was already stopped at the earlier NAIA Gate 1 as a complete NAIA base at its frozen pin, so it is excluded from this remaining candidate test queue; that stop does not eliminate SelfAgent as a donor or component in a different composition. SelfAgent is not one of the fixed 11 system candidates. OpenClaw remains in the system cohort: its recorded exclusion is only from the mobile-focused view, as a product-fit scope choice. AI Butler's security block, QwenPaw's hold, and missing pins/evidence are gates or blockers, not technical eliminations.
