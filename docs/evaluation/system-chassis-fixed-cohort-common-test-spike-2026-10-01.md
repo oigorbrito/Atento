@@ -158,3 +158,25 @@ CANDIDATE_ELIMINATION = NONE
 ```
 
 This does not close Bob Labs' prior per-lab sandbox/HMAC integration uncertainty or qualify an Atento composition. Continue to Ontheia in frozen order; no candidate is selected.
+
+
+## Continuation — Ontheia memory namespace authorization gate — 2026-10-02
+
+Frozen pin verified: `Ontheia/ontheia@70802db61eb16533f55efce3d8785d810223d03b`. Reused the existing focused host memory-tool suite after the committed host lockfile install and TypeScript build:
+
+```text
+node --test dist/mcp/plugins/memory.spec.js
+14 passed, 0 failed
+```
+
+The focused suite covers explicit/implicit namespace search allowlists, denial where access exists only in contextual `read_namespaces`, denial for unknown namespaces, and namespace-constrained writes. Test adapters/DB objects are mocks; no PostgreSQL RLS policy was exercised, no model/provider was called, and this is not an Atento runtime composition result. The frozen source tree stayed clean after install/build (generated dependency/build directories ignored).
+
+```text
+ONTHEIA_MEMORY_TOOL_NAMESPACE_AUTHORIZATION = PASS_WITH_SCOPE (14 MOCK-BASED TESTS)
+ONTHEIA_LIVE_POSTGRES_RLS_AND_AGENT_RUNTIME = NOT_TESTED_BY_THIS_SUITE
+ATENTO_CROSS_ROLE_MEMORY_ASSERTION = OPEN
+COMMON_ATENTO_PROFILE = BLOCKED_ADAPTER
+CANDIDATE_ELIMINATION = NONE
+```
+
+This adds scoped memory-authorization evidence only. Continue in fixed order with OpenAkita next; all candidate gates remain under comparison, with no winner selected.
