@@ -672,3 +672,58 @@ MINDROOM_RESUMED = NO
 BENCHMARKS_RERUN = 0
 
 Os dois passes diretos têm configurações diferentes e continuam PASS_WITH_SCOPE; não formam ranking geral nem qualificação Atento. Resultados externos já publicados permanecem no registro benchmark-específico e não foram repetidos nem agregados a este gate. O próximo bloco comparável deve avançar a mesma sentinela para candidatos parcialmente cobertos que tenham pin/runner e escopo executável; MindRoom só retoma depois desse catch-up.
+
+
+## Gate comum: autoridade de ferramentas por agente — 2026-10-02
+
+### Contrato
+
+Um toolset atribuído a A não deve vazar para B; uma política negada deve impedir registro/execução; grants seletivos devem manter só as ferramentas explicitamente autorizadas e as funções de controle independentes. Os probes aqui são de configuração/registro, sem chamada externa ou provider. Eles não substituem a assertion sistêmica de tentar executar uma ferramenta exclusiva do papel vizinho através do host Atento.
+
+### Evidência executada ou reutilizada
+
+| Candidato/pin | Evidência | Resultado | Limite |
+|---|---|---|---|
+| NanoClaw 4c1eabd3ddd74cc3d71b1871da857391a9411c8d | Reusar o 7/7 de 36815873223: A2A nativo sem grant negado, envelope broker/mailbox tipado e ação reautorizada no receptor. | PASS_WITH_SCOPE — mediação de handoff/autoridade | Adapter de teste, não host/provedor de produto; não repetir o 7/7. |
+| AI Butler c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c | Bloqueio de segurança do pin atual. | BLOCK_CURRENT_PIN_SECURITY | Não avançar autoridade no pin sem correção/requalificação; não é falha deste gate. |
+| QwenPaw 777441721aa72db8e380d90e4d0481b05cbfd4cc | test_tools_toggle_isolated_with_full_cycle: desabilitar ferramenta no agente A não altera B; reabilitação em A foi observada. | PASS_WITH_SCOPE — configuração API isolada (1 pass, 15,90 s) | Não invocou a ferramenta; nenhuma execução real/credential grant foi tentada. Requereu somente servidor loopback local. |
+| MindRoom 4f3bd2d108a6f9be28174e0f66d78eeecddca386 | Reutilizar os dois testes focados já executados: header do requester não define identidade de execução e /v1 rejeita worker_scope=user_agent. | API OpenAI-compatible padrão não é seam de execução por papel neste pin. | Evidência já coberta; não repetir. A ADR mantém host adapter/recovery BLOCKED_ADAPTER. MindRoom segue pausado até catch-up da coorte. |
+| OpenAkita 5f5b38da728274f0fd06461a481851be7c0bca6a | test_tool_inclusive_empty_keeps_only_independent_basics_when_extensions_empty e test_tool_inclusive_preserves_mcp_gateway_when_mcp_servers_are_selected: 2 passed. | PASS_WITH_SCOPE — filtro por profile e retenção condicional do gateway MCP | Unit tests de construção do toolset; não invocam tools nem provam contenção entre workers/processos. |
+| Ontheia 70802db61eb16533f55efce3d8785d810223d03b | filterRunTools em host/dist/routes/mcp-utils.spec.js com padrões para “skills write tools stay out unless explicitly bound” e “scheduled runs never see create_schedule”: relatório Node, 1 pass para o módulo selecionado. | PASS_WITH_SCOPE — filtro de ferramenta por binding e restrição de schedule | Contrato de montagem do toolset; não é chamada real, credencial ou operação externa. |
+| Clawix 5aee015e0bd793102fba69af486dd6e75df6d802 | Probe de autorização MCP no agent-runner.service.test.ts parou antes da coleta: import de ../generated/prisma/client.js ausente. | BLOCKED_HARNESS | Nenhum teste executou; não inferir falha do candidato. Geração Prisma não foi feita neste bloco. |
+| Bob Labs a91d6dad098c8ba6d24436a856556078151db45d | Reutilizar bloqueio já registrado: pytest indisponível na tentativa de auditoria de sandbox HMAC. | BLOCKED_HARNESS | Sem resultado de autoridade por papel. |
+| Letta Code 21daa38a8cdd74f2d03b634c8312253080bacfc1 | Runner Bun permanece indisponível para os testes de policy/MemFS. | BLOCKED_HARNESS | Sem inferência funcional. |
+| Memoh | Pin exato segue PIN_REQUIRED. | NOT_TESTED / PIN_REQUIRED | Não executar branch móvel. |
+
+OpenClaw continua fora da coorte ativa por decisão de product fit. Nenhum resultado deste bloco elimina candidato.
+
+### Evidência bruta
+
+QwenPaw:
+- Comando: .venv/bin/pytest -q tests/integration/test_multi_agent_config_isolation.py::test_tools_toggle_isolated_with_full_cycle
+- Resultado: 1 passed in 15.90s.
+- Agentes e servidor locais sintéticos; nenhuma ferramenta foi invocada; provider ausente.
+
+OpenAkita:
+- Comando: .venv/bin/pytest --no-cov -q tests/unit/test_agent_factory_skill_filter.py::test_tool_inclusive_empty_keeps_only_independent_basics_when_extensions_empty tests/unit/test_agent_factory_skill_filter.py::test_tool_inclusive_preserves_mcp_gateway_when_mcp_servers_are_selected
+- Resultado: 2 passed in 0.89s.
+
+Ontheia:
+- Comando: node --test --test-name-pattern='skills write tools stay out unless explicitly bound|scheduled runs never see create_schedule' host/dist/routes/mcp-utils.spec.js
+- Resultado literal: tests 1, pass 1, fail 0; sem tool/provider externo.
+
+Clawix:
+- Comando: ./node_modules/.bin/vitest run packages/api/src/engine/__tests__/agent-runner.service.test.ts -t '<two MCP policy cases>'
+- Resultado: falha de setup/coleta antes de testes por generated Prisma Client ausente; classificado BLOCKED_HARNESS.
+
+### Resultado do subgate
+
+TOOL_AUTHORITY_PER_AGENT = PARTIAL_PASS_WITH_SCOPE
+DIRECT_POLICY_OR_TOOLSET_CHECKS = [QwenPaw_API_TOGGLE, OpenAkita_PROFILE_FILTER, Ontheia_BINDING_FILTER]
+REUSED_ATENTO_BROKER_EVIDENCE = NanoClaw 7/7 (bounded adapter scope)
+INTEGRATED_ATENTO_CROSS_ROLE_TOOL_EXECUTION = NOT_RUN
+CANDIDATES_ELIMINATED = 0
+BENCHMARKS_RERUN = 0
+PROVIDER_OR_EXTERNAL_TOOL_CALLS = 0
+
+Os três resultados novos têm test harnesses/semânticas diferentes e ficam lado a lado; não viram um rank numérico agregado. Scores externos já publicados permanecem reutilizados em suas próprias métricas. A próxima prova comum pendente é execução negativa cruzada de uma ferramenta exclusiva do papel B via o host Atento. Só executar quando o host/adapter de produto ou um seam já existente torná-la observável; não inventar integração de produção para abrir o gate.
