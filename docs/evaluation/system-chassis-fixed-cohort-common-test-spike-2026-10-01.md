@@ -1150,3 +1150,27 @@ MINDROOM_REMAINS_PAUSED = YES
 ```
 
 Smallest next cost-evidence step: inspect only the three failing paths at their frozen pins and capture the source files, configuration defaults, dependency/build boundary, and smallest fail-closed correction/test sketch; then classify repair effort with one consistent rubric. Do not implement candidate fixes as part of this audit. For source size, obtain exact-pin source archives in a permitted runner and count tracked source files/LOC with one frozen extension/filter rule across the entire cohort; do not substitute current default-branch sizes for pinned measurements.
+
+
+### Frozen-pin repair-scope triage — 2026-10-02
+
+Read-only source inspection at each failing pin narrowed the candidate-local correction surface. This is a structural code/test estimate, not person-hours, a committed fix, or a comparative qualification result.
+
+| Candidate / frozen source | Observed failure mechanism at the pin | Smallest defensible correction and regression evidence | Structural effort |
+|---|---|---|---|
+| QwenPaw — [cron models](https://github.com/agentscope-ai/QwenPaw/blob/777441721aa72db8e380d90e4d0481b05cbfd4cc/src/qwenpaw/app/crons/models.py) and [executor](https://github.com/agentscope-ai/QwenPaw/blob/777441721aa72db8e380d90e4d0481b05cbfd4cc/src/qwenpaw/app/crons/executor.py) | `CronJobRuntimeConfig.tool_safety` defaults to `False`; the frozen executor maps that value to `ToolExecutionLevel.OFF`. Existing negative result matches this exact default path. | Make unattended execution fail closed when the field is omitted; preserve explicit, reviewed configuration semantics. Add frozen-pin tests for omitted/default, explicit safe setting, and request-context approval value. Check all creation surfaces before implementation. | **M** — default propagation/config compatibility plus focused regression assertions; exact fix not selected. |
+| Ontheia — [CronService](https://github.com/Ontheia/ontheia/blob/70802db61eb16533f55efce3d8785d810223d03b/host/src/runtime/CronService.ts) | The one-shot poll atomically commits `active=false` before launching `_executeJob`; an execution rejection is only logged by the fire-and-forget catch. The failed one-shot is therefore not eligible for another poll. | Add persistent claim/attempt/recovery semantics that prevent duplicate execution while making an unacknowledged failure retryable; add fault-injection coverage across claim, failure, restart, bounded retry, and terminal ack. | **L** — durable lifecycle/state-machine change and restart/duplicate controls. |
+| OpenAkita — [scheduler executor](https://github.com/openakita/openakita/blob/5f5b38da728274f0fd06461a481851be7c0bca6a/src/openakita/scheduler/executor.py) | `_resolve_agent_profile` returning no profile for a non-default ID logs a warning and then constructs the default `Agent`, causing silent role drift. | Fail the scheduled task closed for an unknown profile, retain the explicit default-ID behavior, and add a regression that proves unknown IDs do not instantiate the default agent. | **S** — a local fallback branch plus focused test; host-side role validation remains separately required. |
+
+Effort rubric: **S** = one candidate-local branch/default and focused regression; **M** = configuration/default propagation across creation surfaces plus regression coverage; **L** = persistent task-lifecycle/state-machine semantics with restart, bounded-retry, and duplicate-delivery assertions. These are relative implementation-surface categories only; no calendar or labor-hour estimate is defensible from this evidence.
+
+```text
+QWENPAW_REPAIR_SCOPE = M (STRUCTURAL; UNIMPLEMENTED)
+ONTHEIA_REPAIR_SCOPE = L (STRUCTURAL; UNIMPLEMENTED)
+OPENAKITA_REPAIR_SCOPE = S (STRUCTURAL; UNIMPLEMENTED)
+COMMON_ATENTO_HOST_ADAPTER_COST = NOT_ESTIMABLE (NO EXECUTABLE DESIGN/SEAM)
+REPAIR_TESTS_RUN = 0
+CANDIDATE_REPOSITORIES_MODIFIED = 0
+```
+
+These candidate-local corrections would not supply the missing Atento host/runtime/gateway seam and do not change any integrated gate from `BLOCKED_ADAPTER`. No candidate ranking, elimination, or selection changes follow from this effort triage.
