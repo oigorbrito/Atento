@@ -1457,3 +1457,33 @@ TESTS_OR_BENCHMARKS_RERUN_FOR_THIS_LIST = 0
 ```
 
 The detailed exact pins, commands, raw outputs, benchmark provenance, and per-gate caveats remain in the sections above. No candidate is removed because a score or test is missing; no overall cross-benchmark rank is inferred.
+## Status table — individual evidence vs common cohort round — 2026-10-02
+
+This table resolves the phrase “11 blocked by environment.” It applies **only to the requested common Atento round**: none of its 11 test bodies ran because a shared host/runtime runner is absent (`BLOCKED_ADAPTER`). It does **not** mean that all 11 candidate-specific tests were individually attempted and blocked by environment. Individual evidence is mixed: scoped passes, scoped failures, unrun tests, and candidate-specific environment/harness blocks.
+
+| Candidate | Candidate-specific internal tests already executed or evidence inspected | Candidate-specific environment/harness block recorded | Common Atento round |
+|---|---|---|---|
+| NanoClaw | Yes — Atento profile 7/7 scoped; REST/SSE replay 1/1; upstream exact-pin CI 513 passed, 3 skipped. | None for those recorded runs. | `BLOCKED_ADAPTER` — shared runner absent; not a candidate failure. |
+| AI Butler | Yes — Atento Gate-2 6/6 scoped; scheduler evidence and internal live eval 4/7 recorded. | No environment block recorded for those results; frozen pin separately has a security block. | `BLOCKED_ADAPTER`; pin security block is a separate status. |
+| OpenClaw | Yes — persistent-marker probe and bounded SSE replay passed with scope. | Yes — secure-runner attempt stopped before test body because required rootless/non-root conditions were unavailable. | `BLOCKED_ADAPTER`; candidate-specific block does not cover every OpenClaw test. |
+| QwenPaw | Yes — sandbox admission, memory API, tool toggle, provider mocks; default cron path has a scoped authority failure. | Initial ordinary pytest collection needed a disclosed narrow harness adaptation; the focused test then ran. | `BLOCKED_ADAPTER`. |
+| MindRoom | Yes — resolver, mock facade, requester propagation, and role-key checks. | Yes — persistent three-role backend fixture stopped before assertions. | `BLOCKED_ADAPTER`; candidate also remains paused under the catch-up rule. |
+| Bob Labs | Yes — HMAC/lab-binding components 21 passed and replay guard 1 passed. | Yes — official database-backed test body did not start because Docker/image requirements were unavailable. | `BLOCKED_ADAPTER`; distinct from its candidate-specific Docker block. |
+| Ontheia | Yes — namespace, role-helper denial, tool-binding and secret-masking probes; one-shot retry has a scoped failure. | No additional environment block recorded for the listed probes. | `BLOCKED_ADAPTER`. |
+| OpenAkita | Yes — isolated-memory, marker, tool-filter and redaction probes; unknown scheduler profile has a scoped failure. | No additional environment block recorded for the listed probes. | `BLOCKED_ADAPTER`. |
+| Clawix | Yes — delete guard and shared-session approval probe; same-user role-private memory conclusion is from pinned contract inspection, not a runtime marker test. | Yes — a Prisma-backed probe stopped before collection. | `BLOCKED_ADAPTER`. |
+| Memoh | Yes — PostgreSQL store denied foreign-bot access/mutation; scoped fake-store and handler checks also passed. | Yes — a later module-dependent mutation attempt stopped before a result because dependencies/network were unavailable. | `BLOCKED_ADAPTER`. |
+| Letta Code | Yes — cron 99 tests/238 assertions; cross-agent guard 63/102; Bubblewrap argument policy 6/11. | Yes — local-service reachability stopped before Bubblewrap execution because the harness could not create a listener socket. | `BLOCKED_ADAPTER`. |
+
+### Correct denominator
+
+```text
+CANDIDATES_IN_FIXED_COHORT = 11
+COMMON_ATENTO_TEST_BODIES_EXECUTED_IN_BLOCKED_ROUND = 0
+CANDIDATES_BLOCKED_FROM_THAT_COMMON_ROUND = 11 (shared adapter/runner blocker)
+CANDIDATE_SPECIFIC_TESTS = MIXED (executed, inspected, not tested, or individually environment-blocked)
+ALL_11_CANDIDATE_TESTS_BLOCKED_BY_ENVIRONMENT = FALSE
+CANDIDATE_FAILURES_INFERRED_FROM_COMMON_ROUND = 0
+```
+
+Use this table as the status summary when continuing the evaluation. Preserve the per-candidate evidence rows and detailed sections above as provenance; do not collapse component results into a common-gate pass.
