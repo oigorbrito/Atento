@@ -639,6 +639,12 @@ This protocol applies to the fixed system-level cohort recorded in `docs/evaluat
 
 ---
 
+### 11.2 Common system-chassis runner implementation
+
+The serial runner and its versioned input contract live in `tools/system_chassis/common_runner.py` and `evals/config/system_chassis_cohort_v1.json`. The runner preserves the frozen cohort order and exact pins, passes the same synthetic three-role profile to each registered adapter, hashes evidence artifacts, and calculates gate outcomes from this harness's fixed expected cases. Adapter output cannot assign a verdict. A verified counterexample yields `FAIL_WITH_SCOPE` even when another case is still missing; a gate passes only when every required case has verified evidence. Malformed or absent observations remain blocked.
+
+The contract workflow validates the harness and its status artifact only. It does not qualify candidate runtimes. No candidate adapter is registered yet. The existing environment lacks the Atento product host/runtime, so candidate adapters stay `BLOCKED_ADAPTER` until an existing candidate surface can run the shared profile without creating that runtime or making broad donor changes. Adapter invocation must also enforce actual network isolation; the runner strips ambient credential variables but does not itself impose an OS-level egress sandbox.
+
 ## 12. Release gates
 
 Configuração em `evals/config/release_gates.json`.
