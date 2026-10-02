@@ -516,3 +516,27 @@ COMMON_ATENTO_RESTART_GATE = BLOCKED_ADAPTER
 ```
 
 Para tornar falsificável esse gate, executar o mesmo listener local sintético e o Bubblewrap do pin num ambiente que permita socket local e namespace user/mount; comparar conexão do host com conexão do processo sandbox. Mesmo um resultado positivo provaria apenas acesso a loopback sintético; para demonstrar cross-role, um serviço/credencial Atento real e a política de autorização teriam de estar presentes no adapter executável.
+
+
+## MindRoom — scheduled event preserves requester through dispatch prechecks — 2026-10-02
+
+No pin `mindroom-ai/mindroom@4f3bd2d108a6f9be28174e0e66d78eeecddca386`, executei em série dois casos existentes ainda não registrados como executados:
+
+```text
+UV_CACHE_DIR=/tmp/mindroom-uv-cache uv run --frozen --group dev -- \
+  python -m pytest -n 0 -q \
+  tests/test_bot_scheduling.py::TestCommandHandling::test_scheduled_agent_event_with_router_requester_reaches_dispatch_policy \
+  tests/test_bot_scheduling.py::TestCommandHandling::test_scheduled_agent_event_with_router_requester_survives_ingress_precheck \
+2 passed
+```
+
+Os casos constroem um evento agendado enviado pelo agente e com Router como solicitante original. Ambos verificam que o solicitante Router sobrevive ao precheck; o primeiro também verifica `source_kind=SCHEDULED_FIRE` e entrada na política de dispatch sem cair no filtro de agente não mencionado. O teste usa configuração/runtime em memória e não reinicia processo nem prova persistência da identidade em retry. Nenhum provider ou ferramenta foi chamado. O primeiro comando falhou apenas por tentativa de usar classe pytest incorreta; corrigido o seletor, os dois corpos passaram. O checkout permaneceu sem alterações.
+
+```text
+MINDROOM_SCHEDULED_REQUESTER_PROPAGATION = PASS_WITH_SCOPE (2 EXISTING TESTS)
+MINDROOM_SCHEDULED_IDENTITY_AFTER_HOST_CRASH_AND_RETRY = NOT_TESTED
+MINDROOM_COMMON_ATENTO_RESTART_RETRY = BLOCKED_ADAPTER
+MINDROOM_CANDIDATE_ELIMINATION = NONE
+```
+
+A inspeção adjacente do broker de ferramentas confirma casos de runtime de owner indisponível como falha temporária retryable e mudança de autoridade como negação; esses testes existentes não foram repetidos. O próximo gate falsificável continua sendo o teste comum de tarefa NAIA após claim/crash/restart/retry, condicionado a um seam de host Atento executável já existente. Não criar integração produtiva para abrir esse seam.
