@@ -958,3 +958,70 @@ A further check in this session installed the locked host dependencies, built th
 ### Queue continuation
 
 OpenAkita's existing marker result is reused without rerun. Clawix remains unresolved for this memory slice: existing evidence covers path guards, while no exact-pin direct private-marker cross-role test is recorded. Continue at Clawix's frozen pin only if its real workspace/memory seam can express the same private marker property; otherwise record the narrow blocker and advance serially. The full Atento `SYS-MEM-01` remains `BLOCKED_ADAPTER`.
+
+
+## Memoh and Letta Code SYS-MEM catch-up — 2026-10-02
+
+### Memoh — exact pin `felinics/Memoh@3d60a08aa42fdcddb218401699822741b51b52ad`
+
+The exact-pin in-memory runtime scope test passed:
+
+```text
+GOTOOLCHAIN=auto go test ./internal/memory/adapters/builtin -run '^TestMemoryRuntimesRejectForeignAndMissingScopeBeforeMutation$' -count=1
+PASS (graph and file runtimes; in-memory fake stores)
+```
+
+It rejects foreign/missing-bot update/delete and adversarial formation mutations and checks that each bot's original item remains intact. This is component evidence with fake stores, not persistent read isolation.
+
+The stronger existing integration case, `TestPostgresUpsertNodeRejectsConflictingBotScope`, was run once with the pin's embedded production migrations and a dedicated local PostgreSQL 16 database:
+
+```text
+GOTOOLCHAIN=auto TEST_POSTGRES_DSN=<isolated local DSN> go test ./internal/memory/wikistore -run '^TestPostgresUpsertNodeRejectsConflictingBotScope$' -count=1 -v
+PASS (0.033s)
+```
+
+It created synthetic bot A/B rows for one synthetic user, rejected B's attempt to overwrite A's ID, confirmed A's original was unchanged, denied B's GetNode for A's ID, and allowed A's own update. The repo's Compose currently targets PostgreSQL 18; this disposable executor used 16, so the result is scoped to the exact-pin SQL/store behavior on PostgreSQL 16, not a version-matched deployment check. No model/provider or Atento runtime was used.
+
+```text
+MEMOH_PRIVATE_MEMORY_STORE_SCOPE = PASS_WITH_SCOPE
+MEMOH_ATENTO_ROLE_ID_BINDING = NOT_TESTED
+MEMOH_SYSTEM_SYS_MEM_01 = BLOCKED_ADAPTER
+```
+
+### Letta Code — exact pin `letta-ai/letta-code@21daa38a8cdd74f2d03b634c8312253080bacfc1`
+
+Using Bun 1.3.14 and the frozen `bun.lock`, the focused `src/permissions/cross-agent-guard.test.ts` run passed: 63 tests, 0 failures, 102 expectations. It covers default-deny reads across permission modes for foreign API/local agent-memory paths, own-memory positive controls, recursive/list operations, symlink escapes for in-process file tools, and explicit parent/subagent scope.
+
+Scope: this is policy/permission-layer proof with synthetic filesystem roots; it does not run an LLM, connect a Letta API, test an actual OS sandbox boundary, or map Atento role identities to Letta agent IDs. Some explicit parent guard-disable behavior is tested as configurable; an Atento profile would need to keep the default guard enabled. Historical overlay evidence at a different SHA was not reused as exact-pin proof.
+
+```text
+LETTA_CODE_CROSS_AGENT_MEMORY_TOOL_GUARD = PASS_WITH_SCOPE
+LETTA_CODE_OS_PROCESS_BOUNDARY = NOT_TESTED
+LETTA_CODE_ATENTO_ROLE_BINDING = NOT_TESTED
+LETTA_CODE_SYSTEM_SYS_MEM_01 = BLOCKED_ADAPTER
+```
+
+### Fixed-cohort SYS-MEM position after catch-up
+
+| Candidate | Best current memory evidence for this slice | Disposition |
+|---|---|---|
+| NanoClaw | Exact-pin 7/7 role-state/group isolation and negative cross-group lookup; no direct private-marker read between role memories. | `PASS_WITH_SCOPE` for state/group boundary; marker slice open. |
+| AI Butler | Existing current-pin security scan has seven reachable advisories. | `BLOCK_CURRENT_PIN_ON_SECURITY`; do not rerun unchanged pin. |
+| OpenClaw | Persistent synthetic marker returned by NAIA manager and absent from Anna manager at exact pin. | `PASS_WITH_SCOPE`; in-process index only. |
+| QwenPaw | Existing API probe denies B's direct GET of A's private memory file. | `PASS_WITH_SCOPE`; no host/process boundary. |
+| MindRoom | Mock facade/keyed tests pass; persistent three-role backend test remains blocked in its harness. | `BLOCKED_HARNESS`; MindRoom remains paused. |
+| Bob Labs | Official test requires Docker and `bob-manager-bob-api:latest`; the test body did not start. | `BLOCKED_ENVIRONMENT`; no candidate failure. |
+| Ontheia | Reuse the already-recorded explicit three-`agent_id` namespace helper: own scopes accepted, six cross-role scopes denied. The 19/19 additional user-namespace suite run was overlapping validation, not a new marker result. | `PASS_WITH_SCOPE` for configured helper; storage/RLS open. |
+| OpenAkita | Reuse the previously recorded two-profile private-marker result. | `PASS_WITH_SCOPE`; no rerun. |
+| Clawix | No exact-pin direct private-marker test identified; existing path/session guards do not prove memory isolation. | `NOT_TESTED`; not a failure. |
+| Memoh | Exact-pin real PostgreSQL store denied foreign-bot read and overwrite; also fake-store graph/file mutation scope test passed. | `PASS_WITH_SCOPE`; PostgreSQL 16, no Atento ID binding. |
+| Letta Code | Exact-pin 63/63 cross-agent guard suite; in-process file reads denied across permission modes and symlink cases. | `PASS_WITH_SCOPE`; no actual kernel-boundary or Atento role mapping. |
+
+```text
+FIXED_COHORT_SIZE = 11
+CANDIDATE_MEMORY_SLICE = MIXED_SCOPES; NO_AGGREGATE_SCORE
+COMMON_ATENTO_SYS_MEM_01 = BLOCKED_ADAPTER
+CANDIDATES_ELIMINATED_FROM_MISSING_EVIDENCE = 0
+MINDROOM_REMAINS_PAUSED = YES
+```
+
