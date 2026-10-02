@@ -88,3 +88,12 @@ Classificações obrigatórias: `PASS_WITH_SCOPE` nunca significa qualificação
 - Next unresolved fixed-cohort memory slice: Clawix `5aee015e0bd793102fba69af486dd6e75df6d802`; only continue if its real seam permits the frozen private-marker assertion.
 - Common Atento `SYS-MEM-01` remains `BLOCKED_ADAPTER`. No candidate elimination follows from missing evidence.
 - Detailed provenance and test scope: [fixed-cohort common test spike](../evaluation/system-chassis-fixed-cohort-common-test-spike-2026-10-01.md).
+
+
+## Fixed-cohort memory slice closure — 2026-10-02
+
+The latest candidate-specific catch-up adds Memoh's exact-pin PostgreSQL store denial and Letta Code's exact-pin 63/63 permission-guard suite. Bob Labs remains blocked before its test body by the official Docker runner/image; Clawix remains untested for the same private-marker read property; Ontheia's extra user-namespace test was redundant with the already-recorded role-key helper. OpenAkita evidence was reused. No candidate was eliminated from missing evidence.
+
+The complete status and test provenance now appear in the [fixed-cohort spike record](../evaluation/system-chassis-fixed-cohort-common-test-spike-2026-10-01.md). Component passes remain scoped; the integrated common `SYS-MEM-01` is still `BLOCKED_ADAPTER` because the Atento host/runtime seam is absent.
+
+Next block: continue the frozen cohort's tool-authority denial evidence using existing exact-pin tests/results first. Keep the common Atento `SYS-TOOL-01` blocked until an already-existing host adapter can exercise the same three-role profile; do not fabricate a production adapter.
