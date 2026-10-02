@@ -78,3 +78,13 @@ Executar um candidato por vez. Sem seam, conservar `BLOCKED_ADAPTER`; não subst
 4. Só comparar ou escolher chassi comum quando a matriz apresentar evidência comparável suficiente; até lá, MindRoom permanece direção provisória/pausada, NanoClaw permanece direção provisória da NAIA, e nenhum deles é qualificado para produção.
 
 Classificações obrigatórias: `PASS_WITH_SCOPE` nunca significa qualificação geral; `BLOCKED_ENVIRONMENT`/`BLOCKED_HARNESS` não são falhas do candidato; benchmark não é prova local; teste de componente não é prova de integração.
+
+
+## SYS-MEM catch-up — 2026-10-02
+
+- Bob Labs `a91d6dad…`: `BLOCKED_ENVIRONMENT`; its official `make test-only` requires Docker and the pinned API image. No test body ran.
+- Ontheia `70802db6…`: reuse the already-recorded configured `agent_id` namespace probe as `PASS_WITH_SCOPE`. The extra 19/19 user-namespace unit-suite run was overlapping validation, not a new role-memory result.
+- OpenAkita: reuse the existing private-marker pass; no rerun.
+- Next unresolved fixed-cohort memory slice: Clawix `5aee015e0bd793102fba69af486dd6e75df6d802`; only continue if its real seam permits the frozen private-marker assertion.
+- Common Atento `SYS-MEM-01` remains `BLOCKED_ADAPTER`. No candidate elimination follows from missing evidence.
+- Detailed provenance and test scope: [fixed-cohort common test spike](../evaluation/system-chassis-fixed-cohort-common-test-spike-2026-10-01.md).
