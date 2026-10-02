@@ -136,3 +136,25 @@ CANDIDATE_ELIMINATION = NONE
 ```
 
 This is reusable component evidence for workspace isolation, not a complete cross-agent production boundary result. The previously identified shared-runner/deployment-specific isolation issue remains open. Continue to Bob Labs in frozen order; the comparative selection remains pending.
+
+
+## Continuation — Bob Labs sandbox replay-boundary gate — 2026-10-02
+
+Frozen pin verified: `boblabs-eu/boblabs@a91d6dad098c8ba6d24436a856556078151db45d`. Ran one existing focused source guard:
+
+```text
+pytest control-plane/tests/regression/test_cso_2026_06_sandbox_hmac.py::test_sandbox_rejects_replayed_nonce
+1 passed
+```
+
+The assertion checks that the frozen sandbox source tracks nonce use and rejects a replayed signature. It is explicitly source introspection; it does not send an HTTP request to the middleware or launch a Docker sandbox. The probe used minimal pytest/app-import dependencies and intentionally did not load the DB-backed control-plane conftest. Two warnings about unavailable asyncio pytest config options were emitted because pytest-asyncio was not installed; the selected test is synchronous and passed. No Bob Labs source or config was changed.
+
+```text
+BOBLABS_SANDBOX_REPLAY_GUARD_SOURCE_CHECK = PASS_WITH_SCOPE (STATIC SOURCE)
+BOBLABS_LIVE_HMAC_MIDDLEWARE_AND_LAB_BINDING = NOT_TESTED_BY_THIS_CASE
+ATENTO_ROLE_CREDENTIAL_BOUNDARY = OPEN
+COMMON_ATENTO_PROFILE = BLOCKED_ADAPTER
+CANDIDATE_ELIMINATION = NONE
+```
+
+This does not close Bob Labs' prior per-lab sandbox/HMAC integration uncertainty or qualify an Atento composition. Continue to Ontheia in frozen order; no candidate is selected.
