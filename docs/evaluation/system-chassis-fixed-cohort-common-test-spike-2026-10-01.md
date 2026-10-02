@@ -568,3 +568,31 @@ FINAL_CANDIDATE_SELECTION = NONE
 ```
 
 O próximo menor teste falsificável para um futuro executor alternativo é repetir o mesmo estado inerte em PostgreSQL isolado: persistir tarefa vencida, claim, terminar processo após claim e antes do terminal ack, reiniciar e demonstrar um retry com identidade do agente preservada e exatamente uma entrega terminal. Não alterar PR #58 nem construir integração produtiva apenas para esse teste.
+
+
+## Meta-probe de identidade do chassi comum — MindRoom com três papéis — 2026-10-02
+
+No pin mindroom-ai/mindroom@4f3bd2d108a6f9be28174e0f66d78eeecddca386, testei no mesmo usuário/sala sintéticos os identificadores NAIA, Anna e Apollo usando o resolvedor de worker do próprio pin em user_agent:
+
+```text
+roles = [naia, anna, apollo]
+worker_keys = [
+v1:default:user_agent:~@synthetic:localhost:naia,
+v1:default:user_agent:~@synthetic:localhost:anna,
+v1:default:user_agent:~@synthetic:localhost:apollo
+]
+all_distinct = true
+```
+
+A asserção de três chaves distintas passou. Nenhum provider foi configurado/chamado. Classificação PASS_WITH_SCOPE: comprova somente a partição produzida pelo resolvedor de identidade, não armazenamento persistente, execução em workers separados, tool/credential grants, handoff ou retry após restart; portanto não fecha nenhum SYS-* do Atento.
+
+Uma extensão descartável tentou escrever três marcadores privados através do backend de arquivos e então comparar leitura/update/delete cruzados. A execução parou no primeiro add antes de produzir resultado/asserções; o processo foi interrompido após timeout curto de diagnóstico. Classificação BLOCKED_HARNESS, sem inferência de falha funcional. Os testes anteriormente registrados de facade cross-agent e requester propagation não foram repetidos.
+
+```text
+MINDROOM_THREE_ROLE_WORKER_KEY_PARTITION = PASS_WITH_SCOPE
+MINDROOM_THREE_ROLE_PERSISTENT_MEMORY_BOUNDARY = BLOCKED_HARNESS (FIXTURE WRITE STALLED BEFORE ASSERTIONS)
+MINDROOM_SYSTEM_CHASSIS_QUALIFIED = NO
+ATENTO_COMMON_CHASSIS_ADAPTER = BLOCKED_ADAPTER
+```
+
+O menor reteste da propriedade de memória deve usar o teste existente tests/test_memory_backend_contract.py::test_agent_scope_memories_invisible_to_other_agents com configuração de três nomes de agente e fixture de arquivo sem iniciar atualização semântica/background; não repetir a suíte geral. Para qualificar o chassi comum, ainda é necessária a fronteira de runtime Atento que execute as três identidades e exponha estado/auditoria reais.
