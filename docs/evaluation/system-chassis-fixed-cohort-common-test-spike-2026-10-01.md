@@ -1284,3 +1284,50 @@ TESTS_OR_BENCHMARKS_RERUN = 0
 ```
 
 Source: `evals/probes/engram_browser_authority/evidence/engram-agent-runtime-probe-2026-09-30.log`. This is a source-record review, not a new execution or a change to the candidate-neutral blocker.
+
+
+## Consolidated evidence register — existing tests and published benchmarks — 2026-10-02
+
+This register gathers results already recorded in the preceding gate blocks. It adds no test, benchmark, score, or candidate discovery. Exact commands, raw outputs, harness details, and full pins remain in the referenced candidate/gate sections above; this summary does not count reused evidence a second time.
+
+### Executed or attempted candidate tests
+
+| Fixed candidate / pin | Existing test or probe evidence to carry forward | Disposition and boundary |
+|---|---|---|
+| NanoClaw — `4c1eabd3ddd74cc3d71b1871da857391a9411c8d` | Exact-pin upstream CI: 513 passed, 0 failed, 3 skipped. Atento hosted profile run 36815873223: 7/7 scoped assertions. Raw-webhook SSE restart/replay and focused REST+SSE replay run 36936998880: 1/1; reused SQLite/rebound session and per-agent replay behavior passed, while an unknown synthetic token returned 401. | `PASS_WITH_SCOPE` for the recorded lifecycle, role/group state, and replay properties. No provider custody or role-bound scheduled-task retry across an Atento host restart. |
+| AI Butler — `c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c` | Atento Gate-2 exact-pin scoped run: 6/6; scheduler evidence is scoped; internal live eval: 4/7. | Scoped evidence only. The current pin separately remains blocked by seven reachable security advisories; no unchanged-pin qualification or security rerun. |
+| OpenClaw — `e9571d77e76bd6d35996273d9e8398ad539b26e1` | Persistent synthetic marker was present in NAIA's in-process manager and absent in Anna's; one bounded SSE replay case passed. The official isolated test runner also stopped before the test body because required non-root/rootless-container conditions were unavailable. | `PASS_WITH_SCOPE` for the marker and replay cases; `BLOCKED_ENVIRONMENT/HARNESS` for the stopped attempt. Tool execution, provider custody, and scheduled retry remain untested. Retained in the fixed 11. |
+| QwenPaw — `777441721aa72db8e380d90e4d0481b05cbfd4cc` | Sandbox-unavailable admission: 1 focused test passed with a synthetic provisioner. Memory API probes: listing omitted A's marker and B's direct GET returned 404. Tool toggle: 1 passed; provider-selection mocks: 2 passed. Default cron probe emitted `approval_level=off`. | Scoped API/component passes plus `FAIL_WITH_SCOPE` for the default cron authority path. No OS sandbox, provider request, or full Atento role composition. |
+| MindRoom — `4f3bd2d108a6f9be28174e0f66d78eeecddca386` | Visible-workspace resolver: 8 parameter cases passed; mock cross-agent facade: 3 cases; requester propagation: 2 existing tests; three role keys resolved distinctly. Persistent three-role backend fixture stopped before assertions. | Scoped resolver/mock/key-partition evidence; persistent memory remains `BLOCKED_HARNESS`. MindRoom remains paused under the catch-up rule. |
+| Bob Labs — `a91d6dad098c8ba6d24436a856556078151db45d` | HMAC/lab-binding component suite: 21 passed; focused replayed-nonce source guard: 1 passed. | `PASS_WITH_SCOPE` for component/source checks. Official database-backed sandbox runner and image were unavailable; their test body did not start. |
+| Ontheia — `70802db61eb16533f55efce3d8785d810223d03b` | Mock-backed namespace authorization: 14 passed; explicit three-role namespace helper allowed own scope and denied six cross-role attempts; tool-binding filter: 1 passed; secret resolution/masking: 1 passed. | Scoped helper/configuration passes. One-shot `run_at` path loses retry after post-claim failure: `FAIL_WITH_SCOPE`; this does not establish recurring-job behavior or eliminate the family. |
+| OpenAkita — `5f5b38da728274f0fd06461a481851be7c0bca6a` | Existing isolated-memory suite: 3 passed; disposable two-profile private marker: 1 passed; toolset filters: 2 passed; diagnostic secret redaction: 1 passed. | Scoped component passes. Unknown scheduled profile fell back to the default agent: `FAIL_WITH_SCOPE` for that role-drift path. |
+| Clawix — `5aee015e0bd793102fba69af486dd6e75df6d802` | Cross-user scheduled-task delete denial: 1 focused mocked-service case passed. Shared parent/sub-agent session approval reuse was reproduced in one focused case. Pinned memory contract/query inspection showed private wiki visibility is keyed to `userId`; no direct marker runtime test was run. | `PASS_WITH_SCOPE` for the narrow delete guard; `FAIL_WITH_SCOPE` for shared-session approval and same-user role-private memory (the latter from static pinned contract). Other Prisma-backed probe was blocked before collection. |
+| Memoh — `3d60a08aa42fdcddb218401699822741b51b52ad` | Exact-pin PostgreSQL store denied foreign-bot reads/overwrites; fake-store graph/file scope and foreign-bot delete handler checks also passed with stated scopes. Later mutation probes requiring missing Go modules/network were blocked before a result. | `PASS_WITH_SCOPE` for tested bot/store boundaries. No Atento role binding, provider custody, or restart/retry proof. |
+| Letta Code — `21daa38a8cdd74f2d03b634c8312253080bacfc1` | Cron suite: 99 tests / 238 assertions; cross-agent permission guard: 63 tests / 102 expectations; Bubblewrap argument policy: 6 tests / 11 assertions. A real local-service reachability probe was blocked before Bubblewrap execution because the harness sandbox denied listener socket creation. | Scoped permission/policy passes; network reachability is `BLOCKED_ENVIRONMENT`, not a candidate failure. Kernel enforcement and Atento role/recovery composition remain unproven. |
+
+### Published functional benchmark results already available
+
+| Benchmark and configuration | Recorded result | Permitted comparison |
+|---|---|---|
+| PawBench v1.0, published 9-model matrix, 150 tasks | OpenClaw v2026.4.24: 72.1; QwenPaw v1.1.3: 73.7 | Same published matrix: QwenPaw is +1.6 points for those harness releases. Not a result for either frozen Atento pin. |
+| Auto-ClawEval v4, Claude Haiku 4.5 | NanoClaw: 63.7 full / 67.8 Mini; historical CoPaw lineage: 60.8 full / 59.3 Mini | Same paper/config: NanoClaw is +2.9 full / +8.5 Mini. CoPaw is historical QwenPaw lineage and used a different integration tier; do not relabel these values as frozen QwenPaw results. |
+| Terminal-Bench 2.0, Letta Code | 59.1% ±2.4 with Claude Opus 4.5; 53.5% ±2.8 with GPT-5.1-Codex | Separate model configurations for one coding benchmark; not comparable to PawBench or assistant-chassis fit. |
+
+AI Butler's 4/7 is a separate internal live evaluation, not an external benchmark score. No reusable published benchmark score is recorded here for the other fixed-cohort candidates; missing scores are not zero.
+
+### Evaluation boundary after consolidation
+
+```text
+FIXED_COHORT_SIZE = 11
+NEW_TESTS_OR_BENCHMARKS_IN_THIS_REGISTER = 0
+EQUIVALENT_TESTS_OR_BENCHMARKS_RERUN = 0
+CROSS_BENCHMARK_AGGREGATE = NOT_CREATED
+DEFENSIBLE_OVERALL_TOP_7_OR_TOP_3 = NO
+COMMON_INTEGRATED_ATENTO_GATES = BLOCKED_ADAPTER
+CANDIDATE_FAMILY_ELIMINATION_FROM_MISSING_EVIDENCE = 0
+MINDROOM_REMAINS_PAUSED = YES
+CANDIDATE_SELECTION_CHANGED = NO
+```
+
+Use the benchmark table only as the functional-quality evidence axis and the candidate table only at each stated scope. Neither table converts partial results into full three-role qualification. Full commands, raw outputs, benchmark provenance, and failure/harness classifications remain in their detailed sections above.
