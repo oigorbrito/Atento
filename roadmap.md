@@ -101,7 +101,7 @@ A regra de engenharia é preservar capacidade funcional comprovada e comparar o 
 
 ### Source Registry
 
-> **DECISION RESET:** este registry preserva fontes, pins e uso histórico/possível. Labels como candidato, donor integral ou modo permitido **não constituem shortlist nem preferência atual**. Seleção de chassis pertence às ADRs específicas de NAIA/Anna/Apollo.
+> **DECISION RESET (reconciliado 2026-10-02):** este registry preserva fontes, pins e uso histórico/possível. Labels como candidato ou donor não equivalem a qualificação. Direções atuais: MindRoom como implementação reversível do chassi comum; NanoClaw como base provisória da NAIA; Anna sem base selecionada; Apollo adiado. Decisões sistêmicas estão em `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`.
 
 #### SRC-PA — PsychAgent
 - **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
@@ -294,9 +294,9 @@ A regra de engenharia é preservar capacidade funcional comprovada e comparar o 
 - **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
 - **Repo:** https://github.com/mindroom-ai/mindroom
 - **Commit inspecionado:** `4f3bd2d108a6f9be28174e0f66d78eeecddca386`.
-- **Candidato para:** multi-agent system composition, Matrix identities, per-agent worker scope, persistent sessions, tools, delegation.
-- **Gaps:** `worker_scope=user` shares runtimes/workspaces; API requester-scoped `user_agent` execution support and Atento handoff/credential boundaries need exact-pin tests.
-- **Estado:** discovery/system-level pre-triage only; not selected or locally qualified. Provenance details: `docs/third-party.md` (`SRC-SYS-MINDROOM`).
+- **Direção atual (2026-10-02):** selecionado para avançar como implementação reversível do chassi comum de NAIA/Anna/Apollo; ver `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`.
+- **Gaps/gates:** `worker_scope=user` compartilha runtimes/workspaces; usar `user_agent`/workers dedicados. Validar suporte requester-scoped, handoff, credenciais, isolamento persistente, recovery e custo na composição Atento.
+- **Estado:** direção provisória, não qualificada para produção; nenhum código upstream adotado. Provenance: `docs/third-party.md` (`SRC-SYS-MINDROOM`).
 
 #### SRC-SYS-ONTHEIA — Ontheia
 - **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
