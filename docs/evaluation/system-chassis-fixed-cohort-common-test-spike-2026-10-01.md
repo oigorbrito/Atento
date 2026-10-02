@@ -1331,3 +1331,36 @@ CANDIDATE_SELECTION_CHANGED = NO
 ```
 
 Use the benchmark table only as the functional-quality evidence axis and the candidate table only at each stated scope. Neither table converts partial results into full three-role qualification. Full commands, raw outputs, benchmark provenance, and failure/harness classifications remain in their detailed sections above.
+
+
+## Provisional finalist screen from existing evidence — 2026-10-02
+
+This is a shortlist for the next comparative decision, not a winner selection or a claim that other candidates have been eliminated. No composite numeric score is calculated because the external benchmarks use different tasks/configurations and the Atento component probes do not share one integrated denominator.
+
+### Working shortlist
+
+| Candidate | Why it remains a possible finalist | Decision-limiting evidence |
+|---|---|---|
+| NanoClaw | Strongest currently recorded Atento composition evidence: hosted profile run 36815873223 passed 7/7 with scope; a focused REST/SSE replay also passed 1/1. Auto-ClawEval reports 63.7 full / 67.8 Mini. | Auto-ClawEval is not directly comparable with PawBench; its CoPaw comparator is historical and used a different integration tier. Provider custody and role-bound scheduled-task retry after Atento host restart remain `BLOCKED_ADAPTER`. |
+| QwenPaw | Highest score in the only direct same-benchmark pair found: PawBench v1.0 73.7. Several exact-pin component probes passed with scope. | Its default cron path emitted `approval_level=off`, a `FAIL_WITH_SCOPE` authority result. Fail-closed background execution and full Atento composition remain unresolved. |
+| OpenClaw | The other member of that direct PawBench pair: 72.1. Exact-pin persistent-marker and one SSE replay probes passed with scope. Retained in the full-system cohort; mobile-view product-fit exclusion does not remove it here. | PawBench is not an Atento gate. Tool authority and provider custody are untested; cross-role Gateway/session composition and scheduled retry remain open. |
+
+The directly comparable published difference is QwenPaw +1.6 PawBench points over OpenClaw for the published harness releases only. NanoClaw's Auto-ClawEval values are reported separately and do not establish that it is above or below either PawBench result.
+
+### Other candidates and shortlist interpretation
+
+The remaining eight candidates are **not ranked out** by this screen. Their evidence is blocked, partial, scoped to different properties, tied to a current-pin security blocker, or uses a benchmark that does not measure the same assistant-chassis task. In particular, AI Butler's frozen pin is security-blocked; that blocks this pin, not the candidate family. MindRoom remains paused under the user's catch-up rule. Letta Code's Terminal-Bench result measures coding performance and is not an assistant-chassis score.
+
+```text
+PROVISIONAL_WORKING_SHORTLIST = [NanoClaw, QwenPaw, OpenClaw]
+SHORTLIST_ORDER = NOT_RANKED (NO COMMON COMPOSITE SCALE)
+ONLY_DIRECT_PUBLISHED_PAIR = PawBench: QwenPaw 73.7 vs OpenClaw 72.1
+DIRECT_PAIR_DELTA = +1.6 PawBench points for QwenPaw (published versions only)
+OTHER_COHORT_CANDIDATES = NOT_RANKED_OUT
+FINAL_SELECTION = NONE
+FULL_THREE_ROLE_QUALIFICATION = NONE
+COMMON_ATENTO_GATES = BLOCKED_ADAPTER
+NEW_TESTS_OR_BENCHMARKS = 0
+```
+
+This working shortlist is suitable for organizing the eventual head-to-head gate matrix. It is not a defensible overall top three, does not supersede the frozen 11-member cohort, and does not alter any provisional direction or protected PR.
