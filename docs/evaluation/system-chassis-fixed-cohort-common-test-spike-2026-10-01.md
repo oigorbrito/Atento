@@ -1220,3 +1220,46 @@ COMMON_ATENTO_SYS_MEM_01 = BLOCKED_ADAPTER
 ```
 
 This supersedes the earlier Clawix `NOT_TESTED` row for the narrow same-user role-private property. Existing filesystem path guards remain scoped to path traversal and do not repair the user-scoped wiki visibility model.
+
+
+## SYS-DEC-01 fixed-cohort evidence closure — 2026-10-02
+
+This closure compiles the current scoped evidence without rerunning tests or benchmarks. It supersedes earlier 10-candidate active-snapshot summaries: the fixed denominator remains **11**, including OpenClaw. MindRoom remains paused; NanoClaw's prior evidence is reused.
+
+Legend: `P-S` = `PASS_WITH_SCOPE`; `F-S` = a failure limited to the named path or composition; `B` = blocked by environment/harness or not executable; `NT` = not tested. These candidate-level cells do not replace the integrated Atento result.
+
+| Fixed candidate | MEM / TOOL / CRED / REL candidate evidence | Published functional signal already recorded | Current gate disposition |
+|---|---|---|---|
+| NanoClaw | P-S (role/group state; direct marker gap) / P-S (direct A2A denied; broker path via test adapter) / synthetic identities only / partial lifecycle + SSE replay | Auto-ClawEval 63.7 full, 67.8 Mini (Claude Haiku 4.5; Tier 2) | Retained; integrated role-bound host retry blocked. |
+| AI Butler | Not advanced / not advanced / not advanced / scheduler P-S only | Internal live eval 4/7 | Frozen pin blocked by seven reachable security advisories; no further unchanged-pin qualification. |
+| OpenClaw | P-S (persistent marker across workspaces) / NT / NT / P-S (one SSE replay) | PawBench mean 72.1 (published OpenClaw v2026.4.24) | Retained; tools, provider custody, and task retry remain open. |
+| QwenPaw | P-S (API denies foreign private-file read) / P-S (configuration isolation) / mock selection only / F-S (default cron authority off) | PawBench mean 73.7 (published QwenPaw v1.1.3); historical CoPaw lineage Auto-ClawEval 60.8 / 59.3 Mini | Hold for fail-closed background authority; do not transfer lineage score to frozen pin. |
+| MindRoom | B-harness / B-harness / NT / NT | None recorded | Paused until the cohort catches up; no production qualification. |
+| Bob Labs | B-environment / NT / P-S (HMAC/lab-binding components) / B-environment | None recorded | Official test runner/image unavailable; no candidate failure inferred. |
+| Ontheia | P-S (configured namespace helper) / P-S (binding filter) / P-S (secret masking) / F-S (one-shot `run_at` post-claim) | None recorded | Exact tested recovery path fails; family remains open to a different recovery design. |
+| OpenAkita | P-S (isolated profiles) / P-S (profile filters) / P-S (diagnostic redaction) / F-S (unknown-profile fallback to default agent) | None recorded | Fail-closed scheduler path needed; current path exhibits role drift. |
+| Clawix | F-S (private wiki keyed by user, shared by that user's agents) / F-S (shared-session approval reuse) / NT / NT | None recorded | Same-user role-private memory and shared-session approval paths fail; separate-user/session composition is untested. |
+| Memoh | P-S (PostgreSQL foreign-bot denial) / NT / NT / NT | None recorded | Scoped store pass only; no Atento role identity or recovery proof. |
+| Letta Code | P-S (63/63 in-process permission suite) / NT / NT / NT | Terminal-Bench 2.0: 59.1% ±2.4 with Claude Opus 4.5; 53.5% ±2.8 with GPT-5.1-Codex | Scoped memory guard only; coding benchmark does not rank personal-assistant chassis. |
+
+### Closure and ranking decision
+
+- `FIXED_COHORT_SIZE = 11`; OpenClaw remains included.
+- Candidate-specific path failures/holds: AI Butler current pin security block; QwenPaw default cron authority; Ontheia one-shot post-claim recovery; OpenAkita unknown-profile role drift; Clawix same-user private memory and shared-session approval. These do not automatically eliminate whole candidate families where another explicit, testable composition remains possible.
+- Missing evidence and blocked runners remain `B`/`NT`, never zero and never an inferred candidate failure.
+- The only current same-benchmark direct functional comparison among the retained candidates is PawBench's published release matrix: QwenPaw 73.7 vs OpenClaw 72.1 (+1.6 QwenPaw). Auto-ClawEval's NanoClaw/CoPaw comparison is historical and uses different integration tiers; Terminal-Bench is a coding task axis; AI Butler's 4/7 is a separate internal eval.
+- `CROSS_BENCHMARK_AGGREGATE_SCORE = NOT_CREATED`; evidence does not support a defensible overall top 7 or top 3.
+- The common Atento memory, tool-authority, provider-credential, and role-bound recovery gates remain `BLOCKED_ADAPTER`; no candidate has a full three-role pass. No selection changed.
+
+```text
+FIXED_COHORT_DENOMINATOR = 11
+OPENCLAW_IN_FIXED_COHORT = YES
+CANDIDATE_FULL_THREE_ROLE_PASSES = 0
+CROSS_BENCHMARK_AGGREGATE_SCORE = NOT_CREATED
+OVERALL_TOP_7_OR_TOP_3 = NOT_DEFENSIBLE
+COMMON_ATENTO_SYS_MEM_TOOL_CRED_REL = BLOCKED_ADAPTER
+CANDIDATE_SELECTION_CHANGED = NO
+TESTS_OR_BENCHMARKS_RERUN = 0
+```
+
+Next decision-bearing step: keep candidate family/path results and global adapter blocker separate; resume paused directions only under the user's existing catch-up rule. No new candidate or benchmark discovery is justified by this closure alone.
