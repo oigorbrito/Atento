@@ -184,3 +184,22 @@ No overall candidate rank is defensible yet: the benchmark signals do not cover 
 Exact-pin source inspection resolved the private-memory scope question. Clawix private wiki pages are user-owned, and search authorization is keyed by `userId`, not agent/role; separate sessions do not isolate wiki visibility. This is a `FAIL_WITH_SCOPE` for three Atento roles sharing one Clawix user ID, based on the pinned product contract. It is not a direct runtime marker test and does not eliminate Clawix under a different, untested separate-user-per-role mapping.
 
 No Prisma harness was fabricated, no test was run, and no candidate source was changed. The direct runtime marker probe remains unrun; integrated Atento `SYS-MEM-01` remains `BLOCKED_ADAPTER`. The spike supersedes the prior Clawix `NOT_TESTED` row for this narrow same-user property. MindRoom remains paused and PRs #58/#59 remain untouched.
+
+
+## SYS-DEC-01 fixed-cohort evidence closure — 2026-10-02
+
+The current matrix was consolidated across the fixed 11 candidates, including OpenClaw. This supersedes older 10-candidate active-snapshot summaries. The spike now records each candidate's scoped memory/tool/credential/recovery evidence, existing benchmark signal, and path-specific hold/failure. No suite or benchmark was rerun.
+
+Current disposition: AI Butler's frozen pin remains security-blocked; QwenPaw, Ontheia, OpenAkita, and Clawix have narrow path failures requiring a changed/testable configuration or correction; environment/harness blocks and untested cells do not count as candidate failures. The same-benchmark PawBench result favors QwenPaw by 1.6 points over OpenClaw for published harness versions, but no cross-benchmark aggregate or overall top 7/top 3 is defensible.
+
+```text
+FIXED_COHORT = 11 (OPENCLAW RETAINED)
+FULL_THREE_ROLE_PASSES = 0
+OVERALL_RANKING = NOT_DEFENSIBLE
+INTEGRATED_MEMORY_TOOL_CREDENTIAL_RECOVERY = BLOCKED_ADAPTER
+MINDROOM_REMAINS_PAUSED = YES
+NANOCLAW_PRIOR_EVIDENCE_REUSED = YES
+TESTS_OR_BENCHMARKS_RERUN = 0
+```
+
+No candidate selection changed. Continue only with the next same-gate evidence that can be run from an existing seam; keep the blocked integrated assertions blocked without an adapter. PRs #58 and #59 remain untouched.
