@@ -503,7 +503,7 @@ decision_rationale:
 
 ## 3. Arquitetura alvo
 
-> **Escopo histórico / não selecionado:** o diagrama abaixo representa o pipeline conversacional originalmente orientado à trilha terapêutica/Anna. Ele não define o chassi global de NAIA + Anna + Apollo. A avaliação de arquitetura/chassi em nível de sistema está em `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`; até uma ADR aceitar a topologia, não interpretar este diagrama como arquitetura sistêmica selecionada.
+> **Escopo histórico / não selecionado:** o diagrama abaixo representa o pipeline conversacional originalmente orientado à trilha terapêutica/Anna. Ele não define o chassi global de NAIA + Anna + Apollo. A direção de implementação do chassi comum agora é MindRoom, conforme `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`; a composição operacional e a qualificação sistêmica continuam pendentes. Este diagrama não é a arquitetura sistêmica selecionada.
 
 ```mermaid
 flowchart TD
