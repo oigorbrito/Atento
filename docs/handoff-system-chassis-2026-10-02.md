@@ -104,3 +104,15 @@ Next block: continue the frozen cohort's tool-authority denial evidence using ex
 Reused candidate evidence shows scoped filters for QwenPaw, Ontheia, and OpenAkita; NanoClaw's no-grant native A2A denial and limited brokered-mailbox path; and a reproduced Clawix `FAIL_WITH_SCOPE` for shared-session approval reuse. The Clawix result applies to that path only. Other unmeasured candidates remain unmeasured, not failed.
 
 The common Atento `SYS-TOOL-01` remains `BLOCKED_ADAPTER`. Exact pins, provenance, and the candidate-by-candidate boundaries are recorded in the [fixed-cohort spike](../evaluation/system-chassis-fixed-cohort-common-test-spike-2026-10-01.md). Next block: credential/provider isolation, reusing the frozen evidence and not rerunning equivalent probes.
+
+
+## User-decision reconciliation — Anna / Psych — 2026-10-02
+
+The prior handoff's wording that the user choice of Psych could not be verified is superseded by the user's continuity context, which confirms the explicit decision “Psych escolhida como Anna.” Treat Psych as the user's selected Anna base for project planning. The repository/PR #59 still says `NOT_SELECTED`; that documentation conflict remains to be reconciled in an authorized future edit. This handoff-only correction does not alter PR #59 or qualify Psych's integration.
+
+
+## SYS-CRED-01 catch-up and Anna decision correction — 2026-10-02
+
+Reused component evidence for QwenPaw (mock personal-provider selection), Bob Labs (HMAC/lab-binding unit tests), Ontheia (missing-secret exclusion and masking), and OpenAkita (diagnostic redaction). None proves provider-secret isolation across Atento roles. No real credentials or provider calls were used; common `SYS-CRED-01` remains `BLOCKED_ADAPTER`. The exact candidate scopes are in the [fixed-cohort spike](../evaluation/system-chassis-fixed-cohort-common-test-spike-2026-10-01.md).
+
+Anna's base is Psych by the user's earlier explicit decision. PR #59 still carries `NOT_SELECTED`; preserve PR #59 and reconcile that text only under its own authorization.
