@@ -390,3 +390,19 @@ COMMON_ATENTO_PROFILE = BLOCKED_ADAPTER
 ```
 
 Pré-condição para reabrir apenas este teste: materializar dependências de geração travadas e gerar o cliente Prisma do pin, então executar o caso filtrado uma vez. Não equivale ao gate comum Atento de tarefa NAIA após restart.
+
+
+## Memoh — tentativas adicionais de negação cross-bot bloqueadas por dependências — 2026-10-02
+
+No pin `felinics/Memoh@3d60a08aa42fdcddb218401699822741b51b52ad`, foram identificados dois casos distintos do teste de exclusão unitária já executado: `TestChatUpdateRejectsForeignBotMemoryID` e `TestChatDeleteBatchRejectsWhenAnyIDBelongsToAnotherBot`. A execução focalizada não alcançou a coleta nem os corpos dos testes.
+
+A primeira chamada parou porque o cache Go padrão tentava escrever em `/root/.cache/go-build`, somente leitura. Com `GOCACHE` e `GOMODCACHE` redirecionados para `/tmp`, a compilação tentou baixar módulos travados que não estavam em cache; a rede para `proxy.golang.org` foi negada pelo ambiente. Não houve alteração do checkout, fallback de dependências ou relaxamento do pin.
+
+```text
+MEMOH_FOREIGN_BOT_UPDATE_AND_BATCH_DELETE = BLOCKED_ENVIRONMENT (GO MODULES ABSENT; NETWORK UNAVAILABLE)
+MEMOH_FOREIGN_BOT_SINGLE_DELETE = PASS_WITH_SCOPE (PREVIOUSLY RECORDED; NOT REPEATED)
+CANDIDATE_FAILURE = NOT_ESTABLISHED
+COMMON_ATENTO_PROFILE = BLOCKED_ADAPTER
+```
+
+Pré-condições para reabrir os dois casos: disponibilizar os módulos exatos do `go.mod/go.sum` no cache isolado e executar somente esses filtros no mesmo pin. Nenhum resultado destes bloqueios deve ser contado como falha funcional.
