@@ -113,3 +113,26 @@ This narrows the fail-closed uncertainty but does not by itself clear QwenPaw's 
 A separate existing OpenClaw gate attempt on its frozen pin was also checked during this continuation: dependency installation from the frozen lock completed without changing tracked source, but the official test preparation refused to proceed because isolation from managed Gateway artifacts could not be verified. Its documented isolated runner requires non-root execution plus rootless Podman; this environment is UID 0 and has neither Podman nor Docker. No OpenClaw test body ran. Classify as `BLOCKED_ENVIRONMENT/HARNESS`, not a candidate result; retain OpenClaw in the fixed cohort. Do not bypass its guard.
 
 Continue serially in frozen order with MindRoom next. The complete comparative gate matrix remains open; NanoClaw remains provisional only, and no winner is selected.
+
+
+## Continuation — MindRoom workspace visibility gate — 2026-10-02
+
+Frozen pin verified: `mindroom-ai/mindroom@4f3bd2d108a6f9be28174e0f66d78eeecddca386`. Ran only the existing scoped test:
+
+```text
+uv run --frozen --group dev -- python -m pytest -n 0 -q \
+  tests/api/test_sandbox_runner_api.py::test_resolve_worker_base_dir_rejects_paths_outside_visible_workspaces
+8 passed
+```
+
+The eight parameter cases check worker-visible workspace and private-scope paths and reject paths outside the worker root or its authorized visible workspaces. This exercises the source resolver used by sandbox-worker preparation; it did not start an OS/container worker, a provider, or an Atento runtime. The checkout remained at the exact frozen pin; dependency materialization followed its committed `uv.lock`.
+
+```text
+MINDROOM_WORKER_BASE_DIR_VISIBLE_WORKSPACE_GUARD = PASS_WITH_SCOPE (8 PARAMETER CASES)
+MINDROOM_REAL_WORKER_BOUNDARY = NOT_TESTED_BY_THIS_CASE
+MINDROOM_ATENTO_NAIA_OWNERSHIP_AND_RESTART_RETRY = OPEN
+COMMON_ATENTO_PROFILE = BLOCKED_ADAPTER
+CANDIDATE_ELIMINATION = NONE
+```
+
+This is reusable component evidence for workspace isolation, not a complete cross-agent production boundary result. The previously identified shared-runner/deployment-specific isolation issue remains open. Continue to Bob Labs in frozen order; the comparative selection remains pending.
