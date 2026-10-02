@@ -90,3 +90,26 @@ The user has clarified the governing goal: test eliminatory gates across every c
 Apply the same frozen eight SYS assertions and any other frozen hard gates to each eligible candidate in the fixed cohort. Reuse existing results only when pin, setup, property, outcome, and provenance match; run each missing test once and in frozen order. Candidate-specific component tests may add scoped evidence, but do not substitute them for an Atento composition assertion. Record hard-gate failure only when reproduced at the pinned setup; an unavailable seam, missing evidence, security block on one pin, or non-equivalent fixture remains blocked/unresolved rather than silently converted to elimination. Do not select a winner until the gate matrix contains enough comparable evidence to rule out each other eligible candidate or record an explicit remaining blocker.
 
 Current progress includes Letta Code's scoped cron tests (99 tests / 238 assertions) and cross-agent memory-guard suite (63 tests / 102 assertions), all on its frozen pin. These do not close the common Atento assertions. Continue through candidates and gate rows serially, reusing prior NanoClaw/AI Butler results within their recorded scopes and preserving all open gates.
+
+
+## Continuation — QwenPaw fail-closed eliminatory component gate — 2026-10-02
+
+The QwenPaw frozen pin `agentscope-ai/QwenPaw@777441721aa72db8e380d90e4d0481b05cbfd4cc` was materialized and verified at the exact commit. One uncovered narrow gate was run serially: if the Hub provisioner preflight reports that its sandbox is unavailable, runtime admission must fail closed without persisting a runtime.
+
+Existing upstream test body: `tests/unit/hub/test_service.py::test_unavailable_provisioner_rejects_runtime_registration`. Result: **PASS_WITH_SCOPE**. The test asserted that availability is false, creation raises `RuntimeProvisionerUnavailableError` with the preflight reason, and the registry remains empty. It used a synthetic unavailable provisioner and did not invoke the OS sandbox, a provider, or Atento identity/task execution.
+
+The first ordinary pytest invocation stopped before collection because this environment lacked project dependencies and the repository-wide conftest imports the optional provider stack. To keep this one test bounded, the exact test function was invoked directly with its existing source, the exact pin's production Hub modules, and a minimal Python package loader; only pytest, Pydantic, PyYAML, and httpx were supplied. No candidate files or lockfiles changed. This is a harness adaptation disclosed for provenance, not an upstream full-suite pass.
+
+```text
+QWENPAW_SANDBOX_UNAVAILABLE_ADMISSION = PASS_WITH_SCOPE (SYNTHETIC_PROVISIONER)
+QWENPAW_OS_SANDBOX_FAIL_CLOSED = NOT_TESTED_BY_THIS_CASE
+QWENPAW_CRON_AUTHORITY_AND_ATENTO_NAIA_OWNERSHIP = OPEN
+COMMON_ATENTO_PROFILE = BLOCKED_ADAPTER
+CANDIDATE_ELIMINATION = NONE
+```
+
+This narrows the fail-closed uncertainty but does not by itself clear QwenPaw's hold: the recorded background/cron-authority gap and real sandbox enforcement remain unresolved. Keep it in the eligible comparison set, and do not infer a full-system pass.
+
+A separate existing OpenClaw gate attempt on its frozen pin was also checked during this continuation: dependency installation from the frozen lock completed without changing tracked source, but the official test preparation refused to proceed because isolation from managed Gateway artifacts could not be verified. Its documented isolated runner requires non-root execution plus rootless Podman; this environment is UID 0 and has neither Podman nor Docker. No OpenClaw test body ran. Classify as `BLOCKED_ENVIRONMENT/HARNESS`, not a candidate result; retain OpenClaw in the fixed cohort. Do not bypass its guard.
+
+Continue serially in frozen order with MindRoom next. The complete comparative gate matrix remains open; NanoClaw remains provisional only, and no winner is selected.
