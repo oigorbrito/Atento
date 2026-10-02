@@ -1115,3 +1115,38 @@ EQUIVALENT_TESTS_OR_BENCHMARKS_RERUN = 0
 ```
 
 The three scoped failures eliminate only the reproduced paths/configurations, not whole candidate families where a distinct fail-closed composition could address the boundary. Component lifecycle and SSE replay do not prove the common Atento contract. The smallest integrated assertion remains the frozen-handoff task: persist one inert NAIA-owned scheduled task, interrupt the existing host after claim and before terminal ack, restart the same host/store, permit one bounded retry, then verify role ownership, equal-or-narrower grants, and exactly one terminal delivery. Current result: `NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART = BLOCKED_ADAPTER`. Do not build a product adapter just to open it; do not repeat the already-passing 7/7 hosted probe or raw-webhook replay.
+
+
+## SYS-COST-01 footprint and adaptation-cost evidence audit — 2026-10-02
+
+This is a read-only metadata snapshot from GitHub repository objects, collected 2026-10-02. The API `size` value is in KiB and describes each repository as it exists now on its default branch; it is not the frozen candidate commit, an install size, a deployment image, or a runtime memory measure. It excludes any claim about hardware requirements and may reflect repository history/storage conventions. Use it only as a coarse repository-footprint proxy, not as a ranking or exact-pin size.
+
+| Fixed-cohort candidate | Repository | GitHub `size` now (KiB) | Approx. repository footprint |
+|---|---|---:|---:|
+| NanoClaw | `nanocoai/nanoclaw` | 32,771 | 32.0 MiB |
+| AI Butler | `LumabyteCo/aibutler` | 1,790 | 1.7 MiB |
+| OpenClaw | `openclaw/openclaw` | 7,485,543 | 7.14 GiB |
+| QwenPaw | `agentscope-ai/QwenPaw` | 130,767 | 127.7 MiB |
+| MindRoom | `mindroom-ai/mindroom` | 77,211 | 75.4 MiB |
+| Bob Labs | `boblabs-eu/boblabs` | 9,300 | 9.1 MiB |
+| Ontheia | `Ontheia/ontheia` | 3,263 | 3.2 MiB |
+| OpenAkita | `openakita/openakita` | 295,541 | 288.6 MiB |
+| Clawix | `ClawixAI/clawix` | 13,733 | 13.4 MiB |
+| Memoh | `felinics/Memoh` | 116,605 | 113.9 MiB |
+| Letta Code | `letta-ai/letta-code` | 100,315 | 98.0 MiB |
+
+No exact-pin LOC, tracked-source bytes, installed dependency bytes, or deployment image sizes were returned by the available repository-metadata endpoint. Exact-pin checkout transfer previously failed for OpenClaw when the executor network proxy refused the clone. Do not infer that the large OpenClaw repository size equals the runtime needed by a minimal deployment.
+
+### Adaptation-cost disposition
+
+The existing gate records identify concrete repair surfaces for QwenPaw's default cron authority, Ontheia's one-shot `run_at` post-claim path, and OpenAkita's unknown-profile scheduler fallback. They do not yet contain a frozen-pin patch-size estimate, dependency/build impact, tests required for repair, or confirmation that each candidate can fix the issue without moving the boundary into a missing Atento host adapter. Assigning numeric effort or a relative repair-cost ranking now would be speculation.
+
+```text
+CURRENT_REPOSITORY_SIZE_PROXY = RECORDED_FOR_11_CANDIDATES
+EXACT_FROZEN_PIN_LOC_AND_DEPLOYMENT_FOOTPRINT = NOT_AVAILABLE
+ADAPTATION_FIX_COST_RANK = NOT_ESTIMATED (INSUFFICIENT PIN-SCOPED REPAIR EVIDENCE)
+CANDIDATE_RANKING_OR_SELECTION_CHANGED = NO
+MINDROOM_REMAINS_PAUSED = YES
+```
+
+Smallest next cost-evidence step: inspect only the three failing paths at their frozen pins and capture the source files, configuration defaults, dependency/build boundary, and smallest fail-closed correction/test sketch; then classify repair effort with one consistent rubric. Do not implement candidate fixes as part of this audit. For source size, obtain exact-pin source archives in a permitted runner and count tracked source files/LOC with one frozen extension/filter rule across the entire cohort; do not substitute current default-branch sizes for pinned measurements.
