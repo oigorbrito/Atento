@@ -1487,3 +1487,55 @@ CANDIDATE_FAILURES_INFERRED_FROM_COMMON_ROUND = 0
 ```
 
 Use this table as the status summary when continuing the evaluation. Preserve the per-candidate evidence rows and detailed sections above as provenance; do not collapse component results into a common-gate pass.
+## Adapter contract and implementation queue — 2026-10-02
+
+Current runner inspection confirms the executable three-role workflow is NanoClaw-coupled: the test imports NanoClaw's Docker session driver, verifies the NanoClaw repository/pin/profile hashes, and creates role groups using NanoClaw-specific keys. The separate candidate-eval workflow performs static donor audit. Neither is a candidate-neutral implementation of the eight-gate protocol.
+
+### Minimum adapter contract
+
+Each adapter must expose the same operations to one shared test body. The adapter may translate these operations to candidate-native APIs, but must preserve the frozen role identities, fixtures, grants, and observable outcomes:
+
+```text
+Adapter identity: candidate_id, repository, exact upstream_sha, adapter revision
+prepare(profile, isolated_state_roots, synthetic_grants) -> run_handle
+start(run_handle) -> status
+invoke(role, action, inert_payload) -> observable_result
+read_state(role, sentinel_id) -> scoped_state_result
+dispatch_handoff(sender_role, receiver_role, typed_payload) -> delivery_result
+schedule(role, inert_task, due_at) -> task_id
+stop(run_handle, crash_point) -> stop_result
+restart(run_handle, same_state_roots) -> status
+observe(task_id) -> owner, claims, retries, grants, terminal_deliveries
+cleanup(run_handle) -> cleanup_result
+```
+
+Every call must return machine-readable evidence and fail closed when an operation is unsupported. An unsupported operation is `BLOCKED_ADAPTER`, not a pass and not a candidate failure. A candidate adapter may not implement the policy assertions itself; the common test body owns the oracles so adapters cannot weaken the denominator.
+
+### Adapter coverage queue
+
+| Frozen order | Candidate | Adapter status for shared runner | Existing work reusable | First implementation blocker |
+|---:|---|---|---|---|
+| 1 | NanoClaw | Candidate-coupled probe exists; not yet behind neutral adapter contract. | Existing 7/7 profile run and scoped replay; do not rerun equivalent assertions. | Extract its driver operations behind the contract without changing frozen profile or assertions. |
+| 2 | AI Butler | No shared-runner adapter recorded. | Gate-2 and scheduler evidence only for properties/provenance already documented. | Map role state, tools, credentials, handoff, and task lifecycle to candidate-native APIs. |
+| 3 | OpenClaw | No shared-runner adapter recorded. | Marker and SSE replay probes only for their scoped properties. | Identify controllable Gateway/session/state APIs and an inert crash/restart path. |
+| 4 | QwenPaw | No shared-runner adapter recorded. | Scoped admission, memory, tool, provider-mock, and cron results. | Establish role-bound runtime creation and background authority controls. |
+| 5 | MindRoom | No shared-runner adapter recorded; remains paused. | Resolver, mock facade, requester propagation, and role-key evidence. | Persistent three-role backend fixture; do not advance before catch-up rule allows it. |
+| 6 | Bob Labs | No shared-runner adapter recorded. | Component HMAC/lab-binding and replay-guard results. | Official runner requires Docker and its image; adapter must run the repository test harness unchanged. |
+| 7 | Ontheia | No shared-runner adapter recorded. | Namespace/RLS, tool binding, secret masking, and scoped retry failure. | Map persistent claims and task retry to the candidate runtime. |
+| 8 | OpenAkita | No shared-runner adapter recorded. | Existing isolated memory, marker, tool filter, and redaction probes. | Bind explicit profile/role identity and reject unknown scheduled profiles. |
+| 9 | Clawix | No shared-runner adapter recorded. | Delete guard and shared-session approval result; contract-level memory finding stays static evidence. | Demonstrate role-private state despite same-user wiki semantics or keep that path failed with scope. |
+| 10 | Memoh | No shared-runner adapter recorded. | PostgreSQL bot-scope tests and scoped fake-store/handler checks. | Map Atento role identities to bot IDs and retain same store across recovery. |
+| 11 | Letta Code | No shared-runner adapter recorded. | Cron, memory guard, and Bubblewrap argument suites. | Provide an executable sandbox/runtime adapter; local-service socket restriction remains environment-specific. |
+
+### Matrix execution rule
+
+Do not enable a candidate in the common matrix until its adapter implements the contract and passes adapter conformance checks against synthetic fixtures. Then run the unchanged common test body serially in frozen order. Preserve per-assertion outcomes and raw artifacts. A matrix row without an adapter is `BLOCKED_ADAPTER`; a runner setup failure is `BLOCKED_ENVIRONMENT`; only a reproduced assertion violation is `FAIL_WITH_SCOPE` or a hard-gate failure. The first code increment should be refactoring the existing NanoClaw-coupled probe into the neutral interface while preserving its exact pin and current assertions; no other candidate's status changes until its own adapter is implemented and observed.
+
+```text
+SHARED_TEST_BODY = NOT_YET_CANDIDATE_NEUTRAL
+NANOCLAW_ADAPTER = CANDIDATE_COUPLED_IMPLEMENTATION_ONLY
+OTHER_CANDIDATE_ADAPTERS = 0/10
+COMMON_MATRIX_RUNS_ENABLED = 0/11
+NEXT_CODE_GATE = REFACTOR_NANOCLAW_PROBE_BEHIND_ADAPTER_CONTRACT
+NO_TEST_RESULT_CREATED_BY_THIS_CONTRACT = TRUE
+```
