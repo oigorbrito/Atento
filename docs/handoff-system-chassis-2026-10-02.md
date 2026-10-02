@@ -6,7 +6,7 @@ Avaliar por gates eliminatórios, com o mesmo denominador e evidência equivalen
 
 - **Chassi comum:** MindRoom é a direção provisória e reversível registrada na PR #59; permanece pausado enquanto os demais candidatos alcançam os gates comparáveis. Não está qualificado para produção.
 - **NAIA:** NanoClaw continua direção provisória da base da NAIA apenas; não é escolha do chassi comum e segue sem qualificação integrada.
-- **Anna:** há uma decisão anterior do usuário dizendo “Psych escolhida como Anna”, enquanto os documentos/PR #59 ainda dizem base não selecionada. Reconciliar essa divergência antes de tratar a base da Anna como pendência ou escolha consolidada.
+- **Anna:** PR #59 e a instrução explícita mais recente localizada mantêm a base como `NOT_SELECTED`. A frase “Psych escolhida como Anna” aparece em registro de continuidade, mas não foi possível verificar uma mensagem do usuário que a confirme; não tratar Psych como escolhida sem fonte confirmatória.
 - **Apollo:** pesquisa funcional adiada.
 - **Topologia de produção:** nenhum resultado de teste de componente/fixture prova a composição completa do Atento. Seleção sistêmica final permanece pendente.
 
@@ -72,7 +72,7 @@ Executar um candidato por vez. Sem seam, conservar `BLOCKED_ADAPTER`; não subst
 
 ## Próximo trabalho
 
-1. Resolver a divergência documental da base da Anna (Psych escolhida pelo usuário vs “não selecionada” nos docs atuais).
+1. Anna reconciliada para este handoff: manter `NOT_SELECTED`; a alegação de escolha de Psych não tem confirmação user-sourced disponível.
 2. Continuar os mesmos gates eliminatórios nos candidatos ainda elegíveis, um por vez; usar resultados de benchmark já publicados como pontuação do eixo correspondente.
 3. Ao surgir host/adapter executável existente, executar uma única vez o teste de restart/retry acima para cada candidato que chegar a essa etapa.
 4. Só comparar ou escolher chassi comum quando a matriz apresentar evidência comparável suficiente; até lá, MindRoom permanece direção provisória/pausada, NanoClaw permanece direção provisória da NAIA, e nenhum deles é qualificado para produção.
