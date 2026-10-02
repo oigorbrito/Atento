@@ -68,6 +68,8 @@ MINDROOM_ATENTO_HOST_RESTART_RETRY = BLOCKED_ADAPTER
 
 O snapshot de continuidade não contém um runtime/gateway do produto Atento que chame o chassi e mantenha o estado necessário para um evento de background. O PR #58 e o probe anterior delimitam essa lacuna. O workspace de avaliação disponível nesta sessão contém o MindRoom no pin acima, mas não o checkout Atento nem Docker; portanto não há como transformar os testes de componente existentes em uma prova de composição neste ambiente. A falta do adapter é bloqueio de infraestrutura de produto/harness, não falha do MindRoom.
 
+O `main` já contém a execução hospedada 36815873223, registrada em `docs/evaluation/system-chassis-gate2-continuation-2026-10-01.md`: 7/7 assertions limitadas passaram usando broker Atento de referência, APIs mailbox do NanoClaw, identidades sintéticas e tarefas de perfil. Essa evidência inclui autorização de handoff e dispatch sob identidade NAIA; não executa o runtime/gateway de produto, não mata/reinicia o processo host entre claim e ack terminal e não envolve workers `user_agent` do MindRoom. Ela fecha escopos anteriores sem fechar este gate.
+
 Reutilizar, sem repetir, as evidências já registradas: particionamento das três chaves `user_agent` via resolver; casos de memória cross-agent com mocks; propagação de requester em teste em memória; testes upstream citados no registro de continuidade. Esses resultados permanecem `PASS_WITH_SCOPE`.
 
 ### Pré-condições para desbloquear
