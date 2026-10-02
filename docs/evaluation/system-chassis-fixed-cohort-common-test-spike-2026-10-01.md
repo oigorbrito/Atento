@@ -272,3 +272,42 @@ CANDIDATE_ELIMINATION = NONE
 ```
 
 **Correction to the older queue checkpoint:** the 2026-10-02 entry in the Letta continuation report that said the frozen queue was exhausted and instructed waiting was superseded by the user's clarified comparative goal. It is not the current disposition. The work is now continuing through the fixed 11-candidate cohort, applying each uncovered eliminatory component gate once and preserving candidate-specific scope. At this point Letta is the last ordered cohort slot tested in this continuation; the matrix has not established a winner because common Atento composition remains blocked for the candidates.
+
+
+
+## Comparative gate snapshot after full-cohort component continuation — 2026-10-02
+
+The fixed-order continuation has now visited all 11 cohort slots, excluding only the previously technically eliminated SelfAgent (outside this fixed cohort). This snapshot separates candidate-level eliminatory evidence from the still-unavailable common Atento composition:
+
+| # | Candidate | Newly checked or reused eliminatory evidence | Current-pin disposition | Common Atento eight-assertion gate |
+|---:|---|---|---|---|
+| 1 | NanoClaw | Reuse exact-pin existing 7/7 Atento-scope probe, upstream lifecycle tests, and approved raw-webhook SSE restart/replay probe. None repeated here. | `PASS_WITH_SCOPE`; direction remains provisional for NAIA only. | `BLOCKED_ADAPTER` |
+| 2 | AI Butler | Reuse exact-pin prior Gate-2 6/6 scoped evidence and existing scheduler evidence. | `BLOCK_CURRENT_PIN_ON_SECURITY` (seven reachable advisories); this does not eliminate the family. | `BLOCKED_ADAPTER` |
+| 3 | OpenClaw | Existing secure runner attempt stopped before the test body: UID 0; official isolated runner requires non-root plus rootless Podman, neither runtime available. | `BLOCKED_ENVIRONMENT/HARNESS`; source-level cross-agent session caveat remains. | `BLOCKED_ADAPTER` |
+| 4 | QwenPaw | Exact-pin sandbox-unavailable admission test passed with a synthetic unavailable provisioner. | `PASS_WITH_SCOPE`; real OS sandbox and cron/background authority remain open. | `BLOCKED_ADAPTER` |
+| 5 | MindRoom | Exact-pin visible-workspace resolver test: 8 parameter cases passed. | `PASS_WITH_SCOPE`; real worker boundary and shared-runner deployment scope remain open. | `BLOCKED_ADAPTER` |
+| 6 | Bob Labs | Exact-pin source guard for nonce replay rejection passed. | `PASS_WITH_SCOPE`; live sandbox middleware/HMAC/lab binding not exercised. | `BLOCKED_ADAPTER` |
+| 7 | Ontheia | Exact-pin memory namespace authorization suite: 14 passed using mock adapters/DB. | `PASS_WITH_SCOPE`; live PostgreSQL RLS and agent runtime not exercised. | `BLOCKED_ADAPTER` |
+| 8 | OpenAkita | Exact-pin same-user/two-bot-workspace memory isolation test passed. | `PASS_WITH_SCOPE`; no process boundary or Atento runtime result. | `BLOCKED_ADAPTER` |
+| 9 | Clawix | Exact-pin cross-user scheduled-task removal denial test passed with service doubles. | `PASS_WITH_SCOPE`; persistent ownership through restart untested. | `BLOCKED_ADAPTER` |
+| 10 | Memoh | Reuse existing builtin adapter bot-scope result; separate foreign-bot memory delete authorization test passed with fake provider. | `PASS_WITH_SCOPE`; DB/RLS and Atento restart/retry remain open. | `BLOCKED_ADAPTER` |
+| 11 | Letta Code | Reuse exact-pin cron and cross-agent memory guard tests; separate Bubblewrap argument-policy file passed 6 tests / 11 assertions. | `PASS_WITH_SCOPE`; actual kernel enforcement and network isolation untested. | `BLOCKED_ADAPTER` |
+
+```text
+FIXED_COHORT_SLOTS_VISITED = 11_OF_11
+TECHNICAL_CANDIDATE_ELIMINATIONS_IN_THIS_CONTINUATION = 0
+OPEN_CURRENT_PIN_BLOCKS_OR_HOLDS = AI_BUTLER_SECURITY, QWENPAW_FAIL_CLOSED_PROFILE, OPENCLAW_HARNESS
+COMMON_ATENTO_GATE_FOR_EACH_RETAINED_CANDIDATE = BLOCKED_ADAPTER
+PR_58 = OPEN_DRAFT_AT_e948f344b91e20e655399b11300c439228d144ec; UNMODIFIED
+PR_57 = OPEN_DRAFT_DOCUMENTATION_ONLY; NO_PRODUCT_RUNTIME
+FINAL_CANDIDATE_SELECTION = NONE
+NANOCLAW = PROVISIONAL_DIRECTION_ONLY
+```
+
+The PR #58 description still states that production gateway/provider wiring and role-bound scheduled-task retry/recovery are unqualified. PR #57 remains an evaluation-only, documentation-only host/runtime boundary contract and does not add an executable adapter. No executable Atento host runtime/provider gateway was found in these current open PR records. Therefore the smallest falsifiable common test remains blocked until that existing seam appears; do not build a production integration solely to unblock comparison.
+
+### Preconditions and smallest falsifiable common test
+
+Before running the test for each candidate, an executable Atento host/runtime seam must accept that frozen candidate pin, three synthetic role identities (NAIA/Anna/Apollo), isolated task/state/authority sentinels, a no-provider inert job, and observable claim/terminal-delivery IDs. Then, one candidate at a time: persist one due NAIA-owned inert scheduled task; stop the host after claim and before terminal acknowledgement; restart; allow one retry; assert ownership remains NAIA and terminal delivery count is exactly one. This tests the cross-cutting residual without a provider call. Any candidate adapter must be candidate-neutral in assertions and must not be a production integration created solely for this evaluation.
+
+This component-gate continuation improves and makes explicit each pin's scoped evidence, but it does not supply comparable full-composition outcomes. No candidate can yet be selected from this matrix without treating missing adapter evidence as a pass or failure. The user-directed goal remains: finish comparable eliminatory gates for every eligible candidate, then decide.
