@@ -540,3 +540,31 @@ MINDROOM_CANDIDATE_ELIMINATION = NONE
 ```
 
 A inspeção adjacente do broker de ferramentas confirma casos de runtime de owner indisponível como falha temporária retryable e mudança de autoridade como negação; esses testes existentes não foram repetidos. O próximo gate falsificável continua sendo o teste comum de tarefa NAIA após claim/crash/restart/retry, condicionado a um seam de host Atento executável já existente. Não criar integração produtiva para abrir esse seam.
+
+
+## Gate eliminatório com escopo — Ontheia perde retry de tarefa one-shot após claim — 2026-10-02
+
+No pin `Ontheia/ontheia@70802db61eb16533f55efce3d8785d810223d03b`, executei um probe descartável contra o `CronService` compilado do próprio checkout. Um job sintético `run_at` vencido, associado a user/agent UUIDs sintéticos e com prompt inerte, passou pelo claim SQL real do componente: `UPDATE app.cron_jobs SET active = false ... RETURNING *`. No limite imediatamente após o claim e antes do ack terminal, substituí apenas a execução downstream por uma exceção que simula queda do host. Em seguida criei um segundo `CronService` sobre o mesmo estado SQLite-style fake DB (pool transacional em memória) e executei `rescheduleAll()`, que usa o SELECT de produção para jobs ativos.
+
+```text
+claimCommitted=true
+executionAttempts=1
+activeAfterRestart=false
+restoredJobs=0
+```
+
+O resultado é coerente com o fluxo fonte: `checkRunAtJobs()` desativa atomicamente o job antes de agendar `_executeJob` fire-and-forget; o restart carrega apenas jobs `active=true`. Nenhum caminho restaura/rearma esse one-shot em falha ou interrupção depois do claim. O teste não mata um processo OS real nem usa PostgreSQL; reproduz o ponto de crash por exceção no componente compilado, mantendo o estado de claim compartilhado. Não houve provider ou ferramenta.
+
+Classificação: `FAIL_WITH_SCOPE` para `ONTHEIA_RUN_AT_CLAIM_RESTART_RETRY`. A implementação one-shot atual não satisfaz retry após queda no intervalo claim/ack, violando o gate mínimo de recuperação para uma tarefa scheduled role-bound. Isso elimina o caminho nativo `run_at` deste pin para a composição que exige essa garantia; não elimina o repositório como possível componente com outro executor/adapter fail-closed e retry durável, ainda não presente ou testado. A repetição/recorrência baseada em cron não foi testada e não recebe a mesma conclusão.
+
+```text
+ONTHEIA_RUN_AT_RESTART_RETRY = FAIL_WITH_SCOPE
+ONTHEIA_ONE_SHOT_NATIVE_PATH = ELIMINATED_FOR_RETRY_REQUIRED_COMPOSITION
+ONTHEIA_CRON_RECURRENCE_RETRY = NOT_TESTED
+ONTHEIA_REPOSITORY_FAMILY = NOT_ELIMINATED
+PROVIDER_OR_TOOL_CALL = NONE
+COMMON_ATENTO_HOST_GATE = BLOCKED_ADAPTER
+FINAL_CANDIDATE_SELECTION = NONE
+```
+
+O próximo menor teste falsificável para um futuro executor alternativo é repetir o mesmo estado inerte em PostgreSQL isolado: persistir tarefa vencida, claim, terminar processo após claim e antes do terminal ack, reiniciar e demonstrar um retry com identidade do agente preservada e exatamente uma entrega terminal. Não alterar PR #58 nem construir integração produtiva apenas para esse teste.
