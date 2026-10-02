@@ -544,7 +544,7 @@ A inspeção adjacente do broker de ferramentas confirma casos de runtime de own
 
 ## Gate eliminatório com escopo — Ontheia perde retry de tarefa one-shot após claim — 2026-10-02
 
-No pin `Ontheia/ontheia@70802db61eb16533f55efce3d8785d810223d03b`, executei um probe descartável contra o `CronService` compilado do próprio checkout. Um job sintético `run_at` vencido, associado a user/agent UUIDs sintéticos e com prompt inerte, passou pelo claim SQL real do componente: `UPDATE app.cron_jobs SET active = false ... RETURNING *`. No limite imediatamente após o claim e antes do ack terminal, substituí apenas a execução downstream por uma exceção que simula queda do host. Em seguida criei um segundo `CronService` sobre o mesmo estado SQLite-style fake DB (pool transacional em memória) e executei `rescheduleAll()`, que usa o SELECT de produção para jobs ativos.
+No pin `Ontheia/ontheia@70802db61eb16533f55efce3d8785d810223d03b`, executei um probe descartável contra o `CronService` compilado do próprio checkout. Um job sintético `run_at` vencido, associado a user/agent UUIDs sintéticos e com prompt inerte, passou pelo claim SQL real do componente: `UPDATE app.cron_jobs SET active = false ... RETURNING *`. No limite imediatamente após o claim e antes do ack terminal, substituí apenas a execução downstream por uma exceção que simula queda do host. Em seguida criei um segundo `CronService` sobre o mesmo banco falso em memória (pool transacional) e executei `rescheduleAll()`, que usa o SELECT de produção para jobs ativos.
 
 ```text
 claimCommitted=true
