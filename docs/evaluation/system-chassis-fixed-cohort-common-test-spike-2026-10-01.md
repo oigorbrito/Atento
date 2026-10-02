@@ -1539,3 +1539,21 @@ COMMON_MATRIX_RUNS_ENABLED = 0/11
 NEXT_CODE_GATE = REFACTOR_NANOCLAW_PROBE_BEHIND_ADAPTER_CONTRACT
 NO_TEST_RESULT_CREATED_BY_THIS_CONTRACT = TRUE
 ```
+## Block execution attempt — AI Butler retry component test — 2026-10-02
+
+Next frozen slot after NanoClaw is AI Butler at `LumabyteCo/aibutler@c35d3af20f78f1a71ffe9cae76f8be6c8828fe6`. The exact-pin source contains `internal/schedule/reliability_test.go` with `TestRunWithRetry_FailThenSucceed` and `TestRecoverMissed`. These are relevant existing test definitions, but no result was produced in this execution: this workspace has no Go toolchain, no candidate checkout, and the shell cannot reach GitHub through its configured network proxy. No alternate harness was used.
+
+| Test source | What it covers | What it does not cover | This execution |
+|---|---|---|---|
+| `TestRunWithRetry_FailThenSucceed` | In-process scheduler retries after two runner errors and succeeds on the third call. | Host process restart, task claim durability, Atento role identity/grant preservation, or the common three-role matrix. | `BLOCKED_ENVIRONMENT` — Go 1.26.5/toolchain and checkout unavailable; test body not run. |
+| `TestRecoverMissed` | Scheduler recovery of a missed cron run using the repository test database. | Crash between claim and acknowledgement with preserved role authority across an Atento host restart. | `BLOCKED_ENVIRONMENT` — same environment blocker; test body not run. |
+
+These test definitions may be reused as scoped upstream evidence after verifying their CI result at the exact pin; source inspection alone is not a pass. They do not clear the common runner blocker or substitute for the frozen Atento assertion. Do not repeat either test once an exact-pin result is established.
+
+```text
+AIBUTLER_PIN = c35d3af20f78f1a71ffe9cae76f8be6c8828fe6
+TEST_DEFINITIONS_FOUND = 2
+TEST_BODIES_EXECUTED_THIS_ATTEMPT = 0
+BLOCKER = NO_LOCAL_GO_TOOLCHAIN_OR_CHECKOUT_AND_NETWORK_PROXY_UNAVAILABLE
+COMMON_ATENTO_RUNNER = BLOCKED_ADAPTER
+```
