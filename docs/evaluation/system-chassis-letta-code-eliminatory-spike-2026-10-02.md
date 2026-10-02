@@ -52,3 +52,23 @@ Then run one disposable probe only: create one inert due NAIA task with a synthe
 `LETTA_CODE_CURRENT_PIN = PASS_WITH_SCOPE (FOCUSED_COMPONENTS); ATENTO_RECOVERY = BLOCKED_ADAPTER`. Missing integration evidence is not a failure and does not technically eliminate Letta Code. Keep the scheduled-task recovery gate blocked until an executable adapter exists.
 
 This record is on `codex/disposable-nanoclaw-mobile-replay-20261001` only. PR #58 remains unchanged.
+
+
+## Continuation check — 2026-10-02
+
+The follow-up check found no executable Atento host/runtime/provider adapter for the scheduled-task probe in the reviewed current records:
+
+- PR #58 remains open and draft at head `e948f344b91e20e655399b11300c439228d144ec`; its current description still lists product gateway/provider wiring and task retry/recovery as unqualified.
+- PR #57 remains an open draft for the evaluation-only host/runtime boundary contract; its description says it is documentation-only and does not add product runtime.
+- The checked current open-PR results also include PR #55 (GitAgent/OpenGAP control-plane assessment) and PR #35 (transfer audit). Neither is an implementation of the missing Atento runtime seam.
+- No executable seam was identified in the checked current PR/document records. This does not make missing evidence a candidate failure.
+
+```text
+LETTA_CODE_FIXED_COHORT_ORDER = 11_OF_11
+NEXT_CANDIDATE_IN_FROZEN_COHORT = NONE
+NAIA_TASK_RETRY_AFTER_HOST_RESTART = BLOCKED_ADAPTER
+NEW_RUNTIME_IMPLEMENTATION_FOUND = NO
+NEXT_ACTION = WAIT_FOR_OR_PROVIDE_EXECUTABLE_HOST_RUNTIME_SEAM
+```
+
+The frozen candidate queue is exhausted at Letta Code. Do not add an out-of-cohort candidate to this run or repeat scoped tests while the Atento adapter is absent. The falsifiable probe and prerequisites above remain the next gate once an executable seam exists.
