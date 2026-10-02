@@ -1574,3 +1574,26 @@ PROVIDER = FAKE_LOCAL_FIXTURE
 COMMON_THREE_ROLE_GATE = BLOCKED_ADAPTER
 PR_17_OR_OTHER_PR_MODIFIED = NO
 ```
+
+
+## Common runner implementation — 2026-10-02
+
+Implemented the shared serial runner, frozen cohort manifest, adapter process contract, and contract-only GitHub Actions workflow. The runner verifies repository pin before adapter invocation, supplies the same synthetic role profile and gate oracles, records adapter/evidence hashes, and computes scoped results from observed cases. A verified counterexample is retained as `FAIL_WITH_SCOPE` even when other cases remain unobserved; pass requires complete verified evidence. Missing/malformed evidence stays blocked.
+
+The local contract suite passed 6/6 tests. The CLI also processed all eleven manifest entries in frozen order and wrote a cohort result artifact. Each row is `BLOCKED_ADAPTER` because no candidate adapter is registered. This execution tested the runner contract only; it did not launch candidate code or execute a common system gate. No candidate result or elimination is inferred.
+
+| Candidate (frozen order) | Runner result | Reason |
+|---|---|---|
+| NanoClaw | `BLOCKED_ADAPTER` | No common-profile adapter registered |
+| AI Butler | `BLOCKED_ADAPTER` | No common-profile adapter registered |
+| OpenClaw | `BLOCKED_ADAPTER` | No common-profile adapter registered |
+| QwenPaw | `BLOCKED_ADAPTER` | No common-profile adapter registered |
+| MindRoom | `BLOCKED_ADAPTER` | No common-profile adapter registered |
+| Bob Labs | `BLOCKED_ADAPTER` | No common-profile adapter registered |
+| Ontheia | `BLOCKED_ADAPTER` | No common-profile adapter registered |
+| OpenAkita | `BLOCKED_ADAPTER` | No common-profile adapter registered |
+| Clawix | `BLOCKED_ADAPTER` | No common-profile adapter registered |
+| Memoh | `BLOCKED_ADAPTER` | No common-profile adapter registered |
+| Letta Code | `BLOCKED_ADAPTER` | No common-profile adapter registered |
+
+The runner deliberately does not construct adapters that need an Atento product runtime or broad donor changes. The adapter subprocess receives only a minimal environment, but the runner does not impose OS-level network isolation; any future adapter must provide and document an isolated execution boundary before it can be registered. Existing exact-pin test evidence remains in the evidence table above and is not rerun by this contract check.
