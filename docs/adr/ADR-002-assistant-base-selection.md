@@ -10,7 +10,7 @@ Frameworks de orquestração, durable runtimes e componentes isolados não entra
 
 - **Status:** Reopened — `DECISION_RESET`
 - **Date:** 2026-09-29
-- **Decision:** NOT_SELECTED / shortlist reset
+- **Current direction (2026-10-02):** NanoClaw — provisional implementation direction for NAIA only; not production-qualified.
 
 ## Current candidate-universe evidence
 
@@ -18,7 +18,7 @@ Post-reset re-enumeration is recorded in:
 
 `docs/evaluation/candidate-reenumeration-2026-09-29.md`
 
-This record expands/classifies the candidate universe but does not alter this ADR's `NOT_SELECTED` state or create a shortlist.
+This record expands/classifies the candidate universe; it did not itself select a candidate. The current NAIA implementation direction is stated in the dated addendum at the end of this ADR.
 
 
 
@@ -1040,3 +1040,17 @@ NAIA_BASE = NOT_SELECTED
 ```
 
 A future Gate-2 candidate PASS requires both candidate-specific composition evidence and a real runtime broker path conforming to the frozen contract.
+
+
+## Current NAIA implementation direction — 2026-10-02
+
+NanoClaw at `nanocoai/nanoclaw@4c1eabd3ddd74cc3d71b1871da857391a9411c8d` remains the provisional base direction already selected for advancing NAIA. The historical `NOT_SELECTED` and reset statements above describe their dated evaluation snapshots and are superseded only for the current implementation direction; they are not system-level or production-qualification results.
+
+The shared product chassis is a separate decision: MindRoom is the reversible implementation target for the common NAIA/Anna/Apollo chassis under [ADR-SYS-001](ADR-SYS-001-common-chassis-mindroom.md). This does not change Anna's base (`NOT_SELECTED`) or Apollo's deferred base research. NanoClaw is not being promoted as the common chassis.
+
+```text
+NAIA_BASE_DIRECTION = NANOCLAW (PROVISIONAL_IMPLEMENTATION; NOT_QUALIFIED)
+SYSTEM_COMMON_CHASSIS = MINDROOM (PROVISIONAL_IMPLEMENTATION; NOT_QUALIFIED)
+ANNA_BASE = NOT_SELECTED
+APOLLO_BASE_RESEARCH = DEFERRED
+```
