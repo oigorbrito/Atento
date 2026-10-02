@@ -311,3 +311,23 @@ The PR #58 description still states that production gateway/provider wiring and 
 Before running the test for each candidate, an executable Atento host/runtime seam must accept that frozen candidate pin, three synthetic role identities (NAIA/Anna/Apollo), isolated task/state/authority sentinels, a no-provider inert job, and observable claim/terminal-delivery IDs. Then, one candidate at a time: persist one due NAIA-owned inert scheduled task; stop the host after claim and before terminal acknowledgement; restart; allow one retry; assert ownership remains NAIA and terminal delivery count is exactly one. This tests the cross-cutting residual without a provider call. Any candidate adapter must be candidate-neutral in assertions and must not be a production integration created solely for this evaluation.
 
 This component-gate continuation improves and makes explicit each pin's scoped evidence, but it does not supply comparable full-composition outcomes. No candidate can yet be selected from this matrix without treating missing adapter evidence as a pass or failure. The user-directed goal remains: finish comparable eliminatory gates for every eligible candidate, then decide.
+
+
+## Normalized SYS-MEM component slice — QwenPaw — 2026-10-02
+
+A second, more directly comparable memory gate was run on the frozen QwenPaw pin without repeating its sandbox-preflight case:
+
+```text
+uv run --extra test -- python -m pytest -n 0 -q \
+  tests/integration/test_memory_context.py::test_memory_file_cross_agent_isolated
+1 passed in 31.25s
+```
+
+The repository integration fixture launched the real QwenPaw app as a subprocess on an isolated temporary workspace. It created two agents, wrote a synthetic note through agent A's scoped HTTP route, verified agent B received 404 for that path, and verified agent A could read it. No provider/model was used. This is an exact-source-pin app integration result but its Python dependencies were resolved from the pin's version ranges because this repository has no root uv lockfile; warnings from uv concerned normalized legacy dependency specifiers. It still does not exercise Atento's host, role authorization, or scheduled-task recovery.
+
+```text
+QWENPAW_SCOPED_MEMORY_FILE_CROSS_AGENT = PASS_WITH_SCOPE (APP SUBPROCESS, 1 TEST)
+ATENTO_SYS_MEM_01 = BLOCKED_ADAPTER
+QWENPAW_CRON_AUTHORITY_AFTER_ATENTO_HOST_RESTART = OPEN
+CANDIDATE_ELIMINATION = NONE
+```
