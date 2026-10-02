@@ -97,3 +97,10 @@ The latest candidate-specific catch-up adds Memoh's exact-pin PostgreSQL store d
 The complete status and test provenance now appear in the [fixed-cohort spike record](../evaluation/system-chassis-fixed-cohort-common-test-spike-2026-10-01.md). Component passes remain scoped; the integrated common `SYS-MEM-01` is still `BLOCKED_ADAPTER` because the Atento host/runtime seam is absent.
 
 Next block: continue the frozen cohort's tool-authority denial evidence using existing exact-pin tests/results first. Keep the common Atento `SYS-TOOL-01` blocked until an already-existing host adapter can exercise the same three-role profile; do not fabricate a production adapter.
+
+
+## SYS-TOOL-01 catch-up — 2026-10-02
+
+Reused candidate evidence shows scoped filters for QwenPaw, Ontheia, and OpenAkita; NanoClaw's no-grant native A2A denial and limited brokered-mailbox path; and a reproduced Clawix `FAIL_WITH_SCOPE` for shared-session approval reuse. The Clawix result applies to that path only. Other unmeasured candidates remain unmeasured, not failed.
+
+The common Atento `SYS-TOOL-01` remains `BLOCKED_ADAPTER`. Exact pins, provenance, and the candidate-by-candidate boundaries are recorded in the [fixed-cohort spike](../evaluation/system-chassis-fixed-cohort-common-test-spike-2026-10-01.md). Next block: credential/provider isolation, reusing the frozen evidence and not rerunning equivalent probes.
