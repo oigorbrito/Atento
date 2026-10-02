@@ -203,3 +203,27 @@ CANDIDATE_ELIMINATION = NONE
 ```
 
 Continue to Clawix in frozen order. This narrows store-scope uncertainty but does not qualify private agent isolation in a deployed Atento composition; no winner is selected.
+
+
+## Continuation — Clawix scheduled-task ownership gate — 2026-10-02
+
+Frozen pin verified: `ClawixAI/clawix@5aee015e0bd793102fba69af486dd6e75df6d802`. After installing the frozen pnpm lock with the repository-pinned pnpm 10.32.1, one existing cron-service case was run:
+
+```text
+pnpm --filter @clawix/api exec vitest run \
+  src/engine/__tests__/tools/cron.test.ts \
+  -t 'rejects removing a task owned by another user'
+1 passed; 33 sibling cases skipped by name filter
+```
+
+The case verifies that a user cannot remove a scheduled task owned by another user. It uses service-level test doubles and does not test a persistent production repository, process restart, Atento role identity, or terminal-delivery idempotency. No Clawix source, manifests, or lockfiles changed.
+
+```text
+CLAWIX_CROSS_USER_CRON_DELETE_GUARD = PASS_WITH_SCOPE (MOCKED SERVICE CASE)
+CLAWIX_PERSISTED_ROLE_OWNERSHIP_AFTER_RESTART = NOT_TESTED_BY_THIS_CASE
+ATENTO_NAIA_TASK_RETRY_AND_SINGLE_TERMINAL_DELIVERY = OPEN
+COMMON_ATENTO_PROFILE = BLOCKED_ADAPTER
+CANDIDATE_ELIMINATION = NONE
+```
+
+This is scoped ownership evidence only and does not close the NAIA restart/retry gate. Continue to Memoh in frozen order; no final chassis selection is made.
