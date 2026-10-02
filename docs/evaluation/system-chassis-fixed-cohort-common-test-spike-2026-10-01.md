@@ -809,7 +809,7 @@ Esses números são mantidos como eixos de qualidade funcional por protocolo ori
 | Benchmark já publicado | Resultados que entram na comparação | Regra de uso |
 |---|---|---|
 | Auto-ClawEval v4 / Claude Haiku 4.5 | NanoClaw 63,7 full / 67,8 Mini; CoPaw→QwenPaw lineage 60,8 full / 59,3 Mini | Comparação direta só dentro desse benchmark/config histórico. |
-| PawBench v1.0 | QwenPaw 73,7 | Resultado de outro protocolo; NanoClaw não está nessa linha e não se combina com Auto-ClawEval. |
+| PawBench v1.0 / 150 tasks | OpenClaw 72,1; QwenPaw 73,7 (harness means over the same 9-model matrix; published harness versions OpenClaw v2026.4.24 and QwenPaw v1.1.3) | Same-benchmark signal: QwenPaw +1.6 points in this published release/configuration. Not the frozen Atento pins; do not combine with Auto-ClawEval. [Official leaderboard](https://agentscope-ai.github.io/PawBench/en/). |
 | Terminal-Bench 2.0 | Letta Code 59,1% ±2,4 com Claude Opus 4.5; 53,5% ±2,8 com GPT-5.1-Codex | Duas configurações do próprio benchmark; não comparável diretamente com pontuações de agentes pessoais. |
 | AI Butler internal live eval | 4/7 no registro do pin | Evidência first-party; eixo separado de resultados externos. |
 
@@ -1174,3 +1174,27 @@ CANDIDATE_REPOSITORIES_MODIFIED = 0
 ```
 
 These candidate-local corrections would not supply the missing Atento host/runtime/gateway seam and do not change any integrated gate from `BLOCKED_ADAPTER`. No candidate ranking, elimination, or selection changes follow from this effort triage.
+
+
+## SYS-BENCH-01 published-score comparison catch-up — 2026-10-02
+
+This block reuses published results and adds no benchmark runs. The only direct fixed-cohort pair found on one current published harness benchmark is PawBench v1.0: the official 150-task page reports a 9-model average of OpenClaw 72.1 and QwenPaw 73.7, with harness versions OpenClaw v2026.4.24 and QwenPaw v1.1.3. This is a **+1.6 point PawBench signal for QwenPaw** under that published release matrix. It is not a pass on Atento's frozen pins and does not test role isolation, credentials, or recovery. PawBench describes scores as a model × harness matrix and says the axes should be read independently; the 150 tasks combine six sources and include text and multimodal tasks ([methodology](https://agentscope-ai.github.io/PawBench/en/blog/PAWBENCH_MODEL_HARNESS_BLOG_EN/)).
+
+| Existing benchmark signal | Valid comparison | What it does not establish |
+|---|---|---|
+| PawBench v1.0: OpenClaw 72.1; QwenPaw 73.7 average | Same benchmark page and 9-model matrix; QwenPaw leads by 1.6 points for those published versions. | Frozen-pin behavior, cost on the user's API/model setup, or Atento security gates. |
+| Auto-ClawEval: NanoClaw 63.7 full / 67.8 Mini; CoPaw 60.8 full / 59.3 Mini | Same paper, Claude Haiku 4.5; NanoClaw's reported means are +2.9 full and +8.5 Mini. The paper places them in different integration tiers (NanoClaw Tier 2 MCP; CoPaw Tier 3 SKILL.md + shell). | CoPaw is historical QwenPaw lineage, not the frozen QwenPaw pin; tier differs, so this is not a clean current-candidate head-to-head. [Paper](https://arxiv.org/abs/2604.18543). |
+| Terminal-Bench 2.0: Letta Code 59.1% ±2.4 with Claude Opus 4.5; 53.5% ±2.8 with GPT-5.1-Codex | Two model configurations for the same agent/benchmark; keep each result as its own line. | Cross-agent ranking against PawBench/Auto-ClawEval or isolation/recovery qualification. [Leaderboard archive](https://hub.harborframework.com/datasets/terminal-bench/terminal-bench-2/latest?leaderboard=2-0&tab=leaderboard). |
+| AI Butler internal live eval: 4/7 | Retain as a small first-party observation for that exact pin/eval. | Comparable score against external benchmarks or other candidate suites. |
+| Other frozen-cohort candidates | No reusable score located in the current benchmark record. | Missing score is not zero and does not eliminate a candidate. |
+
+```text
+BENCHMARK_RUNS_THIS_BLOCK = 0
+SAME_BENCHMARK_FIXED_COHORT_PAIR = OPENCLAW_VS_QWENPAW (PawBench release matrix only)
+PAWBENCH_SIGNAL = QWENPAW +1.6 POINTS (PUBLISHED HARNESS VERSIONS)
+CROSS_BENCHMARK_AGGREGATE_SCORE = NOT_CREATED
+FROZEN_PIN_QUALIFICATION_FROM_BENCHMARK = NONE
+CANDIDATE_SELECTION_CHANGED = NO
+```
+
+The prior table's PawBench row now includes both OpenClaw and QwenPaw, resolving the previously split recording. Keep published benchmark scores as the functional-quality axis only. Existing common Atento memory/tool/credential/recovery gates remain separate; no candidate is promoted or eliminated by this score catch-up.
