@@ -1597,3 +1597,14 @@ The local contract suite passed 6/6 tests. The CLI also processed all eleven man
 | Letta Code | `BLOCKED_ADAPTER` | No common-profile adapter registered |
 
 The runner deliberately does not construct adapters that need an Atento product runtime or broad donor changes. The adapter subprocess receives only a minimal environment, but the runner does not impose OS-level network isolation; any future adapter must provide and document an isolated execution boundary before it can be registered. Existing exact-pin test evidence remains in the evidence table above and is not rerun by this contract check.
+
+
+## Handoff continuation — NAIA host task retry after restart — 2026-10-02
+
+| Gate | Prior evidence reused | Current result | Next condition |
+|---|---|---|---|
+| `SYS-HANDOFF-01` / `SYS-HANDOFF-02` | NanoClaw hosted run [36815873223](https://github.com/oigorbrito/Atento/actions/runs/36815873223): typed Anna/Apollo requests reached NAIA's isolated mailbox via the reference broker; receiver-identity dispatch was enforced; untyped, wrong-recipient, authority-bearing, and unbrokered direct A2A paths were denied. | `PASS_WITH_SCOPE` on the test-harness composition. Production wiring and model/provider reauthorization are not proven. No rerun. | Preserve scope; do not rerun equivalent broker/mailbox checks. |
+| `NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART` | Exact-pin NanoClaw CI covers task CRUD, recurrence/backoff, host sweep, and runner failure handling. These component suites do not exercise an Atento host restart in the three-role profile. | `BLOCKED_ADAPTER`; no candidate failure inferred. | Resume only when an executable Atento host/runtime seam can persist an inert NAIA task, stop after claim before terminal acknowledgement, restart with the same store, allow one retry, and verify ownership plus exactly one terminal delivery. |
+
+The seam check used Atento `main` at `335c95f07b0c6a56c57d2a9cdf09f0a197200bf8`. Its repository tree contains the injected NanoClaw probe, candidate-specific test adapters, evaluation configs, and workflows, but no Atento product host/runtime or production provider-gateway service. Code search for `NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART` and `HostRuntime` returned no implementation. The hosted system-profile record also explicitly says the prior probe did not test production service wiring, provider/gateway custody, host-process restart, or task retry/recovery. Therefore the precondition remains absent; no new candidate test was run and no broad adapter/runtime was constructed.
+
