@@ -782,3 +782,49 @@ CANDIDATES_ELIMINATED = 0
 BENCHMARKS_RERUN = 0
 
 O denominador comum ainda não foi alcançado para isolamento de credenciais por papel: não existe host Atento executável que aceite grants sintéticos separados para A/B e permita observar o conteúdo efetivamente entregue ao provider. Manter esse gate pendente; não adicionar gateway/integração produtiva só para fabricar um teste. Os números de benchmark externos permanecem como evidência separada, sem rerun nem média cruzada.
+
+
+## Consolidação da coorte nos gates já percorridos — 2026-10-02
+
+Esta tabela fecha o denominador de evidência para os três gates de isolamento que acabamos de avançar. Cada célula é classificada pelo escopo efetivamente observado; BLOCKED, PARTIAL e NOT_TESTED não são zero nem falha do candidato.
+
+| Candidato ativo | Memória/estado privado | Autoridade de tools | Credenciais/provider | Recovery e retry Atento |
+|---|---|---|---|---|
+| NanoClaw | 7/7 Atento prova group/state e propriedade com escopo; sem marcador direto NAIA↔Anna | 7/7 nega A2A sem grant e demonstra caminho brokerado limitado | Só identidades/tokens sintéticos; custódia de provider não provada | BLOCKED_ADAPTER para tarefa host após restart |
+| AI Butler | Gate não avançado | Gate não avançado | Gate não avançado | Pin atual bloqueado por security scan |
+| QwenPaw | PASS_WITH_SCOPE: API A grava/recupera; listing de B não mostra marker | PASS_WITH_SCOPE: toggle de tool em A não muda B | PASS_WITH_SCOPE: seleção personal provider mockada, sem chamada HTTP | HOLD por perfil fail-closed/cron; integração Atento não provada |
+| MindRoom | Mock facade cross-agent e chaves user_agent passam; backend persistente três papéis BLOCKED_HARNESS | API /v1 padrão não executa com user_agent; não confiar requester header | Sem prova | BLOCKED_ADAPTER; MindRoom permanece pausado até catch-up |
+| Bob Labs | BLOCKED_HARNESS anterior | Não avançado | PASS_WITH_SCOPE: 21 HMAC/lab-binding tests de componente, sem middleware/container real | Sem integração Atento executada |
+| Ontheia | PASS_WITH_SCOPE apenas para user namespace; role boundary do mesmo usuário não provada | PASS_WITH_SCOPE para tool filtering via binding | PASS_WITH_SCOPE: segredo ausente excluído e valores mascarados | FAIL_WITH_SCOPE no run_at one-shot após post-claim failure; família não eliminada |
+| OpenAkita | PASS_WITH_SCOPE: dois perfis isolados; A recupera, B não | PASS_WITH_SCOPE: filtros de ferramentas por profile | PASS_WITH_SCOPE: redaction no export diagnóstico | Risco já registrado no scheduler quando perfil é desconhecido; composição Atento ausente |
+| Clawix | PARTIAL: path guards, sem sentinela entre papéis | BLOCKED_HARNESS: Prisma Client ausente antes da coleta | Não demonstrada | Sem restart/retry Atento |
+| Memoh | PIN_REQUIRED | PIN_REQUIRED | PIN_REQUIRED | PIN_REQUIRED |
+| Letta Code | Runner Bun ausente para provas MemFS | Runner Bun ausente | Runner Bun ausente | Sem composição Atento |
+
+### Pontuações externas existentes reutilizadas
+
+Esses números são mantidos como eixos de qualidade funcional por protocolo original; não foram rerodados nem convertidos em score de isolamento, credenciais ou recovery.
+
+| Benchmark já publicado | Resultados que entram na comparação | Regra de uso |
+|---|---|---|
+| Auto-ClawEval v4 / Claude Haiku 4.5 | NanoClaw 63,7 full / 67,8 Mini; CoPaw→QwenPaw lineage 60,8 full / 59,3 Mini | Comparação direta só dentro desse benchmark/config histórico. |
+| PawBench v1.0 | QwenPaw 73,7 | Resultado de outro protocolo; NanoClaw não está nessa linha e não se combina com Auto-ClawEval. |
+| Terminal-Bench 2.0 | Letta Code 59,1% ±2,4 com Claude Opus 4.5; 53,5% ±2,8 com GPT-5.1-Codex | Duas configurações do próprio benchmark; não comparável diretamente com pontuações de agentes pessoais. |
+| AI Butler internal live eval | 4/7 no registro do pin | Evidência first-party; eixo separado de resultados externos. |
+
+Os detalhes e provenance permanecem nos registros de cobertura/ranking de benchmark de 2026-10-01. Ausência de linha para outros candidatos não equivale a nota zero.
+
+### Ponto de convergência
+
+ACTIVE_COHORT = 10
+CANDIDATE_FULL_THREE_ROLE_PASSES = 0
+DIRECT_MEMORY_MARKER_PASSES = [QwenPaw_API_SCOPE, OpenAkita_ISOLATED_PROFILE_SCOPE]
+TOOL_CONFIG_OR_BINDING_PASSES = [QwenPaw, OpenAkita, Ontheia]
+ROLE_LEVEL_PROVIDER_CREDENTIAL_CUSTODY = NOT_ESTABLISHED_FOR_ALL
+NAIA_HOST_RESTART_RETRY = BLOCKED_ADAPTER
+MINDROOM_REMAINS_PAUSED = YES
+EXTERNAL_BENCHMARKS_RERUN = 0
+CROSS_BENCHMARK_AGGREGATE_SCORE = NOT_CREATED
+CANDIDATE_ELIMINATIONS_FROM_MISSING_EVIDENCE = 0
+
+O denominador comparável já está definido como três negações (sentinela/memória privada, tool exclusiva e credential/provider de outro papel) mais preservação de propriedade sob restart/retry, sempre no mesmo perfil de papéis. A evidência direta ainda não cobre todos os candidatos nem uma composição Atento; por isso não há rank sistêmico ou qualificação. O próximo delta com maior poder decisório é a tool exclusiva de B negada quando requisitada por A através de um host/adapter executável. Se esse seam continuar ausente, manter os casos como bloqueados no nível Atento, usar os scores externos existentes apenas no eixo deles e não repetir suites/benchmarks.
