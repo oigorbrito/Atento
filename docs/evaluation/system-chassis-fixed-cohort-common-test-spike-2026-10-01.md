@@ -331,3 +331,35 @@ ATENTO_SYS_MEM_01 = BLOCKED_ADAPTER
 QWENPAW_CRON_AUTHORITY_AFTER_ATENTO_HOST_RESTART = OPEN
 CANDIDATE_ELIMINATION = NONE
 ```
+
+
+## Normalized SYS-MEM authorization slice — MindRoom — 2026-10-02
+
+Frozen pin: `mindroom-ai/mindroom@4f3bd2d108a6f9be28174e0f66d78eeecddca386`. Ran the three existing negative-scope cases in sequence as one focused pytest selection:
+
+```text
+uv run --frozen --group dev -- python -m pytest -n 0 -q \
+  tests/test_memory_facade.py -k 'rejects_other_agent_scope'
+3 passed
+```
+
+The cases deny reading another agent's memory and reject updating or deleting it; the latter two assert that the backend mutation methods are not called. The backend is mocked. This does not test worker/process isolation, persistent authorization after restart, or Atento role authority. The frozen `uv.lock` was used; no candidate files changed.
+
+```text
+MINDROOM_CROSS_AGENT_MEMORY_READ_UPDATE_DELETE = PASS_WITH_SCOPE (3 MOCK-BASED CASES)
+MINDROOM_PERSISTENT_OR_PROCESS_BOUNDARY = NOT_TESTED
+ATENTO_SYS_MEM_01_AND_NAIA_RESTART_RETRY = BLOCKED_ADAPTER
+CANDIDATE_ELIMINATION = NONE
+```
+
+## Bob Labs cross-lab memory authorization attempt — 2026-10-02
+
+The exact-pin repository has a closer existing gate at `control-plane/tests/repositories/test_cross_tenant.py::test_get_all_memories_refuses_without_share_memory_confirmation`. It requires the repository's isolated PostgreSQL `bob_test` database, migrations, and environment variables provided by `make test-only`; its conftest explicitly refuses to run absent that setup or against a non-test database. This environment does not have the prepared test DB, so the test body was not started. No environment guard was bypassed and no Bob Labs candidate failure is inferred.
+
+```text
+BOBLABS_CROSS_LAB_MEMORY_CONSENT = BLOCKED_ENVIRONMENT (ISOLATED POSTGRES TEST DB NOT PREPARED)
+BOBLABS_SANDBOX_REPLAY_SOURCE_CHECK = PASS_WITH_SCOPE (PREVIOUSLY RECORDED; NOT REPEATED)
+ATENTO_SYS_MEM_01 = BLOCKED_ADAPTER
+CANDIDATE_ELIMINATION = NONE
+```
+
