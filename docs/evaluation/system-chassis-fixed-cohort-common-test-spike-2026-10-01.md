@@ -1364,3 +1364,39 @@ NEW_TESTS_OR_BENCHMARKS = 0
 ```
 
 This working shortlist is suitable for organizing the eventual head-to-head gate matrix. It is not a defensible overall top three, does not supersede the frozen 11-member cohort, and does not alter any provisional direction or protected PR.
+
+
+## General chassis list — internal and external evidence — 2026-10-02
+
+This is the fixed system cohort in frozen order. “Internal” means Atento harness or exact-pin component probes used in this evaluation. “External” means upstream CI/test evidence and published benchmark results. These categories are not interchangeable: a component pass or benchmark score does not qualify a complete Atento chassis.
+
+| # | Candidate / frozen pin | Internal / Atento evaluation tests already recorded | External tests and benchmark evidence already available |
+|---:|---|---|---|
+| 1 | NanoClaw — `4c1eabd3…` | Atento three-role profile: 7/7 scoped assertions; REST/SSE replay: 1/1 scoped pass; role-bound host restart/retry remains blocked. | Upstream exact-pin CI: 513 passed, 0 failed, 3 skipped. Auto-ClawEval v4: 63.7 full / 67.8 Mini (Claude Haiku 4.5; Tier 2). |
+| 2 | AI Butler — `c35d3af2…` | Atento Gate-2: 6/6 scoped checks; scheduler evidence scoped; internal live eval 4/7. | Exact-pin race CI passed its recorded cases. Security scan found seven reachable advisories, blocking this frozen pin. No comparable published benchmark score recorded. |
+| 3 | OpenClaw — `e9571d77…` | Persistent marker isolated across two in-process managers; one SSE replay case passed. Secure-runner attempt blocked before test body. | PawBench v1.0: 72.1 (published OpenClaw v2026.4.24). No score for the frozen Atento pin. |
+| 4 | QwenPaw — `77744172…` | Sandbox-unavailable admission 1 pass; cross-agent memory API denial; tool-toggle 1 pass; provider-selection mocks 2 passes; default cron approval emitted `off` (`FAIL_WITH_SCOPE`). | PawBench v1.0: 73.7 (published QwenPaw v1.1.3). Auto-ClawEval's CoPaw values are historical lineage evidence, not a QwenPaw pin score. |
+| 5 | MindRoom — `4f3bd2d1…` | Visible-workspace guard: 8 cases passed; mock memory facade: 3 cases; scheduled requester propagation: 2 existing tests; persistent three-role fixture blocked before assertions. Paused under the catch-up rule. | No comparable published benchmark score found in this record. |
+| 6 | Bob Labs — `a91d6dad…` | HMAC/lab-binding components: 21 passed; source replay guard: 1 passed. Official database-backed test body did not start because runner/image were unavailable. | No comparable published benchmark score recorded. |
+| 7 | Ontheia — `70802db6…` | Mock namespace suite: 14 passed; configured three-role helper denied six cross-role reads; tool binding: 1 pass; secret masking: 1 pass; one-shot post-claim retry failed with scope. | Host/WebUI CI evidence is recorded; no comparable published benchmark score found. |
+| 8 | OpenAkita — `5f5b38da…` | Isolated-memory tests: 3 passed plus marker probe: 1; toolset filters: 2 passed; redaction: 1 passed; unknown scheduler profile fell back to default agent (`FAIL_WITH_SCOPE`). | Exact-pin build passed; Python/unit/integration/smoke/E2E jobs were skipped in the recorded run. No comparable published benchmark score found. |
+| 9 | Clawix — `5aee015e…` | Cross-user scheduled-delete guard: 1 scoped pass; shared-session approval reuse: `FAIL_WITH_SCOPE`; same-user private wiki role sharing: `FAIL_WITH_SCOPE` from pinned contract inspection, without a runtime marker probe. A Prisma-backed probe blocked before collection. | Exact-pin lint/typecheck/test CI passed as recorded; inspected multi-user cases were mock-based. No comparable published benchmark score found. |
+| 10 | Memoh — `3d60a08a…` | PostgreSQL store denied foreign-bot memory access/mutation; fake-store and handler probes passed with scope. Later Go-module-dependent mutation attempt blocked before a result. | Exact pin/license declaration verified; no comparable published benchmark score recorded. |
+| 11 | Letta Code — `21daa38a…` | Cron suite: 99 tests / 238 assertions; cross-agent guard: 63 tests / 102 expectations; Bubblewrap argument policy: 6 tests / 11 assertions. Real local-service probe blocked before sandbox execution. | Terminal-Bench 2.0: 59.1% ±2.4 with Claude Opus 4.5; 53.5% ±2.8 with GPT-5.1-Codex. These are coding-benchmark configurations, not assistant-chassis scores. |
+
+### External benchmark comparisons and limits
+
+- **PawBench v1.0:** QwenPaw 73.7 vs OpenClaw 72.1; the only direct same-benchmark pair recorded here, a +1.6 point signal for the published QwenPaw release.
+- **Auto-ClawEval v4:** NanoClaw 63.7 full / 67.8 Mini vs historical CoPaw lineage 60.8 / 59.3; same paper/config, but different integration tiers, and CoPaw is not the frozen QwenPaw candidate.
+- **Terminal-Bench 2.0:** Letta Code's two scores use different model configurations; do not compare them numerically with PawBench or Auto-ClawEval.
+- **AI Butler 4/7:** internal live evaluation, kept separate from external benchmark results.
+
+```text
+FIXED_SYSTEM_COHORT = 11
+INTERNAL_AND_EXTERNAL_EVIDENCE = RECORDED_WITH_SCOPE
+COMPLETE_THREE_ROLE_CHASSIS_PASSES = 0
+COMMON_INTEGRATED_GATES = BLOCKED_ADAPTER
+TESTS_OR_BENCHMARKS_RERUN_FOR_THIS_LIST = 0
+```
+
+The detailed exact pins, commands, raw outputs, benchmark provenance, and per-gate caveats remain in the sections above. No candidate is removed because a score or test is missing; no overall cross-benchmark rank is inferred.
