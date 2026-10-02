@@ -147,9 +147,18 @@ Adaptation cost is not ranked: existing notes locate three candidate-specific fa
 
 ```text
 EXACT_PIN_SOURCE_SIZE = NOT_AVAILABLE
-ADAPTATION_FIX_COST_RANK = NOT_ESTIMATED
+ADAPTATION_FIX_SCOPE = STRUCTURAL ONLY (QWENPAW M, ONTHEIA L, OPENAKITA S); LABOR HOURS NOT_ESTIMATED
 CANDIDATE_RANKING_OR_SELECTION_CHANGED = NO
 MINDROOM_REMAINS_PAUSED = YES
 ```
 
 Next bounded action: inspect those three failing paths at their frozen pins only, define one repair-effort rubric, and retain the current statuses until the patch surface and falsifiable correction are evidenced. Do not edit candidate repos or protected Atento PRs for this audit. Anna's handoff status is Psych selected; PR #59's `NOT_SELECTED` remains a known documentary conflict and is still untouched.
+
+
+### SYS-COST-01 exact-pin repair-surface update — 2026-10-02
+
+The three reproduced paths were inspected read-only at their frozen pins and the spike now records a relative structural-effort rubric: QwenPaw **M**, Ontheia **L**, OpenAkita **S**. These describe the likely code/test surface only, not time, candidate fixes, or Atento integration cost. No candidate repository was modified and no repair test was run.
+
+Current GitHub `size` metadata is recorded for all 11 repositories as a coarse current-state proxy. It is not pinned source LOC, dependency install size, deployed image size, or runtime RAM. No ranking or selection changed.
+
+The integrated host/runtime adapter remains unestimable and unavailable; integrated memory, tools, credentials, and reliability gates remain `BLOCKED_ADAPTER`. Keep MindRoom paused until other candidates catch up. Psych remains the user's selected Anna base in this handoff; PR #59's contradictory `NOT_SELECTED` text is untouched.
