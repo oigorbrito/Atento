@@ -727,3 +727,58 @@ BENCHMARKS_RERUN = 0
 PROVIDER_OR_EXTERNAL_TOOL_CALLS = 0
 
 Os três resultados novos têm test harnesses/semânticas diferentes e ficam lado a lado; não viram um rank numérico agregado. Scores externos já publicados permanecem reutilizados em suas próprias métricas. A próxima prova comum pendente é execução negativa cruzada de uma ferramenta exclusiva do papel B via o host Atento. Só executar quando o host/adapter de produto ou um seam já existente torná-la observável; não inventar integração de produção para abrir o gate.
+
+
+## Gate comum: custódia e não exposição de credenciais — 2026-10-02
+
+### Contrato
+
+O contrato final exigido é por papel: credencial/provider grant atribuída a A não pode ser enumerada, injetada no contexto nem usada por B; credencial ausente ou não autorizada deve falhar fechado; logs/config exports não devem revelar o segredo. Os testes abaixo cobrem somente propriedades de componentes/configuração. Nenhum usou credencial real ou chamou provider.
+
+### Evidência dos pins ativos
+
+| Candidato/pin | Evidência deste bloco ou já registrada | Resultado com escopo | Lacuna que impede o denominador de papel |
+|---|---|---|---|
+| NanoClaw 4c1eabd3ddd74cc3d71b1871da857391a9411c8d | Os 7/7 checks hosted usam tokens/identidades sintéticas e provam boundaries selecionadas de group/session e broker. | PASS_WITH_SCOPE — limites do profile de teste | Nenhuma custódia de credenciais de provider/gateway do Atento foi exercitada; não repetir o 7/7. |
+| AI Butler c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c | Reusar o bloqueio de segurança do pin atual. | BLOCK_CURRENT_PIN_SECURITY | Não avançar no pin sem correção e requalificação; não é falha deste gate. |
+| QwenPaw 777441721aa72db8e380d90e4d0481b05cbfd4cc | Dois testes existentes em tests/unit/agents/test_model_provider_isolation.py: sem escolha explícita não escolhe modelo; seleção pessoal usa o provider pessoal, e não o fallback gerenciado. | PASS_WITH_SCOPE — seleção sintética de provider (2 passed, 0,49 s) | Usou mocks e token sintético; não comparou dois papéis com credenciais distintas nem inspecionou request/provider real. |
+| MindRoom 4f3bd2d108a6f9be28174e0f66d78eeecddca386 | Testes de identidade API já registrados não configuram nem chamam provider. | NOT_TESTED | Sem host/gateway de produto e fonte confiável de credenciais por papel. Não repetir probes anteriores. |
+| Bob Labs a91d6dad098c8ba6d24436a856556078151db45d | Teste existente test_cso_2026_06_sandbox_hmac.py executado sem o conftest de serviços externos: assinatura vinculada ao body, timestamp/nonce, verificador-fake e guards de source para SANDBOX_LAB_ID/HMAC: 21 passed. | PASS_WITH_SCOPE — isolamento de chamadas control-plane→sandbox por Lab | Não iniciou sandbox/container nem executou middleware real. Rodou com Python/pytest do venv local QwenPaw porque o executor base não tem pytest; deps não usadas na prova foram evitadas com --confcutdir. Não é credencial provider do Atento. |
+| Ontheia 70802db61eb16533f55efce3d8785d810223d03b | Teste resolveEnvMap: secret: is resolved, masked and reported missing when unset passou 1/1; segredo ausente não entra em resolved e valor presente fica mascarado. | PASS_WITH_SCOPE — referência de segredo e masking | Não mostra separação de keys entre NAIA/Anna/Apollo nem policy de role no runtime. |
+| OpenAkita 5f5b38da728274f0fd06461a481851be7c0bca6a | test_feedback_sanitized_config_redacts_runtime_state_bot_credentials passou 1/1. | PASS_WITH_SCOPE — redaction de app_secret em export diagnóstico | Não prova isolamento de provider ou secret store entre perfis/agentes. |
+| Clawix 5aee015e0bd793102fba69af486dd6e75df6d802 | A tentativa anterior dos testes de binding MCP não coletou por Prisma Client gerado ausente. | BLOCKED_HARNESS | Sem execução de policy/bindings por agente; não inferir vazamento nem isolamento. |
+| Letta Code 21daa38a8cdd74f2d03b634c8312253080bacfc1 | Bun ausente para execução dos testes de MemFS/policy. | BLOCKED_HARNESS | Sem resultado deste gate. |
+| Memoh | Exact pin continua PIN_REQUIRED. | NOT_TESTED / PIN_REQUIRED | Não executar em branch móvel. |
+
+OpenClaw continua excluído da coorte ativa por product fit. Bloqueios do AI Butler e do runner não contam como falha funcional de credenciais.
+
+### Evidência bruta
+
+QwenPaw:
+- Comando: .venv/bin/pytest -q tests/unit/agents/test_model_provider_isolation.py::test_hub_does_not_choose_a_model_without_user_selection tests/unit/agents/test_model_provider_isolation.py::test_personal_model_uses_personal_provider_in_hub
+- Resultado: 2 passed in 0.49s; modelos/provider foram mockados; sem chamada HTTP.
+
+Bob Labs:
+- Comando: PYTHONPATH=control-plane <qwenpaw-pin>/.venv/bin/pytest --confcutdir=control-plane/tests/regression -q control-plane/tests/regression/test_cso_2026_06_sandbox_hmac.py
+- Resultado: 21 passed, 1 warning em 0.22s.
+- Sem container ou socket; warning apenas de depreciação Pydantic. A primeira chamada carregou conftest Bob e parou antes da coleta por SQLAlchemy ausente; confcutdir retirou esse conftest e o arquivo não requer fixtures próprias além do monkeypatch padrão. Manter a diferença do ambiente registrada.
+
+Ontheia:
+- Comando: node --test --test-name-pattern='resolveEnvMap: secret: is resolved, masked and reported missing when unset' host/dist/secrets/resolver.spec.js
+- Resultado: tests 1, pass 1, fail 0.
+
+OpenAkita:
+- Comando: .venv/bin/pytest --no-cov -q tests/unit/test_feedback_sanitized_config.py::test_sanitized_config_redacts_runtime_state_bot_credentials
+- Resultado: 1 passed em 0,40 s.
+
+### Resultado do gate
+
+ROLE_LEVEL_PROVIDER_CREDENTIAL_CUSTODY = NOT_ESTABLISHED
+COMPONENT_SECRET_HANDLING = PARTIAL_PASS_WITH_SCOPE
+ATENTO_ROLE_TO_PROVIDER_CREDENTIAL_COMPOSITION = NOT_RUN
+REAL_PROVIDER_CALLS = 0
+REAL_SECRETS_USED = 0
+CANDIDATES_ELIMINATED = 0
+BENCHMARKS_RERUN = 0
+
+O denominador comum ainda não foi alcançado para isolamento de credenciais por papel: não existe host Atento executável que aceite grants sintéticos separados para A/B e permita observar o conteúdo efetivamente entregue ao provider. Manter esse gate pendente; não adicionar gateway/integração produtiva só para fabricar um teste. Os números de benchmark externos permanecem como evidência separada, sem rerun nem média cruzada.
