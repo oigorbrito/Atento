@@ -439,3 +439,34 @@ FINAL_SYSTEM_CHASSIS_SELECTION = NONE
 ```
 
 Este achado atualiza os snapshots anteriores que listavam apenas holds e bloqueios sem reprovação funcional nova. A elegibilidade de composição do pin QwenPaw permanece condicional ao fechamento verificável desse gate; a falha de ambiente do Bob Labs e os bloqueios de harness de OpenClaw/Clawix/Memoh continuam sem valor de FAIL.
+
+
+## Gate eliminatório encontrado — OpenAkita scheduler troca perfil ausente pelo agente padrão — 2026-10-02
+
+No pin `openakita/openakita@5f5b38da728274f0fd06461a481851be7c0bca6a`, executei uma sonda descartável no resolvedor de identidade do scheduler. A consulta de perfil foi controlada para retornar ausente para um ID sintético Anna; o agente padrão foi um objeto falso e nenhum provider, modelo ou ferramenta foi chamado.
+
+```text
+UV_CACHE_DIR=/tmp/openakita-uv-cache uv run --frozen --extra dev -- python - <<'PY'
+# TaskExecutor._create_agent("synthetic-anna-profile-missing")
+# _resolve_agent_profile -> None; observe and assert selected agent
+PY
+requested_profile=synthetic-anna-profile-missing
+resolved_default_agent=True
+initialized=call(start_scheduler=False)
+exit=0
+```
+
+A sonda executou o caminho de produção `TaskExecutor._create_agent`. O próprio código em `src/openakita/scheduler/executor.py` registra aviso para perfil desconhecido e segue para `Agent()` sem perfil: uma tarefa persistida sob Anna/Apollo, se o ID não resolver após restart, pode continuar como o agente padrão. Isto viola o gate hard de identidade/background: tarefa agendada deve manter a mesma autoridade ou menos e não pode sofrer role drift silencioso. O esperado para identidade ausente é falhar fechado, sem instanciar executor substituto.
+
+```text
+OPENAKITA_SCHEDULER_UNKNOWN_PROFILE_ROLE_PRESERVATION = FAIL_WITH_SCOPE
+OPENAKITA_DEFAULT_SCHEDULER_PATH_FOR_ROLE_BOUND_TASKS = ELIMINATED_AT_FROZEN_PIN
+OPENAKITA_REPOSITORY_AS_DONOR_WITH_HOST_FAIL_CLOSED_VALIDATION = NOT_ELIMINATED
+PROVIDER_OR_TOOL_CALL = NONE
+OPENAKITA_SAME_USER_DIFFERENT_BOT_WORKSPACE_MEMORY_TEST = PASS_WITH_SCOPE (PRIOR; NOT REPEATED)
+COMMON_ATENTO_HOST_PROCESS_RESTART_COMPOSITION = BLOCKED_ADAPTER
+```
+
+Este é um hard-gate failure reproduzido para o caminho interno do scheduler do pin, não uma falha de ambiente nem extrapolação do teste de memória anterior. O repositório ainda pode ser usado como componente somente se a composição impedir a execução quando o perfil persistido não resolver e provar esse fail-closed guard no restart; tal adapter/guard não existe no host Atento auditado. Não tratar um profile ID válido e um profile ID ausente como a mesma condição.
+
+Este achado também atualiza o snapshot anterior de OpenAkita, que continha somente PASS_WITH_SCOPE de memória entre workspaces. Essa aprovação permanece válida para sua propriedade; a nova reprovação cobre uma propriedade independente de scheduler/role identity.
