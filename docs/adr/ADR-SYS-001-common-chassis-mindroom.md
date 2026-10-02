@@ -58,3 +58,32 @@ Se um hard gate falhar no adapter real, parar a promoção e revisar a topologia
 Manter MindRoom pinado e atrás de um limite de integração substituível. Implementar primeiro somente o seam mínimo de identidade/worker e registrar change surface. A decisão pode ser revertida se o primeiro probe real mostrar role drift, compartilhamento de autoridade, recuperação incorreta ou custo materialmente pior que a arquitetura composta.
 
 Não alterar as PRs #57 e #58 como parte desta decisão. Esta ADR foi preparada em branch separada e não concede autorização de merge ou produção.
+
+
+## Primeiro gate executável no Atento — 2026-10-02
+
+```text
+MINDROOM_ATENTO_HOST_RESTART_RETRY = BLOCKED_ADAPTER
+```
+
+O snapshot de continuidade não contém um runtime/gateway do produto Atento que chame o chassi e mantenha o estado necessário para um evento de background. O PR #58 e o probe anterior delimitam essa lacuna. O workspace de avaliação disponível nesta sessão contém o MindRoom no pin acima, mas não o checkout Atento nem Docker; portanto não há como transformar os testes de componente existentes em uma prova de composição neste ambiente. A falta do adapter é bloqueio de infraestrutura de produto/harness, não falha do MindRoom.
+
+Reutilizar, sem repetir, as evidências já registradas: particionamento das três chaves `user_agent` via resolver; casos de memória cross-agent com mocks; propagação de requester em teste em memória; testes upstream citados no registro de continuidade. Esses resultados permanecem `PASS_WITH_SCOPE`.
+
+### Pré-condições para desbloquear
+
+- Um seam executável do host Atento para iniciar/encaminhar trabalho à composição, com estado durável e um ponto observável de ack terminal.
+- MindRoom no pin congelado, três identidades sintéticas mapeadas por papel e worker dedicado/`user_agent` para cada papel.
+- Evento NAIA inerte e credenciais/provider ausentes; nenhum efeito externo ou chamada de modelo.
+- Harness capaz de encerrar diretamente o processo host após claim e antes do ack terminal, reiniciar com o mesmo estado e observar retries/deliveries.
+
+### Menor teste falsificável quando o seam existir
+
+Persistir uma tarefa NAIA vencida; iniciar o host; observar o claim e encerrá-lo antes do ack terminal; reiniciar com o mesmo store e permitir exatamente um retry. Verificar que a tentativa recuperada continua NAIA-owned, conserva a mesma identidade/escopo `user_agent`, não lê estado das identidades sintéticas Anna/Apollo e produz no máximo uma entrega terminal para o ID da tarefa.
+
+- **PASS_WITH_SCOPE:** identidade e propriedade NAIA sobrevivem ao restart e retry; estado alheio é inacessível; uma única entrega terminal observada.
+- **FAIL do seam/configuração:** troca de papel, acesso cross-role ou entrega terminal duplicada com o harness válido.
+- **INVALID / falha de harness:** SIGKILL atinge wrapper em vez do processo host, não se prova o estado pre-ack, o mesmo store não é reutilizado ou o controle de retry não é observável.
+- **Permanece BLOCKED_ADAPTER:** não existe chamada executável do host Atento; não criar integração de produção só para destravar o teste.
+
+Executar sequencialmente como um único probe descartável quando as pré-condições forem atendidas. Sem provider real, tarefas paralelas ou repetição dos testes equivalentes já citados.
