@@ -616,3 +616,59 @@ Pré-condições para um único probe descartável: host Atento executável com 
 Quando tudo existir, executar sequencialmente uma vez: persistir uma tarefa vencida da NAIA, iniciar e observar o claim, encerrar o host antes do ack terminal, reiniciar com o mesmo store e permitir exatamente um retry. PASS_WITH_SCOPE somente se a tarefa continuar NAIA-owned no mesmo escopo, não acessar estado de Anna/Apollo e produzir exatamente uma entrega terminal. Drift de identidade, leitura cruzada ou entrega duplicada com harness válido é FAIL do seam/configuração. Wrapper morto em vez do host, falta de prova pre-ack, store diferente ou retry não observável é INVALID/HARNESS. Enquanto faltar a chamada de produto, manter BLOCKED_ADAPTER; não implementar integração produtiva apenas para abrir este teste.
 
 Reutilizar sem repetir: testes upstream de claims/orphans, delivery-attempt persistence, recurrence/backoff e mailbox re-armament já citados nos documentos anteriores; o replay REST+SSE aprovado e os probes 7/7 também permanecem fora desta execução. Não rodar tarefas paralelas.
+
+
+## Gate comum: visibilidade de estado privado entre agentes — 2026-10-02
+
+### Contrato comparável
+
+A asserção comum deste bloco: no mesmo usuário/sala sintéticos, o agente A grava uma sentinela privada em seu escopo persistente; A consegue recuperá-la; o agente B não a lista nem recupera. Sem provider/modelo e sem efeitos externos. Evidência de arquivos/workspace, memória semântica e namespaces é mapeada para este contrato somente com limite explícito. Teste de configuração, mock ou path guard não equivale a execução do armazenamento de produção.
+
+### Resultados congelados e probes deste bloco
+
+| Candidato/pin | Evidência reutilizada ou probe focado | Resultado para o gate comum | Limite que permanece |
+|---|---|---|---|
+| NanoClaw 4c1eabd3ddd74cc3d71b1871da857391a9411c8d | Run Atento 36815873223, 7/7 assertions: mounts/group-state selecionados, propriedade DB/sessão e negação cross-group, entre outros. | PASS_WITH_SCOPE — role/group/state ownership | Não é o teste de sentinela NAIA-versus-Anna em memória persistente; não repetir o run 7/7. NanoClaw é base provisória da NAIA, não prova do chassi dos três. |
+| AI Butler c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c | Reusar o bloqueio de segurança registrado para o pin atual. | BLOCK_CURRENT_PIN_SECURITY; gate de memória não avançado | Não executar mais testes neste pin sem correção e requalificação de segurança. Não contar como falha de memória. |
+| QwenPaw 777441721aa72db8e380d90e4d0481b05cbfd4cc | Teste upstream test_workspace_files_isolated_across_agents passou 1/1. Probe descartável novo: criou dois agentes pela API local; A escreveu e recuperou um arquivo de memória sintético; a listagem de memória de B não continha a sentinela. | PASS_WITH_SCOPE — API de memória/workspace entre dois agentes | A segunda leitura foi verificada pela listagem de B, não por GET direto do caminho; não prova contenção contra acesso absoluto ao filesystem nem composição Atento. O primeiro start foi bloqueado pelo sandbox ao abrir socket; com loopback autorizado, o mesmo probe passou 1/1 em 16,50 s. Falha de harness, não do pin. |
+| MindRoom 4f3bd2d108a6f9be28174e0f66d78eeecddca386 | Reutilizar os três casos de facade cross-agent mock-based já aprovados; meta-probe de três chaves user_agent distintas já registrado. | PASS_WITH_SCOPE — facade mock/key partition; memória persistente de três papéis BLOCKED_HARNESS | Tentativa de fixture real parou no primeiro add antes de assertions. MindRoom fica pausado neste gate até a coorte alcançá-lo; não repetir aqui. |
+| Bob Labs a91d6dad098c8ba6d24436a856556078151db45d | Reutilizar a tentativa focada registrada de sandbox HMAC, que parou antes da coleta por pytest indisponível. | BLOCKED_HARNESS | Nenhum resultado funcional de memória pode ser inferido. Não repetir sem mudança do runner. |
+| Ontheia 70802db61eb16533f55efce3d8785d810223d03b | Reutilizar buildReadableNamespaces returns the base set for a user alone (1 pass); novo teste isNamespaceAllowed resolves placeholders and wildcard suffixes (1 pass), negando namespace de outro user sob placeholder autorizado. | PASS_WITH_SCOPE — limite por user/namespace | O namespace padrão vector.agent.<user_id>.memory é user-keyed; não demonstra partição NAIA/Anna para o mesmo user. Placeholder configurável agent_id não foi validado ponta a ponta no runtime. |
+| OpenAkita 5f5b38da728274f0fd06461a481851be7c0bca6a | Suíte focada existente: test_isolated_memory_rebinds_full_chain_and_cannot_read_global, test_create_agent_can_enable_isolated_memory, test_spawn_agent_inherits_isolated_memory: 3 passed. Probe descartável com dois perfis memory_mode=isolated: NAIA recuperou sua sentinela user-scoped e Anna não a recuperou; 1 passed em 0,76 s. | PASS_WITH_SCOPE — perfis de agente e stores privados isolados | Dois objetos/agentes no mesmo processo e bancos temporários; sem host real ou worker de produção. Primeira tentativa usou ranking de injeção como oráculo e não encontrou a sentinela; classificada inválida. O probe corrigido usou busca escopada determinística e passou. |
+| Clawix 5aee015e0bd793102fba69af486dd6e75df6d802 | Reutilizar os 2 guards de traversal/outside-workspace já aprovados; não repetir. | PARTIAL — path guard | Harness de runner/path; não comprova sentinela privada isolada entre dois agentes nem autorização sobre memória persistente. |
+| Memoh | Sem pin exato aceito no registro (PIN_REQUIRED). | NOT_TESTED / PIN_REQUIRED | Não executar contra branch flutuante nem tratar ausência de resultado como zero/falha. |
+| Letta Code 21daa38a8cdd74f2d03b634c8312253080bacfc1 | Reusar o bloqueio de execução anterior: Bun indisponível no executor para seus testes de confinamento MemFS. | BLOCKED_HARNESS | Sem conclusão funcional neste gate; só retomar se Bun/runner exato ficar disponível. |
+
+OpenClaw permanece excluído da coorte ativa por decisão de product fit. O perfil de segurança bloqueado do QwenPaw e o bloqueio de segurança do AI Butler continuam separados deste resultado de memória.
+
+### Evidência bruta dos testes novos
+
+QwenPaw:
+- Comando: .venv/bin/pytest -q tests/integration/test_spike_cross_agent_memory_visibility.py
+- Resultado: 1 passed in 16.50s.
+- API local; dois agentes sintéticos; provider ausente; arquivo temporário removido após execução.
+
+OpenAkita:
+- Comando: .venv/bin/pytest --no-cov -q tests/unit/test_spike_cross_agent_memory_visibility.py
+- Resultado: 1 passed in 0.76s.
+- Busca direta em scope=user; dois perfis isolados; banco temporário; provider ausente; arquivo temporário removido.
+- A execução inicial com get_injection_context foi INVALID_ORACLE (ranking/relevância), não FAIL do candidato.
+
+Ontheia:
+- Comando: node --test --test-name-pattern='isNamespaceAllowed resolves placeholders and wildcard suffixes' host/dist/memory/namespaces.spec.js
+- Resultado: 1 passed; a negação é contra user_id externo, não contra outro papel no mesmo user.
+
+O pytest -n 0 inicial do OpenAkita também foi erro de invocação (plugin xdist ausente); a chamada serial correta executou 3/3. Arquivos descartáveis de QwenPaw e OpenAkita foram removidos e ambos os checkouts voltaram limpos aos pins congelados. Não houve chamada de provider/modelo.
+
+### Denominador comum deste bloco
+
+SENTINEL_CROSS_ROLE_GATE = DEFINED
+DIRECT_CANDIDATE_SCOPED_PASSES = [QwenPaw_API_SCOPE, OpenAkita_ISOLATED_PROFILE_SCOPE]
+PARTIAL_OR_MOCK_ONLY = [NanoClaw_ROLE_GROUP_STATE, MindRoom_MOCK_FACADE, Ontheia_USER_NAMESPACE, Clawix_PATH_GUARD]
+BLOCKED_OR_PIN_REQUIRED = [AI_Butler_SECURITY, BobLabs_HARNESS, LettaCode_HARNESS, Memoh_PIN]
+FULL_ATENTO_COMPOSITION_PASSES = 0
+CANDIDATES_ELIMINATED_BY_THIS_BLOCK = 0
+MINDROOM_RESUMED = NO
+BENCHMARKS_RERUN = 0
+
+Os dois passes diretos têm configurações diferentes e continuam PASS_WITH_SCOPE; não formam ranking geral nem qualificação Atento. Resultados externos já publicados permanecem no registro benchmark-específico e não foram repetidos nem agregados a este gate. O próximo bloco comparável deve avançar a mesma sentinela para candidatos parcialmente cobertos que tenham pin/runner e escopo executável; MindRoom só retoma depois desse catch-up.
