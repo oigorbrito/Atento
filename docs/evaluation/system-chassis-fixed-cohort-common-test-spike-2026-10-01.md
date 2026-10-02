@@ -941,3 +941,20 @@ OPENCLAW_CANDIDATE_ELIMINATION = NONE
 ```
 
 Este resultado avança OpenClaw no slice comparável da sentinela persistente; não demonstra isolamento contra acesso ao filesystem fora da API do manager, nem prova o host/runtime/autoridade do Atento. O bloqueio integrado continua separado.
+
+
+## Bob Labs and Ontheia SYS-MEM catch-up — 2026-10-02
+
+### Bob Labs — exact pin `boblabs-eu/boblabs@a91d6dad098c8ba6d24436a856556078151db45d`
+
+The exact-pin `control-plane/tests/repositories/test_cross_tenant.py` defines the memory-sharing confirmation negative/positive cases. `control-plane/tests/conftest.py` requires a real database URL containing `bob_test`, and the root `make test-only` runs migrations and pytest inside the `bob-manager-bob-api:latest` Docker image on the test network. This executor had no Docker/Podman, so the official test body was not started. A temporary local PostgreSQL 16 install was removed after confirming it could not supply the required official runner/image. The result remains `BLOCKED_ENVIRONMENT`; neither a candidate failure nor a test pass is claimed.
+
+### Ontheia — exact pin `Ontheia/ontheia@70802db61eb16533f55efce3d8785d810223d03b`
+
+Existing evidence already recorded in this file is the more relevant role-configured helper probe: three explicit `agent_id` namespaces were distinct, own-role reads were allowed, and six cross-role helper attempts were denied. Retain `PASS_WITH_SCOPE` for that configured namespace helper only; storage, PostgreSQL/RLS enforcement, and Atento identity binding were not exercised.
+
+A further check in this session installed the locked host dependencies, built the host, and ran `node --test dist/memory/namespaces.spec.js`: 19 passed, 0 failed. This suite's negative case uses a foreign `user_id` against a namespace template. It overlaps the already-recorded helper property and does not add a new role-private-memory result; do not count it as a second pass.
+
+### Queue continuation
+
+OpenAkita's existing marker result is reused without rerun. Clawix remains unresolved for this memory slice: existing evidence covers path guards, while no exact-pin direct private-marker cross-role test is recorded. Continue at Clawix's frozen pin only if its real workspace/memory seam can express the same private marker property; otherwise record the narrow blocker and advance serially. The full Atento `SYS-MEM-01` remains `BLOCKED_ADAPTER`.
