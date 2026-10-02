@@ -83,7 +83,7 @@ These entries support the post-reset NAIA/Anna universe rebuild. Presence here i
 |---|---|---|---|---|---|---|
 | SRC-QWENPAW | NAIA | QwenPaw | https://github.com/agentscope-ai/QwenPaw | `777441721aa72db8e380d90e4d0481b05cbfd4cc` | Apache-2.0 | technical persistent-assistant base candidate; not selected |
 | SRC-AIBUTLER | NAIA | AI Butler | https://github.com/LumabyteCo/aibutler | `c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c` | Apache-2.0 | technical persistent-assistant base candidate; public-beta maturity audit required |
-| SRC-NANOCLAW | NAIA | NanoClaw | https://github.com/nanocoai/nanoclaw | `4c1eabd3ddd74cc3d71b1871da857391a9411c8d` | MIT | PROVISIONAL_IMPLEMENTATION_DIRECTION | NAIA base direction only; runtime/provider and production qualification remain open |
+| SRC-NANOCLAW | NAIA | NanoClaw | https://github.com/nanocoai/nanoclaw | `4c1eabd3ddd74cc3d71b1871da857391a9411c8d` | MIT | PROVISIONAL_IMPLEMENTATION_DIRECTION — NAIA base only; runtime/provider and production qualification remain open |
 | SRC-TRUSTCLAW | NAIA | TrustClaw | https://github.com/ComposioHQ/trustclaw | `c07410bccb916236b45b563e8c4ff76ad83d3855` | MIT | technical persistent-assistant base candidate; external platform/dependency audit required |
 | SRC-OPENASSISTANT | NAIA | Open Assistant | https://github.com/open-assistant-org/open-assistant | `32c55d2643f9fe38777f9212588b2eee45392514` | BSL 1.1 | technical candidate only; adoption/legal review required before any code use |
 | SRC-OPENCOUCH | ANNA | OpenCouch | https://github.com/whanyu1212/OpenCouch | `ac5af6ee4c9a06b4050c5a912439f343ade2c35c` | AGPL-3.0 | therapeutic/emotional-support base candidate pending domain-fit and product-maturity audit |
