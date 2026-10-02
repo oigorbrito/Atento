@@ -116,3 +116,24 @@ The prior handoff's wording that the user choice of Psych could not be verified 
 Reused component evidence for QwenPaw (mock personal-provider selection), Bob Labs (HMAC/lab-binding unit tests), Ontheia (missing-secret exclusion and masking), and OpenAkita (diagnostic redaction). None proves provider-secret isolation across Atento roles. No real credentials or provider calls were used; common `SYS-CRED-01` remains `BLOCKED_ADAPTER`. The exact candidate scopes are in the [fixed-cohort spike](../evaluation/system-chassis-fixed-cohort-common-test-spike-2026-10-01.md).
 
 Anna's base is Psych by the user's earlier explicit decision. PR #59 still carries `NOT_SELECTED`; preserve PR #59 and reconcile that text only under its own authorization.
+
+
+
+## SYS-REL-01 catch-up — 2026-10-02
+
+Reused the fixed-pin evidence for all 11 candidates and recorded each scope in the [fixed-cohort spike](../evaluation/system-chassis-fixed-cohort-common-test-spike-2026-10-01.md). No equivalent suite, benchmark, replay, or recovery test was rerun.
+
+- NanoClaw has scoped candidate lifecycle and raw-webhook SSE replay passes; neither proves role-bound scheduled-task retry across Atento host restart.
+- OpenClaw has one scoped SSE replay after SIGKILL/restart; no scheduled retry or real Atento auth/provider result.
+- AI Butler's narrow scheduler test remains scoped, while its current pin remains blocked by seven reachable advisories.
+- Reproduced path-specific failures remain limited to QwenPaw default cron authority, Ontheia one-shot `run_at` post-claim recovery, and OpenAkita unknown-profile scheduler fallback/role drift. Do not generalize to entire candidate families.
+- MindRoom, Clawix, Memoh, and Letta Code have no comparable restart/recovery result recorded; Bob Labs remains blocked before test execution by the missing official Docker runner/image. Missing or blocked evidence is not a candidate failure.
+
+```text
+COMMON_ATENTO_SYS_REL_01 = BLOCKED_ADAPTER
+NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART = BLOCKED_ADAPTER
+EQUIVALENT_TESTS_OR_BENCHMARKS_RERUN = 0
+CANDIDATES_ELIMINATED_FROM_MISSING_EVIDENCE = 0
+```
+
+The existing Atento host/runtime seam still cannot execute the real scheduled-task path. Preserve the minimal falsifiable restart/retry test already specified above; when an existing seam becomes available, run one candidate at a time and verify original role ownership, equal-or-narrower grants, and exactly one terminal delivery. Do not construct a production adapter solely to open this gate. The next block remains the next comparable frozen-cohort gate; MindRoom stays paused until the cohort catches up.
