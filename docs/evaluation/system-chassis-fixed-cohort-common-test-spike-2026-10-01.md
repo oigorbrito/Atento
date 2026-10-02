@@ -2,37 +2,36 @@
 
 ## Decision sheet — read this first — 2026-10-02
 
-**Status:** the evidence-gathering block is closed. We have enough to keep a provisional working shortlist, but not enough to select or qualify a complete three-role Atento chassis. The repeated candidate-local probes did not move the decisive gate because the common Atento host/runtime adapter is still absent.
+**Decision:** advance **NanoClaw** as the **provisional general-chassis direction** for the three-role composition, based on the existing exact-profile Atento test below. This is a direction to advance, not production qualification. No other candidate family is eliminated.
 
-### What the current evidence supports
+### Technical rule and executed test
 
-- **Working shortlist:** NanoClaw, QwenPaw, OpenClaw. This is a queue for the eventual common comparison, not an overall ranking. The other eight candidates are not eliminated.
-- **Only direct external benchmark comparison:** PawBench v1.0 gives QwenPaw 73.7 and OpenClaw 72.1, a +1.6 point signal for QwenPaw in those published versions.
-- **Separate benchmark signal:** NanoClaw has Auto-ClawEval 63.7 full / 67.8 Mini. Its historical CoPaw comparator used a different integration tier and is not the frozen QwenPaw pin; do not combine these scores with PawBench.
-- **Strongest Atento-scoped result:** NanoClaw's hosted 7/7 profile probe and 1/1 replay probe passed with scope. Neither proves provider custody or scheduled-task retry after a host restart.
-- **Known path failures:** QwenPaw default cron authority; Ontheia one-shot post-claim retry; OpenAkita unknown-profile role drift; Clawix same-user private memory/shared-session approval. These are path/composition results, not automatic family eliminations.
-- **Integrated result:** memory, tool authority, credential custody, and role-bound recovery remain `BLOCKED_ADAPTER`; complete three-role passes: 0.
+- Technical guide: `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md` defines the system gates, including `SYS-BG-01`: background/retry/recovery must preserve the role's authority or narrow it.
+- Executable profile and test record: `docs/evaluation/system-chassis-gate2-continuation-2026-10-01.md`, profile `evals/config/system_chassis_nanoclaw_v1.json`, Atento run [36815873223](https://github.com/oigorbrito/Atento/actions/runs/36815873223).
+- The exact NanoClaw pin `4c1eabd3ddd74cc3d71b1871da857391a9411c8d` passed **7/7** assertions across NAIA, Anna, and Apollo: group/state ownership, negative cross-group access, direct A2A denial, role-specific synthetic identity, bounded broker/mailbox handoff, recipient-side CLI identity, and scheduled-task ownership.
+- This is the only recorded executed three-role Atento-profile run among the 11 candidates. It is the strongest direct composition evidence available and is the basis for advancing NanoClaw.
 
-### Stop the test loop here
+### What the result does not prove
 
-Do not add more candidate-local probes, rerun benchmarks, or repeat equivalent suites while the common host/runtime seam is absent. The remaining decision-bearing test is one shared assertion after that seam exists: persist an inert NAIA-owned scheduled task, observe its claim, stop the host before terminal acknowledgement, restart against the same store, permit one bounded retry, and verify NAIA ownership, no broader grants, and exactly one terminal delivery.
+The adapter and broker checks ran in the test harness, not deployed Atento services. There was no live provider/model, real channel, provider credential-custody test, or host-process restart with scheduled-task retry. Thus `SYS-BG-01` is only partially covered and `NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART = BLOCKED_ADAPTER`. NanoClaw is **not production-qualified**.
 
-Existing repair-scope estimates for the reproduced local paths are OpenAkita **S**, QwenPaw **M**, and Ontheia **L**. They guide repair effort but do not open the missing shared adapter.
+The earlier three-candidate working shortlist is now the reserve comparison set: QwenPaw and OpenClaw remain alternatives, not eliminated candidates. The PawBench pair still favors QwenPaw over OpenClaw by 1.6 points for the published harness versions, but it does not outweigh or replace the Atento composition gate. Auto-ClawEval remains a separate NanoClaw signal.
 
-### Current decision
+### Stop random test expansion
+
+Use this specific three-role profile as the decision gate. Do not add unrelated candidate-local probes or rerun its 7/7 checks. Resume only when the real host/runtime seam exists, then run the single residual elimination test: persist one inert NAIA-owned task, observe claim, stop the host before terminal acknowledgement, restart with the same store, allow one bounded retry, and verify NAIA ownership, no grant expansion, and exactly one terminal delivery.
 
 ```text
-EVIDENCE_COLLECTION = CLOSED_FOR_CURRENT_BLOCK
-PROVISIONAL_WORKING_SHORTLIST = [NanoClaw, QwenPaw, OpenClaw]
-FINAL_RANKING_OR_CHASSIS_SELECTION = NOT_SUPPORTED
-FULL_THREE_ROLE_QUALIFICATION = NONE
-COMMON_ATENTO_GATES = BLOCKED_ADAPTER
-NEXT_TEST = WAIT_FOR_EXECUTABLE_SHARED_HOST_RUNTIME_SEAM
-TEST_OR_BENCHMARK_RERUN_WITHOUT_MATERIAL_DELTA = 0
+GENERAL_CHASSIS_DIRECTION = NANOCLAW (PROVISIONAL; ADVANCE)
+BASIS = EXACT_PROFILE_ATENTO_RUN_36815873223 (7/7; PASS_WITH_SCOPE)
+OTHER_CANDIDATE_FAMILIES_ELIMINATED = 0
+PRODUCTION_QUALIFICATION = NO
+NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART = BLOCKED_ADAPTER
+NEXT_ACTION = WAIT_FOR_EXECUTABLE_HOST_RUNTIME_SEAM; THEN RUN ONE RESIDUAL TEST
+EQUIVALENT_TESTS_OR_BENCHMARKS_RERUN = 0
 ```
 
-Use the consolidated candidate matrix and benchmark register near the end of this file for the one-row-per-candidate view. Detailed probe commands/raw results remain below for traceability. PR #58 and PR #59 remain untouched.
-
+This decision supersedes the earlier provisional shortlist as the active direction while preserving QwenPaw and OpenClaw as uneliminated alternatives. It does not change PR #58 or PR #59.
 
 ## Request and decision boundary
 
