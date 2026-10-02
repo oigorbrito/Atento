@@ -180,3 +180,26 @@ CANDIDATE_ELIMINATION = NONE
 ```
 
 This adds scoped memory-authorization evidence only. Continue in fixed order with OpenAkita next; all candidate gates remain under comparison, with no winner selected.
+
+
+## Continuation — OpenAkita memory workspace isolation gate — 2026-10-02
+
+Frozen pin verified: `openakita/openakita@5f5b38da728274f0fd06461a481851be7c0bca6a`. Ran only the existing focused case using the project lock and dev extra:
+
+```text
+uv run --frozen --extra dev -- python -m pytest -q \
+  tests/unit/test_memory_owner_isolation.py::test_same_user_different_bot_workspaces_do_not_share_memory
+1 passed
+```
+
+The case writes memory for the same synthetic user in two bot workspaces and verifies that each workspace retrieves only its own entry. It is component-level store evidence: it does not exercise the three-role Atento host, a process boundary, or scheduled retry. One Starlette/httpx deprecation warning appeared during test startup; the test passed. The checkout remained on the exact frozen pin with no tracked edits.
+
+```text
+OPENAKITA_SAME_USER_BOT_WORKSPACE_MEMORY_ISOLATION = PASS_WITH_SCOPE (ONE UNIT TEST)
+OPENAKITA_AGENT_PROCESS_BOUNDARY = NOT_TESTED_BY_THIS_CASE
+ATENTO_ROLE_MEMORY_ASSERTION_AND_RESTART_RETRY = OPEN
+COMMON_ATENTO_PROFILE = BLOCKED_ADAPTER
+CANDIDATE_ELIMINATION = NONE
+```
+
+Continue to Clawix in frozen order. This narrows store-scope uncertainty but does not qualify private agent isolation in a deployed Atento composition; no winner is selected.
