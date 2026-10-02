@@ -6,7 +6,7 @@ Este arquivo é a fonte canônica para **provenance externo**: origem, commit/ve
 
 O Atento está atualmente em **modo de pesquisa/estudo**. A política interna permite `FULL_DONOR` quando empiricamente defensável.
 
-> **DECISION RESET:** os campos de status/adoption deste registro descrevem provenance, modo histórico de consideração ou possibilidade técnica. Eles **não constituem shortlist, preferência ou decisão atual** de chassis da NAIA ou da Anna. A seleção da Anna é regida por `docs/adr/ADR-ANNA-001-therapeutic-base-selection.md` enquanto o reset estiver ativo.
+> **DECISION RESET / CURRENT DIRECTIONS (2026-10-02):** este registro é canônico para provenance e adoção, não para qualificação. As direções atuais de implementação estão em `docs/adr/ADR-002-assistant-base-selection.md` (NanoClaw para NAIA, provisório) e `docs/adr/ADR-SYS-001-common-chassis-mindroom.md` (MindRoom para o chassi comum, reversível). Anna segue sem base selecionada e Apollo está adiado. Nenhum status deste registro equivale a qualificação para produção.
 
 > Importante: autorização interna para copiar/adaptar não altera direitos de terceiros. Para estudo é permitido clonar e executar donors; para redistribuir código copiado dentro deste repositório, preservar notices e observar os termos externos aplicáveis.
 
@@ -19,6 +19,7 @@ O Atento está atualmente em **modo de pesquisa/estudo**. A política interna pe
 - `FORK` — fork mantido com relação upstream.
 - `SELECTIVE_PORT` — partes adotadas.
 - `MODEL_ADAPTER` — modelo/serviço integrado.
+- `PROVISIONAL_IMPLEMENTATION_DIRECTION` — selecionado para avançar em implementação reversível; não implica código adotado, qualificação ou autorização de produção.
 - `REJECTED` — avaliado e rejeitado empiricamente.
 
 ## Registry
@@ -82,7 +83,7 @@ These entries support the post-reset NAIA/Anna universe rebuild. Presence here i
 |---|---|---|---|---|---|---|
 | SRC-QWENPAW | NAIA | QwenPaw | https://github.com/agentscope-ai/QwenPaw | `777441721aa72db8e380d90e4d0481b05cbfd4cc` | Apache-2.0 | technical persistent-assistant base candidate; not selected |
 | SRC-AIBUTLER | NAIA | AI Butler | https://github.com/LumabyteCo/aibutler | `c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c` | Apache-2.0 | technical persistent-assistant base candidate; public-beta maturity audit required |
-| SRC-NANOCLAW | NAIA | NanoClaw | https://github.com/nanocoai/nanoclaw | `4c1eabd3ddd74cc3d71b1871da857391a9411c8d` | MIT | technical persistent-assistant base candidate; runtime/provider breadth audit required |
+| SRC-NANOCLAW | NAIA | NanoClaw | https://github.com/nanocoai/nanoclaw | `4c1eabd3ddd74cc3d71b1871da857391a9411c8d` | MIT | PROVISIONAL_IMPLEMENTATION_DIRECTION | NAIA base direction only; runtime/provider and production qualification remain open |
 | SRC-TRUSTCLAW | NAIA | TrustClaw | https://github.com/ComposioHQ/trustclaw | `c07410bccb916236b45b563e8c4ff76ad83d3855` | MIT | technical persistent-assistant base candidate; external platform/dependency audit required |
 | SRC-OPENASSISTANT | NAIA | Open Assistant | https://github.com/open-assistant-org/open-assistant | `32c55d2643f9fe38777f9212588b2eee45392514` | BSL 1.1 | technical candidate only; adoption/legal review required before any code use |
 | SRC-OPENCOUCH | ANNA | OpenCouch | https://github.com/whanyu1212/OpenCouch | `ac5af6ee4c9a06b4050c5a912439f343ade2c35c` | AGPL-3.0 | therapeutic/emotional-support base candidate pending domain-fit and product-maturity audit |
@@ -209,11 +210,11 @@ These are provenance entries for technical discovery. Terms/license are intentio
 
 ## Atento system-chassis discovery sources — 2026-09-30
 
-These repositories were inspected at README/documentation level during the whole-product chassis rescreen. `REFERENCE_ONLY` means no code was cloned or adopted and grants no candidate status. Verify the exact terms at the frozen pin before any code transfer.
+These repositories were inspected at README/documentation level during the whole-product chassis rescreen. `REFERENCE_ONLY` means no code was cloned or adopted and grants no implementation direction. MindRoom's status below records the later, reversible decision to advance it as common-chassis implementation target; no code is adopted. Verify exact terms at the frozen pin before any code transfer.
 
 | ID | Projeto | Repo / fonte | Commit / versão | Termos conhecidos | Status inicial | Uso pretendido |
 |---|---|---|---|---|---|---|
-| SRC-SYS-MINDROOM | MindRoom — system-chassis discovery | https://github.com/mindroom-ai/mindroom | `4f3bd2d108a6f9be28174e0f66d78eeecddca386` | Apache-2.0 verified in LICENSE at pin | REFERENCE_ONLY | multi-agent runtime, Matrix identities, worker scopes, delegated sessions; system composition probe only |
+| SRC-SYS-MINDROOM | MindRoom — common system chassis | https://github.com/mindroom-ai/mindroom | `4f3bd2d108a6f9be28174e0f66d78eeecddca386` | Apache-2.0 verified in LICENSE at pin | PROVISIONAL_IMPLEMENTATION_DIRECTION | common runtime for NAIA/Anna/Apollo; no source code adopted; qualification pending |
 | SRC-SYS-ONTHEIA | Ontheia — system-chassis discovery | https://github.com/Ontheia/ontheia | `70802db61eb16533f55efce3d8785d810223d03b` | AGPL-3.0 LICENSE; upstream also advertises commercial terms | REFERENCE_ONLY | multi-agent platform, RLS/memory namespaces, workflow and handoff probes |
 | SRC-SYS-BOBLABS | Bob Labs — system-chassis discovery | https://github.com/boblabs-eu/boblabs | `a91d6dad098c8ba6d24436a856556078151db45d` | Apache-2.0 verified in LICENSE at pin | REFERENCE_ONLY | multi-agent labs, typed handoff bus, per-agent grants and per-lab sandbox probe |
 | SRC-SYS-CLAWIX | Clawix — system-chassis discovery | https://github.com/ClawixAI/clawix | `5aee015e0bd793102fba69af486dd6e75df6d802` | README badge claims MIT; LICENSE path not verified at this pin | REFERENCE_ONLY | isolated agent containers, memory scope, RBAC and approval probe |
