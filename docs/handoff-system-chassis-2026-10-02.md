@@ -162,3 +162,18 @@ The three reproduced paths were inspected read-only at their frozen pins and the
 Current GitHub `size` metadata is recorded for all 11 repositories as a coarse current-state proxy. It is not pinned source LOC, dependency install size, deployed image size, or runtime RAM. No ranking or selection changed.
 
 The integrated host/runtime adapter remains unestimable and unavailable; integrated memory, tools, credentials, and reliability gates remain `BLOCKED_ADAPTER`. Keep MindRoom paused until other candidates catch up. Psych remains the user's selected Anna base in this handoff; PR #59's contradictory `NOT_SELECTED` text is untouched.
+
+
+## SYS-BENCH-01 catch-up — 2026-10-02
+
+The existing published benchmark lines are now consolidated in the spike without rerunning any benchmark. PawBench v1.0 gives a same-page, same-9-model-matrix signal of QwenPaw 73.7 versus OpenClaw 72.1 (+1.6 for QwenPaw) for the published harness versions listed there. This is release/config evidence, not the frozen Atento pins. Auto-ClawEval and Terminal-Bench stay separate by benchmark and model configuration; AI Butler's 4/7 remains first-party only. Missing scores for other candidates are not zero.
+
+```text
+BENCHMARK_RERUNS = 0
+CROSS_BENCHMARK_AGGREGATE = NONE
+FROZEN_PIN_QUALIFICATION_FROM_BENCHMARK = NONE
+CANDIDATE_SELECTION_CHANGED = NO
+COMMON_ATENTO_GATES = STILL_BLOCKED_ADAPTER
+```
+
+No overall candidate rank is defensible yet: the benchmark signals do not cover all 11 and the common system gates remain incomplete/non-comparable. Preserve the fixed cohort, keep MindRoom paused until catch-up is complete, and continue using exact-gate evidence plus existing benchmark lines without reruns.
