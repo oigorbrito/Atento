@@ -120,3 +120,17 @@ A checagem da PR #58 confirmou que ela segue aberta/draft no head e948f344b91e20
 Pré-condições: adapter interno executável que derive a identidade de NAIA de uma fonte confiável do Atento (sem confiar em cabeçalho arbitrário do solicitante), ligue-a a worker dedicado/escopo isolado do MindRoom, persista tarefa e estado, e exponha claim e ack terminal observáveis. Para o teste, usar store reutilizável, uma tarefa NAIA inerte vencida, identidades sintéticas distintas para Anna/Apollo, provider ausente e controle para matar diretamente o processo host.
 
 Executar uma vez, sequencialmente: persistir a tarefa vencida; iniciar o host e observar o claim; encerrá-lo após claim e antes do ack terminal; reiniciar com o mesmo store; permitir exatamente um retry. Aprovar com escopo somente se a tentativa continuar NAIA-owned, manter o mesmo isolamento/identidade, não alcançar estado de Anna/Apollo e gerar exatamente uma entrega terminal para o ID da tarefa. Classificar quebra de identidade, leitura cruzada ou entrega duplicada como falha do seam; falta de ponto executável/observável continua BLOCKED_ADAPTER. Não construir integração de produção só para abrir este teste.
+
+
+## Probe decisório de caminho de workspace — 2026-10-02
+
+No checkout MindRoom pinado, foi executado:
+
+```text
+./.venv/bin/pytest tests/api/test_sandbox_runner_api.py::test_prepare_worker_request_rejects_sibling_private_agent_root_for_user_agent_workers -n 0 --no-cov -q
+4 passed
+```
+
+Os quatro casos rejeitam base_dir na workspace de outro agente, na raiz privada do próprio agente, na subárvore de sessões e na raiz acima do workspace. Classificação: USER_AGENT_REQUEST_BASE_DIR_GUARD = PASS_WITH_SCOPE.
+
+Limite decisório: isso valida a checagem do caminho declarado pelo pedido; não prova isolamento de filesystem contra acesso por caminho absoluto, processo local ou storage mais amplo montado. O próprio plano upstream ainda classifica a visibilidade em shared-runner/local como incompleta. Assim, não fecha a lacuna de isolamento do chassi nem muda o gate de composição; mantém-se MindRoom como escolha reversível para avançar, com qualificação bloqueada até um backend/seam executável demonstrar a fronteira real entre papéis.
