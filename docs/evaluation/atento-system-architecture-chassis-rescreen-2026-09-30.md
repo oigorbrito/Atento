@@ -131,7 +131,7 @@ SYSTEM_CHASSIS_BENCHMARK_QUALIFICATION = NOT_ESTABLISHED
 GITHUB_DISCOVERY_COST_SAVING = HYPOTHESIS_NOT_MEASURED
 ```
 
-## Preliminary screen result
+## Preliminary screen result — historical snapshot at 2026-09-30
 
 ```text
 OLD_NAIA_GATE1 = VALID_FOR_NAIA_SCOPE_ONLY
@@ -177,3 +177,16 @@ This is a discovery/static evidence pass, not an executed Atento architecture te
 - AgentSpace: `https://github.com/HKUDS/AgentSpace/tree/0f9da1b125def4d5a0d05b34bf7c5cec0686bbf2`.
 - Architecture-analysis basis: [SEI ATAM](https://www.sei.cmu.edu/library/the-architecture-tradeoff-analysis-method/) evaluates architectural tradeoffs against quality-attribute goals; [NIST SP 800-207](https://doi.org/10.6028/NIST.SP.800-207) informs identity- and policy-based resource-access requirements. Neither source selects a chassis for Atento.
 - OpenClaw and QwenPaw: exact candidate pins are in the existing Atento NAIA evidence records; retain those pins rather than current branch heads.
+
+
+## Decision follow-up — 2026-10-02
+
+The project chose MindRoom to advance as the common-chassis implementation direction, using the pinned revision listed in `docs/third-party.md`. This is a reversible direction chosen to stop cycling through candidates and begin implementation work. It does not claim that every alternative was fully composed and cost-measured, nor that MindRoom passed the complete system gates.
+
+- Common chassis direction: MindRoom, provisional and reversible.
+- NAIA role base: NanoClaw remains the separate provisional direction recorded in `docs/adr/ADR-002-assistant-base-selection.md`.
+- Anna role base: not selected.
+- Apollo: deferred.
+- Production/system qualification: not established; full three-role topology remains unqualified.
+- Next action: build the bounded MindRoom composition seam and run only the missing Atento-specific gates. Reuse the cited upstream tests and existing probe artifacts; do not rerun equivalent suites.
+- Project Points: documentation/decision update only; progress remains 3/100.
