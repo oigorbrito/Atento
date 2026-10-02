@@ -2,7 +2,7 @@
 
 Atento é o repositório canônico de um produto com três agentes especializados: **NAIA** (assistente pessoal persistente), **Anna** (assistente emocional/terapêutica) e **Apollo** (nutrição/fitness, atualmente adiado).
 
-> **Maturidade atual:** reconciliação de produto + pesquisa/arquitetura + scaffold inicial de avaliação. Nenhum chassis está selecionado para NAIA ou Anna; Apollo está adiado.
+> **Estado atual (2026-10-02):** NanoClaw é a direção provisória de base da NAIA; MindRoom é a direção reversível para o chassi comum de NAIA/Anna/Apollo. Nenhum dos dois está qualificado para produção. A base da Anna segue em aberto; Apollo continua adiado.
 
 ## Alinhamento conceitual em reconstrução
 
@@ -17,7 +17,8 @@ O projeto está reconciliando sua definição em três agentes: **NAIA** (assist
 - **Regras para agentes/contribuidores:** [AGENTS.md](AGENTS.md)
 - **Arquitetura, blocos e progresso global:** [roadmap.md](roadmap.md)
 - **Decisão fork vs greenfield:** [docs/adr/ADR-000-fork-vs-greenfield.md](docs/adr/ADR-000-fork-vs-greenfield.md)
-- **Composição dos agentes / isolamento (reaberta):** [docs/adr/ADR-001-naya-product-composition.md](docs/adr/ADR-001-naya-product-composition.md)
+- **Composição dos agentes / isolamento e decisão atual do chassi:** [docs/adr/ADR-001-naya-product-composition.md](docs/adr/ADR-001-naya-product-composition.md)
+- **Chassi comum — MindRoom (direção de implementação, não qualificada):** [docs/adr/ADR-SYS-001-common-chassis-mindroom.md](docs/adr/ADR-SYS-001-common-chassis-mindroom.md)
 - **Seleção da base da NAIA (decision reset):** [docs/adr/ADR-002-assistant-base-selection.md](docs/adr/ADR-002-assistant-base-selection.md)
 - **Seleção da base da Anna (decision reset):** [docs/adr/ADR-ANNA-001-therapeutic-base-selection.md](docs/adr/ADR-ANNA-001-therapeutic-base-selection.md)
 - **Seleção da base do Apollo (deferred):** [docs/adr/ADR-APOLLO-001-fitness-nutrition-base-selection.md](docs/adr/ADR-APOLLO-001-fitness-nutrition-base-selection.md)
@@ -47,9 +48,9 @@ problema
 
 Mudanças que não conseguem percorrer essa cadeia ainda não são consideradas defensáveis.
 
-## Próxima decisão
+## Próximo marco
 
-Antes de novos spikes, o projeto está comparando o **chassi do Atento completo** (NAIA, Anna e a fronteira futura do Apollo), reaproveitando evidência por escopo. A antiga triagem e o Top 5 da NAIA são role-specific; nenhum chassi sistêmico ou Top 5 global está selecionado. Apollo permanece adiado como pesquisa funcional.
+Implementar um primeiro seam reversível no MindRoom para as três identidades, usando worker dedicado por agente. As ADRs de NAIA/Anna/Apollo continuam separadas: NanoClaw permanece apenas como direção provisória da base da NAIA; Anna não tem base; Apollo está adiado. O primeiro seam não é qualificação: isolamento persistente, handoff, tarefas após restart/retry e custo comparável continuam gates.
 
 ## Aviso de escopo
 
