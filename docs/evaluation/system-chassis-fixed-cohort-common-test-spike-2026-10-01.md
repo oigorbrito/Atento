@@ -1,5 +1,39 @@
 # Fixed-cohort common test spike — 2026-10-01
 
+## Decision sheet — read this first — 2026-10-02
+
+**Status:** the evidence-gathering block is closed. We have enough to keep a provisional working shortlist, but not enough to select or qualify a complete three-role Atento chassis. The repeated candidate-local probes did not move the decisive gate because the common Atento host/runtime adapter is still absent.
+
+### What the current evidence supports
+
+- **Working shortlist:** NanoClaw, QwenPaw, OpenClaw. This is a queue for the eventual common comparison, not an overall ranking. The other eight candidates are not eliminated.
+- **Only direct external benchmark comparison:** PawBench v1.0 gives QwenPaw 73.7 and OpenClaw 72.1, a +1.6 point signal for QwenPaw in those published versions.
+- **Separate benchmark signal:** NanoClaw has Auto-ClawEval 63.7 full / 67.8 Mini. Its historical CoPaw comparator used a different integration tier and is not the frozen QwenPaw pin; do not combine these scores with PawBench.
+- **Strongest Atento-scoped result:** NanoClaw's hosted 7/7 profile probe and 1/1 replay probe passed with scope. Neither proves provider custody or scheduled-task retry after a host restart.
+- **Known path failures:** QwenPaw default cron authority; Ontheia one-shot post-claim retry; OpenAkita unknown-profile role drift; Clawix same-user private memory/shared-session approval. These are path/composition results, not automatic family eliminations.
+- **Integrated result:** memory, tool authority, credential custody, and role-bound recovery remain `BLOCKED_ADAPTER`; complete three-role passes: 0.
+
+### Stop the test loop here
+
+Do not add more candidate-local probes, rerun benchmarks, or repeat equivalent suites while the common host/runtime seam is absent. The remaining decision-bearing test is one shared assertion after that seam exists: persist an inert NAIA-owned scheduled task, observe its claim, stop the host before terminal acknowledgement, restart against the same store, permit one bounded retry, and verify NAIA ownership, no broader grants, and exactly one terminal delivery.
+
+Existing repair-scope estimates for the reproduced local paths are OpenAkita **S**, QwenPaw **M**, and Ontheia **L**. They guide repair effort but do not open the missing shared adapter.
+
+### Current decision
+
+```text
+EVIDENCE_COLLECTION = CLOSED_FOR_CURRENT_BLOCK
+PROVISIONAL_WORKING_SHORTLIST = [NanoClaw, QwenPaw, OpenClaw]
+FINAL_RANKING_OR_CHASSIS_SELECTION = NOT_SUPPORTED
+FULL_THREE_ROLE_QUALIFICATION = NONE
+COMMON_ATENTO_GATES = BLOCKED_ADAPTER
+NEXT_TEST = WAIT_FOR_EXECUTABLE_SHARED_HOST_RUNTIME_SEAM
+TEST_OR_BENCHMARK_RERUN_WITHOUT_MATERIAL_DELTA = 0
+```
+
+Use the consolidated candidate matrix and benchmark register near the end of this file for the one-row-per-candidate view. Detailed probe commands/raw results remain below for traceability. PR #58 and PR #59 remain untouched.
+
+
 ## Request and decision boundary
 
 This spike applies the frozen system-composition protocol to every candidate in its 11-member system cohort that has not been technically eliminated. SelfAgent was already stopped at the earlier NAIA Gate 1 as a complete NAIA base at its frozen pin, so it is excluded from this remaining candidate test queue; that stop does not eliminate SelfAgent as a donor or component in a different composition. SelfAgent is not one of the fixed 11 system candidates. OpenClaw remains in the system cohort: its recorded exclusion is only from the mobile-focused view, as a product-fit scope choice. AI Butler's security block, QwenPaw's hold, and missing pins/evidence are gates or blockers, not technical eliminations.
