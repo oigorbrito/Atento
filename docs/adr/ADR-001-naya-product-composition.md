@@ -197,15 +197,15 @@ handoff_mechanism: TBD
 - [ ] role-drift adversarial suite
 
 
-## System-level architecture/chassis re-screen — 2026-09-30
+## System-level architecture/chassis re-screen — historical snapshot, 2026-09-30
 
-The product composition decision remains `NOT_SELECTED`, but the current evaluation scope is broader than the old NAIA base screen. The system-level re-screen compares the total Atento composition for NAIA, Anna, and future Apollo. Apollo's domain boundary must be supported now; Apollo-specific functional chassis research remains `DEFERRED`.
+**Snapshot status:** at this date the product composition/chassis was `NOT_SELECTED`. This dated evaluation compared the total Atento composition for NAIA, Anna, and future Apollo. Apollo's domain boundary must be supported now; Apollo-specific functional chassis research remains `DEFERRED`. The current implementation direction is recorded in the 2026-10-02 update below.
 
 Canonical evidence/method record:
 
 `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`
 
-The metric is the lowest defensible total adaptation and ongoing-maintenance cost for the complete product composition. The alternatives remain open: one multi-agent platform, separate specialist chassis behind explicit Atento control/handoff, or a hybrid. No topology is accepted by this note.
+At the time of this snapshot, the metric was the lowest defensible total adaptation and ongoing-maintenance cost for the complete product composition. The alternatives then remained open: one multi-agent platform, separate specialist chassis behind explicit Atento control/handoff, or a hybrid. This dated screen did not select an implementation direction.
 
 The former NAIA Gate-1 and Top 5 remain valid only as NAIA-role evidence. They do not qualify or rank the overall Atento system. The earlier two-agent diagram in this ADR is historical/incomplete because it omits Apollo; it is not the current target architecture.
 
