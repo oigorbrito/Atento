@@ -913,3 +913,31 @@ FULL_ATENTO_SYS_MEM = BLOCKED_ADAPTER
 ```
 
 Próximo passo falsificável: com o checkout do pin e dependências congeladas disponíveis num runner, executar uma vez o menor caso de gravação/leitura persistente sob agente A e negação de listagem/leitura sob agente B; coletar o transcript bruto e classificar apenas essa propriedade. Não confundir este teste de componente com `SYS-MEM-01` integrado do Atento, que continua bloqueado pelo adapter/runtime de produto ausente.
+
+## OpenClaw — normalized SYS-MEM persistent sentinel — 2026-10-02
+
+No pin exato `openclaw/openclaw@e9571d77e76bd6d35996273d9e8398ad539b26e1`, instalei somente a dependência congelada dos workspaces necessários e executei um teste temporário focalizado contra `getMemorySearchManager`, com duas identidades e workspaces separados. A sentinela sintética foi gravada em `NAIA/MEMORY.md`; cada manager sincronizou o índice de memória real do componente com SQLite temporário e sem provider/vector.
+
+Comando final:
+
+```text
+COREPACK_HOME=/tmp/atento-openclaw-corepack corepack pnpm exec vitest run \
+  --config test/vitest/vitest.extension-database-workers.config.ts \
+  extensions/memory-core/src/memory/sys-mem-cross-agent-probe.tmp.test.ts \
+  --maxWorkers=1 --reporter=verbose
+1 passed; duration 12.05s; exit 0
+```
+
+Resultado bruto: o manager NAIA retornou a sentinela no índice; a busca do manager Anna não continha a sentinela. Anna retornou uma correspondência fraca ao próprio arquivo porque o probe usou `minScore=0`; isso não expôs conteúdo de NAIA. A assertion compara presença/ausência do marcador, não exige uma lista de busca vazia.
+
+Duas invocações iniciais não são resultados de candidato: a primeira usou o campo inexistente `result.text` em vez de `snippet`; a segunda exigiu lista vazia e marcou como falha um resultado fraco do arquivo próprio de Anna. Corrigi o oráculo para buscar somente vazamento da sentinela e executei a seleção novamente; o teste final passou. Não houve provider/modelo/ferramenta, dados reais, edição de fonte ou mudança de lockfile. O arquivo de teste temporário foi removido e `git status --short` ficou limpo no pin exato.
+
+```text
+OPENCLAW_SYS_MEM_PERSISTENT_SENTINEL = PASS_WITH_SCOPE
+OPENCLAW_DIRECT_CANDIDATE_SCOPED_PASS = YES (IN-PROCESS MEMORY INDEX; DISTINCT WORKSPACES)
+OPENCLAW_PROCESS_OR_HOST_BOUNDARY = NOT_TESTED
+OPENCLAW_ATENTO_SYS_MEM_01 = BLOCKED_ADAPTER
+OPENCLAW_CANDIDATE_ELIMINATION = NONE
+```
+
+Este resultado avança OpenClaw no slice comparável da sentinela persistente; não demonstra isolamento contra acesso ao filesystem fora da API do manager, nem prova o host/runtime/autoridade do Atento. O bloqueio integrado continua separado.
