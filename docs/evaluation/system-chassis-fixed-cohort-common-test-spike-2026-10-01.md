@@ -1013,7 +1013,7 @@ LETTA_CODE_SYSTEM_SYS_MEM_01 = BLOCKED_ADAPTER
 | Bob Labs | Official test requires Docker and `bob-manager-bob-api:latest`; the test body did not start. | `BLOCKED_ENVIRONMENT`; no candidate failure. |
 | Ontheia | Reuse the already-recorded explicit three-`agent_id` namespace helper: own scopes accepted, six cross-role scopes denied. The 19/19 additional user-namespace suite run was overlapping validation, not a new marker result. | `PASS_WITH_SCOPE` for configured helper; storage/RLS open. |
 | OpenAkita | Reuse the previously recorded two-profile private-marker result. | `PASS_WITH_SCOPE`; no rerun. |
-| Clawix | No exact-pin direct private-marker test identified; existing path/session guards do not prove memory isolation. | `NOT_TESTED`; not a failure. |
+| Clawix | Exact-pin docs and query code define private wiki visibility by `ownerId=userId`; private pages are readable by the owner and that user’s agents. | `FAIL_WITH_SCOPE` for distinct Atento roles sharing one Clawix user; static product contract, no direct runtime probe. A distinct-user-per-role mapping may alter this, but is untested. |
 | Memoh | Exact-pin real PostgreSQL store denied foreign-bot read and overwrite; also fake-store graph/file mutation scope test passed. | `PASS_WITH_SCOPE`; PostgreSQL 16, no Atento ID binding. |
 | Letta Code | Exact-pin 63/63 cross-agent guard suite; in-process file reads denied across permission modes and symlink cases. | `PASS_WITH_SCOPE`; no actual kernel-boundary or Atento role mapping. |
 
@@ -1198,3 +1198,25 @@ CANDIDATE_SELECTION_CHANGED = NO
 ```
 
 The prior table's PawBench row now includes both OpenClaw and QwenPaw, resolving the previously split recording. Keep published benchmark scores as the functional-quality axis only. Existing common Atento memory/tool/credential/recovery gates remain separate; no candidate is promoted or eliminated by this score catch-up.
+
+
+## Clawix SYS-MEM private-role scope resolution — 2026-10-02
+
+Read-only inspection at exact pin `ClawixAI/clawix@5aee015e0bd793102fba69af486dd6e75df6d802` resolved whether the existing seam can express role-private memory.
+
+- The pinned [memory contract](https://github.com/ClawixAI/clawix/blob/5aee015e0bd793102fba69af486dd6e75df6d802/docs/MEMORY.md) says private wiki pages belong to a user and are readable by that owner and their agents.
+- The pinned [WikiSearchRepository](https://github.com/ClawixAI/clawix/blob/5aee015e0bd793102fba69af486dd6e75df6d802/packages/api/src/db/wiki-search.repository.ts) takes `userId` as its identity input; `ownership='mine'` filters only `WikiPage.ownerId = userId`, while `visible` adds group/org shares. The query has no `agentDefinitionId` or role-scoped key.
+- The pinned [SPEC](https://github.com/ClawixAI/clawix/blob/5aee015e0bd793102fba69af486dd6e75df6d802/docs/SPEC.md) separately keys sessions by `(userId, agentDefinitionId, channelId)`. Session separation therefore does not make private wiki pages role-private.
+- Clawix's own memory guide describes the wiki as a shared continuity layer across agents for one user. This is intentional product behavior, not evidence of accidental database leakage.
+
+For the frozen Atento profile—three roles under one user identity—the private-memory contract does not isolate one role's private marker from another. Record `FAIL_WITH_SCOPE` for this same-user role-private property based on the exact-pin authorization contract; do not generalize to the whole Clawix family. Separate Clawix user IDs per role could create a different composition, but Atento identity mapping, shared profile handling, and cross-user controls would then need explicit testing. No private-marker test was run, no Prisma setup/harness was fabricated, and no Clawix source was modified.
+
+```text
+CLAWIX_SAME_USER_ROLE_PRIVATE_MEMORY = FAIL_WITH_SCOPE (STATIC PINNED CONTRACT)
+CLAWIX_DIRECT_PRIVATE_MARKER_RUNTIME_PROBE = NOT_RUN
+CLAWIX_DISTINCT_USER_PER_ROLE_COMPOSITION = NOT_TESTED
+CLAWIX_CANDIDATE_FAMILY_ELIMINATED = NO
+COMMON_ATENTO_SYS_MEM_01 = BLOCKED_ADAPTER
+```
+
+This supersedes the earlier Clawix `NOT_TESTED` row for the narrow same-user role-private property. Existing filesystem path guards remain scoped to path traversal and do not repair the user-scoped wiki visibility model.
