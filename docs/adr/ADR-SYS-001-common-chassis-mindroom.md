@@ -91,3 +91,32 @@ Persistir uma tarefa NAIA vencida; iniciar o host; observar o claim e encerrá-l
 - **Permanece BLOCKED_ADAPTER:** não existe chamada executável do host Atento; não criar integração de produção só para destravar o teste.
 
 Executar sequencialmente como um único probe descartável quando as pré-condições forem atendidas. Sem provider real, tarefas paralelas ou repetição dos testes equivalentes já citados.
+
+
+## Revalidação do seam e do gate — 2026-10-02
+
+A direção de implementação do chassi comum continua sendo **MindRoom**, em caráter reversível. Esta revalidação não promove o candidato a qualificado e não muda a base independente da NAIA (NanoClaw); Anna continua sem base e Apollo adiado.
+
+Testes focados no pin 4f3bd2d108a6f9be28174e0f66d78eeecddca386 foram executados em sequência, sem provider nem rede externa:
+
+- tests/test_openai_compat.py::TestChatCompletions::test_requester_header_is_not_used_for_execution_identity
+- tests/test_openai_compat.py::TestChatCompletions::test_rejects_non_shared_worker_scope_agent
+
+**2/2 passaram.** O resultado confirma uma restrição real do contrato atual do pin: cabeçalho do solicitante não estabelece identidade confiável e /v1 rejeita worker_scope=user_agent. Portanto, a API OpenAI-compatible padrão **não pode ser usada como seam de execução com isolamento por papel** na configuração exigida. Isso é evidência contra esse caminho específico, não prova de que todo o MindRoom seja inviável: os testes do backend Docker (258) e Kubernetes (201) também passaram, mas exercitam APIs simuladas; nenhum container ou cluster real foi iniciado.
+
+As suítes amplas de recuperação não produziram resultado válido neste executor: houve bloqueio de bind de socket local em um teste e timeout/hang em tentativas mais amplas. A suíte completa também não coletou por dependências opcionais ausentes e caminhos de fixture sem permissão. Esses resultados são **BLOCKED_HARNESS/INCONCLUSIVE**, não falha funcional do MindRoom; não serão repetidos sem mudança concreta do ambiente.
+
+O gate Atento permanece:
+
+```text
+MINDROOM_OPENAI_COMPAT_USER_AGENT_EXECUTION = UNSUPPORTED_BY_PINNED_API
+MINDROOM_ATENTO_HOST_RESTART_RETRY = BLOCKED_ADAPTER
+```
+
+A checagem da PR #58 confirmou que ela segue aberta/draft no head e948f344b91e20e655399b11300c439228d144ec. Seu harness 7/7 é de escopo limitado e não acrescenta host runtime/gateway de produto. O registro do spike NanoClaw também continua descrevendo apenas um seam descartável, sem integração de produto. Não existe, nesses snapshots, caminho executável para claim/restart/retry no host Atento. A PR #58 permanece intocada.
+
+### Menor teste falsificável após surgir o seam
+
+Pré-condições: adapter interno executável que derive a identidade de NAIA de uma fonte confiável do Atento (sem confiar em cabeçalho arbitrário do solicitante), ligue-a a worker dedicado/escopo isolado do MindRoom, persista tarefa e estado, e exponha claim e ack terminal observáveis. Para o teste, usar store reutilizável, uma tarefa NAIA inerte vencida, identidades sintéticas distintas para Anna/Apollo, provider ausente e controle para matar diretamente o processo host.
+
+Executar uma vez, sequencialmente: persistir a tarefa vencida; iniciar o host e observar o claim; encerrá-lo após claim e antes do ack terminal; reiniciar com o mesmo store; permitir exatamente um retry. Aprovar com escopo somente se a tentativa continuar NAIA-owned, manter o mesmo isolamento/identidade, não alcançar estado de Anna/Apollo e gerar exatamente uma entrega terminal para o ID da tarefa. Classificar quebra de identidade, leitura cruzada ou entrega duplicada como falha do seam; falta de ponto executável/observável continua BLOCKED_ADAPTER. Não construir integração de produção só para abrir este teste.
