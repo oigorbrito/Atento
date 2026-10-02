@@ -1,0 +1,64 @@
+name: System chassis common runner contract
+
+on:
+  push:
+    paths:
+      - ".github/workflows/system-chassis-common-runner.yml"
+      - "tools/system_chassis/common_runner.py"
+      - "tools/system_chassis/test_common_runner.py"
+      - "evals/config/system_chassis_cohort_v1.json"
+  pull_request:
+    paths:
+      - ".github/workflows/system-chassis-common-runner.yml"
+      - "tools/system_chassis/common_runner.py"
+      - "tools/system_chassis/test_common_runner.py"
+      - "evals/config/system_chassis_cohort_v1.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runner-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout Atento
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate frozen cohort manifest
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from tools.system_chassis.common_runner import validate_manifest
+          manifest = json.loads(Path("evals/config/system_chassis_cohort_v1.json").read_text())
+          validate_manifest(manifest)
+          PY
+
+      - name: Run runner contract tests
+        run: python -m unittest discover -s tools/system_chassis -p 'test_common_runner.py' -v
+
+      - name: Confirm this job does not qualify candidates
+        run: |
+          python tools/system_chassis/common_runner.py \
+            --manifest evals/config/system_chassis_cohort_v1.json \
+            --atento-sha "$GITHUB_SHA" \
+            --checkout-root /tmp/atento-candidate-checkouts \
+            --adapter-root tools/system_chassis/adapters \
+            --artifact-root /tmp/system-chassis-runner-contract
+
+      - name: Upload serial runner status artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: system-chassis-common-runner-contract-${{ github.run_id }}
+          path: /tmp/system-chassis-runner-contract/cohort-result.json
+          if-no-files-found: error
