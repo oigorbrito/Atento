@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="7" failures="0" errors="0" time="4.66053229">
+    <testsuite name="src/system-chassis.atento.test.ts" timestamp="2026-10-01T04:36:34.592Z" hostname="runnervmtr4k5" tests="7" failures="0" errors="0" skipped="0" time="4.66053229">
+        <testcase classname="src/system-chassis.atento.test.ts" name="Atento three-role mount boundary on the exact NanoClaw pin &gt; keeps role state writable only through that role container mount" time="0.290154055">
+        </testcase>
+        <testcase classname="src/system-chassis.atento.test.ts" name="Atento three-role mount boundary on the exact NanoClaw pin &gt; retains each group state root across a driver stop and prepare cycle" time="0.837386636">
+        </testcase>
+        <testcase classname="src/system-chassis.atento.test.ts" name="Atento three-role mount boundary on the exact NanoClaw pin &gt; resolves role-scoped chat sessions and blocks unregistered native cross-role sends" time="0.032029664">
+        </testcase>
+        <testcase classname="src/system-chassis.atento.test.ts" name="Atento three-role mount boundary on the exact NanoClaw pin &gt; keeps scheduled-task ownership and task-session creation within the profile role" time="0.06488679">
+        </testcase>
+        <testcase classname="src/system-chassis.atento.test.ts" name="Atento three-role mount boundary on the exact NanoClaw pin &gt; delivers typed Anna/Apollo requests to NAIA for receiver-side reauthorization" time="0.258641663">
+        </testcase>
+        <testcase classname="src/system-chassis.atento.test.ts" name="Atento three-role mount boundary on the exact NanoClaw pin &gt; keeps synthetic identity material in the per-session auxiliary container" time="1.513022574">
+        </testcase>
+        <testcase classname="src/system-chassis.atento.test.ts" name="Atento three-role mount boundary on the exact NanoClaw pin &gt; realizes one role-scoped state source per container and no host secret mounts" time="0.154005542">
+        </testcase>
+    </testsuite>
+</testsuites>

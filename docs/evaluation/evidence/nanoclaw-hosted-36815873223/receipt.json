@@ -1,0 +1,33 @@
+{
+  "evidence_type": "reused_github_actions_junit_artifact",
+  "candidate_id": "nanoclaw",
+  "repository": "nanocoai/nanoclaw",
+  "upstream_sha": "4c1eabd3ddd74cc3d71b1871da857391a9411c8d",
+  "atento_workflow_run_id": 36815873223,
+  "atento_workflow_run_head_sha": "a5dca9401fa6f24022b6b7f8daed50505516a309",
+  "artifact_id": 11140824498,
+  "artifact_name": "nanoclaw-system-chassis-mount-probe-36815873223",
+  "artifact_sha256": "31d445221495a05f1d86699dfd627c1a32e0a02408d3933fe0c235a55bcc98ea",
+  "junit_file": "nanoclaw-system-chassis-junit.xml",
+  "junit_sha256": "75773862af56f01d22121a9bdd39ec483ef1ae72253bb169eaee9a8b4d37dc74",
+  "junit_summary": {
+    "tests": 7,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "test_cases": [
+    "keeps role state writable only through that role container mount",
+    "retains each group state root across a driver stop and prepare cycle",
+    "resolves role-scoped chat sessions and blocks unregistered native cross-role sends",
+    "keeps scheduled-task ownership and task-session creation within the profile role",
+    "delivers typed Anna/Apollo requests to NAIA for receiver-side reauthorization",
+    "keeps synthetic identity material in the per-session auxiliary container",
+    "realizes one role-scoped state source per container and no host secret mounts"
+  ],
+  "profile_sha256": "c6e815289488daace646e7d9123b2638c6f245eaf4ef4dff357d6b3c50c1d289",
+  "policy_sha256": "02de0f5540c1c638c0553dc8261cfd0e53ffb4727a0636a50a4653d2e15a7132",
+  "scope": "PASS_WITH_SCOPE for the seven executed assertions in the exact-pin test harness only. This is not proof of the Atento production host/provider runtime, durable task retry after host-process restart, or complete qualification.",
+  "repetition": "This artifact was retrieved and hashed for evidence preservation; no test was rerun.",
+  "artifact_expires_at": "2026-12-30T04:36:05Z"
+}
