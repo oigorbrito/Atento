@@ -1053,3 +1053,31 @@ COMMON_ATENTO_SYS_TOOL_01 = BLOCKED_ADAPTER
 ```
 
 The Clawix failure is a concrete negative for the tested shared-session composition. It does not establish that separate-session mode fails. Existing candidate-specific filters are useful signals but do not close a common three-role assertion. The Atento host/runtime adapter needed to make the same A→B denial observable is still absent; do not create it only to unlock this test.
+
+
+## SYS-CRED-01 credential/provider evidence catch-up — 2026-10-02
+
+Reuse the component evidence below; no real credentials, provider calls, or equivalent tests were used in this block. The common property is that a secret granted only to role B is absent from role A's environment, files, arguments, logs, model-visible context, and provider request while B retains its own authorized path.
+
+| Candidate / exact pin | Reusable evidence | Scope and disposition |
+|---|---|---|
+| NanoClaw — `nanocoai/nanoclaw@4c1eabd3ddd74cc3d71b1871da857391a9411c8d` | Role-unique synthetic identities were mounted per auxiliary container in the prior 7/7 profile probe. | `PASS_WITH_SCOPE` for synthetic identity mount separation only; no provider/gateway credential custody proof. |
+| AI Butler — `LumabyteCo/aibutler@c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c` | Credential/provider slice not advanced; current pin is blocked on its recorded security scan. | `BLOCK_CURRENT_PIN_ON_SECURITY`. |
+| OpenClaw — `openclaw/openclaw@e9571d77e76bd6d35996273d9e8398ad539b26e1` | SYS-MEM manager probe used no provider/vector and did not exercise gateway credential custody. | `NOT_TESTED` for role-bound provider secrets. |
+| QwenPaw — `agentscope-ai/QwenPaw@777441721aa72db8e380d90e4d0481b05cbfd4cc` | Existing exact-pin test selected each agent's personal provider using a mock; no HTTP request was sent. | `PASS_WITH_SCOPE` for configuration selection only; not secret invisibility at the provider boundary. |
+| MindRoom — `mindroom-ai/mindroom@4f3bd2d108a6f9be28174e0f66d78eeecddca386` | No role-level provider credential boundary was demonstrated. | `NOT_TESTED`; MindRoom remains paused. |
+| Bob Labs — `boblabs-eu/boblabs@a91d6dad098c8ba6d24436a856556078151db45d` | Existing 21 HMAC/lab-binding unit assertions cover secret-binding components. | `PASS_WITH_SCOPE` for component signing/binding; no middleware/container/provider delivery proof. |
+| Ontheia — `Ontheia/ontheia@70802db61eb16533f55efce3d8785d810223d03b` | Existing tests check absent secrets are excluded and configured secret values are masked. | `PASS_WITH_SCOPE` for resolver/redaction paths; no cross-role provider request. |
+| OpenAkita — `openakita/openakita@5f5b38da728274f0fd06461a481851be7c0bca6a` | Existing exact-pin test checks redaction from diagnostic export. | `PASS_WITH_SCOPE` for export redaction; no provider-bound role-isolation proof. |
+| Clawix — `ClawixAI/clawix@5aee015e0bd793102fba69af486dd6e75df6d802` | No role-bound provider secret result recorded. | `NOT_TESTED`. |
+| Memoh — `felinics/Memoh@3d60a08aa42fdcddb218401699822741b51b52ad` | The current memory tests did not examine provider credentials. | `NOT_TESTED`. |
+| Letta Code — `letta-ai/letta-code@21daa38a8cdd74f2d03b634c8312253080bacfc1` | The current memory-guard suite did not inspect provider secret injection or custody. | `NOT_TESTED`. |
+
+```text
+ROLE_LEVEL_PROVIDER_CREDENTIAL_CUSTODY = NOT_ESTABLISHED_FOR_ALL
+REAL_CREDENTIALS_USED = 0
+REAL_PROVIDER_CALLS = 0
+COMMON_ATENTO_SYS_CRED_01 = BLOCKED_ADAPTER
+```
+
+Component secret handling is not equivalent to secret isolation by Atento role. The same candidate-neutral host/runtime seam is still required to prove that a role-B-only secret never reaches role A's process or model while B can use it. No adapter was invented to open this assertion.
