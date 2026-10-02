@@ -1081,3 +1081,37 @@ COMMON_ATENTO_SYS_CRED_01 = BLOCKED_ADAPTER
 ```
 
 Component secret handling is not equivalent to secret isolation by Atento role. The same candidate-neutral host/runtime seam is still required to prove that a role-B-only secret never reaches role A's process or model while B can use it. No adapter was invented to open this assertion.
+
+
+
+## SYS-REL-01 reliability/recovery catch-up — 2026-10-02
+
+This block reuses the frozen-pin CI, component probes, and previously recorded Atento runs. No equivalent suite, benchmark, replay test, or recovery test was rerun. Candidate lifecycle evidence is kept separate from the common role-bound Atento assertion.
+
+| Candidate / exact pin | Reusable reliability or background evidence | Scoped disposition for this block |
+|---|---|---|
+| NanoClaw — `nanocoai/nanoclaw@4c1eabd3ddd74cc3d71b1871da857391a9411c8d` | Exact-pin CI (513 passed, 0 failed, 3 skipped) includes claim/incarnation, failed stop/release, host replacement, bounded persisted delivery attempts across restart, container restart and orphan paths. Prior Atento hosted run 36815873223 passed 7/7 with scope. Prior raw-webhook SSE replay after SIGKILL/restart reused SQLite and the same port; synthetic unknown token returned 401. None ran an Atento role-owned scheduled task through host restart and terminal retry. | `PARTIAL_PASS_WITH_SCOPE` for candidate lifecycle and raw-webhook replay. `BLOCKED_ADAPTER` for task retry under integrated Atento host. Reuse; do not repeat. |
+| AI Butler — `LumabyteCo/aibutler@c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c` | Exact-pin race CI run 28973914814 passed, including internal/schedule; `TestTickUsesScopedCapabilities` checks scoped schedule capability behavior. Later scheduled scan 36426287353 found seven reachable advisories. | `PASS_WITH_SCOPE` for the narrow scheduler assertion only; `BLOCK_CURRENT_PIN_ON_SECURITY` independently. No recovery requalification on the unchanged pin. |
+| OpenClaw — `openclaw/openclaw@e9571d77e76bd6d35996273d9e8398ad539b26e1` | Previously recorded exact-pin replay probe: after SIGKILL, server rebound on the same port within 5s, reused SQLite state, and replayed the per-agent SSE event; unknown synthetic token received HTTP 401. One successful replay case. | `PASS_WITH_SCOPE` for raw-webhook SSE replay only. Scheduled task retry, real authentication, provider/gateway, and Atento host recovery remain `NOT_TESTED`. |
+| QwenPaw — `agentscope-ai/QwenPaw@777441721aa72db8e380d90e4d0481b05cbfd4cc` | Existing exact-pin cron probe with no explicit configuration produced `approval_level=off`; static/runtime audit also identifies sandbox-unavailable fallback that can broaden authority, incomplete main-test evidence, and a failed full nightly. | `FAIL_WITH_SCOPE` for the permissive default-cron authority path; hold other restart/recovery claims until fail-closed behavior and passing frozen-pin runtime evidence exist. |
+| MindRoom — `mindroom-ai/mindroom@4f3bd2d108a6f9be28174e0f66d78eeecddca386` | Existing worker/memory evidence is harness-scoped; no comparable role-bound host restart/retry result is recorded. MindRoom remains paused per the cohort order. | `NOT_TESTED` for restart/recovery; do not advance or repeat while the other active alternatives catch up. |
+| Bob Labs — `boblabs-eu/boblabs@a91d6dad098c8ba6d24436a856556078151db45d` | Official test runner requires Docker and `bob-manager-bob-api:latest`; this executor lacks Docker/Podman and the image. The test body did not start. | `BLOCKED_ENVIRONMENT`; no candidate failure or recovery pass. |
+| Ontheia — `Ontheia/ontheia@70802db61eb16533f55efce3d8785d810223d03b` | Existing exact-pin recovery probe recorded a one-shot `run_at` post-claim failure path. Other namespace/helper evidence belongs to the memory slice and is not recovery evidence. | `FAIL_WITH_SCOPE` for the tested one-shot post-claim recovery path; do not generalize to recurring jobs or the entire candidate. |
+| OpenAkita — `openakita/openakita@5f5b38da728274f0fd06461a481851be7c0bca6a` | Existing exact-pin scheduler probe supplied an unknown synthetic profile ID; scheduler instantiated the default agent, producing role drift. Prior same-user/two-workspace evidence is a separate isolation assertion. | `FAIL_WITH_SCOPE` for scheduler fallback/role drift. A host-side fail-closed composition is possible but absent and untested. |
+| Clawix — `ClawixAI/clawix@5aee015e0bd793102fba69af486dd6e75df6d802` | Recorded negative evidence is approval reuse in a shared parent/sub-agent session; it is a tool-authority result, not restart/recovery proof. No comparable recovery run is recorded. | `NOT_TESTED` for restart/recovery; retain the separate shared-session `FAIL_WITH_SCOPE` under SYS-TOOL-01 only. |
+| Memoh — `felinics/Memoh@3d60a08aa42fdcddb218401699822741b51b52ad` | Existing exact-pin memory scope tests cover fake stores and a PostgreSQL 16 store boundary; they do not induce restart or task retry. | `NOT_TESTED` for restart/recovery. |
+| Letta Code — `letta-ai/letta-code@21daa38a8cdd74f2d03b634c8312253080bacfc1` | Existing 63/63 permission-guard suite covers in-process memory access and symlink cases; it does not exercise process recovery or scheduled task retries. | `NOT_TESTED` for restart/recovery. |
+
+```text
+FIXED_COHORT_SIZE = 11
+RELIABILITY_EVIDENCE = MIXED_SCOPES; NO_AGGREGATE_SCORE
+CANDIDATE_PATH_FAILURES = QWENPAW_DEFAULT_CRON_AUTHORITY, ONTHEIA_RUN_AT_POST_CLAIM, OPENAKITA_UNKNOWN_PROFILE_FALLBACK
+NANOCLAW_CANDIDATE_LIFECYCLE_AND_OPENCLAW_SSE_REPLAY = PASS_WITH_SCOPE
+AI_BUTLER_CURRENT_PIN = BLOCK_CURRENT_PIN_ON_SECURITY
+BLOCKED_ENVIRONMENT_OR_NOT_TESTED = NOT_CANDIDATE_FAILURE
+COMMON_ATENTO_SYS_REL_01 = BLOCKED_ADAPTER
+CANDIDATES_ELIMINATED_FROM_MISSING_EVIDENCE = 0
+EQUIVALENT_TESTS_OR_BENCHMARKS_RERUN = 0
+```
+
+The three scoped failures eliminate only the reproduced paths/configurations, not whole candidate families where a distinct fail-closed composition could address the boundary. Component lifecycle and SSE replay do not prove the common Atento contract. The smallest integrated assertion remains the frozen-handoff task: persist one inert NAIA-owned scheduled task, interrupt the existing host after claim and before terminal ack, restart the same host/store, permit one bounded retry, then verify role ownership, equal-or-narrower grants, and exactly one terminal delivery. Current result: `NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART = BLOCKED_ADAPTER`. Do not build a product adapter just to open it; do not repeat the already-passing 7/7 hosted probe or raw-webhook replay.
