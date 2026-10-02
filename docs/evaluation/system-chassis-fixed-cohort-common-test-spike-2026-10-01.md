@@ -250,3 +250,25 @@ CANDIDATE_ELIMINATION = NONE
 ```
 
 No builtin adapter memory suite was repeated. Continue to the final fixed-cohort slot, Letta Code; no winner is selected.
+
+
+## Continuation — Letta Code Bubblewrap policy gate and cohort correction — 2026-10-02
+
+Frozen pin verified: `letta-ai/letta-code@21daa38a8cdd74f2d03b634c8312253080bacfc1`. The already-run cron and cross-agent memory suites were not repeated. Ran one different focused sandbox-policy file:
+
+```text
+npx --yes bun@1.3.14 test src/sandbox/bwrap.test.ts
+6 passed, 11 assertions
+```
+
+The tests verify argument construction for denied agent-tree masking, restoring only configured self/parent carveouts, readonly root in the write-scoped profile, and the `--die-with-parent` setting. They also explicitly verify that the profile does not unshare network. No Bubblewrap process or kernel boundary was executed; the Letta cross-agent memory suite continues to cover only its in-process guard and explicitly defers shell to the kernel sandbox.
+
+```text
+LETTA_BWRAP_POLICY_CONSTRUCTION = PASS_WITH_SCOPE (6 TESTS)
+LETTA_KERNEL_ENFORCEMENT_AND_NETWORK_ISOLATION = NOT_TESTED_BY_THIS_CASE
+LETTA_ATENTO_ROLE_BOUNDARY = OPEN
+COMMON_ATENTO_PROFILE = BLOCKED_ADAPTER
+CANDIDATE_ELIMINATION = NONE
+```
+
+**Correction to the older queue checkpoint:** the 2026-10-02 entry in the Letta continuation report that said the frozen queue was exhausted and instructed waiting was superseded by the user's clarified comparative goal. It is not the current disposition. The work is now continuing through the fixed 11-candidate cohort, applying each uncovered eliminatory component gate once and preserving candidate-specific scope. At this point Letta is the last ordered cohort slot tested in this continuation; the matrix has not established a winner because common Atento composition remains blocked for the candidates.
