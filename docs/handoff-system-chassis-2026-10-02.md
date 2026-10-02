@@ -6,7 +6,7 @@ Avaliar por gates eliminatórios, com o mesmo denominador e evidência equivalen
 
 - **Chassi comum:** MindRoom é a direção provisória e reversível registrada na PR #59; permanece pausado enquanto os demais candidatos alcançam os gates comparáveis. Não está qualificado para produção.
 - **NAIA:** NanoClaw continua direção provisória da base da NAIA apenas; não é escolha do chassi comum e segue sem qualificação integrada.
-- **Anna:** PR #59 e a instrução explícita mais recente localizada mantêm a base como `NOT_SELECTED`. A frase “Psych escolhida como Anna” aparece em registro de continuidade, mas não foi possível verificar uma mensagem do usuário que a confirme; não tratar Psych como escolhida sem fonte confirmatória.
+- **Anna:** Psych foi escolhida pelo usuário como base de Anna. A PR #59 ainda diz `NOT_SELECTED`; esse texto está em conflito com a decisão e deve ser reconciliado numa edição autorizada própria. Não alterar a PR neste bloco.
 - **Apollo:** pesquisa funcional adiada.
 - **Topologia de produção:** nenhum resultado de teste de componente/fixture prova a composição completa do Atento. Seleção sistêmica final permanece pendente.
 
@@ -72,7 +72,7 @@ Executar um candidato por vez. Sem seam, conservar `BLOCKED_ADAPTER`; não subst
 
 ## Próximo trabalho
 
-1. Anna reconciliada para este handoff: manter `NOT_SELECTED`; a alegação de escolha de Psych não tem confirmação user-sourced disponível.
+1. Anna: Psych está escolhida pelo usuário; a PR #59 ainda diz `NOT_SELECTED`. Preservar a PR e tratar essa reconciliação documental separadamente.
 2. Continuar os mesmos gates eliminatórios nos candidatos ainda elegíveis, um por vez; usar resultados de benchmark já publicados como pontuação do eixo correspondente.
 3. Ao surgir host/adapter executável existente, executar uma única vez o teste de restart/retry acima para cada candidato que chegar a essa etapa.
 4. Só comparar ou escolher chassi comum quando a matriz apresentar evidência comparável suficiente; até lá, MindRoom permanece direção provisória/pausada, NanoClaw permanece direção provisória da NAIA, e nenhum deles é qualificado para produção.
@@ -137,3 +137,19 @@ CANDIDATES_ELIMINATED_FROM_MISSING_EVIDENCE = 0
 ```
 
 The existing Atento host/runtime seam still cannot execute the real scheduled-task path. Preserve the minimal falsifiable restart/retry test already specified above; when an existing seam becomes available, run one candidate at a time and verify original role ownership, equal-or-narrower grants, and exactly one terminal delivery. Do not construct a production adapter solely to open this gate. The next block remains the next comparable frozen-cohort gate; MindRoom stays paused until the cohort catches up.
+
+
+## SYS-COST-01 catch-up — 2026-10-02
+
+A read-only GitHub metadata snapshot recorded current repository `size` for all 11 candidates as a coarse, time-sensitive proxy. These values describe the repositories now, not the frozen pins, source LOC, dependencies installed, deployment images, or runtime hardware needs. Exact-pin LOC and deployment footprint remain unavailable; OpenClaw's current repository size must not be treated as its minimum runtime footprint.
+
+Adaptation cost is not ranked: existing notes locate three candidate-specific failure paths (QwenPaw default cron authority, Ontheia one-shot `run_at` post-claim recovery, OpenAkita unknown-profile scheduler fallback), but do not prove frozen-pin patch scope, dependency/build effects, or a minimal corrective test. The spike records the raw repository-size metadata and the next bounded evidence step.
+
+```text
+EXACT_PIN_SOURCE_SIZE = NOT_AVAILABLE
+ADAPTATION_FIX_COST_RANK = NOT_ESTIMATED
+CANDIDATE_RANKING_OR_SELECTION_CHANGED = NO
+MINDROOM_REMAINS_PAUSED = YES
+```
+
+Next bounded action: inspect those three failing paths at their frozen pins only, define one repair-effort rubric, and retain the current statuses until the patch surface and falsifiable correction are evidenced. Do not edit candidate repos or protected Atento PRs for this audit. Anna's handoff status is Psych selected; PR #59's `NOT_SELECTED` remains a known documentary conflict and is still untouched.
