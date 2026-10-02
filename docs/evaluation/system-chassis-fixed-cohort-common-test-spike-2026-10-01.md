@@ -363,3 +363,30 @@ ATENTO_SYS_MEM_01 = BLOCKED_ADAPTER
 CANDIDATE_ELIMINATION = NONE
 ```
 
+
+
+## Continuação — OpenAkita evidência SYS-MEM reutilizada — 2026-10-02
+
+A busca no pin `openakita/openakita@5f5b38da728274f0fd06461a481851be7c0bca6a` encontrou apenas o teste de isolamento entre dois bot-workspaces já executado nesta rodada:
+
+```text
+tests/unit/test_memory_owner_isolation.py::test_same_user_different_bot_workspaces_do_not_share_memory
+1 passed (recorded previously; not repeated)
+```
+
+Não encontrei um teste distinto de memória cross-agent para acrescentar sem duplicar essa propriedade. O resultado já registrado permanece `PASS_WITH_SCOPE`; processo/host Atento e restart/retry continuam abertos.
+
+## Continuação — Clawix sub-agent approval gate bloqueado no setup — 2026-10-02
+
+No pin `ClawixAI/clawix@5aee015e0bd793102fba69af486dd6e75df6d802`, foi identificado um caso distinto do teste de remoção cross-user de cron já executado: `tool-approval-rendezvous.test.ts::sub-agent gate auto-denies without prompting and writes no memory`. Ele seria um teste unitário da negação fail-closed para sub-agent e da ausência de prompt/gravação de memória.
+
+A tentativa direta pelo Vitest parou na importação do arquivo, antes da coleta/teste: o módulo `../generated/prisma/client.js` não existe no checkout materializado. O binário Prisma também não está disponível para gerar o artefato nesta instalação. O primeiro comando pelo wrapper pnpm ainda falhou no índice SQLite do store padrão; tentar redirecioná-lo não chegou ao Vitest. Nenhum guard foi ignorado, nenhum arquivo rastreado foi alterado e o corpo do teste não executou.
+
+```text
+CLAWIX_SUBAGENT_APPROVAL_FAIL_CLOSED = BLOCKED_ENVIRONMENT/GENERATED_PRISMA_CLIENT_MISSING
+CLAWIX_CROSS_USER_CRON_DELETE_GUARD = PASS_WITH_SCOPE (PREVIOUSLY RECORDED; NOT REPEATED)
+CANDIDATE_FAILURE = NOT_ESTABLISHED
+COMMON_ATENTO_PROFILE = BLOCKED_ADAPTER
+```
+
+Pré-condição para reabrir apenas este teste: materializar dependências de geração travadas e gerar o cliente Prisma do pin, então executar o caso filtrado uma vez. Não equivale ao gate comum Atento de tarefa NAIA após restart.
