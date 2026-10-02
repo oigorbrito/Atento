@@ -1,6 +1,6 @@
 # Atento — Roadmap de Arquitetura e Implementação
 
-> **PRODUCT / DECISION RESET — 2026-09-29:** preservar Project Points, sources, medições, benchmarks e trabalho executado. A decomposição arquitetural e as ordens de execução anteriores estão em reconciliação e não devem ser tratadas como decisões finais. A definição conceitual corrente está em `docs/product-concept-reset.md`.
+> **PRODUCT / DECISION RESET — 2026-09-29; reconciliado em 2026-10-02:** preservar Project Points, sources, medições, benchmarks e trabalho executado. A decomposição arquitetural e as ordens de execução anteriores são registros históricos quando marcadas como tal. A definição conceitual corrente está em `docs/product-concept-reset.md`; a direção provisória do chassi comum está em `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`.
 
 ## 0. Contrato deste documento
 
@@ -14,7 +14,7 @@ Este arquivo é a fonte canônica para:
 - progresso global do projeto;
 - source mapping arquitetural.
 
-Durante o `DECISION_RESET`, a identidade do produto e a divisão NAIA/Anna/Apollo são definidas provisoriamente em `docs/product-concept-reset.md`.
+Durante o `DECISION_RESET`, a identidade do produto e a divisão NAIA/Anna/Apollo são definidas provisoriamente em `docs/product-concept-reset.md`. **Atualização 2026-10-02:** MindRoom foi escolhido para avançar como implementação reversível do chassi comum; isso não encerra qualificação nem altera as bases por papel.
 
 Este arquivo **não** é a fonte canônica para:
 
@@ -37,11 +37,11 @@ O Atento é o repositório canônico do produto composto por três agentes espec
 2. **Anna:** assistente emocional/terapêutica;
 3. **Apollo:** nutrição/personal trainer, adiado neste momento.
 
-Os agentes devem ter forte isolamento de chat, memória, ferramentas e autoridade. A topologia concreta de integração/handoff ainda não está selecionada.
+Os agentes devem ter forte isolamento de chat, memória, ferramentas e autoridade. A direção de implementação do chassi comum é MindRoom, registrada em ADR-SYS-001; a composição completa, integração/handoff e qualificação continuam abertas.
 
 A arquitetura A–S abaixo nasceu principalmente da trilha emocional/terapêutica e continua valiosa como inventário técnico, source mapping e evidência. Ela **não deve ser presumida como decomposição final de todo o produto** até a reconciliação terminar.
 
-**Atualização de escopo — 2026-09-30:** a primeira métrica de seleção é agora avaliada sobre o chassi/arquitetura do Atento completo (NAIA, Anna e fronteira futura do Apollo). As triagens de Gate 1 e Top 5 da NAIA continuam válidas somente por agente. O registro sistêmico e sua nova varredura no GitHub estão em `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`; a topologia integrada ainda não está selecionada.
+**Atualização 2026-09-30 (histórica):** a primeira métrica de seleção passou a ser avaliada sobre o chassi/arquitetura completa do Atento. As triagens de Gate 1 e Top 5 da NAIA continuam válidas somente por agente. **Reconciliação 2026-10-02:** MindRoom é a direção provisória para implementar o chassi comum, sem qualificação sistêmica; veja `docs/adr/ADR-SYS-001-common-chassis-mindroom.md` e `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`.
 
 As decisões de chassis serão refeitas por categorias equivalentes:
 
@@ -2062,16 +2062,15 @@ O Atento será arquiteturalmente bem-sucedido quando conseguir demonstrar, com a
 
 ## Próximo passo
 
-**Re-screen da arquitetura/chassi do Atento completo antes de qualquer seleção sistêmica.**
+**Implementar o seam reversível de MindRoom para os três domínios e avançar pelos gates sistêmicos pendentes.**
 
-Registro canônico: `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`.
+Direção e limites: `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`. Evidência de rescreen: `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`.
 
-1. preservar todas as medições anteriores e aplicar cada resultado somente ao escopo/agente e pin a que pertence;
-2. comparar três alternativas ainda abertas: plataforma multiagente integrada, chassis especializados compostos por um broker/controle do Atento, ou solução híbrida;
-3. reconciliar o universo anterior de bases da NAIA e Anna com a nova varredura de plataformas sistêmicas; Apollo mantém sua fronteira no contrato, mas sua pesquisa funcional continua `DEFERRED`;
-4. pinçar candidatos antes de avaliação; reutilizar testes exatos transferíveis e executar apenas deltas materiais;
-5. testar isolamento entre chats, memória, credenciais, ferramentas, scheduler/recovery e handoffs mínimos entre os três domínios;
-6. medir custo total de adaptação e manutenção em composições comparáveis antes de qualquer Top 5, shortlist ou escolha de base.
+1. preservar medições anteriores e aplicar cada resultado somente ao escopo/agente e pin a que pertence;
+2. manter NanoClaw como direção provisória de base da NAIA; Anna continua sem base selecionada; Apollo continua adiado;
+3. implementar a composição experimental de MindRoom com `user_agent` e workers dedicados, mantendo teste e código reversíveis;
+4. fechar gates de identidade/estado, memória, credenciais, ferramentas, handoff explícito, scheduler e recovery, incluindo retry/restart;
+5. medir custo de adaptação e manutenção na composição real antes de qualquer qualificação para produção.
 
-A varredura de discovery não cria Project Points de implementação e não altera o progresso `3/100`. Nenhum chassi sistêmico recebe prioridade, seleção ou promoção sem evidência comparável e gates aprovados.
+A decisão de direção e a documentação não criam Project Points de implementação e não alteram o progresso `3/100`. MindRoom é escolhido para avançar, não declarado vencedor qualificado.
 
