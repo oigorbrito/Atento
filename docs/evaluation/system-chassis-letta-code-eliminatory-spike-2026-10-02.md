@@ -104,3 +104,20 @@ CANDIDATE_ELIMINATION = NONE
 ```
 
 This adds scoped candidate evidence for the memory gate; it does not satisfy the common Atento SYS-MEM-01 composition assertion. No previously recorded NanoClaw, Memoh, 7/7, SSE replay, or Letta cron test was repeated.
+
+
+## Superseding cohort continuation checkpoint — 2026-10-02
+
+This section supersedes the earlier paragraph above that declared `NEXT_CANDIDATE_IN_FROZEN_COHORT = NONE` and said to wait. The user clarified that the governing goal is to run comparable eliminatory gates across every candidate not already technically eliminated, then choose only after the matrix is complete. We resumed the fixed cohort from the recorded checkpoint and have since run one scoped, exact-pin component gate each for QwenPaw, MindRoom, Bob Labs, Ontheia, OpenAkita, and Clawix, plus this distinct Letta Bubblewrap policy-construction gate. Outcomes and limits are recorded chronologically in `docs/evaluation/system-chassis-fixed-cohort-common-test-spike-2026-10-01.md`.
+
+Letta result: `src/sandbox/bwrap.test.ts` passed 6 tests / 11 assertions on Bun 1.3.14. This verifies construction of Bubblewrap args (including denied-root masking, scoped carveouts, and die-with-parent) but does not launch Bubblewrap or prove kernel enforcement. Previously run Letta cron and cross-agent memory suites were not repeated.
+
+```text
+LETTA_BWRAP_POLICY_CONSTRUCTION = PASS_WITH_SCOPE
+FIXED_COHORT_COMPONENT_GATES = CONTINUED_AFTER_LETTA
+COMMON_ATENTO_NAIA_OWNERSHIP_AFTER_RESTART_RETRY = BLOCKED_ADAPTER
+FINAL_CANDIDATE_SELECTION = NOT_MADE
+PR_58 = UNMODIFIED
+```
+
+Continue the comparative gate matrix; do not treat the earlier queue-exhausted wording as current. No production runtime was added to unblock the test.
