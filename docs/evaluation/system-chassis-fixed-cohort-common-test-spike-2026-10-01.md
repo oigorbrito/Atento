@@ -876,3 +876,24 @@ The smallest falsifiable candidate-level probe is the same marker read-denial ab
 The smallest falsifiable common Atento test remains: after an executable Atento host seam exists, assign two synthetic role identities, write a private marker for B, request it as A through the actual role-bound API/tool, assert denial and no marker in response/traces, then verify B's positive read. Do not create a production adapter just to unlock this gate. Until candidate-specific harness prerequisites and the common host seam are available, all three remain unresolved on this property; no comparative score or elimination is supported.
 
 No candidate checkout was left modified. PR #58 was inspected at e948f344b91e20e655399b11300c439228d144ec and not changed. This addendum is only on the disposable branch.
+
+## Supplemental alternates — private memory marker gate — 2026-10-02
+
+After the supplemental top-three candidates could not reach an equivalent test in this runner, two alternates were probed in the documented order. The same bounded property was used: store a synthetic private marker under role B's identifier; ensure role A cannot retrieve it and role B can; no provider or model call.
+
+| Candidate / pin | Result | Scope and limits |
+|---|---|---|
+| HybridClaw — HybridAIOne/hybridclaw@b9378588f9f9666355fc5431a7b1f5292aaa93c0 | PASS_WITH_SCOPE — one disposable test, two assertions. After the exact pin's npm-shrinkwrap dependencies were installed with Node 22 / npm 11.10.0, production setMemoryValue/getMemoryValue used a real temporary SQLite database. The Anna-keyed marker was returned for Anna and null for NAIA. | The API parameter is a synthetic key stored in kv_store.agent_id; this did not run a HostExecutor turn or prove Atento role identity is bound to that key. The first test attempt failed before assertions because better-sqlite3 had Node 24 ABI; after rebuilding that native dependency under Node 22, the single probe passed. Temporary test removed. |
+| Hivekeep — MarlBurroW/hivekeep@7d023c952e46861070683825ff545daf981910f0 | PASS_WITH_SCOPE — one disposable test, three assertions. With Bun 1.3.13 from the exact-pin CI and frozen bun.lock dependencies, real temporary SQLite migrations/schema and production memory service listMemories/getMemory were used. Anna listed only Anna's row, could not fetch NAIA's row, and could fetch her own. | Synthetic agent IDs; rows were inserted directly through Drizzle, no provider/model/runtime or external API authorization. This is a service/storage boundary, not Atento integration. Temporary test and DB removed. The existing memory.test.ts private-filter example reimplements a filter over arrays and was not counted or rerun. |
+| OpenVole — openvole/openvole@c8b405f4933a5ee0a1cb7725cf4c8a31cd24d732 | NOT_RUN for this memory gate. | The closest existing scoped-file tests bind project IDs, not persistent agent/role identity. Counting their pass as cross-role memory evidence would change the assertion. No test was run. |
+
+```text
+HYBRIDCLAW_PRIVATE_KV_KEY_ISOLATION = PASS_WITH_SCOPE
+HIVEKEEP_PRIVATE_MEMORY_SERVICE_ISOLATION = PASS_WITH_SCOPE
+OPENVOLE_ROLE_PRIVATE_MEMORY_ASSERTION = OPEN
+COMMON_ATENTO_SYS_MEM_01 = BLOCKED_ADAPTER
+NEW_SYSTEM_CANDIDATE_ELIMINATIONS = 0
+BENCHMARKS_RERUN = 0
+```
+
+These two passes establish scoped component behavior only. They do not close SYS-MEM-01 for a complete Atento composition: the host must bind NAIA/Anna/Apollo identity to each candidate's private key/path and prove denial through the actual role-bound runtime. MindRoom remains paused as directed until comparable component gates have been applied to the active alternatives; NanoClaw's previously approved tests and benchmarks were reused, not repeated.
