@@ -210,3 +210,18 @@ No candidate selection changed. Continue only with the next same-gate evidence t
 Retrieved the existing GitHub Actions artifact (artifact ID `11140824498`) and preserved its original JUnit plus a provenance receipt at [`docs/evaluation/evidence/nanoclaw-hosted-36815873223/`](evaluation/evidence/nanoclaw-hosted-36815873223/). The JUnit records 7 tests, 0 failures, 0 errors, and 0 skipped at the exact NanoClaw pin and Atento profile/policy hashes recorded in the receipt. ZIP SHA-256: `31d445221495a05f1d86699dfd627c1a32e0a02408d3933fe0c235a55bcc98ea`; extracted JUnit SHA-256: `75773862af56f01d22121a9bdd39ec483ef1ae72253bb169eaee9a8b4d37dc74`.
 
 This is evidence preservation and read-only inspection; no test was rerun. Keep the existing `PASS_WITH_SCOPE` for the seven harness assertions. It does not prove production host/provider wiring or role-bound task retry after host-process restart; that gate remains `BLOCKED_ADAPTER`.
+
+
+## AI Butler exact-pin retry CI reuse — 2026-10-03
+
+At exact pin `LumabyteCo/aibutler@c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c`, the existing upstream CI run [28973914814](https://github.com/LumabyteCo/aibutler/actions/runs/28973914814) completed successfully. Its `Test (race detector)` job ran `go test ./... -race -count=1 -timeout=10m`; the exact-pin source includes `TestRunWithRetry_FailThenSucceed` and `TestRecoverMissed` in `internal/schedule/reliability_test.go`. Reused as scoped component evidence; no test was rerun here.
+
+Scope: these cover in-process retry and missed-schedule recovery. They do not cover host-process restart after claim, durable Atento role binding/grants, or exactly-one terminal delivery. The latest exact-pin scheduled security run [36426287353](https://github.com/LumabyteCo/aibutler/actions/runs/36426287353) failed, so AI Butler remains security-blocked at this pin. `NAIA_HOST_PROCESS_TASK_RETRY_AFTER_RESTART` and common Atento integration remain `BLOCKED_ADAPTER`.
+
+```text
+AIBUTLER_RETRY_TESTS = UPSTREAM_CI_PASS_WITH_SCOPE
+EXACT_PIN_CI_RUN = 28973914814
+TESTS_RERUN_HERE = 0
+AIBUTLER_PIN_SECURITY_STATUS = BLOCKED
+ATENTO_HOST_RESTART_RETRY_PROOF = NOT_ESTABLISHED
+```
