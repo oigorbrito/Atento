@@ -107,3 +107,13 @@ Count failed/blocked infrastructure as `INVALID/BLOCKED` rather than candidate f
 - AgentBalance: https://arxiv.org/abs/2512.11426
 - Efficient Agents: https://arxiv.org/abs/2508.02694
 
+
+
+## Subsequent evidence update — 2026-10-03
+
+The 2026-09-30 benchmark cross-check above is a dated snapshot. A later hosted NanoClaw profile-derived three-role probe is recorded in [the Gate-2 continuation](system-chassis-gate2-continuation-2026-10-01.md): 7/7 harness tests passed, with the mapped system assertions classified `PASS_WITH_SCOPE`. The full system profile gate remains `NOT_PASSED`; product wiring, provider/model decision behavior, host restart, and three-role scheduled-task fire/retry/recovery remain outside that probe.
+
+AI Butler's later NAIA–Anna Gate-2 run passed 6/6 common assertions with scope, while the exact tested pin remains blocked by a separate security workflow failure. Neither result is a comparable full-system selection run. No comparable total-cost vectors or cross-candidate CFS results exist for the current system cohort.
+
+Current adjudication: **no candidate is eligible for cost ranking and no system chassis winner is established**. NanoClaw is the next residual-probe priority, not the selected chassis. The operational scorecard and evidence matrix are in [the system chassis selection metric](system-chassis-selection-metric-2026-10-02.md).
+
