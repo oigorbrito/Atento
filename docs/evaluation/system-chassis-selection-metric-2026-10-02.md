@@ -78,13 +78,22 @@ Only one current-cohort-like numerical CFS result was located: PsyChat at 10/100
 
 ### Existing evidence against the system eligibility gate
 
-| Candidate / evidence | Observed result | Eligibility interpretation |
-|---|---|---|
-| NanoClaw exact pin, system-profile-derived three-role hosted probe | 7/7 harness tests passed; the eight mapped SYS assertions are recorded as `PASS_WITH_SCOPE`. The harness uses an Atento reference broker and candidate mailbox/CLI seams; full product wiring, model/provider decisions, host restart, and three-role task fire/retry/recovery remain untested. | `NOT_ELIGIBLE_YET`: the system profile gate is explicitly `NOT_PASSED`; passing this bounded probe is not a complete hard-gate pass. |
-| AI Butler exact pin, NAIA–Anna Gate 2 | 6/6 common isolation assertions passed with scope, including an explicit runtime broker path. The full three-role system was not exercised; the same frozen candidate pin has a separate scheduled security scan failure with seven reachable advisories. | `BLOCKED_FOR_CURRENT_PIN`; not eligible for ranking. A repaired, refrozen pin would need requalification. |
-| Other current system-chassis candidates | Upstream/source evidence varies by candidate and protocol; no equivalent accepted full-profile Atento composition run is recorded in the reviewed evidence. | `UNRESOLVED`, not a failure and not eligible for cost ranking. |
+This matrix reuses the pinned first-sieve and Gate-2 records; it is not a fresh scan or a newly executed common suite.
 
-No comparable complete-composition adaptation/operation/maintenance cost vectors were found. The existing runs therefore do not satisfy either side of the selection rule: no candidate closes all mandatory hard gates, and no eligible candidates have comparable total-cost measurements.
+| Current system candidate | Comparable CFS | Atento composition / blocking evidence | Cost | Current disposition |
+|---|---|---|---|---|
+| NanoClaw | `NOT_SCORED` | Three-role profile-derived probe: 7/7 harness tests pass; mapped SYS assertions are `PASS_WITH_SCOPE`; full system gate is `NOT_PASSED`. | Not measured comparably | Next residual probe; not eligible yet |
+| AI Butler | `NOT_SCORED` | NAIA–Anna Gate 2: 6/6 common assertions `PASS_WITH_SCOPE`; exact tested pin has a separate scheduled security failure with seven reachable advisories. | Not measured comparably | Current pin blocked by security; requalify only on a repaired/refrozen pin |
+| OpenClaw | `NOT_SCORED` | No matched three-role Atento run; strict role boundary requires separate runtime/Gateway composition, then isolation and recovery probes. | Not measured comparably | Unresolved / hold for composed proof |
+| QwenPaw | `NOT_SCORED` | No matched three-role Atento run; audited sandbox-unavailable fallback can fail open and cron authority needs hardening. | Not measured comparably | Current profile blocked pending fail-closed proof |
+| MindRoom | `NOT_SCORED` | No matched three-role Atento run; audited filesystem isolation is backend-dependent and incomplete on shared-runner/local paths. | Not measured comparably | Unresolved |
+| Bob Labs | `NOT_SCORED` | Test definitions inspected but no hosted run found for the exact pin; Atento role-boundary mapping not demonstrated. | Not measured comparably | Unresolved |
+| Ontheia | `NOT_SCORED` | Exact-pin host/WebUI CI passed; Atento agent/domain isolation and role mapping were not demonstrated. | Not measured comparably | Unresolved |
+| OpenAkita | `NOT_SCORED` | Exact-pin build passed; Python/unit/integration/smoke/E2E jobs were skipped; Atento multi-role isolation not demonstrated. | Not measured comparably | Unresolved |
+| Clawix | `NOT_SCORED` | Exact-pin lint/typecheck/test CI passed; reviewed tests use mocks and do not demonstrate Atento end-to-end role authorization. | Not measured comparably | Unresolved |
+| Memoh | `NOT_SCORED` | No exact source commit frozen in the reviewed first-sieve record. | Not measured comparably | Pin required before qualification |
+
+No current system candidate has a same-protocol CFS, and no candidate closes all mandatory Atento composition gates. Among the ten, zero are eligible for cost ranking. The prior PsyChat 10/100 CFS belongs to a different Anna/RAG donor scope and is excluded. The historical Letta result remains scaffold-only and outside this current cohort.
 
 ### Adjudication
 
