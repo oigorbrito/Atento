@@ -1,6 +1,6 @@
 # ADR-ANNA-001 — Seleção do sistema-base da Anna
 
-> **Reconciliado 2026-10-02:** a direção indicada pelo usuário para a base funcional da Anna é PsychAgent. Isso não encerra auditoria de termos, integração, segurança, pt-BR ou qualificação. Evidências e avaliações deste arquivo continuam sendo registros por pin.
+> **Reconciliado 2026-10-02:** a direção indicada pelo usuário para a base funcional da Anna é PsychAgent. Isso não encerra auditoria de termos, integração, segurança, pt-BR ou qualificação. Evidências e avaliações deste arquivo continuam sendo registros por pin. Campos `NOT_SELECTED` em snapshots datados abaixo registram o estado histórico anterior a esta indicação; não anulam o status corrente desta ADR.
 
 ## Document contract
 
