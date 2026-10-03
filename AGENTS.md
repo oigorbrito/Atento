@@ -1,6 +1,8 @@
 # AGENTS.md — Regras de Engenharia do Atento
 
-> **Reconciliação 2026-10-03:** decisões de chassi ficam em ADR-SYS-001; bases funcionais ficam nas ADRs por agente. Não promover direção do usuário ou evidência parcial a qualificação.\n\nEste arquivo define como agentes de código, copilotos e contribuidores automatizados devem trabalhar neste repositório.
+> **Reconciliação 2026-10-02:** decisões de chassi ficam em ADR-SYS-001; bases funcionais ficam nas ADRs por agente. Não promover direção do usuário ou evidência parcial a qualificação.
+
+Este arquivo define como agentes de código, copilotos e contribuidores automatizados devem trabalhar neste repositório.
 
 O objetivo é manter o Atento **arquiteturalmente defensável, auditável, reproduzível e seguro**.
 
@@ -1215,4 +1217,8 @@ problema
 ```
 
 Se essa cadeia estiver quebrada, a implementação ainda não é defensável.
-\n\n## 7.1 Contacto mínimo entre agentes de produto\n\nNAIA, Anna e Apollo não compartilham histórico, memória persistente, credenciais, ferramentas ou autoridade de background por padrão. Handoff ou lembrete exige pedido explícito do usuário, payload tipado mínimo, provenance, autorização do destinatário, auditoria e deduplicação. Leitura do histórico de outro agente exige pedido explícito e acesso limitado a trecho/resumo necessário; nunca é acesso contínuo. A especificação normativa e os gates estão em `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`.\n
+
+
+## 7.1 Contacto mínimo entre agentes de produto
+
+NAIA, Anna e Apollo não compartilham histórico, memória persistente, credenciais, ferramentas ou autoridade de background por padrão. Handoff ou lembrete exige pedido explícito do usuário, payload tipado mínimo, provenance, autorização do destinatário, auditoria e deduplicação. Leitura do histórico de outro agente exige pedido explícito e acesso limitado a trecho/resumo necessário; nunca é acesso contínuo. A especificação normativa e os gates estão em `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`.
