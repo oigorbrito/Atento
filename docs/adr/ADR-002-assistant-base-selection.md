@@ -1050,11 +1050,11 @@ A future Gate-2 candidate PASS requires both candidate-specific composition evid
 
 NanoClaw at `nanocoai/nanoclaw@4c1eabd3ddd74cc3d71b1871da857391a9411c8d` remains the provisional base direction already selected for advancing NAIA. The historical `NOT_SELECTED` and reset statements above describe their dated evaluation snapshots and are superseded only for the current implementation direction; they are not system-level or production-qualification results.
 
-The shared product chassis is a separate decision: MindRoom is the reversible implementation target for the common NAIA/Anna/Apollo chassis under [ADR-SYS-001](ADR-SYS-001-common-chassis-mindroom.md). This does not change Anna's base (`NOT_SELECTED`) or Apollo's deferred base research. NanoClaw is not being promoted as the common chassis.
+The shared product chassis is a separate decision: there is no selected common runtime; MindRoom is the next candidate to validate under [ADR-SYS-001](ADR-SYS-001-common-chassis-mindroom.md). Anna's user-directed base candidate is PsychAgent, qualification pending; Apollo remains deferred. NanoClaw is not being promoted as the common chassis.
 
 ```text
 NAIA_BASE_DIRECTION = NANOCLAW (PROVISIONAL_IMPLEMENTATION; NOT_QUALIFIED)
 SYSTEM_COMMON_CHASSIS = MINDROOM (PROVISIONAL_IMPLEMENTATION; NOT_QUALIFIED)
-ANNA_BASE = NOT_SELECTED
+ANNA_BASE_DIRECTION = PSYCHAGENT (USER_DIRECTED; NOT_QUALIFIED)
 APOLLO_BASE_RESEARCH = DEFERRED
 ```
