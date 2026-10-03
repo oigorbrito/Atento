@@ -101,7 +101,7 @@ A regra de engenharia é preservar capacidade funcional comprovada e comparar o 
 
 ### Source Registry
 
-> **DECISION RESET (reconciliado 2026-10-02):** este registry preserva fontes, pins e uso histórico/possível. Labels como candidato ou donor não equivalem a qualificação. Direções atuais: MindRoom como implementação reversível do chassi comum; NanoClaw como base provisória da NAIA; PsychAgent é direção escolhida pelo usuário para Anna, qualificação pendente; Apollo adiado. Decisões sistêmicas estão em `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`.
+> **DECISION RESET (reconciliado 2026-10-02):** este registry preserva fontes, pins e uso histórico/possível. Labels como candidato ou donor não equivalem a qualificação. Direções atuais: MindRoom como candidato ao teste do chassi comum, sem vencedor; NanoClaw como base provisória da NAIA; PsychAgent é direção escolhida pelo usuário para Anna, qualificação pendente; Apollo adiado. Decisões sistêmicas estão em `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`.
 
 #### SRC-PA — PsychAgent
 - **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
@@ -2072,5 +2072,5 @@ Direção e limites: `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`. Evidênc
 4. fechar gates de identidade/estado, memória, credenciais, ferramentas, handoff explícito, scheduler e recovery, incluindo retry/restart;
 5. medir custo de adaptação e manutenção na composição real antes de qualquer qualificação para produção.
 
-A decisão de direção e a documentação não criam Project Points de implementação e não alteram o progresso `3/100`. MindRoom é escolhido para avançar, não declarado vencedor qualificado.
+A decisão de direção e a documentação não criam Project Points de implementação e não alteram o progresso `3/100`. MindRoom é o candidato do próximo teste, não um vencedor declarado.
 
