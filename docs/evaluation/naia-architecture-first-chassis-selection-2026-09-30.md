@@ -310,6 +310,7 @@ The five named candidates are prioritized for the next comparable cost measureme
 The Top 5 cohort does not replace the blocked Gate-2 execution queue. AI Butler remains the next residual composition target under that queue; execution is still blocked before checkout by executor infrastructure. When execution is restored, collect comparable maintenance-cost observations during the same frozen composition protocol, without treating a blocked run as candidate failure.
 
 
+System-wide selection threshold and cost accounting are defined separately in [`system-chassis-selection-metric-2026-10-02.md`](system-chassis-selection-metric-2026-10-02.md). This NAIA-role policy does not establish the eligibility or ranking of a complete NAIA/Anna/Apollo composition.
 ## Scope boundary after the system-level rescreen (2026-09-30)
 
 This procedure and its completed Gate-1 screen evaluate **candidate bases for the NAIA role**. They are not the full Atento system-chassis decision and cannot establish that one candidate supports NAIA, Anna, and Apollo as an integrated product.
