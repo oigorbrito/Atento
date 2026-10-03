@@ -101,8 +101,8 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
       };
     };
     expect(profile.upstream_repo).toBe('nanocoai/nanoclaw');
-    expect(profile.upstream_sha).toBe('4c1eabd3ddd74cc3d71b1871da857391a9411c8d');
-    expect(profile.profile_hash).toBe('c6e815289488daace646e7d9123b2638c6f245eaf4ef4dff357d6b3c50c1d289');
+    expect(profile.upstream_sha).toBe('6906434bcb13eaeca1a6d8b461a1f2c22e53359f');
+    expect(profile.profile_hash).toBe('bd41958e55f68ef2e06a8d5c285df6ea5a491a34a2244948a049477da522c2f5');
     expect(profile.policy_hash).toBe('02de0f5540c1c638c0553dc8261cfd0e53ffb4727a0636a50a4653d2e15a7132');
     expect(profile.topology.roles.NAIA.agent_group).toBe('atento-naia');
     expect(profile.topology.roles.Anna.agent_group).toBe('atento-anna');

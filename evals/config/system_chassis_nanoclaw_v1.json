@@ -2,15 +2,15 @@
   "version": "ATENTO-SYSTEM-CHASSIS-NANOCLAW-V1",
   "candidate": "NanoClaw",
   "upstream_repo": "nanocoai/nanoclaw",
-  "upstream_sha": "4c1eabd3ddd74cc3d71b1871da857391a9411c8d",
+  "upstream_sha": "6906434bcb13eaeca1a6d8b461a1f2c22e53359f",
   "scope": "ATENTO_NAIA_ANNA_APOLLO_SYSTEM",
   "execution_state": "PARTIAL_RUN_WITH_SCOPE",
-  "profile_hash": "c6e815289488daace646e7d9123b2638c6f245eaf4ef4dff357d6b3c50c1d289",
+  "profile_hash": "bd41958e55f68ef2e06a8d5c285df6ea5a491a34a2244948a049477da522c2f5",
   "policy_hash": "02de0f5540c1c638c0553dc8261cfd0e53ffb4727a0636a50a4653d2e15a7132",
   "source_naia_profile": "evals/config/naia_gate2_nanoclaw_v1.json",
   "topology": {
     "recipe": {
-      "core_sha": "4c1eabd3ddd74cc3d71b1871da857391a9411c8d",
+      "core_sha": "6906434bcb13eaeca1a6d8b461a1f2c22e53359f",
       "channels_sha": "3f7e13b591a0c8980242b81ceff4b3f542ef839a",
       "providers_sha": "3959d1f055cba2320cf843b30834a278250346b8",
       "channel": {
