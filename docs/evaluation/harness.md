@@ -10,6 +10,14 @@ Ele não define identidade de produto, progresso, shortlist/chassis nem autoriza
 
 Toda mudança metodológica material deve atualizar os testes do harness e, quando alterar um release gate ou política estrutural, exigir ADR conforme `AGENTS.md`.
 
+## 0.1 Chassi compartilhado e contato entre papéis
+
+A decisão e o status atuais estão em [ADR-SYS-001](../adr/ADR-SYS-001-common-chassis-mindroom.md). O harness é autoridade para método; não cria seleção de candidato.
+
+Para o perfil compartilhado, declarar `agent_scope=SHARED` e testar invariantes sem misturar qualidade funcional dos papéis. Não há um pacote universal de “10 testes por candidato”: o conjunto deriva de hipótese, risco e evidência transferível. O snapshot de rescreen tem oito assertions comuns; probes residuais são condicionais e não precisam ser repetidos em todos os candidatos.
+
+As assertions mínimas de confidencialidade entre agentes são: (a) negar leitura/escrita/deleção cross-role de histórico e memória; (b) negar uso cross-role de credencial/ferramenta/background; (c) permitir lembrete somente sob pedido explícito, com payload mínimo, provenance, reautorização do destinatário, audit log e deduplicação; (d) permitir consulta de histórico somente sob pedido explícito, usando trecho/resumo mínimo limitado à finalidade. Falha em identidade ou harness sem adapter é `BLOCKED_ADAPTER`, não PASS/FAIL de produto. Rodar somente deltas não provados; reutilizar evidência válida com pin e escopo.
+
 ## 1. Objetivo
 
 AtentoEval é o harness de avaliação do Atento. Ele deve medir tanto a **qualidade da resposta final** quanto o **processo interno do agente**.
