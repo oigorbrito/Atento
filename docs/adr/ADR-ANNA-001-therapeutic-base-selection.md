@@ -1,6 +1,6 @@
 # ADR-ANNA-001 — Seleção do sistema-base da Anna
 
- > **Reconciliado 2026-10-03:** a direção indicada pelo usuário para a base funcional da Anna é PsychAgent. Isso não encerra auditoria de termos, integração, segurança, pt-BR ou qualificação. Evidências e avaliações deste arquivo continuam sendo registros por pin.
+> **Reconciliado 2026-10-02:** a direção indicada pelo usuário para a base funcional da Anna é PsychAgent. Isso não encerra auditoria de termos, integração, segurança, pt-BR ou qualificação. Evidências e avaliações deste arquivo continuam sendo registros por pin.
 
 ## Document contract
 
@@ -16,9 +16,9 @@ Ela não decide:
 - qual benchmark é canônico;
 - licenças/provenance, que continuam em `docs/third-party.md`.
 
-- **Status:** Reopened — `DECISION_RESET`
-- **Decision:** `NOT_SELECTED`
-- **Shortlist:** `NOT_SELECTED`
+- **Status:** direção do usuário — `PsychAgent`; qualificação pendente
+- **Decision:** `USER_DIRECTED_CANDIDATE; NOT_QUALIFIED`
+- **Shortlist:** PsychAgent para o próximo gate; sem aprovação para produção
 - **Date:** 2026-09-29
 
 ## Current candidate-universe evidence
@@ -337,4 +337,8 @@ This ADR may leave `DECISION_RESET` only after:
 - [ ] a fork/wrap/native/hybrid strategy is supported by evidence.
 
 No previous ranking or “preferred” label satisfies these criteria by itself.
-\n\n## Reconciliação de decisão — 2026-10-03\n\nO usuário escolheu **PsychAgent** como direção de base da Anna. Neste documento, PsychAgent significa o projeto e pin listados na seção “Evidence already preserved” (`ECNU-ICALK/PsychAgent@469f45ef468b968b3fccd1936d7e6a0a574e4c5c`), não PsyChat, que permanece donor de mecanismos/RAG. A escolha de direção não altera os gaps já registrados nem atesta segurança/privacidade de produção, adequação clínica, licença ou integração. O próximo trabalho deve testar somente os deltas materiais da Anna e reutilizar provas upstream transferíveis. O runtime compartilhado e as regras de contato entre agentes pertencem à [ADR-SYS-001](ADR-SYS-001-common-chassis-mindroom.md).\n
+
+
+## Reconciliação de decisão — 2026-10-02
+
+O usuário escolheu **PsychAgent** como direção de base da Anna. Neste documento, PsychAgent significa o projeto e pin listados na seção “Evidence already preserved” (`ECNU-ICALK/PsychAgent@469f45ef468b968b3fccd1936d7e6a0a574e4c5c`), não PsyChat, que permanece donor de mecanismos/RAG. A escolha de direção não altera os gaps já registrados nem atesta segurança/privacidade de produção, adequação clínica, licença ou integração. O próximo trabalho deve testar somente os deltas materiais da Anna e reutilizar provas upstream transferíveis. O runtime compartilhado e as regras de contato entre agentes pertencem à [ADR-SYS-001](ADR-SYS-001-common-chassis-mindroom.md).
