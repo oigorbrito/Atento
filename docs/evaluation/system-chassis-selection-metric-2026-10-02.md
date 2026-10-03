@@ -188,3 +188,9 @@ SYSTEM_PROFILE_GATE = NOT_PASSED
 ELIGIBLE_CANDIDATES_FOR_COST_RANKING = 0
 SYSTEM_CHASSIS_WINNER = NONE
 ```
+
+### Profile overlay coverage audit
+
+The current probe workflow checks out NanoClaw core at the declared `upstream_sha`, but does not materialize the profile's Telegram, Codex, and OneCLI overlay recipe before testing. At the inspected exact core pin, `src/channels/index.ts` imports only the CLI adapter and `src/gateway-providers/installed.ts` is an empty registration barrel. The `add-telegram` and `add-codex` skills describe copying payloads from feature branches; the `add-onecli` skill describes its own payload install. The profile's `channels_sha`, `providers_sha`, and package versions are therefore recipe metadata in this test run, not verified installed components. The eight-case result validates core container/session/mailbox mechanisms with the frozen role fixture; it is not a test of the complete recipe as declared in the profile.
+
+Before eligibility, either apply those exact overlay inputs to the exact core pin in the hosted workflow and test the resulting composition, or revise the frozen profile to the actual shipped/tested composition and rerun all mandatory gates. Do not count uninstalled overlay metadata as passing provider, gateway, or channel assertions.
