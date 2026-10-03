@@ -6,7 +6,7 @@
 
 Este documento é a fonte canônica para **metodologia de avaliação**: schemas, suites, judges, métricas, comparação, adapters e release gates.
 
-Ele não define identidade de produto, progresso, shortlist/chassis nem autoriza uso de datasets. Durante o reset, esses papéis pertencem, respectivamente, a `docs/product-concept-reset.md`, `roadmap.md`, ADR específica do agente e `docs/third-party.md`.
+Ele não define identidade de produto, progresso, shortlist/chassis nem autoriza uso de datasets. A identidade pertence a `docs/product-concept-reset.md`, o progresso ao `roadmap.md`, chassi comum à ADR-SYS-001, bases às ADRs por agente e provenance a `docs/third-party.md`.
 
 Toda mudança metodológica material deve atualizar os testes do harness e, quando alterar um release gate ou política estrutural, exigir ADR conforme `AGENTS.md`.
 
