@@ -132,3 +132,28 @@ SYSTEM_CANDIDATE_PRIORITY = NANOCLAW (strongest direct three-role Atento evidenc
 SYSTEM_CHASSIS_ELIGIBILITY = NONE
 SYSTEM_CHASSIS_WINNER = NONE
 ```
+
+
+## Candidate continuation — current upstream and alternative screen — 2026-10-03
+
+The latest NanoClaw upstream head checked for this continuation is `6906434bcb13eaeca1a6d8b461a1f2c22e53359f`. Its exact-head [CI run 37071400042](https://github.com/nanocoai/nanoclaw/actions/runs/37071400042) completed successfully: the CI gate, host/container test shards, and `iron-front` job passed. The tested Atento profile pin remains `4c1eabd3ddd74cc3d71b1871da857391a9411c8d`; the latest head is 15 commits ahead and adds/churns gateway, approval, Iron Proxy, and provider-overlay surfaces. Upstream CI is currentness evidence only: it does not transfer the Atento three-role probe to the newer pin, nor does it close process-restart, provider, real channel, scheduled firing/retry, or complete-composition assertions.
+
+The public Agno Demo OS is a screened alternative, not an eligible replacement: its frozen project dependency is `agno[os]==2.8.1` at [the inspected project revision](https://github.com/agno-agi/demo-os/blob/985b72e2064a77a0c4cfc204f945a844f3d4db31/pyproject.toml). Agno issue [#9041](https://github.com/agno-agi/agno/issues/9041) documents a scheduler authorization confused-deputy issue; the issue was closed with maintainer and reporter comments saying the fix is in Agno 3.0. This means the inspected 2.8.1 Demo OS pin cannot be advanced for Atento's schedule-authority gate without a fixed, exact dependency pin and fresh qualification. This is a version-specific block, not a conclusion that all Agno 3.x compositions fail.
+
+Candidate decision from available evidence:
+
+- **NanoClaw is the leading candidate to qualify next**, because it is the only current system candidate with a direct three-role Atento profile-derived probe (7/7 harness assertions, all explicitly scoped) and now has green upstream CI at current HEAD.
+- **NanoClaw is not yet eligible or the winner.** Its Atento evidence is tied to the older exact pin and leaves complete host/composition assertions open.
+- **No alternative found in this continuation supersedes it.** Agno Demo OS is blocked at the inspected dependency pin; AI Butler remains blocked at its inspected pin by the recorded security evidence; the remaining matrix entries lack matched full-composition gate evidence.
+
+The only defensible answer to “which candidate?” is therefore **NanoClaw, as the provisional qualification lead**. The selection result remains no eligible candidate and no winner until its current exact pin (or an explicitly frozen tested pin) passes all required composition gates and comparable cost vectors are recorded. The immediate product-side dependency is resolving the still-`TBD` Atento host topology and handoff contract in ADR-001 so the complete system boundary is testable; this is not recorded as a NanoClaw failure.
+
+```text
+PROVISIONAL_QUALIFICATION_LEAD = NANOCLAW
+NANOCLAW_CURRENT_HEAD_UPSTREAM_CI = PASS (head 6906434; run 37071400042)
+NANOCLAW_ATENTO_THREE_ROLE_EVIDENCE_PIN = 4c1eabd (7/7 harness; scoped)
+NANOCLAW_SYSTEM_ELIGIBILITY = BLOCKED/UNRESOLVED
+AGNO_DEMO_OS_INSPECTED_PIN = BLOCKED_PENDING_FIXED_AGNO_PIN_AND_REQUALIFICATION
+ELIGIBLE_CANDIDATES = 0
+SYSTEM_CHASSIS_WINNER = NONE
+```
