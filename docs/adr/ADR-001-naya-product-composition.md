@@ -213,17 +213,18 @@ System-level hard requirements include separate role chat/session, memory, crede
 
 ```yaml
 system_chassis_decision_as_of_2026_09_30: NOT_SELECTED
-system_chassis_implementation_direction_as_of_2026_10_02: MINDROOM (PROVISIONAL; NOT_QUALIFIED)
+system_chassis_next_test_candidate_as_of_2026_10_02: MINDROOM (NOT_SELECTED; BLOCKED_ADAPTER)
+system_chassis_winner: NONE
 architecture_alternative_to_advance: integrated_multi_agent_platform
 naia_role_base_direction: NANOCLAW (PROVISIONAL; NOT_QUALIFIED)
-anna_role_base: NOT_SELECTED
+anna_role_base_direction: PSYCHAGENT (USER_DIRECTED; NOT_QUALIFIED)
 apollo_role_base_research: DEFERRED
 first_metric: total_adaptation_and_ongoing_maintenance_cost
 ```
 
 
-## Current system-chassis decision update — 2026-10-02
+## Current system-chassis status — 2026-10-02
 
-The 2026-09-30 re-screen above records the then-current state and remains valid as historical evidence. Its `NOT_SELECTED` status is superseded for implementation direction by [ADR-SYS-001](ADR-SYS-001-common-chassis-mindroom.md): MindRoom at the exact pin `4f3bd2d108a6f9be28174e0f66d78eeecddca386` is selected as the reversible implementation target for the common NAIA/Anna/Apollo chassis. This does not qualify the full topology or release it for production. Preserve separate chat/session, memory, tools, credentials and background authority for every role. The chassi is to advance using `user_agent`/dedicated workers; `user`-shared workers do not satisfy the boundary.
+The dated 2026-09-30 screen remains historical evidence. Current authority is [ADR-SYS-001](ADR-SYS-001-common-chassis-mindroom.md): there is no selected or qualified winner for the common runtime. MindRoom at `4f3bd2d108a6f9be28174e0f66d78eeecddca386` is a candidate for the next adapter-bound test, not the chosen architecture. The pinned OpenAI-compatible endpoint does not support the required `user_agent` execution scope; integrated Atento host/restart evidence remains `BLOCKED_ADAPTER`. Do not promote it until the eliminatory `SYSTEM-ISO-01` and later reliability/cost gates pass.
 
-This common-chassis decision does not replace the three independent role-base decisions: NanoClaw remains the provisional NAIA base direction only; Anna remains unselected; Apollo remains deferred. No Project Points are awarded for the decision record, and PR #57/#58 remain untouched.
+NanoClaw remains a provisional base direction for NAIA only. PsychAgent is the user-directed base candidate for Anna, qualification pending. Apollo remains deferred. This composition summary links to the owning ADRs; it does not create another decision source.
