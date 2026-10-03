@@ -127,3 +127,17 @@ The same exact-pin upstream CI also includes the agent-runner pre-task-script su
 - [NanoClaw three-role probe source](../../tools/system_chassis/nanoclaw.atento.test.ts)
 - [NanoClaw three-role profile-derived hosted run 36815873223 and 7/7 artifact](https://github.com/oigorbrito/Atento/actions/runs/36815873223)
 - [External benchmark cross-check: OrchBench and BenchLM](system-chassis-benchmark-crosscheck-2026-09-30.md)
+
+## Runtime prerequisite check — 2026-10-03
+
+A repository-tree check found no Atento product host/runtime to which the NanoClaw mailbox adapter can currently be bound. The relevant executable Atento material is the evaluation broker/reference contract and the injected candidate probe under `evals/` and `tools/`; the product composition ADR still records `cross_agent_topology: TBD` and `handoff_mechanism: TBD`. This is an implementation prerequisite, not a NanoClaw failure.
+
+Consequently, do not repeat the already-passing bounded probe or mark the full-system gate passed. The next decision-bearing work is to resolve the product composition topology and define a candidate-neutral host/handoff contract. Once that runtime boundary exists, bind the frozen handoff contract to it, then qualify one exact candidate pin against the same boundary. That sequence avoids building an assumed NanoClaw-specific production path before the system architecture is selected.
+
+```text
+ATENTO_PRODUCT_HOST_RUNTIME = NOT_FOUND_IN_CURRENT_REPOSITORY_TREE
+SYSTEM_TOPOLOGY = TBD (ADR-001 DECISION_RESET)
+NANOCLAW_RESIDUAL_PROBE = BLOCKED_ON_PRODUCT_RUNTIME_AND_TOPOLOGY
+NANOCLAW_CANDIDATE_STATUS = NEXT_PROBE_PRIORITY; NOT_WINNER
+SYSTEM_CHASSIS_WINNER = NONE
+```
