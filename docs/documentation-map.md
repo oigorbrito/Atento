@@ -29,16 +29,16 @@ Quando a mesma informação aparece em mais de um arquivo, prevalece o documento
 Papel correto: política de execução. Deve apontar para fontes canônicas em vez de copiar especificações inteiras. O progress tracking global foi tornado obrigatório.
 
 ### docs/product-concept-reset.md — autoridade provisória durante DECISION_RESET
-Enquanto a reconciliação estiver aberta, este documento define a identidade NAIA/Anna/Apollo e impede que a decomposição histórica seja confundida com decisão final.
+Este documento define identidade e escopo dos agentes. As decisões correntes de base e chassi estão nas ADRs por papel e na ADR-SYS-001.
 
 ### roadmap.md — ledger técnico durante reconciliação
 Permanece a fonte de verdade para Project Points e evidência de progresso, mas sua decomposição arquitetural histórica não substitui o product concept reset enquanto `DECISION_RESET` estiver ativo.
 
-### ADR-000 / ADR-001 / ADR-002 — reabertas
-Preservam evidência e histórico, mas não possuem autoridade para selecionar chassis, shortlist, ordem de execução ou topologia enquanto estiverem marcadas `DECISION_RESET`.
+### ADR-000 / ADR-001 / ADR-002 — escopo
+Preservam evidência histórica e decisões apenas dentro do escopo de cada arquivo. Para status corrente, ADR-SYS-001 governa o runtime comum; ADR-002 governa base NAIA. Textos `DECISION_RESET` datados não anulam decisões posteriores explícitas.
 
 ### ADR-ANNA-001 — seleção da base da Anna
-Fonte de verdade para o estado da decisão de chassis da Anna. Enquanto `DECISION_RESET`, nenhuma classificação histórica de PsychAgent, TherapyMind, PsyChat ou TheraMind constitui shortlist ou vencedor.
+Fonte de verdade para evidência e qualificação da base funcional da Anna. Direção escolhida pelo usuário: PsychAgent; qualificação pendente. PsyChat permanece donor de mecanismos/RAG.
 
 ### ADR-APOLLO-001 — seleção da base do Apollo
 Fonte de verdade para o estado da decisão de chassis do Apollo. Enquanto `DEFERRED`, não existe shortlist, candidato preferido nem pesquisa de base iniciada.
