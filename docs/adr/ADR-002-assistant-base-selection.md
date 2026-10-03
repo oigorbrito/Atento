@@ -12,7 +12,7 @@ Frameworks de orquestração, durable runtimes e componentes isolados não entra
 - **Date:** 2026-09-29
 - **Current direction (2026-10-02):** NanoClaw — provisional implementation direction for NAIA only; not production-qualified.
 
-## Current candidate-universe evidence
+## Reconciliação de escopo — 2026-10-03\n\nNanoClaw é a direção provisória escolhida pelo usuário para a base geral/funcional da NAIA somente, no pin definido no addendum final. Não é a escolha do runtime comum dos três agentes nem está qualificada para produção. A qualificação da composição é autoridade separada da [ADR-SYS-001](ADR-SYS-001-common-chassis-mindroom.md).\n\n## Current candidate-universe evidence
 
 Post-reset re-enumeration is recorded in:
 
