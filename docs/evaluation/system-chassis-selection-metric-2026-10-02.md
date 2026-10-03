@@ -173,3 +173,18 @@ ELIGIBLE_CANDIDATES_FOR_COST_RANKING = 0
 SYSTEM_CHASSIS_WINNER = NONE
 NEXT = CLOSE_FULL_HOST_PROVIDER_CHANNEL_BACKGROUND_AND_RESTART_GAPS; MEASURE_COMPARABLE_COST
 ```
+
+## Role-scoped recurrence recovery extension — 2026-10-03
+
+A new eighth Atento test was added to exercise NanoClaw's real recurrence handler across three separate profile-role mailboxes. For each role, the test marks one recurring occurrence completed, closes and reopens that role's persisted inbound SQLite database (interruption boundary), invokes the candidate recurrence handler, and verifies that only the same role mailbox receives the pending next occurrence with the original series and inert role-specific content. The exact-pin hosted workflow [37096864526](https://github.com/oigorbrito/Atento/actions/runs/37096864526) passed, and uploaded JUnit artifact 11264078802. The prior seven probe cases remain unchanged.
+
+This adds scoped evidence for per-role recurring-series recovery after mailbox reopen. It still does not simulate a NanoClaw host-process restart, execute the due task through the complete scheduled delivery/provider path, test retry under a role identity, or measure recovery against an Atento-declared RTO/RPO. Therefore SYS-BG-01 and SYS-STATE-01 remain `PASS_WITH_SCOPE`, and the system hard-gate remains open.
+
+```text
+NANOCLAW_CURRENT_PIN_PROBE = 8_OF_8_TEST_CASES_PASS (run 37096864526)
+SYS-BG-01 = PASS_WITH_SCOPE (role-scoped re-arm after DB reopen; no real firing/retry)
+SYS-STATE-01 = PASS_WITH_SCOPE (DB reopen only; no whole-host restart or RTO/RPO)
+SYSTEM_PROFILE_GATE = NOT_PASSED
+ELIGIBLE_CANDIDATES_FOR_COST_RANKING = 0
+SYSTEM_CHASSIS_WINNER = NONE
+```
