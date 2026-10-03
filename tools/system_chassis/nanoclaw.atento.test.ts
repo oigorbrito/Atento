@@ -19,6 +19,10 @@ import { dispatch } from './cli/dispatch.js';
 import './cli/resources/tasks.js';
 import type { CallerContext } from './cli/frame.js';
 import { sessionDir, withExistingMailboxSession, writeSessionMessage } from './session-manager.js';
+import { ensureSchema, openInboundDb } from './mailbox/sqlite/session-db.js';
+import { insertTaskRow } from './mailbox/sqlite/tasks.js';
+import { wrapSqliteInbound } from './mailbox/sqlite/index.js';
+import { handleRecurrence } from './modules/scheduling/recurrence.js';
 import type { Session } from './types.js';
 
 const roles = ['naia', 'anna', 'apollo'] as const;
@@ -386,6 +390,70 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
     }
   });
 
+  it('re-arms each role recurring series from its own reopened mailbox after interruption', async () => {
+    const db = await initTestDb();
+    await runMigrations(db);
+    const createdAt = new Date().toISOString();
+    const dbs = new Map<Role, ReturnType<typeof openInboundDb>>();
+    try {
+      for (const role of roles) {
+        const profileRole = groupByRole[role];
+        await createAgentGroup({
+          id: profileRole.agent_group,
+          name: role,
+          folder: profileRole.agent_group,
+          agent_provider: profileRole.provider,
+          created_at: createdAt,
+        });
+        const inboundPath = join(root, 'recurrence-recovery', profileRole.agent_group, 'inbound.db');
+        mkdirSync(join(root, 'recurrence-recovery', profileRole.agent_group), { recursive: true });
+        ensureSchema(inboundPath, 'inbound');
+        const firstOpen = openInboundDb(inboundPath);
+        const taskId = `atento-${role}-completed-recurrence`;
+        insertTaskRow(firstOpen, {
+          id: taskId,
+          seriesId: taskId,
+          processAfter: '2020-01-01T00:00:00.000Z',
+          recurrence: '0 0 * * *',
+          content: JSON.stringify({ prompt: `inert-${role}-recurrence` }),
+        });
+        firstOpen.prepare("UPDATE messages_in SET status = 'completed' WHERE id = ?").run(taskId);
+        firstOpen.close();
+
+        // Reopen from the role's persisted mailbox, as the recovery side of a host interruption.
+        const reopened = openInboundDb(inboundPath);
+        dbs.set(role, reopened);
+        const session = {
+          id: `atento-${role}-recovery-session`,
+          agent_group_id: profileRole.agent_group,
+          messaging_group_id: profileRole.channel_instance,
+          thread_id: null,
+          status: 'active',
+          created_at: createdAt,
+          last_active: createdAt,
+          container_status: 'stopped',
+        } as Session;
+        await handleRecurrence(wrapSqliteInbound(reopened), session);
+      }
+
+      for (const role of roles) {
+        const dbForRole = dbs.get(role)!;
+        const rows = dbForRole.prepare(
+          'SELECT id, status, recurrence, series_id, content FROM messages_in ORDER BY seq',
+        ).all() as Array<{ id: string; status: string; recurrence: string | null; series_id: string; content: string }>;
+        expect(rows).toHaveLength(2);
+        expect(rows[0].recurrence).toBeNull();
+        expect(rows[1].status).toBe('pending');
+        expect(rows[1].recurrence).toBe('0 0 * * *');
+        expect(rows[1].series_id).toBe(rows[0].id);
+        expect(JSON.parse(rows[1].content).prompt).toBe(`inert-${role}-recurrence`);
+      }
+    } finally {
+      for (const role of roles) dbs.get(role)?.close();
+      await closeDb();
+    }
+  });
+
   it('delivers typed Anna/Apollo requests to NAIA for receiver-side reauthorization', async () => {
     const brokerAdapter = process.env.ATENTO_HANDOFF_BROKER_ADAPTER;
     if (!brokerAdapter) throw new Error('ATENTO_HANDOFF_BROKER_ADAPTER must point to the Atento reference broker adapter');
@@ -665,3 +733,4 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
     }
   });
 });
+
