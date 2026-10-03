@@ -199,7 +199,7 @@ handoff_mechanism: TBD
 
 ## System-level architecture/chassis re-screen — historical snapshot, 2026-09-30
 
-**Snapshot status:** at this date the product composition/chassis was `NOT_SELECTED`. This dated evaluation compared the total Atento composition for NAIA, Anna, and future Apollo. Apollo's domain boundary must be supported now; Apollo-specific functional chassis research remains `DEFERRED`. The current implementation direction is recorded in the 2026-10-02 update below.
+**Snapshot status:** at this date the product composition/chassis was `NOT_SELECTED`. This dated evaluation compared the total Atento composition for NAIA, Anna, and future Apollo. Apollo's domain boundary must be supported now; Apollo-specific functional chassis research remains `DEFERRED`. The current candidate/gate status is recorded in the 2026-10-02 reconciliation below.
 
 Canonical evidence/method record:
 
