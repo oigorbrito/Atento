@@ -1,6 +1,6 @@
 # Atento — Roadmap de Arquitetura e Implementação
 
-> **PRODUCT / DECISION RESET — 2026-09-29; reconciliado em 2026-10-02:** preservar Project Points, sources, medições, benchmarks e trabalho executado. A decomposição arquitetural e as ordens de execução anteriores são registros históricos quando marcadas como tal. A definição conceitual corrente está em `docs/product-concept-reset.md`; a direção provisória do chassi comum está em `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`.
+> **PRODUCT / DECISION RESET — 2026-09-29; reconciliado em 2026-10-02:** preservar Project Points, sources, medições, benchmarks e trabalho executado. A decomposição arquitetural e as ordens de execução anteriores são registros históricos quando marcadas como tal. A definição conceitual corrente está em `docs/product-concept-reset.md`; a decisão e o gate de isolamento estão em `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`; MindRoom é candidato de teste, sem vencedor qualificado.
 
 ## 0. Contrato deste documento
 
@@ -14,7 +14,7 @@ Este arquivo é a fonte canônica para:
 - progresso global do projeto;
 - source mapping arquitetural.
 
-Durante o `DECISION_RESET`, a identidade do produto e a divisão NAIA/Anna/Apollo são definidas provisoriamente em `docs/product-concept-reset.md`. **Atualização 2026-10-02:** MindRoom foi escolhido para avançar como implementação reversível do chassi comum; isso não encerra qualificação nem altera as bases por papel.
+Durante o `DECISION_RESET`, a identidade do produto e a divisão NAIA/Anna/Apollo são definidas provisoriamente em `docs/product-concept-reset.md`. **Reconciliação 2026-10-02:** não há vencedor qualificado para o runtime comum. MindRoom é o próximo candidato a validar, condicionado ao adapter e ao gate SYSTEM-ISO-01. NanoClaw permanece direção provisória NAIA; PsychAgent é direção do usuário para Anna; Apollo adiado.
 
 Este arquivo **não** é a fonte canônica para:
 
@@ -37,11 +37,11 @@ O Atento é o repositório canônico do produto composto por três agentes espec
 2. **Anna:** assistente emocional/terapêutica;
 3. **Apollo:** nutrição/personal trainer, adiado neste momento.
 
-Os agentes devem ter forte isolamento de chat, memória, ferramentas e autoridade. A direção de implementação do chassi comum é MindRoom, registrada em ADR-SYS-001; a composição completa, integração/handoff e qualificação continuam abertas.
+Os agentes devem ter isolamento de chat, memória, ferramentas, credenciais e autoridade. O runtime comum está sem vencedor; MindRoom é o candidato de próximo teste. A composição completa e qualificação continuam abertas.
 
 A arquitetura A–S abaixo nasceu principalmente da trilha emocional/terapêutica e continua valiosa como inventário técnico, source mapping e evidência. Ela **não deve ser presumida como decomposição final de todo o produto** até a reconciliação terminar.
 
-**Atualização 2026-09-30 (histórica):** a primeira métrica de seleção passou a ser avaliada sobre o chassi/arquitetura completa do Atento. As triagens de Gate 1 e Top 5 da NAIA continuam válidas somente por agente. **Reconciliação 2026-10-02:** MindRoom é a direção provisória para implementar o chassi comum, sem qualificação sistêmica; veja `docs/adr/ADR-SYS-001-common-chassis-mindroom.md` e `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`.
+**Atualização 2026-09-30 (histórica):** a primeira métrica de seleção passou a ser avaliada sobre o chassi/arquitetura completa do Atento. As triagens de Gate 1 e Top 5 da NAIA continuam válidas somente por agente. **Reconciliação 2026-10-02:** MindRoom é o candidato para o próximo gate, ainda sem seleção; veja `docs/adr/ADR-SYS-001-common-chassis-mindroom.md` e `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`.
 
 As decisões de chassis serão refeitas por categorias equivalentes:
 
@@ -101,7 +101,7 @@ A regra de engenharia é preservar capacidade funcional comprovada e comparar o 
 
 ### Source Registry
 
-> **DECISION RESET (reconciliado 2026-10-02):** este registry preserva fontes, pins e uso histórico/possível. Labels como candidato ou donor não equivalem a qualificação. Direções atuais: MindRoom como implementação reversível do chassi comum; NanoClaw como base provisória da NAIA; Anna sem base selecionada; Apollo adiado. Decisões sistêmicas estão em `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`.
+> **DECISION RESET (reconciliado 2026-10-02):** este registry preserva fontes, pins e uso histórico/possível. Labels como candidato ou donor não equivalem a qualificação. Direções atuais: MindRoom como implementação reversível do chassi comum; NanoClaw como base provisória da NAIA; PsychAgent é direção escolhida pelo usuário para Anna, qualificação pendente; Apollo adiado. Decisões sistêmicas estão em `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`.
 
 #### SRC-PA — PsychAgent
 - **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
@@ -294,7 +294,7 @@ A regra de engenharia é preservar capacidade funcional comprovada e comparar o 
 - **Tipo:** `IMPLEMENTATION_REFERENCE` + `ARCHITECTURE_REFERENCE`.
 - **Repo:** https://github.com/mindroom-ai/mindroom
 - **Commit inspecionado:** `4f3bd2d108a6f9be28174e0f66d78eeecddca386`.
-- **Direção atual (2026-10-02):** selecionado para avançar como implementação reversível do chassi comum de NAIA/Anna/Apollo; ver `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`.
+- **Estado (2026-10-02):** candidato ao próximo teste do runtime comum, sem vencedor; seleção condicionada ao adapter e SYSTEM-ISO-01, conforme `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`.
 - **Gaps/gates:** `worker_scope=user` compartilha runtimes/workspaces; usar `user_agent`/workers dedicados. Validar suporte requester-scoped, handoff, credenciais, isolamento persistente, recovery e custo na composição Atento.
 - **Estado:** direção provisória, não qualificada para produção; nenhum código upstream adotado. Provenance: `docs/third-party.md` (`SRC-SYS-MINDROOM`).
 
@@ -2062,7 +2062,7 @@ O Atento será arquiteturalmente bem-sucedido quando conseguir demonstrar, com a
 
 ## Próximo passo
 
-**Implementar o seam reversível de MindRoom para os três domínios e avançar pelos gates sistêmicos pendentes.**
+**Desbloquear o adapter de avaliação e executar SYSTEM-ISO-01 uma vez; não iniciar integração de produção antes do resultado.**
 
 Direção e limites: `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`. Evidência de rescreen: `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`.
 
