@@ -6,7 +6,7 @@ Este arquivo é a fonte canônica para **provenance externo**: origem, commit/ve
 
 O Atento está atualmente em **modo de pesquisa/estudo**. A política interna permite `FULL_DONOR` quando empiricamente defensável.
 
-> **DECISION RESET / CURRENT DIRECTIONS (2026-10-02):** este registro é canônico para provenance e adoção, não para qualificação. As direções atuais de implementação estão em `docs/adr/ADR-002-assistant-base-selection.md` (NanoClaw para NAIA, provisório) e `docs/adr/ADR-SYS-001-common-chassis-mindroom.md` (MindRoom para o chassi comum, reversível). Anna segue sem base selecionada e Apollo está adiado. Nenhum status deste registro equivale a qualificação para produção.
+> **DECISION RESET / CURRENT DIRECTIONS (2026-10-02):** este registro é canônico para provenance e adoção, não para qualificação. As direções atuais de implementação estão em `docs/adr/ADR-002-assistant-base-selection.md` (NanoClaw para NAIA, provisório) e `docs/adr/ADR-SYS-001-common-chassis-mindroom.md` (MindRoom candidato ao próximo teste; sem vencedor). PsychAgent é direção escolhida pelo usuário para Anna, qualificação pendente e Apollo está adiado. Nenhum status deste registro equivale a qualificação para produção.
 
 > Importante: autorização interna para copiar/adaptar não altera direitos de terceiros. Para estudo é permitido clonar e executar donors; para redistribuir código copiado dentro deste repositório, preservar notices e observar os termos externos aplicáveis.
 
@@ -210,11 +210,11 @@ These are provenance entries for technical discovery. Terms/license are intentio
 
 ## Atento system-chassis discovery sources — 2026-09-30
 
-These repositories were inspected at README/documentation level during the whole-product chassis rescreen. `REFERENCE_ONLY` means no code was cloned or adopted and grants no implementation direction. MindRoom's status below records the later, reversible decision to advance it as common-chassis implementation target; no code is adopted. Verify exact terms at the frozen pin before any code transfer.
+These repositories were inspected at README/documentation level during the whole-product chassis rescreen. `REFERENCE_ONLY` means no code was cloned or adopted and grants no implementation direction. MindRoom's status below records a next-test candidate only; no common chassis is selected and no code is adopted. Verify exact terms at the frozen pin before any code transfer.
 
 | ID | Projeto | Repo / fonte | Commit / versão | Termos conhecidos | Status inicial | Uso pretendido |
 |---|---|---|---|---|---|---|
-| SRC-SYS-MINDROOM | MindRoom — common system chassis | https://github.com/mindroom-ai/mindroom | `4f3bd2d108a6f9be28174e0f66d78eeecddca386` | Apache-2.0 verified in LICENSE at pin | PROVISIONAL_IMPLEMENTATION_DIRECTION | common runtime for NAIA/Anna/Apollo; no source code adopted; qualification pending |
+| SRC-SYS-MINDROOM | MindRoom — common system chassis | https://github.com/mindroom-ai/mindroom | `4f3bd2d108a6f9be28174e0f66d78eeecddca386` | Apache-2.0 verified in LICENSE at pin | NEXT_TEST_CANDIDATE; NO_WINNER | possible common runtime for NAIA/Anna/Apollo; adapter and SYSTEM-ISO-01 gate pending; no code adopted |
 | SRC-SYS-ONTHEIA | Ontheia — system-chassis discovery | https://github.com/Ontheia/ontheia | `70802db61eb16533f55efce3d8785d810223d03b` | AGPL-3.0 LICENSE; upstream also advertises commercial terms | REFERENCE_ONLY | multi-agent platform, RLS/memory namespaces, workflow and handoff probes |
 | SRC-SYS-BOBLABS | Bob Labs — system-chassis discovery | https://github.com/boblabs-eu/boblabs | `a91d6dad098c8ba6d24436a856556078151db45d` | Apache-2.0 verified in LICENSE at pin | REFERENCE_ONLY | multi-agent labs, typed handoff bus, per-agent grants and per-lab sandbox probe |
 | SRC-SYS-CLAWIX | Clawix — system-chassis discovery | https://github.com/ClawixAI/clawix | `5aee015e0bd793102fba69af486dd6e75df6d802` | README badge claims MIT; LICENSE path not verified at this pin | REFERENCE_ONLY | isolated agent containers, memory scope, RBAC and approval probe |
