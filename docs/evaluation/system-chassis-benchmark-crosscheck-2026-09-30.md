@@ -72,6 +72,9 @@ The claim we can carry forward is:
 
 Do not choose a winner, shortlist, or numeric estimate from upstream benchmark scores, popularity, feature counts, README claims, or CFS alone.
 
+### Minimum decision threshold
+
+Use [`system-chassis-selection-metric-2026-10-02.md`](system-chassis-selection-metric-2026-10-02.md) as the operational rule for the **complete system chassis**. Eligibility requires 100% of the frozen suite's mandatory hard-gate assertions to pass, including zero observed unauthorized cross-role actions. This is a finite-suite acceptance criterion, not universal assurance. Blocked, missing, mocked-only, or non-comparable system evidence remains unresolved and cannot be used to rank or eliminate a candidate. Among eligible candidates with the same profile and cost-accounting horizon, compare total adaptation plus ongoing-maintenance cost; if required labor rates, horizon, or comparable measurements are missing, report the component vector and do not invent a scalar winner. The repository currently records zero comparable three-role cost runs and gates as defined but not executed.
 ## Minimum comparable Atento benchmark to close the question
 
 For each candidate composition, freeze exact revisions and the same functional profile. Use the same task cases, model/provider or explicitly declared local model, token/tool budgets, deployment assumptions, and observation window. Run hard boundary assertions first: isolated chats/state/memory/tools/credentials, explicit minimal handoff with recipient-side reauthorization, and role-preserving scheduler/retry/recovery.
