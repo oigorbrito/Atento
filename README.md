@@ -19,7 +19,7 @@ O projeto está reconciliando sua definição em três agentes: **NAIA** (assist
 - **Decisão fork vs greenfield:** [docs/adr/ADR-000-fork-vs-greenfield.md](docs/adr/ADR-000-fork-vs-greenfield.md)
 - **Composição dos agentes / isolamento (contrato):** [docs/adr/ADR-001-naya-product-composition.md](docs/adr/ADR-001-naya-product-composition.md)
 - **Candidato a chassi comum — MindRoom (sem seleção/qualificação):** [docs/adr/ADR-SYS-001-common-chassis-mindroom.md](docs/adr/ADR-SYS-001-common-chassis-mindroom.md)
-- **Seleção da base da NAIA (decision reset):** [docs/adr/ADR-002-assistant-base-selection.md](docs/adr/ADR-002-assistant-base-selection.md)
+- **Base geral da NAIA — NanoClaw (direção provisória):** [docs/adr/ADR-002-assistant-base-selection.md](docs/adr/ADR-002-assistant-base-selection.md)
 - **Base da Anna — PsychAgent (direção do usuário, qualificação pendente):** [docs/adr/ADR-ANNA-001-therapeutic-base-selection.md](docs/adr/ADR-ANNA-001-therapeutic-base-selection.md)
 - **Seleção da base do Apollo (deferred):** [docs/adr/ADR-APOLLO-001-fitness-nutrition-base-selection.md](docs/adr/ADR-APOLLO-001-fitness-nutrition-base-selection.md)
 - **Evaluation harness:** [docs/evaluation/harness.md](docs/evaluation/harness.md)
