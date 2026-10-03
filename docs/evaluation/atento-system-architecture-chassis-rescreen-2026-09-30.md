@@ -179,14 +179,14 @@ This is a discovery/static evidence pass, not an executed Atento architecture te
 - OpenClaw and QwenPaw: exact candidate pins are in the existing Atento NAIA evidence records; retain those pins rather than current branch heads.
 
 
-## Decision follow-up — 2026-10-02
+## Later status reconciliation — 2026-10-02
 
-The project chose MindRoom to advance as the common-chassis implementation direction, using the pinned revision listed in `docs/third-party.md`. This is a reversible direction chosen to stop cycling through candidates and begin implementation work. It does not claim that every alternative was fully composed and cost-measured, nor that MindRoom passed the complete system gates.
+No common-chassis winner was selected. MindRoom at the pin in `docs/third-party.md` is the next candidate to validate, not an implementation choice. Its required `user_agent` path is unsupported by the pinned OpenAI-compatible API, and the Atento host adapter is absent; current status is `BLOCKED_ADAPTER`. SYSTEM-ISO-01 in ADR-SYS-001 is the eliminatory gate before qualification.
 
-- Common chassis direction: MindRoom, provisional and reversible.
+- Common chassis: no winner; MindRoom is a next-test candidate only.
 - NAIA role base: NanoClaw remains the separate provisional direction recorded in `docs/adr/ADR-002-assistant-base-selection.md`.
-- Anna role base: not selected.
+- Anna role base direction: PsychAgent, user-directed; qualification pending.
 - Apollo: deferred.
 - Production/system qualification: not established; full three-role topology remains unqualified.
-- Next action: build the bounded MindRoom composition seam and run only the missing Atento-specific gates. Reuse the cited upstream tests and existing probe artifacts; do not rerun equivalent suites.
+- Next action: run SYSTEM-ISO-01 only after a valid adapter reaches the enforced boundary; reuse the cited upstream tests and existing probe artifacts; do not rerun equivalent suites.
 - Project Points: documentation/decision update only; progress remains 3/100.
