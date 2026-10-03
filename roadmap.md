@@ -2067,7 +2067,7 @@ O Atento será arquiteturalmente bem-sucedido quando conseguir demonstrar, com a
 Direção e limites: `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`. Evidência de rescreen: `docs/evaluation/atento-system-architecture-chassis-rescreen-2026-09-30.md`.
 
 1. preservar medições anteriores e aplicar cada resultado somente ao escopo/agente e pin a que pertence;
-2. manter NanoClaw como direção provisória de base da NAIA; Anna continua sem base selecionada; Apollo continua adiado;
+2. manter NanoClaw como direção provisória de base da NAIA; PsychAgent como direção escolhida pelo usuário para Anna, qualificação pendente; Apollo continua adiado;
 3. implementar a composição experimental de MindRoom com `user_agent` e workers dedicados, mantendo teste e código reversíveis;
 4. fechar gates de identidade/estado, memória, credenciais, ferramentas, handoff explícito, scheduler e recovery, incluindo retry/restart;
 5. medir custo de adaptação e manutenção na composição real antes de qualquer qualificação para produção.
