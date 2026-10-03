@@ -1,6 +1,6 @@
 # ADR-002 — Seleção do sistema-base da NAIA
 
-> **DECISION RESET — 2026-09-29:** preservar todos os pins, achados estáticos, testes upstream, gaps e medições abaixo. Não preservar como decisão a shortlist, a ordem de execução, a prioridade de OpenClaw ou qualquer caracterização de candidato como finalista até a categoria de agentes persistentes ser reenumerada.
+> **Reconciliação 2026-10-02:** NanoClaw é a direção provisória do usuário para a base funcional geral da NAIA, não para o runtime comum dos três agentes. Qualificação de produção pendente; decisão sistêmica pertence à ADR-SYS-001. Textos de reset abaixo são registros do snapshot de 2026-09-29.
 
 ## Document contract
 
@@ -12,7 +12,11 @@ Frameworks de orquestração, durable runtimes e componentes isolados não entra
 - **Date:** 2026-09-29
 - **Current direction (2026-10-02):** NanoClaw — provisional implementation direction for NAIA only; not production-qualified.
 
-## Reconciliação de escopo — 2026-10-03\n\nNanoClaw é a direção provisória escolhida pelo usuário para a base geral/funcional da NAIA somente, no pin definido no addendum final. Não é a escolha do runtime comum dos três agentes nem está qualificada para produção. A qualificação da composição é autoridade separada da [ADR-SYS-001](ADR-SYS-001-common-chassis-mindroom.md).\n\n## Current candidate-universe evidence
+## Reconciliação de escopo — 2026-10-02
+
+NanoClaw é a direção provisória escolhida pelo usuário para a base geral/funcional da NAIA somente, no pin definido no addendum final. Não é a escolha do runtime comum dos três agentes nem está qualificada para produção. A qualificação da composição é autoridade separada da [ADR-SYS-001](ADR-SYS-001-common-chassis-mindroom.md).
+
+## Current candidate-universe evidence
 
 Post-reset re-enumeration is recorded in:
 
