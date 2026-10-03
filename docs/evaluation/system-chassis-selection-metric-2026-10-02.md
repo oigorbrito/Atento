@@ -157,3 +157,19 @@ AGNO_DEMO_OS_INSPECTED_PIN = BLOCKED_PENDING_FIXED_AGNO_PIN_AND_REQUALIFICATION
 ELIGIBLE_CANDIDATES = 0
 SYSTEM_CHASSIS_WINNER = NONE
 ```
+
+## Current-pin Atento residual probe — 2026-10-03
+
+The same bounded probe was rerun against NanoClaw exact HEAD `6906434bcb13eaeca1a6d8b461a1f2c22e53359f`, with the profile pin, canonical topology hash, test pin assertion, and workflow checkout changed together. Atento Actions run [37096028670](https://github.com/oigorbrito/Atento/actions/runs/37096028670) succeeded: exact-pin verification, locked dependency installation, native SQLite build, inert test image pull, probe injection, and Vitest all completed successfully. The JUnit artifact was uploaded. The unchanged probe source contains seven `it(...)` assertions, so the current-pin result is 7/7 for this same bounded probe. The duplicate run [37096026143](https://github.com/oigorbrito/Atento/actions/runs/37096026143) for the same commit also succeeded.
+
+The frozen-profile validator also passed with 12/12 candidate configs and no failures after the pin/hash update. This is stronger than the prior-pin evidence for container mount/session and brokered mailbox behavior, but the test scope is still unchanged: it does not start NanoClaw's full host, real provider/gateway or channel adapters, or prove host-process restart and actual three-role scheduled fire/retry/recovery. Assertions mapped to system requirements remain `PASS_WITH_SCOPE`, not full hard-gate passes. No cost vector was produced.
+
+```text
+NANOCLAW_ATENTO_PROFILE_PIN = 6906434bcb13eaeca1a6d8b461a1f2c22e53359f
+NANOCLAW_ATENTO_BOUNDED_PROBE = PASS (7/7, hosted, run 37096028670)
+FROZEN_PROFILE_VALIDATION = PASS (12/12 configs, zero failures)
+SYSTEM_PROFILE_GATE = NOT_PASSED
+ELIGIBLE_CANDIDATES_FOR_COST_RANKING = 0
+SYSTEM_CHASSIS_WINNER = NONE
+NEXT = CLOSE_FULL_HOST_PROVIDER_CHANNEL_BACKGROUND_AND_RESTART_GAPS; MEASURE_COMPARABLE_COST
+```
