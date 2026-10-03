@@ -118,3 +118,17 @@ To create a comparable chassis score, the ten CFS properties must be assessed wi
 - AWS Well-Architected, [REL13-BP01: define recovery objectives for downtime and data loss](https://docs.aws.amazon.com/wellarchitected/2024-06-27/framework/rel_planning_for_recovery_objective_defined_recovery.html): RTO/RPO are workload/business objectives used to select and evaluate recovery strategy; AWS does not prescribe universal values.
 - AWS Well-Architected, [REL12: test reliability](https://docs.aws.amazon.com/wellarchitected/2022-03-31/framework/rel-failmgmt.html): test failure and recovery behavior and track KPIs, RTO, and RPO. These references support defining local thresholds; they do not supply Atento-specific limits.
 
+
+## Additional exact-pin functional benchmark check — 2026-10-03
+
+The frozen AI Butler pin publishes an internal live-mode baseline of 4/7 tasks (57%), suite hash `28438749c91bd565…`, using Ollama Cloud `glm-5.1` on 2026-07-08: [exact-pin baseline](https://github.com/LumabyteCo/aibutler/blob/c35d3af20f78f1a71ffe9cae76f8be6c8828fe6c/docs/eval/BASELINE.md). The baseline itself describes two failures as output-phrasing checks and one as a scripted error-then-recovery trajectory expectation; its same-suite comparison is only meaningful for equal suite hashes.
+
+This is useful evidence that the pinned candidate has a reproducible functional-eval mechanism, but it is not the Atento three-role composition suite, does not test the frozen system hard gates, and has no matching NanoClaw run under the same benchmark. Therefore `4/7` must not be compared with NanoClaw's `7/7 PASS_WITH_SCOPE`, treated as a system score, or used to resolve AI Butler's separate exact-pin security blocker.
+
+```text
+AIBUTLER_INTERNAL_LIVE_EVAL = 4_OF_7 (57%); EXACT_PIN; MODEL_AND_SUITE_SPECIFIC
+AIBUTLER_EVAL_COMPARABLE_TO_NANOCLAW_SYSTEM_PROBE = NO
+SYSTEM_CANDIDATE_PRIORITY = NANOCLAW (strongest direct three-role Atento evidence)
+SYSTEM_CHASSIS_ELIGIBILITY = NONE
+SYSTEM_CHASSIS_WINNER = NONE
+```
