@@ -17,7 +17,7 @@ O projeto está reconciliando sua definição em três agentes: **NAIA** (assist
 - **Regras para agentes/contribuidores:** [AGENTS.md](AGENTS.md)
 - **Arquitetura, blocos e progresso global:** [roadmap.md](roadmap.md)
 - **Decisão fork vs greenfield:** [docs/adr/ADR-000-fork-vs-greenfield.md](docs/adr/ADR-000-fork-vs-greenfield.md)
-- **Composição dos agentes / isolamento e decisão atual do chassi:** [docs/adr/ADR-001-naya-product-composition.md](docs/adr/ADR-001-naya-product-composition.md)
+- **Composição dos agentes / isolamento (contrato):** [docs/adr/ADR-001-naya-product-composition.md](docs/adr/ADR-001-naya-product-composition.md)
 - **Candidato a chassi comum — MindRoom (sem seleção/qualificação):** [docs/adr/ADR-SYS-001-common-chassis-mindroom.md](docs/adr/ADR-SYS-001-common-chassis-mindroom.md)
 - **Seleção da base da NAIA (decision reset):** [docs/adr/ADR-002-assistant-base-selection.md](docs/adr/ADR-002-assistant-base-selection.md)
 - **Base da Anna — PsychAgent (direção do usuário, qualificação pendente):** [docs/adr/ADR-ANNA-001-therapeutic-base-selection.md](docs/adr/ADR-ANNA-001-therapeutic-base-selection.md)
