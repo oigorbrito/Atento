@@ -35,6 +35,7 @@
     { "id": "SYS-STATE-01", "state": "PASS_WITH_SCOPE", "scope": "driver stop/prepare preserves role scope and persisted completed recurrence re-arms from each reopened role mailbox; full host-process restart and declared RTO/RPO not tested" }
   ],
   "known_gaps": [
+    "profile recipe pins for Telegram, Codex and OneCLI overlays are declarative only in the current probe workflow; the workflow checks out and tests NanoClaw core, not the complete overlaid recipe",
     "full NanoClaw host startup and production service wiring",
     "real provider/gateway and channel adapters",
     "actual three-role scheduled task firing, retry and recovery",
