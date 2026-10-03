@@ -1,8 +1,6 @@
 # AGENTS.md — Regras de Engenharia do Atento
 
-> **PRODUCT / DECISION RESET — 2026-09-29:** enquanto `docs/product-concept-reset.md` estiver ativo, preservar evidência existente e não inferir decisões de chassis, shortlist, arquitetura global ou ordem de execução a partir da documentação histórica.
-
-Este arquivo define como agentes de código, copilotos e contribuidores automatizados devem trabalhar neste repositório.
+> **Reconciliação 2026-10-03:** decisões de chassi ficam em ADR-SYS-001; bases funcionais ficam nas ADRs por agente. Não promover direção do usuário ou evidência parcial a qualificação.\n\nEste arquivo define como agentes de código, copilotos e contribuidores automatizados devem trabalhar neste repositório.
 
 O objetivo é manter o Atento **arquiteturalmente defensável, auditável, reproduzível e seguro**.
 
@@ -72,7 +70,7 @@ Antes de implementar, consultar nesta ordem:
 9. documentação local do módulo;
 10. testes existentes.
 
-Se houver conflito entre documentos, **não escolher silenciosamente**. Durante o `DECISION_RESET`, a identidade de produto vem de `docs/product-concept-reset.md`; decisões de chassis vêm das ADRs específicas de NAIA/Anna/Apollo. Evidência datada não substitui essas fontes.
+Se houver conflito entre documentos, **não escolher silenciosamente**. Identidade de produto vem de `docs/product-concept-reset.md`; estado do runtime/chassi comum vem de ADR-SYS-001; base funcional vem da ADR específica do papel; evidência datada sustenta mas não substitui essas fontes.
 
 ---
 
@@ -1217,3 +1215,4 @@ problema
 ```
 
 Se essa cadeia estiver quebrada, a implementação ainda não é defensável.
+\n\n## 7.1 Contacto mínimo entre agentes de produto\n\nNAIA, Anna e Apollo não compartilham histórico, memória persistente, credenciais, ferramentas ou autoridade de background por padrão. Handoff ou lembrete exige pedido explícito do usuário, payload tipado mínimo, provenance, autorização do destinatário, auditoria e deduplicação. Leitura do histórico de outro agente exige pedido explícito e acesso limitado a trecho/resumo necessário; nunca é acesso contínuo. A especificação normativa e os gates estão em `docs/adr/ADR-SYS-001-common-chassis-mindroom.md`.\n
