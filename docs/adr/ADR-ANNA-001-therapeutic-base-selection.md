@@ -27,7 +27,7 @@ Post-reset re-enumeration is recorded in:
 
 `docs/evaluation/candidate-reenumeration-2026-09-29.md`
 
-This record expands/classifies the candidate universe but does not alter this ADR's `NOT_SELECTED` state or create a shortlist.
+As of the 2026-09-29 reset snapshot, this record expanded the candidate universe without selecting a base. The user-directed PsychAgent status below supersedes that dated state; qualification remains open.
 
 
 
