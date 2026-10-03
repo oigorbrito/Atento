@@ -66,18 +66,43 @@ Do not average unlike measures (CFS, source-file counts, mutation counts, test p
 - `docs/evaluation/naia-architecture-first-chassis-selection-2026-09-30.md` governs a NAIA role-base screen only. Its NAIA cohort, results, and test budget do not qualify or rank a complete NAIA/Anna/Apollo system.
 - `docs/adr/ADR-003-evidence-first-engineering-decision-policy.md` controls evidence quality and requires uncertainty to remain explicit. This rule does not promote a candidate or relax that ADR.
 
-## Current measured state
+## Application to existing results — 2026-10-03
+
+This is a read-only adjudication of preserved repository evidence. No new candidate test or benchmark was executed for this update.
+
+### Common-score availability
+
+The current `evals/chassis/donor_static_audit.py` is a Python-only static scanner: it walks `.py` files and uses source-name/text/AST heuristics. Its own module contract says the score has no selection authority. It cannot be applied unchanged as a comparable score to the current mixed-language chassis cohort (for example, TypeScript and Go systems); absence of Python files would be a scanner applicability failure, not evidence that architectural checks fail.
+
+Only one current-cohort-like numerical CFS result was located: PsyChat at 10/100. It is Anna/RAG-scoped and is not a matched score across system chassis. The historical 2026-09-29 six-donor screen selected Letta only as an architecture scaffold; it did not calculate a comparable global CFS and is not the current NAIA/Anna/Apollo selection.
+
+### Existing evidence against the system eligibility gate
+
+| Candidate / evidence | Observed result | Eligibility interpretation |
+|---|---|---|
+| NanoClaw exact pin, system-profile-derived three-role hosted probe | 7/7 harness tests passed; the eight mapped SYS assertions are recorded as `PASS_WITH_SCOPE`. The harness uses an Atento reference broker and candidate mailbox/CLI seams; full product wiring, model/provider decisions, host restart, and three-role task fire/retry/recovery remain untested. | `NOT_ELIGIBLE_YET`: the system profile gate is explicitly `NOT_PASSED`; passing this bounded probe is not a complete hard-gate pass. |
+| AI Butler exact pin, NAIA–Anna Gate 2 | 6/6 common isolation assertions passed with scope, including an explicit runtime broker path. The full three-role system was not exercised; the same frozen candidate pin has a separate scheduled security scan failure with seven reachable advisories. | `BLOCKED_FOR_CURRENT_PIN`; not eligible for ranking. A repaired, refrozen pin would need requalification. |
+| Other current system-chassis candidates | Upstream/source evidence varies by candidate and protocol; no equivalent accepted full-profile Atento composition run is recorded in the reviewed evidence. | `UNRESOLVED`, not a failure and not eligible for cost ranking. |
+
+No comparable complete-composition adaptation/operation/maintenance cost vectors were found. The existing runs therefore do not satisfy either side of the selection rule: no candidate closes all mandatory hard gates, and no eligible candidates have comparable total-cost measurements.
+
+### Adjudication
 
 ```text
-PRIMARY_METRIC = TOTAL_ADAPTATION_AND_ONGOING_MAINTENANCE_COST
-MINIMUM_ELIGIBILITY = 100_PERCENT_REQUIRED_HARD_GATE_ASSERTIONS_PASS; ZERO_OBSERVED_UNAUTHORIZED_CROSS_ROLE_ACTIONS
-COMPARABLE_THREE_ROLE_TOTAL_COST_RUNS = 0
-SYSTEM_CHASSIS_HARD_GATES = DEFINED_NOT_EXECUTED
+COMPARABLE_CFS_FOR_CURRENT_SYSTEM_COHORT = NONE
+SYSTEM_PROFILE_DERIVED_NANOCLAW_PROBE = 7_OF_7_HARNESS_TESTS; PASS_WITH_SCOPE
+SYSTEM_PROFILE_GATE = NOT_PASSED
+AI_BUTLER_CURRENT_PIN = BLOCKED_BY_SECURITY_EVIDENCE
+OTHER_SYSTEM_CANDIDATES = UNRESOLVED
+COMPARABLE_COMPLETE_SYSTEM_COST_VECTORS = 0
+ELIGIBLE_CANDIDATES_FOR_COST_RANKING = 0
 SYSTEM_CHASSIS_WINNER = NONE
-SYSTEM_CHASSIS_SHORTLIST = NOT_SELECTED
+NEXT_PROBE_PRIORITY = NANOCLAW_RESIDUAL_COMPOSITION_GAPS
 ```
 
-These values describe the records reviewed, not a newly executed test. `100_PERCENT` means all assertions in the declared finite suite, not universal assurance.
+Thus NanoClaw remains the next probe priority based on existing evidence, not the selected winner. There is no defensible numeric cross-candidate score or winner in the available results.
+
+To create a comparable chassis score, the ten CFS properties must be assessed with a language-neutral evidence rubric or equivalent verified analyzers for each candidate language and the same frozen profile. Keep unknown properties as `UNRESOLVED`, not zero. Treat CFS as a structural screening vector, then apply the full hard-gate suite; only surviving candidates may be compared on total cost. The CFS implementation itself states that static screening alone does not decide fork/selection.
 
 ## Official methodological references
 
