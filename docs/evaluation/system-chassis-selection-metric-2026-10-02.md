@@ -200,3 +200,21 @@ PRODUCTION_ELIGIBILITY = BLOCKED_UNRESOLVED
 ELIGIBLE_CANDIDATES_FOR_COST_RANKING = 0
 SYSTEM_CHASSIS_WINNER = NONE
 ```
+
+
+## Reference implementation decision — 2026-10-04
+
+The product owner selected **NanoClaw as the common reference runtime** for NAIA, Anna, and Apollo, each in a separate role group with private state and grants. Cross-role work uses an Atento-owned typed handoff with receiver-side authorization. The decision selects a reference implementation direction; it does not satisfy the eligibility threshold or produce a cost ranking.
+
+This decision supersedes the earlier “next probe priority” as the current implementation direction only. Historical execution records above remain unchanged and scoped to their recorded pins and tests.
+
+```text
+REFERENCE_RUNTIME_SELECTION = NANOCLAW
+REFERENCE_SCOPE = THREE_ISOLATED_ROLE_GROUPS (NAIA, ANNA, APOLLO)
+SYSTEM_PROFILE_GATE = NOT_PASSED
+PRODUCTION_ELIGIBILITY = BLOCKED_UNRESOLVED
+QUALIFIED_SYSTEM_CHASSIS_WINNER = NONE
+COMPARABLE_COMPLETE_SYSTEM_COST_VECTORS = 0
+```
+
+The latest overlay-composition workflow at this decision point did not execute any job steps because GitHub Actions assigned no runner (runner_id = 0); its failure is an environment block, not a candidate test result. The product host remains absent and RTO/RPO remain unset, so those system assertions remain blocked.
