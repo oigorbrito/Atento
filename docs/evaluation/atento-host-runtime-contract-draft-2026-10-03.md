@@ -124,6 +124,23 @@ Use inert synthetic role identities, isolated temporary stores, and a determinis
 
 Acceptance: every mandatory assertion passes on the complete Atento composition; zero unauthorized cross-role access; no assertion passes only as `PASS_WITH_SCOPE`; recovery meets the approved RTO/RPO. If the host seam, approved objectives, or observable boundary is absent, record `BLOCKED/UNRESOLVED`, never a zero score or implicit pass.
 
+## Identity implementation slice — 2026-10-04
+
+A host-owned identity issuer prototype is now present in `services/host/atento_host/identity.py` on branch `feat/atento-host-identity-issuer`. Its 11 local unit tests pass against the committed source. Covered properties: principal-to-role/grant allowlisting, short expiry, issuer/audience and run/session/generation binding, malformed-token rejection, and HMAC tamper detection.
+
+This closes only the first implementation slice. It does **not** authenticate users or channels, manage signing-key custody/rotation/revocation, persist run state, supervise processes, or bind to NanoClaw. Therefore:
+
+```text
+IDENTITY_ISSUER_SLICE = IMPLEMENTED_AND_LOCALLY_TESTED
+AUTHENTICATED_HOST_ENTRYPOINT = ABSENT
+KEY_CUSTODY_ROTATION_REVOCATION = UNRESOLVED
+HOST_LIFECYCLE_AND_DURABLE_LEDGER = ABSENT
+SYSTEM_GATE = NOT_PASSED
+PRODUCTION_ELIGIBILITY = BLOCKED_UNRESOLVED
+```
+
+The local test result is not a hosted CI check and does not establish production qualification.
+
 ## Reconciliation with current repository evidence
 
 - `docs/adr/ADR-001-naya-product-composition.md` selects NanoClaw as the reference runtime for three isolated role groups and an Atento typed handoff. Production deployment topology, trusted identity issuer, and product host wiring remain undecided; this contract does not silently resolve those implementation choices.
