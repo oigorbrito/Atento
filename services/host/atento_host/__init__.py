@@ -28,6 +28,10 @@ __all__ = [
     "AuthenticatedTelegramUpdate",
     "TelegramWebhookAuthenticator",
     "TelegramWebhookRejected",
+    "ClaimLease",
+    "HostRunLedger",
+    "RunRecord",
+    "RunRejected",
 ]
 
 from .telegram_webhook import (
@@ -35,3 +39,5 @@ from .telegram_webhook import (
     TelegramWebhookAuthenticator,
     TelegramWebhookRejected,
 )
+
+from .supervisor import ClaimLease, HostRunLedger, RunRecord, RunRejected
