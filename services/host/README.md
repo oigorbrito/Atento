@@ -31,3 +31,7 @@ Run the isolated tests from the repository root:
 ```sh
 PYTHONPATH=services/host python -m unittest discover -s services/host/tests -v
 ```
+
+### Frozen-pin deployment boundary
+
+NanoClaw at upstream base pin `3f7e13b591a0c8980242b81ceff4b3f542ef839a` documents Windows support through WSL2, not native Windows. Its host CLI server uses the local `data/ncl.sock` socket and its agents execute in Linux Docker containers. Production qualification on a Windows workstation therefore requires the approved NanoClaw fork checkout and Docker runtime to run inside WSL2/Linux. This is a deployment prerequisite; native-Windows execution is not claimed by this adapter.
