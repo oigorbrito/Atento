@@ -12,7 +12,7 @@ from atento_host.telegram_webhook import (
 class TelegramWebhookAuthenticatorTests(unittest.TestCase):
     def setUp(self) -> None:
         self.secret = "Atento_Webhook-Secret_2026"
-        self.auth = TelegramWebhookAuthenticator(secret_token=self.secret)
+        self.auth = TelegramWebhookAuthenticator(secret_token=self.secret, bot_account_id=777000)
 
     def body(self, update: dict[str, object]) -> bytes:
         return json.dumps(update, separators=(",", ":")).encode("utf-8")
@@ -30,6 +30,7 @@ class TelegramWebhookAuthenticatorTests(unittest.TestCase):
                 }
             ),
         )
+        self.assertEqual(result.event.bot_account_id, 777000)
         self.assertEqual(result.event.user_id, 123456)
         self.assertEqual(result.update_id, 1001)
         self.assertEqual(result.update_kind, "message")
@@ -132,10 +133,10 @@ class TelegramWebhookAuthenticatorTests(unittest.TestCase):
                 )
 
     def test_secret_configuration_matches_telegram_character_contract(self) -> None:
-        TelegramWebhookAuthenticator(secret_token="A-z_0-9")
+        TelegramWebhookAuthenticator(secret_token="A-z_0-9", bot_account_id=777000)
         for secret in ("", "has space", "bad!", "x" * 257):
             with self.subTest(secret=secret[:12]), self.assertRaises(ValueError):
-                TelegramWebhookAuthenticator(secret_token=secret)
+                TelegramWebhookAuthenticator(secret_token=secret, bot_account_id=777000)
 
 
 if __name__ == "__main__":
