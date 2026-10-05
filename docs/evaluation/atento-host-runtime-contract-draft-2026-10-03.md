@@ -53,6 +53,8 @@ ExecutionIdentity = {
 Requirements:
 
 - `issuer` is the Atento Host Control Plane. It derives `role_id` from an authenticated host-side principal-to-role mapping; the mapping source/store and enrollment procedure remain to be implemented and verified.
+- The initial principal source is an authenticated channel identity: the channel adapter MUST validate provider message/webhook authenticity and derive a canonical provider subject within its channel/account namespace before the Control Plane maps it to a role. Display names, message text, model output, and unverified user-supplied IDs are never identity evidence.
+- The host MUST NOT merge identities across providers by matching display names or raw identifiers. Cross-channel linking, if required, needs a separate authenticated account-linking flow; the product channel and its adapter remain to be selected and implemented.
 - The binding is authenticated and integrity-protected end-to-end to the runtime/adapter boundary. The adapter MUST reject missing, invalid, expired, revoked, or mismatched role/session/run bindings.
 - Each role resolves only its own private state root, credentials, and capability set. A role name in a path or request body is not authorization.
 - Identity is revalidated at each handoff, delayed/retried dispatch, and consequential tool boundary. A child run receives an explicit equal-or-narrower grant; it does not inherit ambient authority.
