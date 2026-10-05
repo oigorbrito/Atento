@@ -34,11 +34,23 @@ class AuthenticatedTelegramUpdate:
 class TelegramWebhookAuthenticator:
     """Authenticate Telegram webhook requests before trusting update contents."""
 
-    def __init__(self, *, secret_token: str, max_body_bytes: int = _MAX_WEBHOOK_BODY_BYTES) -> None:
+    def __init__(
+        self,
+        *,
+        secret_token: str,
+        bot_account_id: int,
+        max_body_bytes: int = _MAX_WEBHOOK_BODY_BYTES,
+    ) -> None:
         if not isinstance(secret_token, str) or not _SECRET_RE.fullmatch(secret_token):
             raise ValueError(
                 "secret_token must be 1-256 Telegram-compatible ASCII characters"
             )
+        if (
+            isinstance(bot_account_id, bool)
+            or not isinstance(bot_account_id, int)
+            or bot_account_id <= 0
+        ):
+            raise ValueError("bot_account_id must be a positive integer")
         if (
             isinstance(max_body_bytes, bool)
             or not isinstance(max_body_bytes, int)
@@ -46,6 +58,7 @@ class TelegramWebhookAuthenticator:
         ):
             raise ValueError("max_body_bytes is outside host policy")
         self._secret_token = secret_token
+        self._bot_account_id = bot_account_id
         self._max_body_bytes = max_body_bytes
 
     def authenticate(
@@ -85,7 +98,10 @@ class TelegramWebhookAuthenticator:
             raise TelegramWebhookRejected("telegram actor must be a non-bot user")
 
         return AuthenticatedTelegramUpdate(
-            event=AuthenticatedTelegramEvent(user_id=user_id),
+            event=AuthenticatedTelegramEvent(
+                bot_account_id=self._bot_account_id,
+                user_id=user_id,
+            ),
             update_id=update_id,
             update_kind=update_kind,
         )
