@@ -15,7 +15,10 @@ Implemented here:
 - Telegram event resolution into the host-owned role before identity issuance;
 - an integration test spanning authenticated webhook -> enrollment -> host-issued identity;
 - a durable SQLite Host Supervisor ledger with generation fencing, leases, state transitions, stale-worker rejection, restart recovery and terminal states;
-- fail-closed ambiguous-effect recovery: a crash after a durable effect record enters `RECONCILE_REQUIRED`, never blind retry.
+- fail-closed ambiguous-effect recovery: a crash after runtime dispatch or a durable effect record enters `RECONCILE_REQUIRED`, never blind retry;
+- a NanoClaw runtime adapter using only seams present at frozen upstream pin `3f7e13b591a0c8980242b81ceff4b3f542ef839a`;
+- cross-platform CLI invocation through `pnpm exec tsx src/cli/client.ts` rather than the Bash-only `bin/ncl` launcher;
+- runtime source attestation separating the frozen upstream base pin from an explicitly approved Atento fork head.
 
 The Telegram webhook authenticator verifies the configured webhook secret before parsing any actor identity. It binds the accepted user to a trusted configured `bot_account_id`, producing subjects such as `telegram:bot:777000:user:123456`; raw Telegram user IDs are therefore not merged across bot accounts. NanoClaw pairing state and NanoClaw's `owner` role are never consulted.
 
