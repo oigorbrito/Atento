@@ -116,7 +116,7 @@ Acceptance: every mandatory assertion passes on the complete Atento composition;
 
 ## Reconciliation with current repository evidence
 
-- `docs/adr/ADR-001-naya-product-composition.md` still has `cross_agent_topology: TBD` and `handoff_mechanism: TBD`; this draft does not silently resolve either.
+- `docs/adr/ADR-001-naya-product-composition.md` selects NanoClaw as the reference runtime for three isolated role groups and an Atento typed handoff. Production deployment topology, trusted identity issuer, and product host wiring remain undecided; this contract does not silently resolve those implementation choices.
 - `docs/evaluation/system-chassis-gate2-continuation-2026-10-01.md` records that no Atento product host/runtime was found to bind the NanoClaw mailbox adapter to. The probe uses a test-harness broker and is explicitly `PASS_WITH_SCOPE`.
 - `docs/evaluation/system-chassis-selection-metric-2026-10-02.md` requires persisted role state to meet predeclared RTO/RPO before eligibility. No product limits are approved; therefore this gate remains open.
 - `evals/config/system_chassis_nanoclaw_v1.json` and `tools/system_chassis/nanoclaw.atento.test.ts` describe a candidate-facing profile/probe, not the missing Atento product host.
@@ -127,9 +127,11 @@ Current disposition:
 HOST_CONTRACT = DRAFTED_FOR_REVIEW
 HOST_IMPLEMENTATION = ABSENT
 RTO_RPO = UNSET
-MINDROOM_ADAPTER = BLOCKED_UNTIL_HOST_BOUNDARY_EXISTS
+REFERENCE_RUNTIME = NANOCLAW
+REFERENCE_TOPOLOGY = THREE_ISOLATED_ROLE_GROUPS + ATENTO_TYPED_HANDOFF
 NANOCLAW_SYSTEM_GATE = NOT_PASSED
-SYSTEM_CHASSIS_WINNER = NONE
+PRODUCTION_ELIGIBILITY = BLOCKED_UNRESOLVED
+QUALIFIED_SYSTEM_CHASSIS_WINNER = NONE
 ```
 
 The next implementation decision is to accept/revise this contract, choose the trusted identity issuer and lifecycle owner, and obtain product-owner RTO/RPO objectives. Once those are present in a real host implementation, run the decisive integration test above against frozen candidate pins. No candidate result is changed by this draft.
