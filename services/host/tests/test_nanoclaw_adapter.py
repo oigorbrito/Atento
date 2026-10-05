@@ -26,6 +26,8 @@ class FakeRunner:
         self.calls.append((args, cwd))
         if args == ("git", "rev-parse", "HEAD"):
             return subprocess.CompletedProcess(args, 0, self.pin + "\n", "")
+        if len(args) == 5 and args[:3] == ("git", "merge-base", "--is-ancestor"):
+            return subprocess.CompletedProcess(args, 0, "", "")
         if "tasks" in args and "create" in args:
             frame = {
                 "id": "req-1",
@@ -106,7 +108,7 @@ class NanoClawRuntimeAdapterTests(unittest.TestCase):
 
     def test_pin_mismatch_blocks_before_runtime_dispatch(self) -> None:
         self.runner.pin = "0" * 40
-        with self.assertRaisesRegex(NanoClawAdapterRejected, "pin mismatch"):
+        with self.assertRaisesRegex(NanoClawAdapterRejected, "runtime head mismatch"):
             self.adapter.dispatch(
                 identity_token=self.token,
                 lease=self.lease,
@@ -114,6 +116,37 @@ class NanoClawRuntimeAdapterTests(unittest.TestCase):
             )
         self.assertEqual(self.ledger.get("run-1").state, "CLAIMED")
         self.assertFalse(any("tasks" in args for args, _ in self.runner.calls))
+
+    def test_approved_fork_head_must_descend_from_upstream_pin(self) -> None:
+        approved_head = "1" * 40
+        self.runner.pin = approved_head
+
+        class NonDescendantRunner(FakeRunner):
+            def __call__(inner_self, argv, cwd):
+                args = tuple(argv)
+                inner_self.calls.append((args, cwd))
+                if args == ("git", "rev-parse", "HEAD"):
+                    return subprocess.CompletedProcess(args, 0, approved_head + "\n", "")
+                if len(args) == 5 and args[:3] == ("git", "merge-base", "--is-ancestor"):
+                    return subprocess.CompletedProcess(args, 1, "", "")
+                return super(NonDescendantRunner, inner_self).__call__(argv, cwd)
+
+        runner = NonDescendantRunner()
+        runner.pin = approved_head
+        adapter = NanoClawRuntimeAdapter(
+            nanoclaw_root=Path(self.tempdir.name) / "nanoclaw",
+            role_to_group={"NAIA": "group-naia"},
+            identity_issuer=self.issuer,
+            ledger=self.ledger,
+            runner=runner,
+            approved_runtime_head=approved_head,
+        )
+        with self.assertRaisesRegex(NanoClawAdapterRejected, "not descended"):
+            adapter.dispatch(
+                identity_token=self.token,
+                lease=self.lease,
+                task_prompt="blocked",
+            )
 
     def test_role_mapping_is_host_owned(self) -> None:
         adapter = NanoClawRuntimeAdapter(
