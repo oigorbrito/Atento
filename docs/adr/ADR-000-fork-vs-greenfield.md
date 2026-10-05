@@ -12,7 +12,21 @@ A fonte canônica de progresso continua sendo `roadmap.md`; a fonte canônica de
 
 - **Status:** Reopened — `DECISION_RESET`
 - **Date:** TBD
-- **Decision owners:** TBD
+- **Decision owners:** product owner
+
+## Narrow current decision: shared runtime distribution
+
+For the operational runtime layer only, the product owner selected a single Atento-maintained **FORK** of NanoClaw as the intended shared distribution for the isolated agent role groups. There will not be a separate runtime fork per agent. Agent-specific functional bases remain governed by their ADRs; NanoClaw is not thereby selected as Anna's therapeutic base or Apollo's fitness/nutrition base.
+
+```text
+RUNTIME_DISTRIBUTION = ONE_ATENTO_MAINTAINED_FORK
+UPSTREAM = https://github.com/nanocoai/nanoclaw
+FORK_REPOSITORY = NOT_CREATED
+PRODUCT_HOST = ABSENT
+PRODUCTION_APPROVAL = NO
+```
+
+The reference choice is not production qualification. Before any production release, record exact Atento fork provenance, upstream sync/rollback policy, host implementation, trusted identity/lifecycle owners, approved RTO/RPO, and passing complete-system evidence. Historical comparison material below remains non-authoritative for this narrow runtime distribution decision.
 
 ## Context
 
