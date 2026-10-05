@@ -15,7 +15,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
 
-from .identity import AuthenticatedExecutionIdentity
+from .identity import AuthenticatedExecutionIdentity, IdentityIssuer
 
 
 _NONTERMINAL = frozenset(
@@ -61,6 +61,7 @@ class HostRunLedger:
         self,
         *,
         database_path: str | Path,
+        identity_issuer: IdentityIssuer,
         clock: Callable[[], float] = time.time,
         max_lease_seconds: int = 300,
     ) -> None:
@@ -70,7 +71,10 @@ class HostRunLedger:
             or not 1 <= max_lease_seconds <= 3600
         ):
             raise ValueError("max_lease_seconds is outside host policy")
+        if not isinstance(identity_issuer, IdentityIssuer):
+            raise ValueError("identity_issuer is required")
         self._database_path = str(database_path)
+        self._identity_issuer = identity_issuer
         self._clock = clock
         self._max_lease_seconds = max_lease_seconds
         self._initialize()
@@ -163,7 +167,11 @@ class HostRunLedger:
             and identity.session_id == row["session_id"]
         )
 
-    def create_run(self, *, identity: AuthenticatedExecutionIdentity) -> RunRecord:
+    def _verify_identity(self, token: str) -> AuthenticatedExecutionIdentity:
+        return self._identity_issuer.verify(token)
+
+    def create_run(self, *, identity_token: str) -> RunRecord:
+        identity = self._verify_identity(identity_token)
         if identity.generation != 1:
             raise RunRejected("new run must begin at generation 1")
         now = int(self._clock())
@@ -202,10 +210,11 @@ class HostRunLedger:
     def claim(
         self,
         *,
-        identity: AuthenticatedExecutionIdentity,
+        identity_token: str,
         claim_owner: str,
         lease_seconds: int,
     ) -> ClaimLease:
+        identity = self._verify_identity(identity_token)
         owner = self._require_text(claim_owner, "claim_owner")
         if (
             isinstance(lease_seconds, bool)
@@ -268,9 +277,10 @@ class HostRunLedger:
     def mark_running(
         self,
         *,
-        identity: AuthenticatedExecutionIdentity,
+        identity_token: str,
         lease: ClaimLease,
     ) -> RunRecord:
+        identity = self._verify_identity(identity_token)
         return self._claim_transition(
             identity=identity,
             lease=lease,
@@ -283,10 +293,11 @@ class HostRunLedger:
     def record_effect(
         self,
         *,
-        identity: AuthenticatedExecutionIdentity,
+        identity_token: str,
         lease: ClaimLease,
         result_ref: str,
     ) -> RunRecord:
+        identity = self._verify_identity(identity_token)
         result = self._require_text(result_ref, "result_ref")
         now = int(self._clock())
         with self._connect() as conn:
@@ -319,9 +330,10 @@ class HostRunLedger:
     def ack(
         self,
         *,
-        identity: AuthenticatedExecutionIdentity,
+        identity_token: str,
         lease: ClaimLease,
     ) -> RunRecord:
+        identity = self._verify_identity(identity_token)
         now = int(self._clock())
         with self._connect() as conn:
             conn.execute("BEGIN IMMEDIATE")
@@ -394,8 +406,9 @@ class HostRunLedger:
     def release_retry(
         self,
         *,
-        identity: AuthenticatedExecutionIdentity,
+        identity_token: str,
     ) -> RunRecord:
+        identity = self._verify_identity(identity_token)
         now = int(self._clock())
         with self._connect() as conn:
             conn.execute("BEGIN IMMEDIATE")
@@ -430,9 +443,10 @@ class HostRunLedger:
     def fail_terminal(
         self,
         *,
-        identity: AuthenticatedExecutionIdentity,
+        identity_token: str,
         reason: str,
     ) -> RunRecord:
+        identity = self._verify_identity(identity_token)
         return self._terminal_transition(
             identity=identity,
             state="FAILED_TERMINAL",
@@ -443,9 +457,10 @@ class HostRunLedger:
     def cancel(
         self,
         *,
-        identity: AuthenticatedExecutionIdentity,
+        identity_token: str,
         reason: str,
     ) -> RunRecord:
+        identity = self._verify_identity(identity_token)
         return self._terminal_transition(
             identity=identity,
             state="CANCELLED",
