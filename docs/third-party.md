@@ -232,3 +232,17 @@ These references are evidence about inference-time cost/quality measurement, not
 | SRC-SYS-AGENTBALANCE | AgentBalance: Backbone-then-Topology Design for Cost-Effective Multi-Agent Systems under Budget Constraints | https://arxiv.org/abs/2512.11426 (arXiv submission 2025-12-12) | Research reference; benchmark claims are external and not Atento proof | Inform matched-budget task-quality, token-cost, and latency measurements; no transfer of reported percentages |
 | SRC-SYS-EFFICIENTAGENTS | Efficient Agents: Building Effective Agents While Reducing Cost | https://arxiv.org/abs/2508.02694 (v1, 2025-07-24) | arXiv work in progress per authors' record; reference only | Inform cost-of-pass analysis against task quality; operational model cost is not integration or maintenance cost |
 
+
+
+## NanoClaw runtime reference provenance — 2026-10-04
+
+`SRC-NANOCLAW` now has a second, narrower role in the project: the product owner selected it as the shared operational runtime reference for isolated agent groups. Its NAIA personal-assistant functional-base status remains undecided; it is not selected as Anna's therapeutic base or Apollo's fitness/nutrition base.
+
+- Upstream: https://github.com/nanocoai/nanoclaw
+- Reference commit: `6906434bcb13eaeca1a6d8b461a1f2c22e53359f`
+- Exact-pin license: MIT, verified from the upstream `LICENSE` at that commit; Atento must preserve the copyright and permission notice with any copied/substantial portions.
+- Atento profile overlay pins: providers `3959d1f055cba2320cf843b30834a278250346b8`; channels `3f7e13b591a0c8980242b81ceff4b3f542ef839a`.
+- Adoption direction: one Atento-maintained downstream fork shared by role groups; no per-agent runtime forks.
+- State: the Atento fork and product host have not been created. The current overlay-install workflow did not execute because no GitHub runner was allocated; this is not a passing overlay qualification.
+
+This provenance entry records a runtime direction and an exact upstream license check. It does not claim copied files, a completed fork, product integration, or production qualification.
