@@ -9,13 +9,23 @@
 
 ```text
 ATENTO_PRODUCT_HOST_IMPLEMENTATION = ABSENT_IN_REVIEWED_TREE
-TRUSTED_IDENTITY_ISSUER = UNDECIDED
-PROCESS_LIFECYCLE_OWNER = UNDECIDED
+TRUSTED_IDENTITY_ISSUER = ATENTO_HOST_CONTROL_PLANE
+PROCESS_LIFECYCLE_OWNER = ATENTO_HOST_SUPERVISOR
 HANDOFF_TRANSPORT = REFERENCE_BROKER_ONLY; PRODUCT_WIRING_ABSENT
 RTO = TBD_BY_PRODUCT_OWNER
 RPO = TBD_BY_PRODUCT_OWNER
 HOST_CONTRACT_STATUS = BLOCKED_UNTIL_ADOPTED_AND_IMPLEMENTED
 ```
+
+## Initial implementation ownership decisions — 2026-10-04
+
+The product owner authorized continuing toward production using the selected common NanoClaw runtime. To remove the two ownership ambiguities without changing any agent-specific functional-base decision:
+
+- **Identity issuer:** the Atento Host Control Plane is the sole trusted issuer. It derives the role from an authenticated host-side principal-to-role mapping; prompts, channel display names, model output, and caller-supplied role labels cannot choose or elevate the role.
+- **Process/run lifecycle owner:** the Atento Host Supervisor owns process lifecycle, durable run transitions, claim leases, retries, cancellation, recovery, and terminal delivery. NanoClaw is an execution runtime behind this boundary and does not own Atento run authority.
+- **Receiver authorization:** every typed handoff is reauthorized by the receiving role under a fresh host-issued identity/grant.
+- **Implementation status:** these are accepted ownership decisions for implementation; the control plane and supervisor are still absent. No identity, lifecycle, restart, or recovery behavior is thereby marked passed.
+- **Still unresolved:** issuer key custody/rotation mechanism, implementation/deployment topology, and product RTO/RPO targets. Those must be fixed before release qualification.
 
 `RTO` and `RPO` are required product objectives, not values an evaluator may infer. Until they are approved for each state class below, recovery assertions that depend on them remain `BLOCKED/UNRESOLVED`. A value of “a definir” is not a zero-minute/zero-loss objective and cannot pass SYS-STATE-01.
 
