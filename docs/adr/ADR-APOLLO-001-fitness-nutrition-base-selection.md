@@ -22,6 +22,10 @@ Ela não decide:
 - **Candidate enumeration:** `NOT_STARTED`
 - **Date:** 2026-09-29
 
+## Shared runtime direction and deferred functional work
+
+The product owner selected NanoClaw as the common operational runtime reference, including the substrate intended for Apollo if Apollo is reactivated. This does not reactivate Apollo's functional chassis research, select a nutrition/fitness base, or authorize migration work. `APOLLO_STATUS = DEFERRED` remains in force.
+
 ## Role
 
 Apollo será responsável pelo domínio de:
