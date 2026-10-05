@@ -218,3 +218,26 @@ first_metric: total_adaptation_and_ongoing_maintenance_cost
 architecture_alternatives: [integrated_multi_agent, composed_specialist_chassis, hybrid]
 apollo_functional_chassis_research: DEFERRED
 ```
+
+## Architecture selection update — 2026-10-03
+
+Following the product owner's instruction to choose a chassis, select **NanoClaw as the reference runtime chassis for the Atento three-role composition**. Run NAIA, Anna, and Apollo as separate role groups with private state and grants; all cross-role work must pass through an Atento-owned, typed handoff boundary with receiver-side authorization. NanoClaw is selected as the implementation baseline because it is the only current system candidate with a direct Atento profile-derived three-role probe, and an earlier bounded probe at that exact pin passed eight assertions (`37096864526`), before the current overlay-install workflow; it does not qualify the overlay composition. MindRoom cannot yet bind to an Atento host adapter, and the other screened candidates lack comparable three-role Atento evidence or have a blocker at the inspected pin.
+
+This is an architecture choice for the reference implementation and next qualification cycle, not a claim that NanoClaw has passed the complete system gate, won a comparable total-cost study, or is approved for production. The probe used an incomplete candidate overlay recipe and did not establish the real Atento host, full provider/channel wiring, host-process restart, real task fire/retry/terminal delivery, or approved recovery objectives. The drafted host contract remains unimplemented; RTO/RPO remain unset. No test result is upgraded by this decision.
+
+```yaml
+system_chassis_decision: SELECTED_FOR_REFERENCE_IMPLEMENTATION
+system_chassis: NanoClaw
+tested_candidate_pin: 6906434bcb13eaeca1a6d8b461a1f2c22e53359f
+role_topology: three_isolated_role_groups
+cross_role_boundary: atento_typed_handoff_with_receiver_authorization
+system_gate: NOT_PASSED
+production_eligibility: BLOCKED_UNRESOLVED
+total_cost_comparison: NOT_MEASURED
+RTO: TBD
+RPO: TBD
+```
+
+The hard gates remain release conditions: install and verify all profile overlays at the frozen pin; bind the candidate to the real Atento host contract; test identity, cross-role memory/tool/credential denial, handoff reauthorization, whole-host restart, role-preserving scheduled/retry/recovery execution and terminal delivery; set and meet product RTO/RPO; then measure the comparable cost vector. If NanoClaw cannot satisfy those conditions within the predeclared adaptation boundary, reopen this choice and resume the unresolved cohort.
+
+This update supersedes the earlier `system_chassis_decision: NOT_SELECTED` as the **reference-implementation choice only**. The production eligibility and comparative-cost decisions remain open.

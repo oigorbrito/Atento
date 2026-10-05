@@ -4,11 +4,13 @@ on:
   push:
     paths:
       - ".github/workflows/system-chassis-nanoclaw-probe.yml"
+      - "tools/system_chassis/install_profile_overlays.sh"
       - "tools/system_chassis/nanoclaw.atento.test.ts"
       - "evals/config/system_chassis_nanoclaw_v1.json"
   pull_request:
     paths:
       - ".github/workflows/system-chassis-nanoclaw-probe.yml"
+      - "tools/system_chassis/install_profile_overlays.sh"
       - "tools/system_chassis/nanoclaw.atento.test.ts"
       - "evals/config/system_chassis_nanoclaw_v1.json"
   workflow_dispatch:
@@ -19,7 +21,7 @@ permissions:
 jobs:
   three-role-probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 45
     steps:
       - name: Checkout Atento harness
         uses: actions/checkout@v4
@@ -28,14 +30,25 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: nanocoai/nanoclaw
-          ref: 4c1eabd3ddd74cc3d71b1871da857391a9411c8d
+          ref: 6906434bcb13eaeca1a6d8b461a1f2c22e53359f
           path: candidate
           persist-credentials: false
 
-      - name: Verify exact pin
-        working-directory: candidate
-        run: |
-          test "$(git rev-parse HEAD)" = "4c1eabd3ddd74cc3d71b1871da857391a9411c8d"
+      - name: Checkout exact NanoClaw providers overlay pin
+        uses: actions/checkout@v4
+        with:
+          repository: nanocoai/nanoclaw
+          ref: 3959d1f055cba2320cf843b30834a278250346b8
+          path: providers
+          persist-credentials: false
+
+      - name: Checkout exact NanoClaw channels overlay pin
+        uses: actions/checkout@v4
+        with:
+          repository: nanocoai/nanoclaw
+          ref: 3f7e13b591a0c8980242b81ceff4b3f542ef839a
+          path: channels
+          persist-credentials: false
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
@@ -53,9 +66,39 @@ jobs:
         working-directory: candidate
         run: pnpm install --frozen-lockfile
 
+      - name: Verify exact profile recipe and install overlays
+        run: bash tools/system_chassis/install_profile_overlays.sh candidate providers channels
+
       - name: Build SQLite dependency for scoped session test
         working-directory: candidate
         run: pnpm rebuild better-sqlite3
+
+      - name: Build and verify profile provider/channel/gateway overlays
+        working-directory: candidate
+        run: |
+          pnpm run build
+          pnpm exec tsc -p container/agent-runner/tsconfig.json --noEmit
+          pnpm exec tsx scripts/provider-contract-verifier.ts --required-declared codex
+          pnpm exec vitest run \
+            src/providers/codex-registration.test.ts \
+            src/providers/codex-host-contribution.test.ts \
+            src/providers/codex-agents-md.test.ts \
+            container/agent-runner/src/providers/codex-registration.test.ts \
+            container/agent-runner/src/providers/codex.factory.test.ts \
+            container/agent-runner/src/providers/codex-app-server.test.ts \
+            container/agent-runner/src/providers/codex-cli-tools.test.ts \
+            container/agent-runner/src/providers/codex-contract-parity.test.ts \
+            container/agent-runner/src/providers/codex.conformance.test.ts \
+            setup/providers/codex-registration.test.ts \
+            setup/providers/codex.test.ts \
+            src/gateway-providers/onecli.test.ts \
+            src/gateway-providers/onecli-files.test.ts \
+            src/gateway-providers/onecli-install.test.ts \
+            src/channels/telegram-registration.test.ts
+
+      - name: Build candidate agent container image
+        working-directory: candidate
+        run: ./container/build.sh
 
       - name: Prepare inert test image
         run: docker pull node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1
@@ -78,3 +121,4 @@ jobs:
           name: nanoclaw-system-chassis-mount-probe-${{ github.run_id }}
           path: /tmp/nanoclaw-system-chassis-junit.xml
           if-no-files-found: warn
+

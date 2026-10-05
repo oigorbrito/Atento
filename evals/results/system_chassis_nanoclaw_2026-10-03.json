@@ -1,0 +1,49 @@
+{
+  "candidate": "NanoClaw",
+  "harness_version": "ATENTO-SYSTEM-CHASSIS-NANOCLAW-V1",
+  "upstream_repo": "nanocoai/nanoclaw",
+  "upstream_sha": "6906434bcb13eaeca1a6d8b461a1f2c22e53359f",
+  "profile": "evals/config/system_chassis_nanoclaw_v1.json",
+  "profile_hash": "bd41958e55f68ef2e06a8d5c285df6ea5a491a34a2244948a049477da522c2f5",
+  "policy_hash": "02de0f5540c1c638c0553dc8261cfd0e53ffb4727a0636a50a4653d2e15a7132",
+  "state": "PASS_WITH_SCOPE",
+  "environment": {
+    "provider_calls": false,
+    "real_channel_accounts": false,
+    "production_credentials": false,
+    "test_effects": "inert local fixtures only",
+    "runner": "GitHub Actions ubuntu-latest",
+    "workflow_run": "https://github.com/oigorbrito/Atento/actions/runs/37096864526",
+    "prior_current_pin_run": "https://github.com/oigorbrito/Atento/actions/runs/37096028670",
+    "duplicate_workflow_run": "https://github.com/oigorbrito/Atento/actions/runs/37096026143",
+    "junit_artifact_id": 11264078802
+  },
+  "test_summary": {
+    "test_cases": 8,
+    "passed_test_cases": 8,
+    "failed_test_cases": 0,
+    "source": "tools/system_chassis/nanoclaw.atento.test.ts"
+  },
+  "system_assertions": [
+    { "id": "SYS-MEM-01", "state": "PASS_WITH_SCOPE", "scope": "driver-realized role-group state mount isolation" },
+    { "id": "SYS-CHAT-01", "state": "PASS_WITH_SCOPE", "scope": "database session/group ownership; no real channel/router" },
+    { "id": "SYS-TOOL-01", "state": "PASS_WITH_SCOPE", "scope": "ungranted direct agent-to-agent route denied; other tools not tested" },
+    { "id": "SYS-CRED-01", "state": "PASS_WITH_SCOPE", "scope": "synthetic identity material in role auxiliary container; provider/gateway custody not tested" },
+    { "id": "SYS-HANDOFF-01", "state": "PASS_WITH_SCOPE", "scope": "reference broker to NanoClaw mailbox and receiver CLI authorization; no production wiring/provider decision" },
+    { "id": "SYS-HANDOFF-02", "state": "PASS_WITH_SCOPE", "scope": "typed/minimal, recipient, authority-field and native-path negative cases; sensitive-consent positive path not tested" },
+    { "id": "SYS-BG-01", "state": "PASS_WITH_SCOPE", "scope": "profile-bound task creation/session and cross-group CLI denial; recurring series re-armed separately per role after mailbox DB reopen; actual task firing/retry not tested" },
+    { "id": "SYS-STATE-01", "state": "PASS_WITH_SCOPE", "scope": "driver stop/prepare preserves role scope and persisted completed recurrence re-arms from each reopened role mailbox; full host-process restart and declared RTO/RPO not tested" }
+  ],
+  "known_gaps": [
+    "profile recipe pins for Telegram, Codex and OneCLI overlays are declarative only in the current probe workflow; the workflow checks out and tests NanoClaw core, not the complete overlaid recipe",
+    "full NanoClaw host startup and production service wiring",
+    "real provider/gateway and channel adapters",
+    "actual three-role scheduled task firing, retry and recovery",
+    "host-process restart and recovery within product RTO/RPO",
+    "complete Atento composition deployment and comparable total-cost vector"
+  ],
+  "system_profile_gate": "NOT_PASSED",
+  "eligible_for_cost_ranking": false,
+  "system_chassis_winner": null
+}
+

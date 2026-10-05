@@ -12,6 +12,10 @@ Frameworks de orquestração, durable runtimes e componentes isolados não entra
 - **Date:** 2026-09-29
 - **Decision:** NOT_SELECTED / shortlist reset
 
+## Runtime direction versus NAIA functional base
+
+The product owner selected NanoClaw as the **shared operational runtime reference** for the Atento agent groups. This ADR remains `NAIA_BASE = NOT_SELECTED`: NanoClaw's runtime selection does not establish that it is the complete personal-assistant functional base. One Atento-maintained downstream fork is the intended distribution, shared across role groups; the Atento fork and product host have not been created. Production eligibility remains blocked by the system gate.
+
 ## Current candidate-universe evidence
 
 Post-reset re-enumeration is recorded in:

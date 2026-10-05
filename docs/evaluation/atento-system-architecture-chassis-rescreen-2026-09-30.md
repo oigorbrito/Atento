@@ -42,6 +42,7 @@ Required invariants:
 
 These are test alternatives, not a decision that one style is inherently cheaper or safer.
 
+Canonical operational threshold and cost-accounting rule: [`system-chassis-selection-metric-2026-10-02.md`](system-chassis-selection-metric-2026-10-02.md). The current system-level decision remains `SYSTEM_CHASSIS_WINNER = NONE`; the minimum eligibility threshold is all declared hard-gate assertions passing on the complete composition, with zero observed unauthorized cross-role actions. BLOCKED/UNRESOLVED evidence does not count as pass or candidate failure. Cost ranking applies only to comparable eligible compositions.
 ## Ordered screening and common denominator
 
 Selection is staged, with architecture and chassis assessed together first:

@@ -149,6 +149,8 @@ ARCHITECTURE_FIRST = HIGH_REPLACEMENT_COST_PROPERTY_SCREEN
 The operational procedure is recorded in:
 `docs/evaluation/naia-architecture-first-chassis-selection-2026-09-30.md`
 
+That procedure is scoped to a NAIA role base. The product-wide NAIA/Anna/Apollo chassis metric and minimum selection threshold are operationalized in `docs/evaluation/system-chassis-selection-metric-2026-10-02.md`, under this ADR and the system-level scope record.
+
 Its numerical weights are triage heuristics only and cannot override a hard failure of a required property.
 
 ## Relation to candidate selection

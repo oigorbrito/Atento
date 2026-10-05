@@ -72,6 +72,9 @@ The claim we can carry forward is:
 
 Do not choose a winner, shortlist, or numeric estimate from upstream benchmark scores, popularity, feature counts, README claims, or CFS alone.
 
+### Minimum decision threshold
+
+Use [`system-chassis-selection-metric-2026-10-02.md`](system-chassis-selection-metric-2026-10-02.md) as the operational rule for the **complete system chassis**. Eligibility requires 100% of the frozen suite's mandatory hard-gate assertions to pass, including zero observed unauthorized cross-role actions. This is a finite-suite acceptance criterion, not universal assurance. Blocked, missing, mocked-only, or non-comparable system evidence remains unresolved and cannot be used to rank or eliminate a candidate. Among eligible candidates with the same profile and cost-accounting horizon, compare total adaptation plus ongoing-maintenance cost; if required labor rates, horizon, or comparable measurements are missing, report the component vector and do not invent a scalar winner. The repository currently records zero comparable three-role cost runs and gates as defined but not executed.
 ## Minimum comparable Atento benchmark to close the question
 
 For each candidate composition, freeze exact revisions and the same functional profile. Use the same task cases, model/provider or explicitly declared local model, token/tool budgets, deployment assumptions, and observation window. Run hard boundary assertions first: isolated chats/state/memory/tools/credentials, explicit minimal handoff with recipient-side reauthorization, and role-preserving scheduler/retry/recovery.
@@ -103,4 +106,14 @@ Count failed/blocked infrastructure as `INVALID/BLOCKED` rather than candidate f
 - Agentic Score weights and source-confidence counts are specific to the BenchLM page snapshot. The displayed model ranks are not independent evidence of chassis fitness; benchmark-specific provider/independent counts and raw scores must be read in their own pages.
 - AgentBalance: https://arxiv.org/abs/2512.11426
 - Efficient Agents: https://arxiv.org/abs/2508.02694
+
+
+
+## Subsequent evidence update — 2026-10-03
+
+The 2026-09-30 benchmark cross-check above is a dated snapshot. A later hosted NanoClaw profile-derived three-role probe is recorded in [the Gate-2 continuation](system-chassis-gate2-continuation-2026-10-01.md): 7/7 harness tests passed, with the mapped system assertions classified `PASS_WITH_SCOPE`. The full system profile gate remains `NOT_PASSED`; product wiring, provider/model decision behavior, host restart, and three-role scheduled-task fire/retry/recovery remain outside that probe.
+
+AI Butler's later NAIA–Anna Gate-2 run passed 6/6 common assertions with scope, while the exact tested pin remains blocked by a separate security workflow failure. Neither result is a comparable full-system selection run. No comparable total-cost vectors or cross-candidate CFS results exist for the current system cohort.
+
+Current adjudication: **no candidate is eligible for cost ranking and no system chassis winner is established**. NanoClaw is the next residual-probe priority, not the selected chassis. The operational scorecard and evidence matrix are in [the system chassis selection metric](system-chassis-selection-metric-2026-10-02.md).
 

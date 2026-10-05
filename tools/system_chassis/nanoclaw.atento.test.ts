@@ -19,6 +19,10 @@ import { dispatch } from './cli/dispatch.js';
 import './cli/resources/tasks.js';
 import type { CallerContext } from './cli/frame.js';
 import { sessionDir, withExistingMailboxSession, writeSessionMessage } from './session-manager.js';
+import { ensureSchema, openInboundDb } from './mailbox/sqlite/session-db.js';
+import { insertTaskRow } from './mailbox/sqlite/tasks.js';
+import { wrapSqliteInbound } from './mailbox/sqlite/index.js';
+import { handleRecurrence } from './modules/scheduling/recurrence.js';
 import type { Session } from './types.js';
 
 const roles = ['naia', 'anna', 'apollo'] as const;
@@ -101,8 +105,8 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
       };
     };
     expect(profile.upstream_repo).toBe('nanocoai/nanoclaw');
-    expect(profile.upstream_sha).toBe('4c1eabd3ddd74cc3d71b1871da857391a9411c8d');
-    expect(profile.profile_hash).toBe('c6e815289488daace646e7d9123b2638c6f245eaf4ef4dff357d6b3c50c1d289');
+    expect(profile.upstream_sha).toBe('6906434bcb13eaeca1a6d8b461a1f2c22e53359f');
+    expect(profile.profile_hash).toBe('bd41958e55f68ef2e06a8d5c285df6ea5a491a34a2244948a049477da522c2f5');
     expect(profile.policy_hash).toBe('02de0f5540c1c638c0553dc8261cfd0e53ffb4727a0636a50a4653d2e15a7132');
     expect(profile.topology.roles.NAIA.agent_group).toBe('atento-naia');
     expect(profile.topology.roles.Anna.agent_group).toBe('atento-anna');
@@ -386,6 +390,70 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
     }
   });
 
+  it('re-arms each role recurring series from its own reopened mailbox after interruption', async () => {
+    const db = await initTestDb();
+    await runMigrations(db);
+    const createdAt = new Date().toISOString();
+    const dbs = new Map<Role, ReturnType<typeof openInboundDb>>();
+    try {
+      for (const role of roles) {
+        const profileRole = groupByRole[role];
+        await createAgentGroup({
+          id: profileRole.agent_group,
+          name: role,
+          folder: profileRole.agent_group,
+          agent_provider: profileRole.provider,
+          created_at: createdAt,
+        });
+        const inboundPath = join(root, 'recurrence-recovery', profileRole.agent_group, 'inbound.db');
+        mkdirSync(join(root, 'recurrence-recovery', profileRole.agent_group), { recursive: true });
+        ensureSchema(inboundPath, 'inbound');
+        const firstOpen = openInboundDb(inboundPath);
+        const taskId = `atento-${role}-completed-recurrence`;
+        insertTaskRow(firstOpen, {
+          id: taskId,
+          seriesId: taskId,
+          processAfter: '2020-01-01T00:00:00.000Z',
+          recurrence: '0 0 * * *',
+          content: JSON.stringify({ prompt: `inert-${role}-recurrence` }),
+        });
+        firstOpen.prepare("UPDATE messages_in SET status = 'completed' WHERE id = ?").run(taskId);
+        firstOpen.close();
+
+        // Reopen from the role's persisted mailbox, as the recovery side of a host interruption.
+        const reopened = openInboundDb(inboundPath);
+        dbs.set(role, reopened);
+        const session = {
+          id: `atento-${role}-recovery-session`,
+          agent_group_id: profileRole.agent_group,
+          messaging_group_id: profileRole.channel_instance,
+          thread_id: null,
+          status: 'active',
+          created_at: createdAt,
+          last_active: createdAt,
+          container_status: 'stopped',
+        } as Session;
+        await handleRecurrence(wrapSqliteInbound(reopened), session);
+      }
+
+      for (const role of roles) {
+        const dbForRole = dbs.get(role)!;
+        const rows = dbForRole.prepare(
+          'SELECT id, status, recurrence, series_id, content FROM messages_in ORDER BY seq',
+        ).all() as Array<{ id: string; status: string; recurrence: string | null; series_id: string; content: string }>;
+        expect(rows).toHaveLength(2);
+        expect(rows[0].recurrence).toBeNull();
+        expect(rows[1].status).toBe('pending');
+        expect(rows[1].recurrence).toBe('0 0 * * *');
+        expect(rows[1].series_id).toBe(rows[0].id);
+        expect(JSON.parse(rows[1].content).prompt).toBe(`inert-${role}-recurrence`);
+      }
+    } finally {
+      for (const role of roles) dbs.get(role)?.close();
+      await closeDb();
+    }
+  });
+
   it('delivers typed Anna/Apollo requests to NAIA for receiver-side reauthorization', async () => {
     const brokerAdapter = process.env.ATENTO_HANDOFF_BROKER_ADAPTER;
     if (!brokerAdapter) throw new Error('ATENTO_HANDOFF_BROKER_ADAPTER must point to the Atento reference broker adapter');
@@ -665,3 +733,4 @@ describe('Atento three-role mount boundary on the exact NanoClaw pin', () => {
     }
   });
 });
+

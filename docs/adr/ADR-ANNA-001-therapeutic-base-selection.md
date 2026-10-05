@@ -21,6 +21,10 @@ Ela não decide:
 - **Shortlist:** `NOT_SELECTED`
 - **Date:** 2026-09-29
 
+## Runtime direction versus Anna therapeutic base
+
+The product owner selected NanoClaw as the **shared operational runtime reference** for the Atento agent groups. This ADR remains `ANNA_BASE = NOT_SELECTED`: NanoClaw's runtime selection does not establish it as a therapeutic/functional base for Anna. Anna uses an isolated role group on the common runtime if and when implemented; her therapeutic behavior and safety remain Anna-specific and require a separate base decision and evaluation. Production eligibility remains blocked by the system gate.
+
 ## Current candidate-universe evidence
 
 Post-reset re-enumeration is recorded in:
