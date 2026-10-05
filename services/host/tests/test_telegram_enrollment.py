@@ -18,7 +18,7 @@ class TelegramEnrollmentTests(unittest.TestCase):
         self.tempdir = tempfile.TemporaryDirectory()
         self.db = Path(self.tempdir.name) / "host.sqlite3"
         self.now = 1_800_000_000
-        self.event = AuthenticatedTelegramEvent(user_id=123456)
+        self.event = AuthenticatedTelegramEvent(bot_account_id=777000, user_id=123456)
         self.store = TelegramEnrollmentStore(
             database_path=self.db,
             enrollment_secret=b"test-only-enrollment-key-at-least-32-bytes",
@@ -48,9 +48,9 @@ class TelegramEnrollmentTests(unittest.TestCase):
             self.store.start_enrollment(event=self.event, role_id="NAIA")
 
         binding = self.enroll_bootstrap_naia()
-        self.assertEqual(binding.principal_id, "atento:telegram:123456")
+        self.assertEqual(binding.principal_id, "atento:telegram:777000:123456")
 
-        other = AuthenticatedTelegramEvent(user_id=999)
+        other = AuthenticatedTelegramEvent(bot_account_id=777000, user_id=999)
         with self.assertRaisesRegex(EnrollmentRejected, "bootstrap enrollment is not authorized"):
             self.store.start_enrollment(event=other, role_id="ANNA", bootstrap=True)
 
@@ -99,10 +99,19 @@ class TelegramEnrollmentTests(unittest.TestCase):
         )
         with self.assertRaisesRegex(EnrollmentRejected, "not found for subject"):
             self.store.complete_enrollment(
-                event=AuthenticatedTelegramEvent(user_id=654321),
+                event=AuthenticatedTelegramEvent(bot_account_id=777000, user_id=654321),
                 challenge_id=challenge.challenge_id,
                 code=challenge.code,
             )
+
+    def test_same_user_id_on_another_bot_account_is_a_distinct_subject(self) -> None:
+        self.enroll_bootstrap_naia()
+        other_bot_event = AuthenticatedTelegramEvent(
+            bot_account_id=888000,
+            user_id=self.event.user_id,
+        )
+        with self.assertRaisesRegex(EnrollmentRejected, "not enrolled or has been revoked"):
+            self.store.resolve(other_bot_event)
 
     def test_authenticated_event_maps_to_host_role_and_identity_issuer(self) -> None:
         binding = self.enroll_bootstrap_naia()
@@ -165,7 +174,7 @@ class TelegramEnrollmentTests(unittest.TestCase):
             challenge_id=seed.challenge_id,
             code=seed.code,
         )
-        anna = AuthenticatedTelegramEvent(user_id=222222)
+        anna = AuthenticatedTelegramEvent(bot_account_id=777000, user_id=222222)
         challenge = store.start_enrollment(
             event=anna,
             role_id="ANNA",
