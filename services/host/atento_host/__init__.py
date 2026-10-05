@@ -25,4 +25,13 @@ __all__ = [
     "TelegramPrincipalBinding",
     "canonical_telegram_subject",
     "issue_execution_identity_for_telegram",
+    "AuthenticatedTelegramUpdate",
+    "TelegramWebhookAuthenticator",
+    "TelegramWebhookRejected",
 ]
+
+from .telegram_webhook import (
+    AuthenticatedTelegramUpdate,
+    TelegramWebhookAuthenticator,
+    TelegramWebhookRejected,
+)
