@@ -15,7 +15,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
 
-from .identity import AuthenticatedExecutionIdentity, IdentityIssuer
+from .identity import AuthenticatedExecutionIdentity, IdentityIssuer, IdentityRejected
 
 
 _NONTERMINAL = frozenset(
@@ -168,7 +168,10 @@ class HostRunLedger:
         )
 
     def _verify_identity(self, token: str) -> AuthenticatedExecutionIdentity:
-        return self._identity_issuer.verify(token)
+        try:
+            return self._identity_issuer.verify(token)
+        except IdentityRejected as exc:
+            raise RunRejected("execution identity token is invalid") from exc
 
     def create_run(self, *, identity_token: str) -> RunRecord:
         identity = self._verify_identity(identity_token)
