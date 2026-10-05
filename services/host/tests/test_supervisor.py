@@ -99,6 +99,59 @@ class HostRunLedgerTests(unittest.TestCase):
         )
         self.assertNotEqual(old_lease.claim_id, new_lease.claim_id)
 
+    def test_effect_pending_recovery_requires_reconciliation_before_retry(self) -> None:
+        lease = self.ledger.claim(
+            identity_token=self.token1,
+            claim_owner="worker-1",
+            lease_seconds=1,
+        )
+        self.ledger.mark_running(identity_token=self.token1, lease=lease)
+        self.ledger.record_effect(
+            identity_token=self.token1,
+            lease=lease,
+            result_ref="provider:ambiguous:123",
+        )
+        self.now += 2
+
+        recovered = self.ledger.recover_expired(run_id="run-1")
+        self.assertEqual(recovered.state, "RECONCILE_REQUIRED")
+        token2 = self.token(generation=2)
+
+        with self.assertRaisesRegex(RunRejected, "not waiting for retry"):
+            self.ledger.release_retry(identity_token=token2)
+
+        reconciled = self.ledger.reconcile_effect(
+            identity_token=token2,
+            effect_completed=False,
+        )
+        self.assertEqual(reconciled.state, "RETRY_WAIT")
+        released = self.ledger.release_retry(identity_token=token2)
+        self.assertEqual(released.state, "ACCEPTED")
+
+    def test_reconciled_completed_effect_becomes_terminal_without_replay(self) -> None:
+        lease = self.ledger.claim(
+            identity_token=self.token1,
+            claim_owner="worker-1",
+            lease_seconds=1,
+        )
+        self.ledger.mark_running(identity_token=self.token1, lease=lease)
+        self.ledger.record_effect(
+            identity_token=self.token1,
+            lease=lease,
+            result_ref="provider:pending:123",
+        )
+        self.now += 2
+        self.ledger.recover_expired(run_id="run-1")
+        token2 = self.token(generation=2)
+
+        record = self.ledger.reconcile_effect(
+            identity_token=token2,
+            effect_completed=True,
+            result_ref="provider:confirmed:123",
+        )
+        self.assertEqual(record.state, "ACKED")
+        self.assertEqual(record.result_ref, "provider:confirmed:123")
+
     def test_recovery_requires_expired_lease(self) -> None:
         self.ledger.claim(
             identity_token=self.token1,
