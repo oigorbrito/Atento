@@ -290,6 +290,7 @@ class TelegramEnrollmentStore:
                     role_id=row["role_id"],
                     actor_principal_id=row["authorized_by"],
                 )
+                conn.commit()
                 raise EnrollmentRejected("enrollment challenge expired")
 
             supplied = self._digest(challenge_id, subject, code)
@@ -312,6 +313,7 @@ class TelegramEnrollmentStore:
                     role_id=row["role_id"],
                     actor_principal_id=row["authorized_by"],
                 )
+                conn.commit()
                 raise EnrollmentRejected("enrollment code rejected")
 
             principal_id = f"atento:telegram:{event.user_id}"
