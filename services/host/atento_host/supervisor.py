@@ -19,7 +19,7 @@ from .identity import AuthenticatedExecutionIdentity, IdentityIssuer, IdentityRe
 
 
 _NONTERMINAL = frozenset(
-    {"ACCEPTED", "CLAIMED", "RUNNING", "EFFECT_PENDING", "RETRY_WAIT"}
+    {"ACCEPTED", "CLAIMED", "RUNNING", "EFFECT_PENDING", "RETRY_WAIT", "RECONCILE_REQUIRED"}
 )
 _TERMINAL = frozenset({"ACKED", "FAILED_TERMINAL", "CANCELLED"})
 
@@ -383,16 +383,21 @@ class HostRunLedger:
                 raise RunRejected("run claim lease has not expired")
 
             new_generation = row["generation"] + 1
+            recovered_state = (
+                "RECONCILE_REQUIRED"
+                if row["state"] == "EFFECT_PENDING"
+                else "RETRY_WAIT"
+            )
             changed = conn.execute(
                 """
                 UPDATE host_runs
-                SET generation = ?, state = 'RETRY_WAIT',
+                SET generation = ?, state = ?,
                     claim_id = NULL, claim_owner = NULL, lease_expires_at = NULL,
                     updated_at = ?
                 WHERE run_id = ? AND generation = ?
                   AND state IN ('CLAIMED', 'RUNNING', 'EFFECT_PENDING')
                 """,
-                (new_generation, now, run, row["generation"]),
+                (new_generation, recovered_state, now, run, row["generation"]),
             )
             if changed.rowcount != 1:
                 raise RunRejected("recovery lost concurrent state transition")
@@ -401,10 +406,80 @@ class HostRunLedger:
                 run_id=run,
                 generation=new_generation,
                 event_type="RUN_RECOVERED",
-                state="RETRY_WAIT",
-                detail=f"expired_generation={row['generation']}",
+                state=recovered_state,
+                detail=f"expired_generation={row['generation']};from_state={row['state']}",
             )
         return self.get(run)
+
+    def reconcile_effect(
+        self,
+        *,
+        identity_token: str,
+        effect_completed: bool,
+        result_ref: str | None = None,
+    ) -> RunRecord:
+        """Resolve an ambiguous post-effect crash without blind replay."""
+
+        identity = self._verify_identity(identity_token)
+        if not isinstance(effect_completed, bool):
+            raise RunRejected("effect_completed must be boolean")
+        if effect_completed:
+            result = self._require_text(result_ref, "result_ref")
+        elif result_ref is not None:
+            raise RunRejected("result_ref is only valid for a completed effect")
+        else:
+            result = None
+
+        now = int(self._clock())
+        with self._connect() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            row = conn.execute(
+                "SELECT * FROM host_runs WHERE run_id = ?",
+                (identity.run_id,),
+            ).fetchone()
+            if row is None or not self._identity_matches_row(identity, row):
+                raise RunRejected("identity binding does not match recovered run")
+            if row["state"] != "RECONCILE_REQUIRED":
+                raise RunRejected("run does not require effect reconciliation")
+
+            if effect_completed:
+                changed = conn.execute(
+                    """
+                    UPDATE host_runs
+                    SET state = 'ACKED', result_ref = ?, updated_at = ?
+                    WHERE run_id = ? AND generation = ?
+                      AND state = 'RECONCILE_REQUIRED'
+                    """,
+                    (result, now, identity.run_id, identity.generation),
+                )
+                event_type = "EFFECT_RECONCILED_COMPLETED"
+                next_state = "ACKED"
+                detail = f"result_ref={result}"
+            else:
+                changed = conn.execute(
+                    """
+                    UPDATE host_runs
+                    SET state = 'RETRY_WAIT', result_ref = NULL, updated_at = ?
+                    WHERE run_id = ? AND generation = ?
+                      AND state = 'RECONCILE_REQUIRED'
+                    """,
+                    (now, identity.run_id, identity.generation),
+                )
+                event_type = "EFFECT_RECONCILED_NOT_COMPLETED"
+                next_state = "RETRY_WAIT"
+                detail = "adapter reconciliation authorized retry eligibility"
+
+            if changed.rowcount != 1:
+                raise RunRejected("effect reconciliation lost concurrent state transition")
+            self._event(
+                conn,
+                run_id=identity.run_id,
+                generation=identity.generation,
+                event_type=event_type,
+                state=next_state,
+                detail=detail,
+            )
+        return self.get(identity.run_id)
 
     def release_retry(
         self,
