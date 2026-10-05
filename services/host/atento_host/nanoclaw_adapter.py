@@ -65,13 +65,18 @@ class NanoClawRuntimeAdapter:
         identity_issuer: IdentityIssuer,
         ledger: HostRunLedger,
         runner: CommandRunner = _default_runner,
-        expected_pin: str = NANOCLAW_FROZEN_PIN,
+        upstream_base_pin: str = NANOCLAW_FROZEN_PIN,
+        approved_runtime_head: str = NANOCLAW_FROZEN_PIN,
     ) -> None:
         root = Path(nanoclaw_root)
         if not root:
             raise ValueError("nanoclaw_root is required")
-        if not isinstance(expected_pin, str) or len(expected_pin) != 40:
-            raise ValueError("expected_pin must be a full commit SHA")
+        for value, field in (
+            (upstream_base_pin, "upstream_base_pin"),
+            (approved_runtime_head, "approved_runtime_head"),
+        ):
+            if not isinstance(value, str) or len(value) != 40:
+                raise ValueError(f"{field} must be a full commit SHA")
         if not role_to_group:
             raise ValueError("role_to_group is required")
         normalized: dict[str, str] = {}
@@ -87,7 +92,8 @@ class NanoClawRuntimeAdapter:
         self._issuer = identity_issuer
         self._ledger = ledger
         self._runner = runner
-        self._expected_pin = expected_pin
+        self._upstream_base_pin = upstream_base_pin
+        self._approved_runtime_head = approved_runtime_head
 
     def _run(self, *argv: str) -> subprocess.CompletedProcess[str]:
         try:
@@ -101,9 +107,21 @@ class NanoClawRuntimeAdapter:
         if result.returncode != 0:
             raise NanoClawAdapterRejected("cannot resolve NanoClaw checkout HEAD")
         actual = result.stdout.strip()
-        if actual != self._expected_pin:
+        if actual != self._approved_runtime_head:
             raise NanoClawAdapterRejected(
-                f"NanoClaw checkout pin mismatch: expected {self._expected_pin}, got {actual}"
+                "NanoClaw runtime head mismatch: "
+                f"expected {self._approved_runtime_head}, got {actual}"
+            )
+        ancestry = self._run(
+            "git",
+            "merge-base",
+            "--is-ancestor",
+            self._upstream_base_pin,
+            self._approved_runtime_head,
+        )
+        if ancestry.returncode != 0:
+            raise NanoClawAdapterRejected(
+                "approved NanoClaw runtime head is not descended from frozen upstream pin"
             )
 
     def _verify_identity_for_lease(
@@ -202,7 +220,7 @@ class NanoClawRuntimeAdapter:
         if not all(isinstance(v, str) and v for v in (series_id, row_id, status)):
             raise NanoClawAdapterRejected("NanoClaw task creation response is incomplete")
 
-        dispatch_ref = f"nanoclaw:{self._expected_pin}:task:{series_id}:row:{row_id}"
+        dispatch_ref = f"nanoclaw:{self._approved_runtime_head}:task:{series_id}:row:{row_id}"
         self._ledger.mark_dispatched(
             identity_token=identity_token,
             lease=lease,
@@ -259,7 +277,7 @@ class NanoClawRuntimeAdapter:
 
         if status == "completed":
             result_ref = (
-                f"nanoclaw:{self._expected_pin}:task:{dispatch.series_id}:"
+                f"nanoclaw:{self._approved_runtime_head}:task:{dispatch.series_id}:"
                 f"row:{dispatch.row_id}:completed"
             )
             self._ledger.record_effect(
