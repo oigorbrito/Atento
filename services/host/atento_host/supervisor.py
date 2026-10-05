@@ -19,7 +19,7 @@ from .identity import AuthenticatedExecutionIdentity, IdentityIssuer, IdentityRe
 
 
 _NONTERMINAL = frozenset(
-    {"ACCEPTED", "CLAIMED", "RUNNING", "EFFECT_PENDING", "RETRY_WAIT", "RECONCILE_REQUIRED"}
+    {"ACCEPTED", "CLAIMED", "RUNNING", "DISPATCHED", "EFFECT_PENDING", "RETRY_WAIT", "RECONCILE_REQUIRED"}
 )
 _TERMINAL = frozenset({"ACKED", "FAILED_TERMINAL", "CANCELLED"})
 
@@ -293,6 +293,45 @@ class HostRunLedger:
             detail="worker began execution",
         )
 
+    def mark_dispatched(
+        self,
+        *,
+        identity_token: str,
+        lease: ClaimLease,
+        dispatch_ref: str,
+    ) -> RunRecord:
+        """Persist external dispatch before the runtime may perform effects."""
+
+        identity = self._verify_identity(identity_token)
+        dispatch = self._require_text(dispatch_ref, "dispatch_ref")
+        now = int(self._clock())
+        with self._connect() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            row = self._require_live_claim(conn, identity=identity, lease=lease)
+            if row["state"] != "RUNNING":
+                raise RunRejected("run is not ready to record dispatch")
+            changed = conn.execute(
+                """
+                UPDATE host_runs
+                SET state = 'DISPATCHED', result_ref = ?, updated_at = ?
+                WHERE run_id = ? AND generation = ?
+                  AND state IN ('RUNNING', 'DISPATCHED') AND claim_id = ?
+                """,
+                (dispatch, now, identity.run_id, identity.generation, lease.claim_id),
+            )
+            if changed.rowcount != 1:
+                raise RunRejected("dispatch record lost concurrent state transition")
+            self._event(
+                conn,
+                run_id=identity.run_id,
+                generation=identity.generation,
+                event_type="RUN_DISPATCHED",
+                state="DISPATCHED",
+                claim_id=lease.claim_id,
+                detail=f"dispatch_ref={dispatch}",
+            )
+        return self.get(identity.run_id)
+
     def record_effect(
         self,
         *,
@@ -306,7 +345,7 @@ class HostRunLedger:
         with self._connect() as conn:
             conn.execute("BEGIN IMMEDIATE")
             row = self._require_live_claim(conn, identity=identity, lease=lease)
-            if row["state"] != "RUNNING":
+            if row["state"] not in {"RUNNING", "DISPATCHED"}:
                 raise RunRejected("run is not ready to record effect")
             changed = conn.execute(
                 """
@@ -377,7 +416,7 @@ class HostRunLedger:
             ).fetchone()
             if row is None:
                 raise RunRejected("run not found")
-            if row["state"] not in {"CLAIMED", "RUNNING", "EFFECT_PENDING"}:
+            if row["state"] not in {"CLAIMED", "RUNNING", "DISPATCHED", "EFFECT_PENDING"}:
                 raise RunRejected("run is not recoverable from an active claim")
             if row["lease_expires_at"] is None or row["lease_expires_at"] > now:
                 raise RunRejected("run claim lease has not expired")
@@ -385,7 +424,7 @@ class HostRunLedger:
             new_generation = row["generation"] + 1
             recovered_state = (
                 "RECONCILE_REQUIRED"
-                if row["state"] == "EFFECT_PENDING"
+                if row["state"] in {"DISPATCHED", "EFFECT_PENDING"}
                 else "RETRY_WAIT"
             )
             changed = conn.execute(
@@ -395,7 +434,7 @@ class HostRunLedger:
                     claim_id = NULL, claim_owner = NULL, lease_expires_at = NULL,
                     updated_at = ?
                 WHERE run_id = ? AND generation = ?
-                  AND state IN ('CLAIMED', 'RUNNING', 'EFFECT_PENDING')
+                  AND state IN ('CLAIMED', 'RUNNING', 'DISPATCHED', 'EFFECT_PENDING')
                 """,
                 (new_generation, recovered_state, now, run, row["generation"]),
             )
