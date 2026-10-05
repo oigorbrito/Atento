@@ -1,8 +1,9 @@
 """Host-issued, short-lived execution identities for runtime adapters.
 
 The issuer must only be called after the host has authenticated the principal
-and resolved the role from trusted channel/session policy. Agents and prompts
-must never receive the signing key or provide their own grants.
+and resolved the role from trusted channel/session policy. The token is
+presented to the host control plane for validation; agents and runtime
+containers must never receive the signing key or provide their own grants.
 """
 
 from __future__ import annotations
