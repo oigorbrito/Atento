@@ -314,8 +314,8 @@ class HostRunLedger:
                 """
                 UPDATE host_runs
                 SET state = 'DISPATCHED', result_ref = ?, updated_at = ?
-                WHERE run_id = ? AND generation = ?
-                  AND state IN ('RUNNING', 'DISPATCHED') AND claim_id = ?
+                WHERE run_id = ? AND generation = ? AND state = 'RUNNING'
+                  AND claim_id = ?
                 """,
                 (dispatch, now, identity.run_id, identity.generation, lease.claim_id),
             )
@@ -351,8 +351,8 @@ class HostRunLedger:
                 """
                 UPDATE host_runs
                 SET state = 'EFFECT_PENDING', result_ref = ?, updated_at = ?
-                WHERE run_id = ? AND generation = ? AND state = 'RUNNING'
-                  AND claim_id = ?
+                WHERE run_id = ? AND generation = ?
+                  AND state IN ('RUNNING', 'DISPATCHED') AND claim_id = ?
                 """,
                 (result, now, identity.run_id, identity.generation, lease.claim_id),
             )
