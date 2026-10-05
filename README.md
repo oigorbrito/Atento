@@ -2,7 +2,7 @@
 
 Atento é o repositório canônico de um produto com três agentes especializados: **NAIA** (assistente pessoal persistente), **Anna** (assistente emocional/terapêutica) e **Apollo** (nutrição/fitness, atualmente adiado).
 
-> **Maturidade atual:** reconciliação de produto + pesquisa/arquitetura + scaffold inicial de avaliação. Nenhum chassis está selecionado para NAIA ou Anna; Apollo está adiado.
+> **Maturidade atual:** NanoClaw foi escolhido como runtime comum de referência, com grupos isolados por agente. As bases funcionais da NAIA e da Anna seguem sem seleção; Apollo segue adiado. O host do produto não foi implementado e produção não está aprovada.
 
 ## Alinhamento conceitual em reconstrução
 
@@ -47,9 +47,9 @@ problema
 
 Mudanças que não conseguem percorrer essa cadeia ainda não são consideradas defensáveis.
 
-## Próxima decisão
+## Próximo gate
 
-Antes de novos spikes, o projeto está comparando o **chassi do Atento completo** (NAIA, Anna e a fronteira futura do Apollo), reaproveitando evidência por escopo. A antiga triagem e o Top 5 da NAIA são role-specific; nenhum chassi sistêmico ou Top 5 global está selecionado. Apollo permanece adiado como pesquisa funcional.
+A direção de runtime comum está selecionada: NanoClaw, distribuído como um único fork mantido pelo Atento e executado em grupos isolados por agente. Isso não seleciona as bases funcionais da NAIA ou da Anna; a pesquisa funcional do Apollo continua adiada. O próximo gate é implementar o host Atento, fechar identidade e ciclo de vida, aprovar RTO/RPO e executar a qualificação do sistema completo. A direção não aprova produção.
 
 ## Aviso de escopo
 
