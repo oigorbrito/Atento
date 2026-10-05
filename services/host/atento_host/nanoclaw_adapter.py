@@ -5,8 +5,8 @@ The adapter uses only seams verified at the frozen NanoClaw pin:
 - ncl CLI over the host-owned 0600 Unix socket;
 - one-shot task creation and task status reads.
 
-It never imports NanoClaw's owner/pairing authority and refuses to dispatch if
-the checkout HEAD differs from the frozen pin.
+It never imports NanoClaw's owner/pairing authority. Dispatch is allowed only
+from an explicitly approved runtime head descended from the frozen upstream pin.
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Callable, Mapping, Sequence
 
 from .identity import IdentityIssuer, IdentityRejected
-from .supervisor import ClaimLease, HostRunLedger, RunRejected
+from .supervisor import ClaimLease, HostRunLedger
 
 
 NANOCLAW_FROZEN_PIN = "3f7e13b591a0c8980242b81ceff4b3f542ef839a"
