@@ -32,6 +32,7 @@ class EnrollmentRejected(ValueError):
 class AuthenticatedTelegramEvent:
     """Event identity after provider transport authentication by the adapter."""
 
+    bot_account_id: int
     user_id: int
 
 
@@ -51,9 +52,13 @@ class EnrollmentChallenge:
 
 
 def canonical_telegram_subject(event: AuthenticatedTelegramEvent) -> str:
-    if isinstance(event.user_id, bool) or not isinstance(event.user_id, int) or event.user_id <= 0:
-        raise EnrollmentRejected("telegram user_id must be a positive integer")
-    return f"telegram:user:{event.user_id}"
+    for value, field in (
+        (event.bot_account_id, "bot_account_id"),
+        (event.user_id, "user_id"),
+    ):
+        if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+            raise EnrollmentRejected(f"telegram {field} must be a positive integer")
+    return f"telegram:bot:{event.bot_account_id}:user:{event.user_id}"
 
 
 class TelegramEnrollmentStore:
@@ -316,7 +321,7 @@ class TelegramEnrollmentStore:
                 conn.commit()
                 raise EnrollmentRejected("enrollment code rejected")
 
-            principal_id = f"atento:telegram:{event.user_id}"
+            principal_id = f"atento:telegram:{event.bot_account_id}:{event.user_id}"
             conn.execute(
                 """
                 INSERT INTO telegram_principals
