@@ -3,7 +3,7 @@
 - Status: `PROPOSED; NOT_IMPLEMENTED; NOT_ACCEPTED`
 - Scope: runtime boundary needed to execute the complete NAIA/Anna/Apollo system-chassis profile against a real Atento host.
 - Authority: subordinate to `docs/adr/ADR-001-naya-product-composition.md` and `docs/adr/ADR-003-evidence-first-engineering-decision-policy.md`.
-- Decision: this draft makes the test seam concrete. It does not select a deployment topology or chassis and does not claim a passing implementation.
+- Decision: this draft makes the test seam concrete. It does not change the selected NanoClaw reference runtime, select a deployment topology, or claim a passing implementation.
 
 ## Decision record
 
@@ -52,13 +52,13 @@ ExecutionIdentity = {
 
 Requirements:
 
-- `issuer` is a trusted Atento control-plane component or an explicitly approved authenticated channel-to-role mapping; the specific issuer and mapping store remain undecided.
+- `issuer` is the Atento Host Control Plane. It derives `role_id` from an authenticated host-side principal-to-role mapping; the mapping source/store and enrollment procedure remain to be implemented and verified.
 - The binding is authenticated and integrity-protected end-to-end to the runtime/adapter boundary. The adapter MUST reject missing, invalid, expired, revoked, or mismatched role/session/run bindings.
 - Each role resolves only its own private state root, credentials, and capability set. A role name in a path or request body is not authorization.
 - Identity is revalidated at each handoff, delayed/retried dispatch, and consequential tool boundary. A child run receives an explicit equal-or-narrower grant; it does not inherit ambient authority.
 - Logs and traces record identity references and authorization decisions, never credential values or private cross-role payloads.
 
-Unresolved product decision: name the trusted issuer, enrollment/mapping authority, revocation path, and the mechanism by which the host proves the binding to each candidate adapter.
+Remaining implementation decisions: choose the mapping source/store and enrollment procedure, define identity revocation and key custody/rotation, and implement proof validation at each candidate adapter boundary. The trusted issuer is already selected as the Atento Host Control Plane.
 
 ## 2. Process and run lifecycle
 
@@ -126,7 +126,7 @@ Acceptance: every mandatory assertion passes on the complete Atento composition;
 
 ## Reconciliation with current repository evidence
 
-- `docs/adr/ADR-001-naya-product-composition.md` selects NanoClaw as the reference runtime for three isolated role groups and an Atento typed handoff. Production deployment topology, trusted identity issuer, and product host wiring remain undecided; this contract does not silently resolve those implementation choices.
+- `docs/adr/ADR-001-naya-product-composition.md` selects NanoClaw as the reference runtime for three isolated role groups and an Atento typed handoff. Deployment topology and product host wiring remain undecided. The trusted identity issuer and lifecycle owner are selected below; this contract does not claim those components are implemented.
 - `docs/evaluation/system-chassis-gate2-continuation-2026-10-01.md` records that no Atento product host/runtime was found to bind the NanoClaw mailbox adapter to. The probe uses a test-harness broker and is explicitly `PASS_WITH_SCOPE`.
 - `docs/evaluation/system-chassis-selection-metric-2026-10-02.md` requires persisted role state to meet predeclared RTO/RPO before eligibility. No product limits are approved; therefore this gate remains open.
 - `evals/config/system_chassis_nanoclaw_v1.json` and `tools/system_chassis/nanoclaw.atento.test.ts` describe a candidate-facing profile/probe, not the missing Atento product host.
@@ -144,4 +144,4 @@ PRODUCTION_ELIGIBILITY = BLOCKED_UNRESOLVED
 QUALIFIED_SYSTEM_CHASSIS_WINNER = NONE
 ```
 
-The next implementation decision is to accept/revise this contract, choose the trusted identity issuer and lifecycle owner, and obtain product-owner RTO/RPO objectives. Once those are present in a real host implementation, run the decisive integration test above against frozen candidate pins. No candidate result is changed by this draft.
+The next implementation work is to accept/revise this contract, implement the selected Host Control Plane and Host Supervisor, define mapping-source and key custody/rotation/revocation behavior, and obtain product-owner RTO/RPO objectives. Once these are present in a real host implementation, run the decisive integration test above against frozen candidate pins. No candidate result is changed by this draft.
