@@ -452,3 +452,10 @@ APOLLO_STATUS = DEFERRED
 
 CROSS_AGENT_DEFAULT = ISOLATED
 ```
+
+
+## 8. Decisão de runtime compartilhado — 2026-10-04
+
+O responsável pelo produto selecionou NanoClaw como runtime/chassi operacional comum de referência para NAIA, Anna e Apollo quando este último for reativado. A distribuição pretendida é um único fork mantido pelo Atento, compartilhado pelos três papéis; cada papel executa em grupo isolado, com estado e grants próprios e handoff tipado autorizado pelo destinatário.
+
+Esta decisão é sobre o runtime operacional. Não seleciona a base funcional/terapêutica da NAIA ou da Anna, não reativa a pesquisa funcional do Apollo, e não estabelece topologia de produção. O fork Atento e o host do produto ainda não existem; gates de identidade, restart, retry, recuperação e RTO/RPO seguem abertos. Portanto, produção não está aprovada.
