@@ -1,0 +1,67 @@
+name: Three-project extraction roundtrip
+
+on:
+  push:
+    paths:
+      - ".github/workflows/three-project-roundtrip.yml"
+      - "agents/**"
+      - "tools/validate_logical_agent_boundaries.py"
+  pull_request:
+    paths:
+      - ".github/workflows/three-project-roundtrip.yml"
+      - "agents/**"
+      - "tools/validate_logical_agent_boundaries.py"
+
+permissions:
+  contents: read
+
+jobs:
+  split-build-test-merge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate monorepo logical boundaries
+        run: python tools/validate_logical_agent_boundaries.py
+
+      - name: Extract, build and test each logical project independently
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/atento-extracted /tmp/atento-roundtrip
+          mkdir -p /tmp/atento-extracted /tmp/atento-roundtrip/agents
+
+          for role in naia anna apollo; do
+            cp -a "agents/$role" "/tmp/atento-extracted/$role"
+
+            (
+              cd "/tmp/atento-extracted/$role"
+              python -m compileall -q .
+              python -m unittest discover -s tests -v
+              python -m pip wheel . --no-deps --no-build-isolation -w dist
+              test "$(find dist -maxdepth 1 -name '*.whl' | wc -l)" -eq 1
+            )
+
+            cp -a "/tmp/atento-extracted/$role" "/tmp/atento-roundtrip/agents/$role"
+            rm -rf "/tmp/atento-roundtrip/agents/$role/dist"
+            find "/tmp/atento-roundtrip/agents/$role" -type d -name __pycache__ -prune -exec rm -rf {} +
+            find "/tmp/atento-extracted/$role" -type d -name __pycache__ -prune -exec rm -rf {} +
+            rm -rf "/tmp/atento-extracted/$role/dist"
+
+            diff -qr "agents/$role" "/tmp/atento-roundtrip/agents/$role"
+          done
+
+      - name: Re-merge and revalidate boundaries
+        run: |
+          set -euo pipefail
+          cp tools/validate_logical_agent_boundaries.py /tmp/atento-roundtrip/validate.py
+          (
+            cd /tmp/atento-roundtrip
+            python validate.py
+          )
+
+      - name: Emit gate
+        run: |
+          echo "INDEPENDENT_ROLE_BUILD_TEST_3_OF_3=PASS"
+          echo "LOSSLESS_SPLIT_REMERGE_3_OF_3=PASS"
+          echo "PHYSICAL_REPOSITORY_HOSTING=NOT_TESTED"
