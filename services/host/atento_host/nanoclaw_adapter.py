@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import subprocess
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable, Mapping, Sequence
 
@@ -21,7 +22,7 @@ from .identity import IdentityIssuer, IdentityRejected
 from .supervisor import ClaimLease, HostRunLedger
 
 
-NANOCLAW_FROZEN_PIN = "3f7e13b591a0c8980242b81ceff4b3f542ef839a"
+NANOCLAW_FROZEN_PIN = "d7175d0dee42a1130c17ced09220b983257696a4"
 
 
 class NanoClawAdapterRejected(ValueError):
@@ -199,6 +200,17 @@ class NanoClawRuntimeAdapter:
         elif current.state != "RUNNING":
             raise NanoClawAdapterRejected("host run is not dispatchable")
 
+        intent_ref = (
+            f"nanoclaw:{self._approved_runtime_head}:intent:"
+            f"{identity.run_id}:generation:{identity.generation}"
+        )
+        self._ledger.mark_dispatching(
+            identity_token=identity_token,
+            lease=lease,
+            intent_ref=intent_ref,
+        )
+
+        process_after = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
         data = self._ncl_json(
             "tasks",
             "create",
@@ -209,7 +221,7 @@ class NanoClawRuntimeAdapter:
             "--prompt",
             task_prompt,
             "--process-after",
-            "now",
+            process_after,
         )
         if not isinstance(data, dict):
             raise NanoClawAdapterRejected("NanoClaw task creation returned invalid data")
@@ -276,9 +288,23 @@ class NanoClawRuntimeAdapter:
             return status
 
         if status == "completed":
+            completed_runs = data.get("completed_runs")
+            failed_runs = data.get("failed_runs")
+            recent_log = data.get("recent_log")
+            if (
+                not isinstance(completed_runs, int)
+                or completed_runs < 1
+                or not isinstance(failed_runs, int)
+                or failed_runs != 0
+                or not isinstance(recent_log, list)
+                or not any(isinstance(line, str) and line.strip() for line in recent_log)
+            ):
+                raise NanoClawAdapterRejected(
+                    "NanoClaw completed task lacks successful run evidence"
+                )
             result_ref = (
                 f"nanoclaw:{self._approved_runtime_head}:task:{dispatch.series_id}:"
-                f"row:{dispatch.row_id}:completed"
+                f"row:{dispatch.row_id}:completed:runs:{completed_runs}"
             )
             self._ledger.record_effect(
                 identity_token=identity_token,
