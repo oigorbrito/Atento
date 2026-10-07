@@ -95,6 +95,12 @@ def main() -> int:
             call(sys.executable, "-m", "compileall", "-q", ".", cwd=dst)
             call(sys.executable, "-m", "unittest", "discover", "-s", "tests", "-v", cwd=dst)
 
+            # Generated interpreter/build artifacts are not source evolution.
+            for cache in list(dst.rglob("__pycache__")):
+                shutil.rmtree(cache)
+            for pyc in list(dst.rglob("*.pyc")):
+                pyc.unlink()
+
             call("git", "add", ".", cwd=dst)
             call("git", "commit", "-q", "-m", f"{slug}: independent evolution", cwd=dst)
             evolved_commit = run("git", "rev-parse", "HEAD", cwd=dst)
