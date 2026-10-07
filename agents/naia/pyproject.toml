@@ -1,0 +1,13 @@
+[build-system]
+requires = []
+build-backend = "atento_build_backend"
+
+[project]
+name = "atento-naia"
+version = "0.0.0"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.atento]
+role = "NAIA"
+topology_scope = "experiment"
