@@ -393,14 +393,14 @@ class HostRunLedger:
         with self._connect() as conn:
             conn.execute("BEGIN IMMEDIATE")
             row = self._require_live_claim(conn, identity=identity, lease=lease)
-            if row["state"] != "DISPATCHED":
+            if row["state"] not in {"RUNNING", "DISPATCHED"}:
                 raise RunRejected("run is not ready to record effect")
             changed = conn.execute(
                 """
                 UPDATE host_runs
                 SET state = 'EFFECT_PENDING', result_ref = ?, updated_at = ?
                 WHERE run_id = ? AND generation = ?
-                  AND state = 'DISPATCHED' AND claim_id = ?
+                  AND state IN ('RUNNING', 'DISPATCHED') AND claim_id = ?
                 """,
                 (result, now, identity.run_id, identity.generation, lease.claim_id),
             )
