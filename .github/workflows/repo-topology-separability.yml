@@ -1,0 +1,60 @@
+name: Repository topology separability probe
+
+on:
+  push:
+    paths:
+      - ".github/workflows/repo-topology-separability.yml"
+      - "tools/repo_topology_probe.py"
+      - "docs/**"
+      - "services/**"
+      - "evals/**"
+      - "agents/**"
+      - "naia/**"
+      - "anna/**"
+      - "apollo/**"
+  pull_request:
+    paths:
+      - ".github/workflows/repo-topology-separability.yml"
+      - "tools/repo_topology_probe.py"
+      - "docs/**"
+      - "services/**"
+      - "evals/**"
+      - "agents/**"
+      - "naia/**"
+      - "anna/**"
+      - "apollo/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run separability probe
+        run: python tools/repo_topology_probe.py
+
+      - name: Publish decision summary
+        run: |
+          python - <<'PY'
+          import json, os
+          d=json.load(open("artifacts/repo-topology-separability.json"))
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
+              f.write("## Repository topology separability\n\n")
+              f.write("- physical_three_repo_split: **" + d["decision"]["physical_three_repo_split"] + "**\n")
+              f.write("- logical_bounded_contexts_in_one_repo: **" + d["decision"]["logical_bounded_contexts_in_one_repo"] + "**\n")
+              f.write("- multi-role commit ratio: **" + str(d["history"]["multi_role_ratio_among_role_commits"]) + "**\n")
+              for role, values in d["necessary_conditions"].items():
+                  f.write("- " + role + ": \`" + str(values) + "\`\n")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: repo-topology-separability
+          path: artifacts/repo-topology-separability.json
