@@ -1,0 +1,17 @@
+{
+  "schema": "atento.logical-agent-project.v1",
+  "agent": "NAIA",
+  "bounded_context": "personal_assistant",
+  "runtime": {
+    "chassis": "nanoclaw",
+    "group_isolation_required": true
+  },
+  "dependencies": {
+    "shared": ["services/host"],
+    "agents": []
+  },
+  "authority": {
+    "role_id": "NAIA",
+    "caller_selectable": false
+  }
+}
