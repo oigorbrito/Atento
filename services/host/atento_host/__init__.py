@@ -32,6 +32,10 @@ __all__ = [
     "HostRunLedger",
     "RunRecord",
     "RunRejected",
+    "NANOCLAW_FROZEN_PIN",
+    "NanoClawAdapterRejected",
+    "NanoClawDispatch",
+    "NanoClawRuntimeAdapter",
 ]
 
 from .telegram_webhook import (
@@ -41,3 +45,10 @@ from .telegram_webhook import (
 )
 
 from .supervisor import ClaimLease, HostRunLedger, RunRecord, RunRejected
+
+from .nanoclaw_adapter import (
+    NANOCLAW_FROZEN_PIN,
+    NanoClawAdapterRejected,
+    NanoClawDispatch,
+    NanoClawRuntimeAdapter,
+)
