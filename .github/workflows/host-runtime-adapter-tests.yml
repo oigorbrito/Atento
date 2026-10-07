@@ -1,0 +1,27 @@
+name: Host runtime adapter tests
+
+on:
+  push:
+    paths:
+      - ".github/workflows/host-runtime-adapter-tests.yml"
+      - "services/host/**"
+      - "scripts/bootstrap-nanoclaw-wsl2.sh"
+      - "docs/operations/nanoclaw-fork-bootstrap.md"
+  pull_request:
+    paths:
+      - ".github/workflows/host-runtime-adapter-tests.yml"
+      - "services/host/**"
+      - "scripts/bootstrap-nanoclaw-wsl2.sh"
+      - "docs/operations/nanoclaw-fork-bootstrap.md"
+
+permissions:
+  contents: read
+
+jobs:
+  host-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run host unit tests
+        run: PYTHONPATH=services/host python -m unittest discover -s services/host/tests -v
