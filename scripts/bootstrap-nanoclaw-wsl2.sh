@@ -3,7 +3,7 @@ set -euo pipefail
 
 FORK="${ATENTO_NANOCLAW_FORK:-oigorbrito/nanoclaw}"
 UPSTREAM="${ATENTO_NANOCLAW_UPSTREAM:-nanocoai/nanoclaw}"
-PIN="${ATENTO_NANOCLAW_UPSTREAM_PIN:-3f7e13b591a0c8980242b81ceff4b3f542ef839a}"
+PIN="${ATENTO_NANOCLAW_UPSTREAM_PIN:-d7175d0dee42a1130c17ced09220b983257696a4}"
 ROOT="${ATENTO_NANOCLAW_ROOT:-$HOME/atento-nanoclaw}"
 
 for cmd in git gh docker; do
