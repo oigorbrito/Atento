@@ -19,6 +19,10 @@ class FakeRunner:
     def __init__(self) -> None:
         self.calls: list[tuple[tuple[str, ...], Path]] = []
         self.task_status = "pending"
+        self.completed_runs = 0
+        self.failed_runs = 0
+        self.recent_log: list[str] = []
+        self.fail_create = False
         self.pin = NANOCLAW_FROZEN_PIN
 
     def __call__(self, argv, cwd):
@@ -29,6 +33,8 @@ class FakeRunner:
         if len(args) == 5 and args[:3] == ("git", "merge-base", "--is-ancestor"):
             return subprocess.CompletedProcess(args, 0, "", "")
         if "tasks" in args and "create" in args:
+            if self.fail_create:
+                return subprocess.CompletedProcess(args, 1, "", "transport lost")
             frame = {
                 "id": "req-1",
                 "ok": True,
@@ -47,6 +53,9 @@ class FakeRunner:
                     "series_id": "atento-run-1-a1b2",
                     "row_id": "t-a1b2",
                     "status": self.task_status,
+                    "completed_runs": self.completed_runs,
+                    "failed_runs": self.failed_runs,
+                    "recent_log": self.recent_log,
                 },
             }
             return subprocess.CompletedProcess(args, 0, json.dumps(frame), "")
@@ -105,6 +114,9 @@ class NanoClawRuntimeAdapterTests(unittest.TestCase):
         cli_call = next(args for args, _ in self.runner.calls if "tasks" in args)
         self.assertEqual(cli_call[:4], ("pnpm", "exec", "tsx", "src/cli/client.ts"))
         self.assertNotIn("shell", cli_call)
+        process_after = cli_call[cli_call.index("--process-after") + 1]
+        self.assertNotEqual(process_after, "now")
+        self.assertTrue(process_after.endswith("Z"))
 
     def test_pin_mismatch_blocks_before_runtime_dispatch(self) -> None:
         self.runner.pin = "0" * 40
@@ -170,6 +182,8 @@ class NanoClawRuntimeAdapterTests(unittest.TestCase):
             task_prompt="do work",
         )
         self.runner.task_status = "completed"
+        self.runner.completed_runs = 1
+        self.runner.recent_log = ["2026-10-06 17:31 — ATENTO_RUNTIME_OK"]
         status = self.adapter.observe(
             identity_token=self.token,
             lease=self.lease,
@@ -177,6 +191,41 @@ class NanoClawRuntimeAdapterTests(unittest.TestCase):
         )
         self.assertEqual(status, "completed")
         self.assertEqual(self.ledger.get("run-1").state, "ACKED")
+
+    def test_completed_without_run_log_is_not_accepted(self) -> None:
+        dispatch = self.adapter.dispatch(
+            identity_token=self.token,
+            lease=self.lease,
+            task_prompt="do work",
+        )
+        self.runner.task_status = "completed"
+        self.runner.completed_runs = 1
+        with self.assertRaisesRegex(
+            NanoClawAdapterRejected,
+            "lacks successful run evidence",
+        ):
+            self.adapter.observe(
+                identity_token=self.token,
+                lease=self.lease,
+                dispatch=dispatch,
+            )
+        self.assertEqual(self.ledger.get("run-1").state, "DISPATCHED")
+
+    def test_create_transport_loss_stays_ambiguous_and_requires_reconciliation(self) -> None:
+        self.runner.fail_create = True
+        with self.assertRaisesRegex(
+            NanoClawAdapterRejected,
+            "runtime command could not be executed|CLI command failed",
+        ):
+            self.adapter.dispatch(
+                identity_token=self.token,
+                lease=self.lease,
+                task_prompt="do work",
+            )
+        self.assertEqual(self.ledger.get("run-1").state, "DISPATCHING")
+        self.now += 61
+        recovered = self.ledger.recover_expired(run_id="run-1")
+        self.assertEqual(recovered.state, "RECONCILE_REQUIRED")
 
     def test_failed_task_becomes_terminal_failure(self) -> None:
         dispatch = self.adapter.dispatch(
