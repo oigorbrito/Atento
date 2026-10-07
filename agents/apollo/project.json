@@ -1,0 +1,17 @@
+{
+  "schema": "atento.logical-agent-project.v1",
+  "agent": "APOLLO",
+  "bounded_context": "fitness_nutrition",
+  "runtime": {
+    "chassis": "nanoclaw",
+    "group_isolation_required": true
+  },
+  "dependencies": {
+    "shared": ["services/host"],
+    "agents": []
+  },
+  "authority": {
+    "role_id": "APOLLO",
+    "caller_selectable": false
+  }
+}
