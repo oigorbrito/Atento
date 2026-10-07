@@ -106,10 +106,33 @@ class HostRunLedgerTests(unittest.TestCase):
             lease_seconds=1,
         )
         self.ledger.mark_running(identity_token=self.token1, lease=lease)
+        self.ledger.mark_dispatching(
+            identity_token=self.token1,
+            lease=lease,
+            intent_ref="nanoclaw:intent:run-1",
+        )
         self.ledger.mark_dispatched(
             identity_token=self.token1,
             lease=lease,
             dispatch_ref="nanoclaw:task:series-1",
+        )
+        self.now += 2
+
+        recovered = self.ledger.recover_expired(run_id="run-1")
+        self.assertEqual(recovered.state, "RECONCILE_REQUIRED")
+        self.assertEqual(recovered.generation, 2)
+
+    def test_dispatching_recovery_requires_reconciliation_before_retry(self) -> None:
+        lease = self.ledger.claim(
+            identity_token=self.token1,
+            claim_owner="worker-1",
+            lease_seconds=1,
+        )
+        self.ledger.mark_running(identity_token=self.token1, lease=lease)
+        self.ledger.mark_dispatching(
+            identity_token=self.token1,
+            lease=lease,
+            intent_ref="nanoclaw:intent:run-1",
         )
         self.now += 2
 
