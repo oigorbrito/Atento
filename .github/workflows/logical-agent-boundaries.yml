@@ -1,0 +1,25 @@
+name: Logical agent boundaries
+
+on:
+  push:
+    paths:
+      - ".github/workflows/logical-agent-boundaries.yml"
+      - "agents/**"
+      - "tools/validate_logical_agent_boundaries.py"
+  pull_request:
+    paths:
+      - ".github/workflows/logical-agent-boundaries.yml"
+      - "agents/**"
+      - "tools/validate_logical_agent_boundaries.py"
+
+permissions:
+  contents: read
+
+jobs:
+  boundary-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate logical project boundaries
+        run: python tools/validate_logical_agent_boundaries.py

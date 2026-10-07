@@ -1,0 +1,17 @@
+{
+  "schema": "atento.logical-agent-project.v1",
+  "agent": "ANNA",
+  "bounded_context": "emotional_therapeutic",
+  "runtime": {
+    "chassis": "nanoclaw",
+    "group_isolation_required": true
+  },
+  "dependencies": {
+    "shared": ["services/host"],
+    "agents": []
+  },
+  "authority": {
+    "role_id": "ANNA",
+    "caller_selectable": false
+  }
+}
