@@ -1,6 +1,7 @@
 [build-system]
 requires = []
 build-backend = "atento_build_backend"
+backend-path = ["."]
 
 [project]
 name = "atento-apollo"
