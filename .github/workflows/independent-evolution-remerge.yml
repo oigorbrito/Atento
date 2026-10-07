@@ -1,0 +1,45 @@
+name: Independent three-project evolution remerge
+
+on:
+  push:
+    paths:
+      - ".github/workflows/independent-evolution-remerge.yml"
+      - "agents/**"
+      - "tools/three_project_evolution_probe.py"
+      - "tools/validate_logical_agent_boundaries.py"
+  pull_request:
+    paths:
+      - ".github/workflows/independent-evolution-remerge.yml"
+      - "agents/**"
+      - "tools/three_project_evolution_probe.py"
+      - "tools/validate_logical_agent_boundaries.py"
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run independent evolution and remerge probe
+        run: python tools/three_project_evolution_probe.py
+
+      - name: Publish gate summary
+        run: |
+          python - <<'PY'
+          import json, os
+          d=json.load(open("artifacts/independent-evolution-remerge.json"))
+          x=d["decision"]
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
+              f.write("## Independent evolution / remerge\n\n")
+              for k,v in x.items():
+                  f.write(f"- {k}: **{v}**\n")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: independent-evolution-remerge
+          path: artifacts/independent-evolution-remerge.json
