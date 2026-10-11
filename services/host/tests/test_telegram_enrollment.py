@@ -187,6 +187,43 @@ class TelegramEnrollmentTests(unittest.TestCase):
         )
         self.assertEqual(binding.role_id, "ANNA")
 
+    def test_completing_challenge_for_already_enrolled_subject_fails_closed(self) -> None:
+        c1 = self.store.start_enrollment(event=self.event, role_id="NAIA", bootstrap=True)
+        self.store.complete_enrollment(event=self.event, challenge_id=c1.challenge_id, code=c1.code)
+
+        # Insert a second pending challenge directly for the same subject
+        digest = self.store._digest("c2", "telegram:bot:777000:user:123456", "123456")
+        with self.store._connect() as conn:
+            conn.execute(
+                """
+                INSERT INTO telegram_enrollment_challenges
+                (challenge_id, provider_subject, role_id, code_digest, expires_at, attempts_left, status, created_at, bootstrap)
+                VALUES ('c2', 'telegram:bot:777000:user:123456', 'NAIA', ?, 9999999999, 3, 'PENDING', 1, 0)
+                """,
+                (digest,),
+            )
+
+        with self.assertRaisesRegex(EnrollmentRejected, "already has a principal binding"):
+            self.store.complete_enrollment(event=self.event, challenge_id="c2", code="123456")
+
+    def test_invalid_parameter_types_fail_closed_with_enrollment_rejected(self) -> None:
+        with self.assertRaisesRegex(EnrollmentRejected, "authorizing principal must be a non-empty canonical string"):
+            self.store.start_enrollment(
+                event=self.event,
+                role_id="NAIA",
+                authorized_by_principal_id=[],  # type: ignore[arg-type]
+            )
+
+        with self.assertRaisesRegex(EnrollmentRejected, "malformed enrollment response"):
+            self.store.complete_enrollment(
+                event=self.event,
+                challenge_id=123,  # type: ignore[arg-type]
+                code="123456",
+            )
+
+        with self.assertRaisesRegex(EnrollmentRejected, "revocation requires principal and actor"):
+            self.store.revoke(principal_id=123, actor_principal_id="actor")  # type: ignore[arg-type]
+
 
 if __name__ == "__main__":
     unittest.main()

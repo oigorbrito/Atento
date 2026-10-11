@@ -185,6 +185,12 @@ class TelegramEnrollmentStore:
         subject = canonical_telegram_subject(event)
         if role_id not in _ROLES:
             raise EnrollmentRejected("unsupported role")
+        if authorized_by_principal_id is not None and (
+            not isinstance(authorized_by_principal_id, str)
+            or not authorized_by_principal_id
+            or authorized_by_principal_id.strip() != authorized_by_principal_id
+        ):
+            raise EnrollmentRejected("authorizing principal must be a non-empty canonical string")
         ttl = self._max_ttl_seconds if ttl_seconds is None else ttl_seconds
         if isinstance(ttl, bool) or not isinstance(ttl, int) or not 1 <= ttl <= self._max_ttl_seconds:
             raise EnrollmentRejected("requested enrollment lifetime is outside host policy")
@@ -268,7 +274,13 @@ class TelegramEnrollmentStore:
         code: str,
     ) -> TelegramPrincipalBinding:
         subject = canonical_telegram_subject(event)
-        if not challenge_id or not isinstance(code, str) or len(code) != 6 or not code.isdigit():
+        if (
+            not isinstance(challenge_id, str)
+            or not challenge_id
+            or not isinstance(code, str)
+            or len(code) != 6
+            or not code.isdigit()
+        ):
             raise EnrollmentRejected("malformed enrollment response")
         now = int(self._clock())
 
@@ -280,7 +292,7 @@ class TelegramEnrollmentStore:
             ).fetchone()
             if row is None or row["provider_subject"] != subject:
                 raise EnrollmentRejected("enrollment challenge not found for subject")
-            if row["status"] != "PENDING":
+            if row["status"] != "PENDING" or row["attempts_left"] <= 0:
                 raise EnrollmentRejected("enrollment challenge is not pending")
             if row["expires_at"] <= now:
                 conn.execute(
@@ -320,6 +332,13 @@ class TelegramEnrollmentStore:
                 )
                 conn.commit()
                 raise EnrollmentRejected("enrollment code rejected")
+
+            existing = conn.execute(
+                "SELECT 1 FROM telegram_principals WHERE provider_subject = ?",
+                (subject,),
+            ).fetchone()
+            if existing is not None:
+                raise EnrollmentRejected("telegram subject already has a principal binding")
 
             principal_id = f"atento:telegram:{event.bot_account_id}:{event.user_id}"
             conn.execute(
@@ -374,7 +393,12 @@ class TelegramEnrollmentStore:
         )
 
     def revoke(self, *, principal_id: str, actor_principal_id: str) -> None:
-        if not principal_id or not actor_principal_id:
+        if (
+            not isinstance(principal_id, str)
+            or not principal_id
+            or not isinstance(actor_principal_id, str)
+            or not actor_principal_id
+        ):
             raise EnrollmentRejected("revocation requires principal and actor")
         now = int(self._clock())
         with self._connect() as conn:

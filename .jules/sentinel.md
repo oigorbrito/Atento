@@ -1,0 +1,4 @@
+## 2026-10-03 - Fail-Closed Database Constraint and Input Handling in Telegram Enrollment Store
+**Vulnerability:** Completing an enrollment challenge for an already-bound Telegram principal subject caused an unhandled `sqlite3.IntegrityError` database exception leak rather than a controlled `EnrollmentRejected` failure, and unhashable input parameter types raised unhandled `TypeError`s.
+**Learning:** Database unique constraints (such as `provider_subject` in `telegram_principals`) will trigger unhandled DB exceptions in control plane methods if state changes occur between challenge initiation and challenge completion.
+**Prevention:** Always check existing database state before mutating operations and validate parameter types explicitly at security boundary entry points so all exceptions fail closed with clean domain error types (`EnrollmentRejected`).
