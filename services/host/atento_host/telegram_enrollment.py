@@ -278,9 +278,14 @@ class TelegramEnrollmentStore:
                 "SELECT * FROM telegram_enrollment_challenges WHERE challenge_id = ?",
                 (challenge_id,),
             ).fetchone()
+            supplied = self._digest(challenge_id, subject, code)
+            # Security: Prevent timing side-channel leaks when challenge lookup or status fails
+            dummy_target = b"\x00" * 32
             if row is None or row["provider_subject"] != subject:
+                hmac.compare_digest(supplied, dummy_target)
                 raise EnrollmentRejected("enrollment challenge not found for subject")
             if row["status"] != "PENDING":
+                hmac.compare_digest(supplied, dummy_target)
                 raise EnrollmentRejected("enrollment challenge is not pending")
             if row["expires_at"] <= now:
                 conn.execute(
@@ -298,7 +303,6 @@ class TelegramEnrollmentStore:
                 conn.commit()
                 raise EnrollmentRejected("enrollment challenge expired")
 
-            supplied = self._digest(challenge_id, subject, code)
             if not hmac.compare_digest(supplied, row["code_digest"]):
                 remaining = row["attempts_left"] - 1
                 status = "LOCKED" if remaining <= 0 else "PENDING"

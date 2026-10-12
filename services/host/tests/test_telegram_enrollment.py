@@ -154,6 +154,31 @@ class TelegramEnrollmentTests(unittest.TestCase):
         events = self.store.audit_events()
         self.assertEqual(events[-1]["event_type"], "PRINCIPAL_REVOKED")
 
+    def test_complete_enrollment_rejects_non_existent_or_invalid_status_challenge(self) -> None:
+        with self.assertRaisesRegex(EnrollmentRejected, "not found for subject"):
+            self.store.complete_enrollment(
+                event=self.event,
+                challenge_id="non-existent-challenge-id",
+                code="123456",
+            )
+
+        challenge = self.store.start_enrollment(
+            event=self.event,
+            role_id="NAIA",
+            bootstrap=True,
+        )
+        self.store.complete_enrollment(
+            event=self.event,
+            challenge_id=challenge.challenge_id,
+            code=challenge.code,
+        )
+        with self.assertRaisesRegex(EnrollmentRejected, "not pending"):
+            self.store.complete_enrollment(
+                event=self.event,
+                challenge_id=challenge.challenge_id,
+                code=challenge.code,
+            )
+
     def test_non_bootstrap_enrollment_requires_explicit_host_grant(self) -> None:
         first = self.enroll_bootstrap_naia()
         second_db = Path(self.tempdir.name) / "host-with-grants.sqlite3"
