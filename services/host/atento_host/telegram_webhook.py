@@ -71,7 +71,9 @@ class TelegramWebhookAuthenticator:
 
         if not isinstance(secret_token_header, str):
             raise TelegramWebhookRejected("telegram webhook secret is missing")
-        if not hmac.compare_digest(secret_token_header, self._secret_token):
+        if not _SECRET_RE.fullmatch(secret_token_header) or not hmac.compare_digest(
+            secret_token_header, self._secret_token
+        ):
             raise TelegramWebhookRejected("telegram webhook secret is invalid")
 
         if not isinstance(body, bytes) or not body or len(body) > self._max_body_bytes:
