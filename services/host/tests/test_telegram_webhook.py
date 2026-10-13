@@ -42,7 +42,7 @@ class TelegramWebhookAuthenticatorTests(unittest.TestCase):
                 "message": {"from": {"id": 999999, "is_bot": False}},
             }
         )
-        for supplied in (None, "", "wrong-secret"):
+        for supplied in (None, "", "wrong-secret", "bad_\u1234_secret", "a" * 257, "with space"):
             with self.subTest(supplied=supplied), self.assertRaises(TelegramWebhookRejected):
                 self.auth.authenticate(
                     secret_token_header=supplied,
