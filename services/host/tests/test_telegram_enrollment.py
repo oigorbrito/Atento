@@ -154,6 +154,48 @@ class TelegramEnrollmentTests(unittest.TestCase):
         events = self.store.audit_events()
         self.assertEqual(events[-1]["event_type"], "PRINCIPAL_REVOKED")
 
+    def test_superseded_challenge_cannot_be_completed(self) -> None:
+        first_challenge = self.store.start_enrollment(
+            event=self.event,
+            role_id="NAIA",
+            bootstrap=True,
+        )
+        second_challenge = self.store.start_enrollment(
+            event=self.event,
+            role_id="NAIA",
+            bootstrap=True,
+        )
+        with self.assertRaisesRegex(EnrollmentRejected, "not pending"):
+            self.store.complete_enrollment(
+                event=self.event,
+                challenge_id=first_challenge.challenge_id,
+                code=first_challenge.code,
+            )
+        binding = self.store.complete_enrollment(
+            event=self.event,
+            challenge_id=second_challenge.challenge_id,
+            code=second_challenge.code,
+        )
+        self.assertEqual(binding.principal_id, "atento:telegram:777000:123456")
+
+    def test_complete_enrollment_rejects_already_bound_subject(self) -> None:
+        challenge = self.store.start_enrollment(
+            event=self.event,
+            role_id="NAIA",
+            bootstrap=True,
+        )
+        self.store.complete_enrollment(
+            event=self.event,
+            challenge_id=challenge.challenge_id,
+            code=challenge.code,
+        )
+        with self.assertRaisesRegex(EnrollmentRejected, "already has a principal binding"):
+            self.store.complete_enrollment(
+                event=self.event,
+                challenge_id=challenge.challenge_id,
+                code=challenge.code,
+            )
+
     def test_non_bootstrap_enrollment_requires_explicit_host_grant(self) -> None:
         first = self.enroll_bootstrap_naia()
         second_db = Path(self.tempdir.name) / "host-with-grants.sqlite3"
