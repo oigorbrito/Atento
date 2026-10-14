@@ -227,6 +227,15 @@ class TelegramEnrollmentStore:
 
             conn.execute(
                 """
+                UPDATE telegram_enrollment_challenges
+                SET status = 'SUPERSEDED'
+                WHERE provider_subject = ? AND status = 'PENDING'
+                """,
+                (subject,),
+            )
+
+            conn.execute(
+                """
                 INSERT INTO telegram_enrollment_challenges
                 (challenge_id, provider_subject, role_id, code_digest, expires_at, attempts_left,
                  status, created_at, authorized_by, bootstrap)
@@ -274,6 +283,13 @@ class TelegramEnrollmentStore:
 
         with self._connect() as conn:
             conn.execute("BEGIN IMMEDIATE")
+            existing_binding = conn.execute(
+                "SELECT 1 FROM telegram_principals WHERE provider_subject = ?",
+                (subject,),
+            ).fetchone()
+            if existing_binding is not None:
+                raise EnrollmentRejected("telegram subject already has a principal binding")
+
             row = conn.execute(
                 "SELECT * FROM telegram_enrollment_challenges WHERE challenge_id = ?",
                 (challenge_id,),
