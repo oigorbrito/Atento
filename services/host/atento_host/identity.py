@@ -199,7 +199,12 @@ class IdentityIssuer:
             raise IdentityRejected("identity claims are malformed") from exc
         if not isinstance(raw, dict) or set(raw) != _CLAIM_KEYS:
             raise IdentityRejected("identity claims do not match schema")
-        if raw["v"] != 1 or raw["iss"] != self._issuer or raw["aud"] != self._audience:
+        if (
+            isinstance(raw["v"], bool)
+            or raw["v"] != 1
+            or raw["iss"] != self._issuer
+            or raw["aud"] != self._audience
+        ):
             raise IdentityRejected("identity issuer, audience, or version mismatch")
 
         principal = self._require_text(raw["sub"], "principal_id")

@@ -187,6 +187,19 @@ class TelegramEnrollmentTests(unittest.TestCase):
         )
         self.assertEqual(binding.role_id, "ANNA")
 
+    def test_malformed_challenge_or_revocation_inputs_rejected(self) -> None:
+        with self.assertRaisesRegex(EnrollmentRejected, "malformed enrollment response"):
+            self.store.complete_enrollment(
+                event=self.event,
+                challenge_id=123,  # type: ignore[arg-type]
+                code="123456",
+            )
+        with self.assertRaisesRegex(EnrollmentRejected, "revocation requires canonical principal"):
+            self.store.revoke(
+                principal_id=None,  # type: ignore[arg-type]
+                actor_principal_id="actor",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
