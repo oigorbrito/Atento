@@ -103,6 +103,28 @@ class IdentityIssuerTests(unittest.TestCase):
         with self.assertRaisesRegex(IdentityRejected, "issuer, audience, or version"):
             other_audience.verify(token)
 
+    def test_boolean_version_claim_is_rejected(self) -> None:
+        import hashlib
+        import hmac
+
+        token = self.issue()
+        encoded, _ = token.split(".")
+        claims = json.loads(base64.urlsafe_b64decode(encoded + "=" * (-len(encoded) % 4)))
+        claims["v"] = True
+        changed = base64.urlsafe_b64encode(
+            json.dumps(claims, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).rstrip(b"=").decode("ascii")
+        sig = hmac.new(
+            b"test-only-signing-key-which-is-32-bytes-minimum",
+            changed.encode("ascii"),
+            hashlib.sha256,
+        ).digest()
+        token_with_bool_v = (
+            changed + "." + base64.urlsafe_b64encode(sig).rstrip(b"=").decode("ascii")
+        )
+        with self.assertRaisesRegex(IdentityRejected, "issuer, audience, or version"):
+            self.issuer.verify(token_with_bool_v)
+
 
 if __name__ == "__main__":
     unittest.main()

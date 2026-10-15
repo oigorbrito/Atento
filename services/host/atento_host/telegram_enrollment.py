@@ -268,7 +268,14 @@ class TelegramEnrollmentStore:
         code: str,
     ) -> TelegramPrincipalBinding:
         subject = canonical_telegram_subject(event)
-        if not challenge_id or not isinstance(code, str) or len(code) != 6 or not code.isdigit():
+        if (
+            not isinstance(challenge_id, str)
+            or not challenge_id
+            or len(challenge_id) > 256
+            or not isinstance(code, str)
+            or len(code) != 6
+            or not code.isdigit()
+        ):
             raise EnrollmentRejected("malformed enrollment response")
         now = int(self._clock())
 
@@ -282,6 +289,8 @@ class TelegramEnrollmentStore:
                 raise EnrollmentRejected("enrollment challenge not found for subject")
             if row["status"] != "PENDING":
                 raise EnrollmentRejected("enrollment challenge is not pending")
+            if row["attempts_left"] <= 0:
+                raise EnrollmentRejected("enrollment challenge is locked")
             if row["expires_at"] <= now:
                 conn.execute(
                     "UPDATE telegram_enrollment_challenges SET status = 'EXPIRED' WHERE challenge_id = ?",
@@ -374,8 +383,15 @@ class TelegramEnrollmentStore:
         )
 
     def revoke(self, *, principal_id: str, actor_principal_id: str) -> None:
-        if not principal_id or not actor_principal_id:
-            raise EnrollmentRejected("revocation requires principal and actor")
+        if (
+            not isinstance(principal_id, str)
+            or not principal_id
+            or len(principal_id) > 256
+            or not isinstance(actor_principal_id, str)
+            or not actor_principal_id
+            or len(actor_principal_id) > 256
+        ):
+            raise EnrollmentRejected("revocation requires canonical principal and actor")
         now = int(self._clock())
         with self._connect() as conn:
             conn.execute("BEGIN IMMEDIATE")
