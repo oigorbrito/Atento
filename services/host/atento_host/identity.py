@@ -197,7 +197,9 @@ class IdentityIssuer:
             raw = json.loads(_b64url_decode(encoded))
         except (UnicodeDecodeError, json.JSONDecodeError) as exc:
             raise IdentityRejected("identity claims are malformed") from exc
-        if not isinstance(raw, dict) or set(raw) != _CLAIM_KEYS:
+        # raw.keys() compares dictionary keys directly against _CLAIM_KEYS frozenset
+        # without allocating a temporary set object on every token verification
+        if not isinstance(raw, dict) or raw.keys() != _CLAIM_KEYS:
             raise IdentityRejected("identity claims do not match schema")
         if raw["v"] != 1 or raw["iss"] != self._issuer or raw["aud"] != self._audience:
             raise IdentityRejected("identity issuer, audience, or version mismatch")
