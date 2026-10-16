@@ -186,6 +186,8 @@ class IdentityIssuer:
         if len(parts) != 2:
             raise IdentityRejected("malformed identity token")
         encoded, signature_text = parts
+        if not _TOKEN_PART_RE.fullmatch(encoded):
+            raise IdentityRejected("malformed identity token")
         supplied_signature = _b64url_decode(signature_text)
         expected_signature = hmac.new(
             self._signing_key, encoded.encode("ascii"), hashlib.sha256
