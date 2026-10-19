@@ -84,7 +84,7 @@ class IdentityIssuerTests(unittest.TestCase):
             self.issuer.verify(changed + "." + signature)
 
     def test_malformed_or_noncanonical_tokens_fail_closed(self) -> None:
-        for token in ("", "a", "a.b.c", "!bad.abc", "x" * 9000):
+        for token in ("", "a", "a.b.c", "!bad.abc", "café.sig", "x" * 9000):
             with self.subTest(token=token[:12]), self.assertRaises(IdentityRejected):
                 self.issuer.verify(token)
 
