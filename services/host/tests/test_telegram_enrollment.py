@@ -187,6 +187,44 @@ class TelegramEnrollmentTests(unittest.TestCase):
         )
         self.assertEqual(binding.role_id, "ANNA")
 
+    def test_invalid_input_types_and_non_canonical_texts_are_rejected(self) -> None:
+        with self.assertRaisesRegex(EnrollmentRejected, "event must be an AuthenticatedTelegramEvent"):
+            self.store.resolve("not-an-event")  # type: ignore[arg-type]
+
+        challenge = self.store.start_enrollment(
+            event=self.event,
+            role_id="NAIA",
+            bootstrap=True,
+        )
+
+        invalid_challenge_ids = (123, True, "", "  spaces  ", "a" * 257)
+        for bad_id in invalid_challenge_ids:
+            with self.subTest(bad_id=bad_id), self.assertRaisesRegex(
+                EnrollmentRejected, "canonical string|exceeds the host limit"
+            ):
+                self.store.complete_enrollment(
+                    event=self.event,
+                    challenge_id=bad_id,  # type: ignore[arg-type]
+                    code=challenge.code,
+                )
+
+        invalid_principals = (None, 123, "", " leading", "a" * 257)
+        for bad_principal in invalid_principals:
+            with self.subTest(bad_principal=bad_principal), self.assertRaisesRegex(
+                EnrollmentRejected, "canonical string|exceeds the host limit"
+            ):
+                self.store.revoke(
+                    principal_id=bad_principal,  # type: ignore[arg-type]
+                    actor_principal_id="atento:actor",
+                )
+
+        with self.assertRaisesRegex(EnrollmentRejected, "canonical string"):
+            self.store.start_enrollment(
+                event=self.event,
+                role_id="ANNA",
+                authorized_by_principal_id="   non_canonical   ",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

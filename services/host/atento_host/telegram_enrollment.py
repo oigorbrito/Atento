@@ -51,7 +51,17 @@ class EnrollmentChallenge:
     attempts_left: int
 
 
+def _require_canonical_text(value: object, field: str) -> str:
+    if not isinstance(value, str) or not value or value.strip() != value:
+        raise EnrollmentRejected(f"{field} must be a non-empty canonical string")
+    if len(value) > 256:
+        raise EnrollmentRejected(f"{field} exceeds the host limit")
+    return value
+
+
 def canonical_telegram_subject(event: AuthenticatedTelegramEvent) -> str:
+    if not isinstance(event, AuthenticatedTelegramEvent):
+        raise EnrollmentRejected("event must be an AuthenticatedTelegramEvent")
     for value, field in (
         (event.bot_account_id, "bot_account_id"),
         (event.user_id, "user_id"),
@@ -183,6 +193,8 @@ class TelegramEnrollmentStore:
         ttl_seconds: int | None = None,
     ) -> EnrollmentChallenge:
         subject = canonical_telegram_subject(event)
+        if authorized_by_principal_id is not None:
+            _require_canonical_text(authorized_by_principal_id, "authorized_by_principal_id")
         if role_id not in _ROLES:
             raise EnrollmentRejected("unsupported role")
         ttl = self._max_ttl_seconds if ttl_seconds is None else ttl_seconds
@@ -268,7 +280,8 @@ class TelegramEnrollmentStore:
         code: str,
     ) -> TelegramPrincipalBinding:
         subject = canonical_telegram_subject(event)
-        if not challenge_id or not isinstance(code, str) or len(code) != 6 or not code.isdigit():
+        _require_canonical_text(challenge_id, "challenge_id")
+        if not isinstance(code, str) or len(code) != 6 or not code.isdigit():
             raise EnrollmentRejected("malformed enrollment response")
         now = int(self._clock())
 
@@ -374,8 +387,8 @@ class TelegramEnrollmentStore:
         )
 
     def revoke(self, *, principal_id: str, actor_principal_id: str) -> None:
-        if not principal_id or not actor_principal_id:
-            raise EnrollmentRejected("revocation requires principal and actor")
+        _require_canonical_text(principal_id, "principal_id")
+        _require_canonical_text(actor_principal_id, "actor_principal_id")
         now = int(self._clock())
         with self._connect() as conn:
             conn.execute("BEGIN IMMEDIATE")
