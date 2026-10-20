@@ -227,6 +227,15 @@ class TelegramEnrollmentStore:
 
             conn.execute(
                 """
+                UPDATE telegram_enrollment_challenges
+                SET status = 'SUPERSEDED'
+                WHERE provider_subject = ? AND status = 'PENDING'
+                """,
+                (subject,),
+            )
+
+            conn.execute(
+                """
                 INSERT INTO telegram_enrollment_challenges
                 (challenge_id, provider_subject, role_id, code_digest, expires_at, attempts_left,
                  status, created_at, authorized_by, bootstrap)
@@ -320,6 +329,13 @@ class TelegramEnrollmentStore:
                 )
                 conn.commit()
                 raise EnrollmentRejected("enrollment code rejected")
+
+            existing = conn.execute(
+                "SELECT 1 FROM telegram_principals WHERE provider_subject = ?",
+                (subject,),
+            ).fetchone()
+            if existing is not None:
+                raise EnrollmentRejected("telegram subject already has a principal binding")
 
             principal_id = f"atento:telegram:{event.bot_account_id}:{event.user_id}"
             conn.execute(

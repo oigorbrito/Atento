@@ -187,6 +187,53 @@ class TelegramEnrollmentTests(unittest.TestCase):
         )
         self.assertEqual(binding.role_id, "ANNA")
 
+    def test_new_enrollment_supersedes_prior_pending_challenge(self) -> None:
+        first = self.store.start_enrollment(
+            event=self.event,
+            role_id="NAIA",
+            bootstrap=True,
+        )
+        second = self.store.start_enrollment(
+            event=self.event,
+            role_id="NAIA",
+            bootstrap=True,
+        )
+        with self.assertRaisesRegex(EnrollmentRejected, "not pending"):
+            self.store.complete_enrollment(
+                event=self.event,
+                challenge_id=first.challenge_id,
+                code=first.code,
+            )
+        binding = self.store.complete_enrollment(
+            event=self.event,
+            challenge_id=second.challenge_id,
+            code=second.code,
+        )
+        self.assertEqual(binding.principal_id, "atento:telegram:777000:123456")
+
+    def test_complete_enrollment_rejects_already_bound_subject(self) -> None:
+        challenge = self.store.start_enrollment(
+            event=self.event,
+            role_id="NAIA",
+            bootstrap=True,
+        )
+        # Directly insert a binding into principals table to simulate existing subject binding
+        with self.store._connect() as conn:
+            conn.execute(
+                """
+                INSERT INTO telegram_principals
+                (principal_id, provider_subject, role_id, created_at, revoked_at)
+                VALUES (?, ?, 'NAIA', ?, NULL)
+                """,
+                ("atento:telegram:777000:123456", "telegram:bot:777000:user:123456", self.now),
+            )
+        with self.assertRaisesRegex(EnrollmentRejected, "already has a principal binding"):
+            self.store.complete_enrollment(
+                event=self.event,
+                challenge_id=challenge.challenge_id,
+                code=challenge.code,
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
