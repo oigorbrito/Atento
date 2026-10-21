@@ -374,11 +374,29 @@ class TelegramEnrollmentStore:
         )
 
     def revoke(self, *, principal_id: str, actor_principal_id: str) -> None:
-        if not principal_id or not actor_principal_id:
-            raise EnrollmentRejected("revocation requires principal and actor")
+        if (
+            not isinstance(principal_id, str)
+            or not principal_id
+            or principal_id.strip() != principal_id
+            or not isinstance(actor_principal_id, str)
+            or not actor_principal_id
+            or actor_principal_id.strip() != actor_principal_id
+        ):
+            raise EnrollmentRejected("revocation requires canonical principal and actor")
         now = int(self._clock())
         with self._connect() as conn:
             conn.execute("BEGIN IMMEDIATE")
+            # Security: Verify that the authorizing actor is an active, unrevoked host principal
+            actor = conn.execute(
+                """
+                SELECT 1 FROM telegram_principals
+                WHERE principal_id = ? AND revoked_at IS NULL
+                """,
+                (actor_principal_id,),
+            ).fetchone()
+            if actor is None:
+                raise EnrollmentRejected("authorizing principal is not active")
+
             row = conn.execute(
                 """
                 SELECT provider_subject, role_id, revoked_at
