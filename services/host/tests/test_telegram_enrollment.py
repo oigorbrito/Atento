@@ -154,6 +154,60 @@ class TelegramEnrollmentTests(unittest.TestCase):
         events = self.store.audit_events()
         self.assertEqual(events[-1]["event_type"], "PRINCIPAL_REVOKED")
 
+    def test_revocation_requires_active_actor_principal(self) -> None:
+        first = self.enroll_bootstrap_naia()
+        second_db = Path(self.tempdir.name) / "host-revocation-test.sqlite3"
+        store = TelegramEnrollmentStore(
+            database_path=second_db,
+            enrollment_secret=b"test-only-enrollment-key-at-least-32-bytes",
+            enrollment_grants={first.principal_id: {"ANNA"}},
+            allow_bootstrap=True,
+            clock=lambda: self.now,
+        )
+        seed = store.start_enrollment(event=self.event, role_id="NAIA", bootstrap=True)
+        store.complete_enrollment(event=self.event, challenge_id=seed.challenge_id, code=seed.code)
+
+        anna_event = AuthenticatedTelegramEvent(bot_account_id=777000, user_id=222222)
+        challenge = store.start_enrollment(
+            event=anna_event,
+            role_id="ANNA",
+            authorized_by_principal_id=first.principal_id,
+        )
+        second = store.complete_enrollment(
+            event=anna_event,
+            challenge_id=challenge.challenge_id,
+            code=challenge.code,
+        )
+
+        # Non-existent actor principal cannot revoke an active principal
+        with self.assertRaisesRegex(EnrollmentRejected, "authorizing principal is not active"):
+            store.revoke(
+                principal_id=second.principal_id,
+                actor_principal_id="atento:telegram:777000:999999",
+            )
+
+        # Malformed/non-canonical actor principal is rejected
+        with self.assertRaisesRegex(EnrollmentRejected, "canonical principal and actor"):
+            store.revoke(
+                principal_id=second.principal_id,
+                actor_principal_id="   ",
+            )
+
+        # Revoke first principal
+        store.revoke(principal_id=first.principal_id, actor_principal_id=first.principal_id)
+
+        # Revoked principal cannot authorize further revocations
+        with self.assertRaisesRegex(EnrollmentRejected, "authorizing principal is not active"):
+            store.revoke(
+                principal_id=second.principal_id,
+                actor_principal_id=first.principal_id,
+            )
+
+        # Active principal 2 can revoke itself
+        store.revoke(principal_id=second.principal_id, actor_principal_id=second.principal_id)
+        with self.assertRaisesRegex(EnrollmentRejected, "not enrolled or has been revoked"):
+            store.resolve(anna_event)
+
     def test_non_bootstrap_enrollment_requires_explicit_host_grant(self) -> None:
         first = self.enroll_bootstrap_naia()
         second_db = Path(self.tempdir.name) / "host-with-grants.sqlite3"
