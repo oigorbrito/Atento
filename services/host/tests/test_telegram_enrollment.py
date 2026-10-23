@@ -175,6 +175,18 @@ class TelegramEnrollmentTests(unittest.TestCase):
             code=seed.code,
         )
         anna = AuthenticatedTelegramEvent(bot_account_id=777000, user_id=222222)
+        with self.assertRaisesRegex(EnrollmentRejected, "authorized_by_principal_id must be a canonical string"):
+            store.start_enrollment(
+                event=anna,
+                role_id="ANNA",
+                authorized_by_principal_id="   ",
+            )
+        with self.assertRaisesRegex(EnrollmentRejected, "authorized_by_principal_id must be a canonical string"):
+            store.start_enrollment(
+                event=anna,
+                role_id="ANNA",
+                authorized_by_principal_id="a" * 257,
+            )
         challenge = store.start_enrollment(
             event=anna,
             role_id="ANNA",

@@ -185,6 +185,14 @@ class TelegramEnrollmentStore:
         subject = canonical_telegram_subject(event)
         if role_id not in _ROLES:
             raise EnrollmentRejected("unsupported role")
+        if authorized_by_principal_id is not None:
+            if (
+                not isinstance(authorized_by_principal_id, str)
+                or not authorized_by_principal_id
+                or authorized_by_principal_id.strip() != authorized_by_principal_id
+                or len(authorized_by_principal_id) > 256
+            ):
+                raise EnrollmentRejected("authorized_by_principal_id must be a canonical string")
         ttl = self._max_ttl_seconds if ttl_seconds is None else ttl_seconds
         if isinstance(ttl, bool) or not isinstance(ttl, int) or not 1 <= ttl <= self._max_ttl_seconds:
             raise EnrollmentRejected("requested enrollment lifetime is outside host policy")
