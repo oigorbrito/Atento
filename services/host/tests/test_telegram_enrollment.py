@@ -154,6 +154,14 @@ class TelegramEnrollmentTests(unittest.TestCase):
         events = self.store.audit_events()
         self.assertEqual(events[-1]["event_type"], "PRINCIPAL_REVOKED")
 
+    def test_revocation_requires_active_actor(self) -> None:
+        binding = self.enroll_bootstrap_naia()
+        with self.assertRaisesRegex(EnrollmentRejected, "revoking actor is not active"):
+            self.store.revoke(
+                principal_id=binding.principal_id,
+                actor_principal_id="atento:telegram:777000:999999",
+            )
+
     def test_non_bootstrap_enrollment_requires_explicit_host_grant(self) -> None:
         first = self.enroll_bootstrap_naia()
         second_db = Path(self.tempdir.name) / "host-with-grants.sqlite3"
