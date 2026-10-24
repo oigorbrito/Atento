@@ -388,6 +388,15 @@ class TelegramEnrollmentStore:
             ).fetchone()
             if row is None or row["revoked_at"] is not None:
                 raise EnrollmentRejected("principal is not active")
+            actor = conn.execute(
+                """
+                SELECT 1 FROM telegram_principals
+                WHERE principal_id = ? AND revoked_at IS NULL
+                """,
+                (actor_principal_id,),
+            ).fetchone()
+            if actor is None:
+                raise EnrollmentRejected("revoking actor is not active")
             conn.execute(
                 "UPDATE telegram_principals SET revoked_at = ? WHERE principal_id = ?",
                 (now, principal_id),
