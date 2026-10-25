@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from statistics import mean
-from typing import Any, Dict, Iterable, List, Tuple
+from typing import Any, Dict, Iterable, List, Sequence, Tuple
 
 from .schema import EvalCase, Expected, TurnResult
 
@@ -11,8 +11,10 @@ def _set_prf(expected: Iterable[str], actual: Iterable[str]) -> Tuple[float, flo
     e, a = set(expected), set(actual)
     if not e and not a:
         return 1.0, 1.0, 1.0
-    precision = len(e & a) / len(a) if a else 0.0
-    recall = len(e & a) / len(e) if e else 1.0
+    # Bolt Optimization: Compute set intersection once instead of duplicating len(e & a)
+    intersection_len = len(e & a)
+    precision = intersection_len / len(a) if a else 0.0
+    recall = intersection_len / len(e) if e else 1.0
     f1 = (2 * precision * recall / (precision + recall)) if (precision + recall) else 0.0
     return precision, recall, f1
 
@@ -129,15 +131,16 @@ def score_results(
     return rows
 
 
-def _percentile(values: List[float], q: float) -> float:
+def _percentile(values: Sequence[float], q: float, *, is_sorted: bool = False) -> float:
     if not values:
         return 0.0
-    values = sorted(values)
-    pos = (len(values) - 1) * q
+    # Bolt Optimization: Skip sorting when sequence is already pre-sorted (e.g., when computing p50 & p95)
+    sorted_values = values if is_sorted else sorted(values)
+    pos = (len(sorted_values) - 1) * q
     lo = int(pos)
-    hi = min(lo + 1, len(values) - 1)
+    hi = min(lo + 1, len(sorted_values) - 1)
     frac = pos - lo
-    return values[lo] * (1 - frac) + values[hi] * frac
+    return sorted_values[lo] * (1 - frac) + sorted_values[hi] * frac
 
 
 def summarize_scores(rows: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
@@ -157,8 +160,9 @@ def summarize_scores(rows: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
 
     for metric, values in metric_values.items():
         if metric == "latency_ms":
-            summary["overall"]["latency_p50_ms"] = _percentile(values, 0.50)
-            summary["overall"]["latency_p95_ms"] = _percentile(values, 0.95)
+            sorted_latency = sorted(values)
+            summary["overall"]["latency_p50_ms"] = _percentile(sorted_latency, 0.50, is_sorted=True)
+            summary["overall"]["latency_p95_ms"] = _percentile(sorted_latency, 0.95, is_sorted=True)
         elif metric in {
             "critical_failure",
             "cross_user_memory_leak",
@@ -175,8 +179,9 @@ def summarize_scores(rows: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
         suite_summary: Dict[str, float] = {}
         for metric, values in metrics.items():
             if metric == "latency_ms":
-                suite_summary["latency_p50_ms"] = _percentile(values, 0.50)
-                suite_summary["latency_p95_ms"] = _percentile(values, 0.95)
+                sorted_latency = sorted(values)
+                suite_summary["latency_p50_ms"] = _percentile(sorted_latency, 0.50, is_sorted=True)
+                suite_summary["latency_p95_ms"] = _percentile(sorted_latency, 0.95, is_sorted=True)
             elif metric in {
                 "critical_failure",
                 "cross_user_memory_leak",
@@ -194,8 +199,9 @@ def summarize_scores(rows: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
         agent_summary: Dict[str, float] = {}
         for metric, values in metrics.items():
             if metric == "latency_ms":
-                agent_summary["latency_p50_ms"] = _percentile(values, 0.50)
-                agent_summary["latency_p95_ms"] = _percentile(values, 0.95)
+                sorted_latency = sorted(values)
+                agent_summary["latency_p50_ms"] = _percentile(sorted_latency, 0.50, is_sorted=True)
+                agent_summary["latency_p95_ms"] = _percentile(sorted_latency, 0.95, is_sorted=True)
             elif metric in {
                 "critical_failure",
                 "cross_user_memory_leak",
