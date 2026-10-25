@@ -51,6 +51,14 @@ class EnrollmentChallenge:
     attempts_left: int
 
 
+def _require_text(value: object, field: str) -> str:
+    if not isinstance(value, str) or not value or value.strip() != value:
+        raise EnrollmentRejected(f"{field} must be a non-empty canonical string")
+    if len(value) > 256:
+        raise EnrollmentRejected(f"{field} exceeds the host limit")
+    return value
+
+
 def canonical_telegram_subject(event: AuthenticatedTelegramEvent) -> str:
     for value, field in (
         (event.bot_account_id, "bot_account_id"),
@@ -205,6 +213,9 @@ class TelegramEnrollmentStore:
             else:
                 if authorized_by_principal_id is None:
                     raise EnrollmentRejected("enrollment requires host-authorized principal")
+                authorized_by_principal_id = _require_text(
+                    authorized_by_principal_id, "authorized_by_principal_id"
+                )
                 allowed = self._enrollment_grants.get(authorized_by_principal_id, frozenset())
                 if role_id not in allowed:
                     raise EnrollmentRejected("authorizing principal cannot enroll requested role")
@@ -268,7 +279,8 @@ class TelegramEnrollmentStore:
         code: str,
     ) -> TelegramPrincipalBinding:
         subject = canonical_telegram_subject(event)
-        if not challenge_id or not isinstance(code, str) or len(code) != 6 or not code.isdigit():
+        challenge_id = _require_text(challenge_id, "challenge_id")
+        if not isinstance(code, str) or len(code) != 6 or not code.isdigit():
             raise EnrollmentRejected("malformed enrollment response")
         now = int(self._clock())
 
@@ -374,8 +386,8 @@ class TelegramEnrollmentStore:
         )
 
     def revoke(self, *, principal_id: str, actor_principal_id: str) -> None:
-        if not principal_id or not actor_principal_id:
-            raise EnrollmentRejected("revocation requires principal and actor")
+        principal_id = _require_text(principal_id, "principal_id")
+        actor_principal_id = _require_text(actor_principal_id, "actor_principal_id")
         now = int(self._clock())
         with self._connect() as conn:
             conn.execute("BEGIN IMMEDIATE")
