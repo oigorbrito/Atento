@@ -187,6 +187,19 @@ class TelegramEnrollmentTests(unittest.TestCase):
         )
         self.assertEqual(binding.role_id, "ANNA")
 
+    def test_non_canonical_identifiers_are_rejected(self) -> None:
+        with self.assertRaisesRegex(EnrollmentRejected, "must be a non-empty canonical string"):
+            self.store.complete_enrollment(
+                event=self.event,
+                challenge_id="  bad_challenge_id  ",
+                code="123456",
+            )
+        with self.assertRaisesRegex(EnrollmentRejected, "must be a non-empty canonical string"):
+            self.store.revoke(
+                principal_id="atento:telegram:777000:123456",
+                actor_principal_id="  invalid_actor  ",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
