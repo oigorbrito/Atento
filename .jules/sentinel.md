@@ -1,0 +1,4 @@
+## 2026-10-04 - Non-ASCII secret comparison TypeError in hmac.compare_digest
+**Vulnerability:** Passing non-ASCII strings to Python `hmac.compare_digest(a, b)` raises an unhandled `TypeError: comparing strings with non-ASCII characters is not supported`. When processing external HTTP headers like `X-Telegram-Bot-Api-Secret-Token`, an attacker sending non-ASCII characters in the header could trigger an uncaught server exception / 500 internal server error instead of a handled authentication rejection.
+**Learning:** `hmac.compare_digest` supports `bytes` or ASCII-only `str`. Comparing `str` headers directly is unsafe if incoming HTTP request headers can contain arbitrary Unicode or UTF-8 byte sequences.
+**Prevention:** Always encode `str` secrets to UTF-8 `bytes` before invoking `hmac.compare_digest(a.encode("utf-8"), b.encode("utf-8"))`.
